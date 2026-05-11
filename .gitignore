@@ -40,6 +40,9 @@ yarn-error.log*
 .open-next
 .wrangler
 
+# ML model artifacts (download via `pnpm models:fetch`)
+public/_models/*.onnx
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

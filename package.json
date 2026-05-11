@@ -16,6 +16,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "i18n:check": "node scripts/i18n-check.mjs",
+    "models:fetch": "node scripts/fetch-model.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
