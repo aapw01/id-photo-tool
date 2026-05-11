@@ -36,6 +36,26 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare / opennext
+.open-next
+.wrangler
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# testing extras
+/playwright-report/
+/test-results/
+/blob-report/
+
+# IDE
+.idea/
+.vscode/settings.json
+
+# logs
+*.log
+
+# OS
+Thumbs.db
+
