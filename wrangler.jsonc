@@ -1,0 +1,25 @@
+/**
+ * Cloudflare Workers / Pages configuration for Pixfit.
+ *
+ * Build pipeline (handled by `@opennextjs/cloudflare`):
+ *   pnpm exec opennextjs-cloudflare build
+ *     → .open-next/worker.js   (entry point referenced by `main`)
+ *     → .open-next/assets/     (static files, served via [assets])
+ *
+ * Local preview:
+ *   pnpm preview
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pixfit",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-05-11",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "observability": {
+    "enabled": true,
+  },
+}
