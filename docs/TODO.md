@@ -65,18 +65,22 @@
 
 ---
 
-## 3. M2 · 抠图核心（next up）
+## 3. M2 · 抠图核心（in progress）
 
-任务清单将在 `docs/tasks/M2.md` 单独维护。本节只列高层提醒。
+> 详细任务清单见 [`tasks/M2.md`](./tasks/M2.md)（20 个原子任务）。
+> 本节只跟踪「跨小组的高层进度」，每个 task 的状态以 `tasks/M2.md §6` 进度表为准。
 
-- [ ] 撰写 `docs/tasks/M2.md`（原子任务拆分）
-- [ ] MODNet ONNX 模型量化与 R2 托管（含 CORS / Cache-Control）
-- [ ] `segmentation.worker.ts` Worker 实现（WebGPU → WASM 降级）
-- [ ] `useSegmentation` React Hook
-- [ ] `/studio` 路由骨架（先静态、再接入 worker）
-- [ ] 模型预热（导航到 `/studio` 时 prefetch）
-- [ ] 模型 SRI / integrity 校验
-- [ ] 单元测试 + worker 集成测试（Vitest browser mode 或 Playwright）
+- [x] 撰写 `docs/tasks/M2.md`（原子任务拆分）— 2026-05-11
+- [ ] 组 A · 模型资产准备（T01–T04）
+- [ ] 组 B · 抠图运行时（T05–T11）
+- [ ] 组 C · React 集成（T12–T14）
+- [ ] 组 D · Studio 路由（T15–T17）
+- [ ] 组 E · 验证（T18–T20）
+
+**关键里程碑**：
+
+- [ ] **首版可演示** — 用户上传一张图，能在 `/studio` 看到 mask 预览（T16+T17 完成）
+- [ ] **达到性能 DoD** — 桌面 Chrome 1024² 推理中位数 ≤ 800 ms（T19）
 
 参考：[`TECH_DESIGN.md §5.2 抠图模块`](./TECH_DESIGN.md)
 
