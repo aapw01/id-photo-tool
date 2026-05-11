@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "appName": "Pixfit",
+    "tagline": "ID photos, done right in your browser",
+    "openStudio": "Open Studio",
+    "learnMore": "Learn more",
+    "languages": {
+      "zh-Hans": "简体中文",
+      "zh-Hant": "繁體中文",
+      "en": "English"
+    }
+  },
+  "Nav": {
+    "studio": "Studio",
+    "sizes": "Sizes",
+    "paper": "Paper",
+    "templates": "Layouts",
+    "docs": "Docs",
+    "github": "GitHub"
+  },
+  "Home": {
+    "heroTitle": "ID photos, done right in your browser",
+    "heroSubtitle": "Upload a portrait, then cut out, swap the background, crop to spec, lay out for printing, compress, and export — all without ever uploading your photo.",
+    "cta": "Get started",
+    "ctaHint": "Free · No sign-up · 100% in your browser",
+    "features": {
+      "privacy": {
+        "title": "Privacy first",
+        "desc": "Every step runs on your device. Your photos never leave the browser."
+      },
+      "smart": {
+        "title": "Smart crop",
+        "desc": "Faces and shoulders are auto-aligned to each country's spec."
+      },
+      "layout": {
+        "title": "One-click layout",
+        "desc": "Auto-tile onto 4x6 or 5x7 paper with crop marks ready for the print shop."
+      },
+      "compress": {
+        "title": "Precise compression",
+        "desc": "Binary-search compression to hit the exact KB range visa portals require."
+      }
+    },
+    "uploadDropzone": {
+      "title": "Drop a photo here, or click to choose",
+      "subtitle": "JPG / PNG / HEIC · up to 50 MB",
+      "browse": "Choose a file"
+    }
+  },
+  "Footer": {
+    "copy": "© {year} Pixfit",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "openSource": "Open source (MIT)",
+    "tagline": "ID photo studio inside your browser"
+  },
+  "LanguageSwitcher": {
+    "label": "Change language",
+    "current": "Current language"
+  }
+}

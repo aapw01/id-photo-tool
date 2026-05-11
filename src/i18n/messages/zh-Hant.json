@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "appName": "Pixfit",
+    "tagline": "證件照，一次搞定",
+    "openStudio": "開啟工作台",
+    "learnMore": "了解更多",
+    "languages": {
+      "zh-Hans": "简体中文",
+      "zh-Hant": "繁體中文",
+      "en": "English"
+    }
+  },
+  "Nav": {
+    "studio": "工作台",
+    "sizes": "尺寸庫",
+    "paper": "相紙",
+    "templates": "排版模板",
+    "docs": "文件",
+    "github": "GitHub"
+  },
+  "Home": {
+    "heroTitle": "證件照，一次搞定",
+    "heroSubtitle": "上傳一張人像，瀏覽器內完成去背、換底色、智慧裁切、排版、壓縮與匯出。照片不會離開你的裝置。",
+    "cta": "立即開始",
+    "ctaHint": "免費 · 無需註冊 · 完全在瀏覽器中執行",
+    "features": {
+      "privacy": {
+        "title": "隱私優先",
+        "desc": "全流程在你的裝置完成，不上傳任何照片到伺服器。"
+      },
+      "smart": {
+        "title": "智慧裁切",
+        "desc": "自動定位人臉與肩線，對齊各國規範。"
+      },
+      "layout": {
+        "title": "一鍵排版",
+        "desc": "6 吋、5 吋相紙自動拼版，含裁切線。"
+      },
+      "compress": {
+        "title": "精準壓縮",
+        "desc": "二分搜尋壓到指定大小區間，滿足上傳需求。"
+      }
+    },
+    "uploadDropzone": {
+      "title": "把照片拖到這裡，或點擊選擇",
+      "subtitle": "支援 JPG / PNG / HEIC · 單張 ≤ 50 MB",
+      "browse": "選擇檔案"
+    }
+  },
+  "Footer": {
+    "copy": "© {year} Pixfit · 像配",
+    "privacy": "隱私政策",
+    "terms": "服務條款",
+    "openSource": "開源 (MIT)",
+    "tagline": "瀏覽器內的證件照工作台"
+  },
+  "LanguageSwitcher": {
+    "label": "切換語言",
+    "current": "當前語言"
+  }
+}

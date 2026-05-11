@@ -1,0 +1,61 @@
+{
+  "Common": {
+    "appName": "Pixfit",
+    "tagline": "证件照，一次搞定",
+    "openStudio": "打开工作台",
+    "learnMore": "了解更多",
+    "languages": {
+      "zh-Hans": "简体中文",
+      "zh-Hant": "繁體中文",
+      "en": "English"
+    }
+  },
+  "Nav": {
+    "studio": "工作台",
+    "sizes": "尺寸库",
+    "paper": "相纸",
+    "templates": "排版模板",
+    "docs": "文档",
+    "github": "GitHub"
+  },
+  "Home": {
+    "heroTitle": "证件照，一次搞定",
+    "heroSubtitle": "上传一张人像，浏览器内完成抠图、换底色、智能裁剪、排版、压缩与导出。照片不离开你的设备。",
+    "cta": "立即开始",
+    "ctaHint": "免费 · 无需注册 · 完全在浏览器中运行",
+    "features": {
+      "privacy": {
+        "title": "隐私优先",
+        "desc": "全流程在你的设备完成，不上传任何照片到服务器。"
+      },
+      "smart": {
+        "title": "智能裁剪",
+        "desc": "自动定位人脸与肩线，对齐各国规范。"
+      },
+      "layout": {
+        "title": "一键排版",
+        "desc": "6 寸、5 寸相纸自动拼版，含裁切线。"
+      },
+      "compress": {
+        "title": "精准压缩",
+        "desc": "二分搜索压到指定大小区间，满足上传要求。"
+      }
+    },
+    "uploadDropzone": {
+      "title": "把照片拖到这里，或点击选择",
+      "subtitle": "支持 JPG / PNG / HEIC · 单张 ≤ 50 MB",
+      "browse": "选择文件"
+    }
+  },
+  "Footer": {
+    "copy": "© {year} Pixfit · 像配",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "openSource": "开源 (MIT)",
+    "tagline": "浏览器内的证件照工作台"
+  },
+  "LanguageSwitcher": {
+    "label": "切换语言",
+    "current": "当前语言"
+  }
+}
