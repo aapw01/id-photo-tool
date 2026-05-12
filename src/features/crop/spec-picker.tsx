@@ -33,6 +33,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RegionFlag } from '@/components/region-flag'
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
+import { NextStepCTA } from '@/features/studio/next-step-cta'
 import { useStudioTabStore } from '@/features/studio/studio-tab-store'
 import { localizeText } from '@/lib/i18n-text'
 import { derivePixels, MM_PER_INCH } from '@/lib/spec-units'
@@ -350,6 +351,8 @@ export function SpecPicker() {
         <Download className="size-4" aria-hidden />
         {tStudio('export')}
       </Button>
+
+      <NextStepCTA current="size" />
     </section>
   )
 }

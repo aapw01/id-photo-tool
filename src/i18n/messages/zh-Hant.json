@@ -111,6 +111,11 @@
     },
     "cta": {
       "export": "匯出當前作品"
+    },
+    "nextStep": {
+      "toSize": "下一步：尺寸",
+      "toLayout": "下一步：排版",
+      "toExport": "下一步：匯出"
     }
   },
   "Crop": {
@@ -211,6 +216,11 @@
       "webp": "WebP"
     },
     "quality": "編碼品質",
+    "qualityMax": "最高品質",
+    "qualityMaxHint": "JPG / WebP 在最高品質下仍為有損壓縮；如需完全無損請選 PNG。",
+    "estimateLabel": "預計大小 ~{kb} KB",
+    "dimensionsBySpec": "匯出像素：{w} × {h} · 依所選規格",
+    "dimensionsByBitmap": "匯出像素：{w} × {h} · 依原圖",
     "qualityLockedByCompress": "壓縮至指定大小時，品質由演算法自動選擇",
     "compressToKB": "壓縮至指定 KB",
     "compressUnsupported": "壓縮僅適用於 JPG / WebP",

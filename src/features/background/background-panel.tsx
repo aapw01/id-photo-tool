@@ -26,6 +26,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import type { SegmentationState } from '@/features/segmentation/use-segmentation'
+import { NextStepCTA } from '@/features/studio/next-step-cta'
 import { useStudioTabStore } from '@/features/studio/studio-tab-store'
 import { cn } from '@/lib/utils'
 
@@ -218,6 +219,8 @@ export function BackgroundPanel({
         <Download className="size-4" aria-hidden />
         {tStudio('export')}
       </Button>
+
+      <NextStepCTA current="background" />
     </section>
   )
 }

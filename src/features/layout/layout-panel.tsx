@@ -19,6 +19,7 @@
 import { useEffect, useRef } from 'react'
 
 import type { BgColor } from '@/features/background/composite'
+import { NextStepCTA } from '@/features/studio/next-step-cta'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
 import { LayoutActions } from './layout-actions'
@@ -59,6 +60,7 @@ export function LayoutPanel({
         activeCropSpec={activeCropSpec}
         activeCropFrame={activeCropFrame}
       />
+      <NextStepCTA current="layout" />
     </div>
   )
 }

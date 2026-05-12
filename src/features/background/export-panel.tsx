@@ -510,6 +510,11 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const targetLong = Math.max(targetPixels.width, targetPixels.height)
   const showFullResHint = targetLong > PREVIEW_FG_LONGSIDE_PX
 
+  const exportFollowsSpec = !!(spec && frame)
+  const qualityPercent = Math.round(quality * 100)
+  const isQualityMax = qualityPercent === 100
+  const estimateBytes = estimates[format]
+
   return (
     <section className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <header>
@@ -517,7 +522,14 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         <p className="mt-1 text-xs text-[var(--color-text-mute)]">{t('subtitle')}</p>
       </header>
 
-      {spec && frame ? (
+      <p className="text-xs text-[var(--color-text-mute)]">
+        {t(exportFollowsSpec ? 'dimensionsBySpec' : 'dimensionsByBitmap', {
+          w: targetPixels.width,
+          h: targetPixels.height,
+        })}
+      </p>
+
+      {exportFollowsSpec ? (
         <p className="text-xs text-[var(--color-text-mute)]">{t('cropAppliedHint')}</p>
       ) : null}
 
@@ -595,7 +607,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
               {t('quality')}
             </Label>
             <span className="font-mono text-xs text-[var(--color-text-mute)]">
-              {Math.round(quality * 100)}%
+              {isQualityMax ? `${qualityPercent}% · ${t('qualityMax')}` : `${qualityPercent}%`}
             </span>
           </div>
           <input
@@ -604,13 +616,20 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
             min={30}
             max={100}
             step={1}
-            value={Math.round(quality * 100)}
+            value={qualityPercent}
             onChange={(e) => setQuality(Number(e.target.value) / 100)}
             disabled={compress}
             className="w-full accent-[var(--color-primary)] disabled:opacity-50"
           />
+          <p className="font-mono text-xs text-[var(--color-text-mute)]">
+            {estimateBytes !== null
+              ? t('estimateLabel', { kb: Math.round(estimateBytes / 1024) })
+              : '—'}
+          </p>
           {compress ? (
             <p className="text-xs text-[var(--color-text-mute)]">{t('qualityLockedByCompress')}</p>
+          ) : isQualityMax ? (
+            <p className="text-xs text-[var(--color-text-mute)]">{t('qualityMaxHint')}</p>
           ) : null}
         </div>
       ) : null}

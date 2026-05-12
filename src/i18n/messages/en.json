@@ -111,6 +111,11 @@
     },
     "cta": {
       "export": "Export now"
+    },
+    "nextStep": {
+      "toSize": "Next: Size",
+      "toLayout": "Next: Layout",
+      "toExport": "Next: Export"
     }
   },
   "Crop": {
@@ -211,6 +216,11 @@
       "webp": "WebP"
     },
     "quality": "Encoder quality",
+    "qualityMax": "Max quality",
+    "qualityMaxHint": "JPG / WebP at 100% is still lossy — pick PNG for true lossless.",
+    "estimateLabel": "Est. size ~{kb} KB",
+    "dimensionsBySpec": "Export pixels: {w} × {h} · per selected spec",
+    "dimensionsByBitmap": "Export pixels: {w} × {h} · original bitmap",
     "qualityLockedByCompress": "Quality is set automatically while compressing to a target size.",
     "compressToKB": "Compress to target size",
     "compressUnsupported": "Compression only applies to JPG / WebP.",
