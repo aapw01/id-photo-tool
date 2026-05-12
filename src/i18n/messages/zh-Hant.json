@@ -16,7 +16,12 @@
     "paper": "相紙",
     "templates": "排版模板",
     "docs": "文件",
-    "github": "GitHub"
+    "github": "GitHub",
+    "menu": {
+      "open": "開啟導覽",
+      "close": "關閉導覽",
+      "title": "導覽"
+    }
   },
   "Home": {
     "heroTitle": "證件照，一次搞定",
@@ -52,7 +57,23 @@
     "privacy": "隱私政策",
     "terms": "服務條款",
     "openSource": "開源 (MIT)",
-    "tagline": "瀏覽器內的證件照工作台"
+    "tagline": "瀏覽器內的證件照工作台",
+    "groups": {
+      "product": "產品",
+      "browse": "瀏覽",
+      "legal": "法律",
+      "about": "關於"
+    },
+    "links": {
+      "studio": "工作台",
+      "specs": "規格管理",
+      "sizes": "照片尺寸",
+      "paper": "相紙規格",
+      "templates": "排版模板",
+      "privacy": "隱私政策",
+      "terms": "服務條款",
+      "github": "GitHub"
+    }
   },
   "LanguageSwitcher": {
     "label": "切換語言",
@@ -80,6 +101,13 @@
       "layout": "排版",
       "export": "匯出",
       "comingSoon": "即將上線"
+    },
+    "mobile": {
+      "tabLabel": "切換面板",
+      "openPanel": "開啟設定面板",
+      "closePanel": "關閉設定面板",
+      "panelTitle": "{tab} 設定",
+      "panelSummary": "調整當前 {tab} 的參數。"
     }
   },
   "Crop": {
@@ -168,11 +196,26 @@
     },
     "copied": "已複製到剪貼簿",
     "copyFailed": "複製失敗，請嘗試下載",
-    "size": "約 {kb} KB"
+    "size": "約 {kb} KB",
+    "wechatHint": "在微信中開啟？長按預覽圖即可儲存到相簿。"
   },
   "Paper": {
     "title": "相紙",
-    "subtitle": "選擇拼版輸出的相紙規格。"
+    "subtitle": "選擇拼版輸出的相紙規格。",
+    "list": {
+      "heading": "相紙規格庫",
+      "subtitle": "Pixfit 內建的沖印店常用相紙，可在工作台一鍵把照片自動拼版。",
+      "intro": "從 3R 到 A4，七張內建相紙涵蓋台港中文沖印店常見格式以及辦公印表機。所有尺寸均按 300 DPI 校準，所見即所得。",
+      "fields": {
+        "alias": "別名",
+        "dimensions": "尺寸",
+        "pixels": "像素",
+        "dpi": "DPI"
+      },
+      "cta": "在工作台使用",
+      "metaTitle": "證件照排版相紙規格 · Pixfit · 像配",
+      "metaDescription": "查看 Pixfit 用於排版與匯出的七張內建相紙（3R / 4R / 5R / 6R / 8R / A4 / A5）。"
+    }
   },
   "Layout": {
     "templates": {
@@ -212,6 +255,159 @@
       "preparing": "準備中…",
       "downloadFailed": "無法產生排版，請嘗試更換相紙或減少照片數量。",
       "filenamePreview": "檔案名稱"
+    }
+  },
+  "Sizes": {
+    "heading": "照片尺寸庫",
+    "subtitle": "Pixfit 內建的全部證件照規格——中國證件、通行證、主流簽證、考試報名。",
+    "intro": "28 條規格覆蓋中國 1 吋 / 2 吋 / 身分證 / 護照，港澳台通行證，14 項主流簽證（美國 / 申根 / 英國 / 加拿大 / 澳洲 / 紐西蘭 / 日本 / 韓國 / 新加坡 / 馬來西亞 / 越南 / 泰國 / 俄羅斯），以及 3 項中國考試報名。在工作台選中後會自動鎖定比例並置中頭部。",
+    "fields": {
+      "dimensions": "物理尺寸",
+      "pixels": "像素",
+      "dpi": "DPI",
+      "background": "建議底色",
+      "fileSize": "檔案大小",
+      "region": "地區"
+    },
+    "cta": "在工作台使用",
+    "categoryEmpty": "此分類目前沒有規格",
+    "metaTitle": "證件照尺寸（簽證 · 證件 · 考試報名）· Pixfit · 像配",
+    "metaDescription": "查看 28 條內建證件照規格——美國 / 申根 / 英國 / 加拿大 / 澳紐 / 日韓 / 東南亞簽證、中國 1 吋 / 2 吋 / 身分證、考試報名。完全免費，瀏覽器內執行，照片不會上傳。"
+  },
+  "Templates": {
+    "heading": "排版模板庫",
+    "subtitle": "把多張照片自動排到一張相紙上，送印刷店即可冲印。",
+    "intro": "12 套內建模板涵蓋主流沖印店場景：8 張 / 16 張 1 吋、8 張 2 吋、1 吋 + 2 吋混排、身分證、護照、皮夾照等。每套模板會自動挑選相符相紙、生成網格，並支援 PNG 與向量 PDF 匯出。",
+    "fields": {
+      "paper": "相紙",
+      "photos": "照片",
+      "total": "共 {count} 張"
+    },
+    "groups": {
+      "byPaper": "依相紙分組"
+    },
+    "cta": "在工作台開啟",
+    "metaTitle": "證件照列印排版模板 · Pixfit · 像配",
+    "metaDescription": "查看 12 套內建列印模板（8 張 1 吋 / 16 張 1 吋 / 1 吋 + 2 吋混排 / 身分證 / 護照 / 皮夾照），涵蓋 5R / 6R / A4 相紙，支援 PNG 與向量 PDF 輸出。"
+  },
+  "Legal": {
+    "common": {
+      "lastUpdated": "最近更新 · {date}",
+      "backHome": "回首頁"
+    },
+    "privacy": {
+      "heading": "隱私政策",
+      "subtitle": "Pixfit 完全在你的瀏覽器內執行，不會收集、儲存或上傳你的照片。",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "隱私政策 · Pixfit · 像配",
+      "metaDescription": "Pixfit 如何處理你的資料：所有影像處理皆在裝置端完成，不使用追蹤 cookie，唯一持久化的內容是你自行建立的規格（儲存在瀏覽器 localStorage 中）。",
+      "sections": {
+        "summary": {
+          "title": "一句話總結",
+          "body": "Pixfit 是一個完全在瀏覽器內執行的證件照工作台。你的照片不會離開裝置。我們不需要註冊帳號，也不使用追蹤 cookie 收集你的行為。"
+        },
+        "data": {
+          "title": "我們處理什麼",
+          "body": "當你上傳照片時，檔案會在瀏覽器中解碼，由本機的 AI 去背模型（MODNet，跑在 WebGPU / WebAssembly 上）處理，並繪製到本地畫布。這些位元組不會透過網路傳出。"
+        },
+        "localStorage": {
+          "title": "本地儲存",
+          "body": "我們僅使用 localStorage 保存你自行建立或匯入的規格（key 為 `pixfit:specs:v1`），以及最近用過的幾種背景色。你可隨時在瀏覽器「網站設定」中清除這些資料。"
+        },
+        "thirdParty": {
+          "title": "第三方資源",
+          "body": "AI 模型權重、字型與 MediaPipe 執行時來自公開鏡像（ModelScope、jsDelivr、Hugging Face CDN）。這些服務只會看到模型檔的下載請求，看不到你的照片。模型快取命中後，核心流程可完全離線執行。"
+        },
+        "analytics": {
+          "title": "統計與分析",
+          "body": "正式上線後我們計劃接入 Cloudflare Web Analytics——無 cookie、不收集 IP 或裝置指紋。在該決策落地前不會載入任何統計腳本。目前未整合 Google Analytics / Mixpanel / Sentry 等第三方追蹤。"
+        },
+        "rights": {
+          "title": "你的權利",
+          "body": "由於我們不收集個人資料，沒有任何資訊可供我們代為刪除或匯出。你可透過瀏覽器清除網站資料，完全掌控自己的本機內容。"
+        },
+        "children": {
+          "title": "未成年人",
+          "body": "Pixfit 面向一般大眾，不專為 13 歲以下兒童設計。若代未成年人使用，請由監護人共同確認本政策。"
+        },
+        "changes": {
+          "title": "政策變更",
+          "body": "若資料處理實務發生變化，我們會更新本頁並同步更新「最近更新」日期。重大變更也會在首頁或站內通知中公告。"
+        },
+        "contact": {
+          "title": "聯絡我們",
+          "body": "可在 github.com/pixfit/pixfit 開 issue，或透過儲存庫 README 提供的維護者信箱聯絡。"
+        }
+      }
+    },
+    "terms": {
+      "heading": "服務條款",
+      "subtitle": "Pixfit 完全免費，以「現狀」提供，不附帶任何明示或默示擔保。使用即代表同意以下條款。",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "服務條款 · Pixfit · 像配",
+      "metaDescription": "Pixfit 免費開源，使用前請確認你對所處理照片享有合法權利。軟體以現狀提供。",
+      "sections": {
+        "scope": {
+          "title": "適用範圍",
+          "body": "本條款適用於對 pix-fit.com 網站以及開源 Pixfit 程式碼的任何使用。存取網站或執行原始碼即視為同意。"
+        },
+        "service": {
+          "title": "服務內容",
+          "body": "Pixfit 提供一個瀏覽器內運作的證件照工作台。所有功能在本機完成，主機服務僅用於分發靜態檔案。我們不承諾特定的可用性水準或處理結果的準確性。"
+        },
+        "responsibility": {
+          "title": "使用者責任",
+          "body": "你必須對所處理的每張照片享有合法權利。未經他人同意不得上傳他人照片，也不得使用 Pixfit 違反任何政府的證件照標準、身分驗證規定或當地法律。"
+        },
+        "compliance": {
+          "title": "規格準確性",
+          "body": "內建照片規格已在撰寫時參考官方來源核對。但各國使領館與考試機構可能更新規定，提交申請前請再次核對最新官方要求。"
+        },
+        "ip": {
+          "title": "智慧財產權",
+          "body": "Pixfit 原始碼以 MIT 授權釋出；內建圖示、字型及 AI 模型由各自作者授權（詳見 README）。你的照片所有權始終屬於你。"
+        },
+        "warranty": {
+          "title": "免責聲明",
+          "body": "本服務以「現狀」與「現有」方式提供，不附帶任何明示或默示擔保，包含但不限於可商售性、特定用途適用性與不侵權擔保。"
+        },
+        "liability": {
+          "title": "責任限制",
+          "body": "在適用法律允許的最大範圍內，我們對因使用 Pixfit 而產生的任何間接、附隨、特殊、衍生或懲罰性損害不承擔責任，包括但不限於簽證遭拒或冲印費用。"
+        },
+        "changes": {
+          "title": "服務變更",
+          "body": "我們可能隨時新增、修改或移除功能。重大變更會透過開源儲存庫的 changelog 公告。"
+        },
+        "law": {
+          "title": "管轄法律",
+          "body": "爭議適用維護者所在地的法律，並在適用情況下受當地消費者保護法管轄。"
+        },
+        "contact": {
+          "title": "聯絡我們",
+          "body": "條款相關疑問請在 github.com/pixfit/pixfit 開 issue。"
+        }
+      }
+    }
+  },
+  "Errors": {
+    "notFound": {
+      "title": "找不到頁面",
+      "body": "你要找的頁面可能已搬移或從未存在。返回工作台或首頁繼續吧。",
+      "actions": {
+        "home": "回首頁",
+        "studio": "開啟工作台"
+      },
+      "metaTitle": "找不到頁面 · Pixfit · 像配"
+    },
+    "runtime": {
+      "title": "出錯了",
+      "body": "Pixfit 在渲染此頁面時遇到未預期錯誤，詳情已記錄在瀏覽器主控台。可嘗試重試或重新整理；若問題持續，歡迎到儲存庫開 issue。",
+      "actions": {
+        "retry": "重試",
+        "home": "回首頁"
+      },
+      "metaTitle": "出錯了 · Pixfit · 像配"
     }
   },
   "SpecManager": {

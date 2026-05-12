@@ -1,10 +1,11 @@
 import { useTranslations } from 'next-intl'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Wand2 } from 'lucide-react'
 
 import { Link } from '@/i18n/navigation'
 import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { GitHubIcon } from '@/components/brand-icons'
+import { SiteMobileNav } from '@/components/site-mobile-nav'
 
 export function SiteHeader() {
   const t = useTranslations('Nav')
@@ -47,7 +48,7 @@ export function SiteHeader() {
             href="https://github.com/pixfit/pixfit"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-9 items-center gap-1 rounded-[var(--radius-md)] px-3 text-sm text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)]"
+            className="hidden h-9 items-center gap-1 rounded-[var(--radius-md)] px-3 text-sm text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)] md:inline-flex"
           >
             <GitHubIcon className="size-4" />
             <span className="hidden lg:inline">{t('github')}</span>
@@ -57,10 +58,13 @@ export function SiteHeader() {
           <Link
             href="/studio"
             data-warmup-segmentation
-            className="ml-2 inline-flex h-9 items-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 text-sm font-medium text-white shadow-[var(--shadow-sm)] hover:bg-[var(--color-primary-dk)]"
+            aria-label={tCommon('openStudio')}
+            className="ml-2 inline-flex h-9 items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-3 text-sm font-medium text-white shadow-[var(--shadow-sm)] hover:bg-[var(--color-primary-dk)] sm:px-4"
           >
-            {tCommon('openStudio')}
+            <Wand2 className="size-4 sm:hidden" aria-hidden="true" />
+            <span className="hidden sm:inline">{tCommon('openStudio')}</span>
           </Link>
+          <SiteMobileNav />
         </div>
       </div>
     </header>

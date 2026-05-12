@@ -16,7 +16,12 @@
     "paper": "Paper",
     "templates": "Layouts",
     "docs": "Docs",
-    "github": "GitHub"
+    "github": "GitHub",
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu",
+      "title": "Navigate"
+    }
   },
   "Home": {
     "heroTitle": "ID photos, done right in your browser",
@@ -52,7 +57,23 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "openSource": "Open source (MIT)",
-    "tagline": "ID photo studio inside your browser"
+    "tagline": "ID photo studio inside your browser",
+    "groups": {
+      "product": "Product",
+      "browse": "Browse",
+      "legal": "Legal",
+      "about": "About"
+    },
+    "links": {
+      "studio": "Studio",
+      "specs": "Spec manager",
+      "sizes": "Photo sizes",
+      "paper": "Paper sizes",
+      "templates": "Layout templates",
+      "privacy": "Privacy policy",
+      "terms": "Terms of service",
+      "github": "GitHub"
+    }
   },
   "LanguageSwitcher": {
     "label": "Change language",
@@ -80,6 +101,13 @@
       "layout": "Layout",
       "export": "Export",
       "comingSoon": "Coming soon"
+    },
+    "mobile": {
+      "tabLabel": "Switch panel",
+      "openPanel": "Open settings panel",
+      "closePanel": "Close settings panel",
+      "panelTitle": "{tab} settings",
+      "panelSummary": "Adjust the {tab} options for your photo."
     }
   },
   "Crop": {
@@ -168,11 +196,26 @@
     },
     "copied": "Copied to clipboard",
     "copyFailed": "Copy failed — try downloading instead",
-    "size": "≈{kb} KB"
+    "size": "≈{kb} KB",
+    "wechatHint": "Inside WeChat? Long-press the preview to save it to your album."
   },
   "Paper": {
     "title": "Paper",
-    "subtitle": "Pick the print paper your photos will tile onto."
+    "subtitle": "Pick the print paper your photos will tile onto.",
+    "list": {
+      "heading": "Print paper sizes",
+      "subtitle": "Standard print-shop papers Pixfit supports for tiled layouts. Pick one in Studio to auto-tile your photos.",
+      "intro": "From 3R to A4, the seven built-in papers cover every common Chinese print-shop format plus office printers. All sizes are calibrated to 300 DPI so what you see is what gets printed.",
+      "fields": {
+        "alias": "Alias",
+        "dimensions": "Dimensions",
+        "pixels": "Pixels",
+        "dpi": "DPI"
+      },
+      "cta": "Use in Studio",
+      "metaTitle": "Print paper sizes for ID photo layouts · Pixfit",
+      "metaDescription": "Browse the seven built-in print papers (3R / 4R / 5R / 6R / 8R / A4 / A5) Pixfit uses to tile and export ID photo layouts."
+    }
   },
   "Layout": {
     "templates": {
@@ -212,6 +255,159 @@
       "preparing": "Preparing…",
       "downloadFailed": "Couldn't produce the layout — try a smaller paper or fewer photos.",
       "filenamePreview": "Filename"
+    }
+  },
+  "Sizes": {
+    "heading": "ID photo sizes",
+    "subtitle": "Every built-in photo spec Pixfit ships with — Chinese IDs, travel permits, popular visas, and exam-registration formats.",
+    "intro": "Twenty-eight specs covering Chinese 1- and 2-inch IDs, Hong Kong / Macao / Taiwan travel permits, fourteen common visa standards (US / Schengen / UK / CA / AU / NZ / JP / KR / SG / MY / VN / TH / RU), and three national exam registration formats. Pick one to lock the aspect ratio in Studio and auto-centre the head.",
+    "fields": {
+      "dimensions": "Dimensions",
+      "pixels": "Pixels",
+      "dpi": "DPI",
+      "background": "Recommended background",
+      "fileSize": "File size",
+      "region": "Region"
+    },
+    "cta": "Use in Studio",
+    "categoryEmpty": "No specs in this category yet",
+    "metaTitle": "ID photo sizes for visa, ID, and exam registration · Pixfit",
+    "metaDescription": "Browse 28 built-in ID photo specifications — US / Schengen / UK / CA / AU / NZ / JP / KR visas, Chinese 1- and 2-inch IDs, travel permits, and exam formats. Free, in-browser, no upload."
+  },
+  "Templates": {
+    "heading": "Layout templates",
+    "subtitle": "Auto-grid arrangements that tile your photos onto a single print paper, ready for the print shop.",
+    "intro": "Twelve built-in templates covering the most common print-shop scenarios: 8× / 16× 1-inch, 8× 2-inch, mixed 1+2-inch sets, ID cards, passports, and wallet photos. Each template picks the right paper, computes the grid, and exports as PNG or vector-clean PDF.",
+    "fields": {
+      "paper": "Paper",
+      "photos": "Photos",
+      "total": "{count} total"
+    },
+    "groups": {
+      "byPaper": "Grouped by paper"
+    },
+    "cta": "Open in Studio",
+    "metaTitle": "ID photo print layout templates · Pixfit",
+    "metaDescription": "Browse twelve built-in print layouts — 8 × 1-inch, 16 × 1-inch, mixed 1+2-inch, ID card, passport, and wallet — across 5R / 6R / A4 papers. Export PNG or vector PDF."
+  },
+  "Legal": {
+    "common": {
+      "lastUpdated": "Last updated · {date}",
+      "backHome": "Back to home"
+    },
+    "privacy": {
+      "heading": "Privacy policy",
+      "subtitle": "Pixfit runs entirely in your browser. We do not collect, store, or transmit your photos.",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "Privacy policy · Pixfit",
+      "metaDescription": "How Pixfit handles your data: every image stays on your device, no cookies for tracking, and the only persistent storage is your own customised specs in localStorage.",
+      "sections": {
+        "summary": {
+          "title": "In short",
+          "body": "Pixfit is a browser-only ID photo studio. Your photos never leave your device. We do not run accounts, do not require sign-up, and do not track you with cookies."
+        },
+        "data": {
+          "title": "What we process",
+          "body": "When you upload a photo, the file is decoded in your browser, processed by an on-device AI model (MODNet running on WebGPU / WebAssembly), and rendered onto a local canvas. None of those bytes are sent over the network."
+        },
+        "localStorage": {
+          "title": "Local storage",
+          "body": "We use your browser's localStorage only to remember the photo / paper / layout specs you create or import (key `pixfit:specs:v1`) plus a small list of recently-used background colours. You can clear them at any time from your browser's site-settings panel."
+        },
+        "thirdParty": {
+          "title": "Third-party resources",
+          "body": "The AI model weights, fonts, and the MediaPipe runtime are fetched from public mirrors (ModelScope, jsDelivr, the Hugging Face CDN). These services see only the model file requests — never your photos. Once cached your subsequent visits are fully offline-capable for the core flow."
+        },
+        "analytics": {
+          "title": "Analytics",
+          "body": "Once we go live we plan to use Cloudflare Web Analytics, which is cookie-less and does not collect IP addresses or device fingerprints. No script is loaded until that decision ships. No third-party analytics tracker (Google / Mixpanel / Sentry) is bundled today."
+        },
+        "rights": {
+          "title": "Your rights",
+          "body": "Because we do not collect personal data, there is nothing for us to delete or export on your behalf. You retain full control by clearing local site data inside your browser."
+        },
+        "children": {
+          "title": "Children",
+          "body": "Pixfit is suitable for general audiences but is not directed at children under 13. If you are using Pixfit on behalf of a minor, please review these terms with their guardian."
+        },
+        "changes": {
+          "title": "Updates to this policy",
+          "body": "If our data-handling practices ever change we will update this page and bump the last-updated date. Material changes will also be summarised on the home page or via the in-app notification banner."
+        },
+        "contact": {
+          "title": "Contact",
+          "body": "Open an issue at github.com/pixfit/pixfit or email the maintainer listed in the repository README."
+        }
+      }
+    },
+    "terms": {
+      "heading": "Terms of service",
+      "subtitle": "Pixfit is offered free of charge, as-is, and with no warranties. By using it you agree to these terms.",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "Terms of service · Pixfit",
+      "metaDescription": "Pixfit is free and open source. You agree to use it only with photos you have the right to process, and accept the software is provided as-is.",
+      "sections": {
+        "scope": {
+          "title": "Scope",
+          "body": "These terms cover any use of pix-fit.com and the open-source Pixfit code base. By loading the site or running the code you agree to be bound by them."
+        },
+        "service": {
+          "title": "What we provide",
+          "body": "A browser-based ID photo studio. Every feature runs locally; the host service exists only to serve static files. We do not promise any specific level of availability or accuracy."
+        },
+        "responsibility": {
+          "title": "Your responsibility",
+          "body": "You must hold the rights to every photo you process. Do not upload other people's photos without their consent and do not use Pixfit to violate any government photo standard, identity-verification policy, or local law."
+        },
+        "compliance": {
+          "title": "Spec accuracy",
+          "body": "Built-in photo specifications are cross-referenced from official sources at the time of writing. Embassies and exam boards change their rules regularly — please double-check the latest official requirement before submitting your application."
+        },
+        "ip": {
+          "title": "Intellectual property",
+          "body": "The Pixfit source code is released under the MIT license. Built-in icons, fonts, and the AI model are licensed by their respective authors (see the README). Your photos remain yours."
+        },
+        "warranty": {
+          "title": "No warranty",
+          "body": "The service is provided as-is and as-available, without warranties of any kind, express or implied. We disclaim warranties of merchantability, fitness for a particular purpose, and non-infringement."
+        },
+        "liability": {
+          "title": "Limitation of liability",
+          "body": "To the maximum extent permitted by law, we are not liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of Pixfit, including but not limited to rejected applications or printing costs."
+        },
+        "changes": {
+          "title": "Changes to the service",
+          "body": "We may add, change, or remove features at any time. Material changes will be announced through the changelog in the open-source repository."
+        },
+        "law": {
+          "title": "Governing law",
+          "body": "Disputes are governed by the laws of the jurisdiction where the maintainer resides, and where applicable, by the relevant local consumer-protection law."
+        },
+        "contact": {
+          "title": "Contact",
+          "body": "Open an issue at github.com/pixfit/pixfit for any term-related question."
+        }
+      }
+    }
+  },
+  "Errors": {
+    "notFound": {
+      "title": "Page not found",
+      "body": "The page you are looking for has been moved or never existed. Head back to the studio or the home page to keep going.",
+      "actions": {
+        "home": "Back to home",
+        "studio": "Open Studio"
+      },
+      "metaTitle": "Not found · Pixfit"
+    },
+    "runtime": {
+      "title": "Something went wrong",
+      "body": "Pixfit hit an unexpected error rendering this page. The issue has been logged in your browser console. Try retrying or reload the page; if it persists, please open an issue.",
+      "actions": {
+        "retry": "Try again",
+        "home": "Back to home"
+      },
+      "metaTitle": "Error · Pixfit"
     }
   },
   "SpecManager": {

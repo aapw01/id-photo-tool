@@ -6,7 +6,9 @@ import { notFound } from 'next/navigation'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { StudioWorkspace } from '@/features/studio/studio-workspace'
+import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
+import { buildMetadata } from '@/lib/seo/metadata'
 
 interface StudioPageProps {
   params: Promise<{ locale: string }>
@@ -14,11 +16,14 @@ interface StudioPageProps {
 
 export async function generateMetadata({ params }: StudioPageProps): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'Studio' })
-  return {
+  return buildMetadata({
+    locale: locale as Locale,
+    path: '/studio',
     title: t('title'),
     description: t('subtitle'),
-  }
+  })
 }
 
 export default async function StudioPage({ params }: StudioPageProps) {

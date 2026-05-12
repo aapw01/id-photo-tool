@@ -265,15 +265,31 @@ NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
 
 收到反馈、读 PRD/TECH_DESIGN 时发现但尚未排期的小事，丢到这里，到对应里程碑再消化。
 
-- [ ] **隐私政策与服务条款页面**（M8）— 当前 Footer 已经有 `/privacy` `/terms` 链接但还没路由
-- [ ] **`/sizes` `/paper` `/templates` 列表页**（M7/M8）— SEO 着陆页
-- [ ] **历史会话**（M8 后期，IndexedDB）
+### M8 进行中（M8b 移动 + 打磨）
+
+- [ ] **`/studio?tab=export` 等 deeplink**（M8b）— `searchParams.tab` ↔ store；`router.replace` 不推历史栈
+- [ ] **Studio 移动端布局**（M8b）— ≤ 768px 底部 nav + 右侧面板 bottom Sheet
+- [ ] **CropFrame 触摸把手 ≥ 44×44**（M8b）— `touch-action: none`，coarse pointer 视觉 +4px
+- [ ] **ExportPanel 微信浏览器长按提示**（M8b）— UA 检测 + 三语 hint
+- [ ] **404 / error 页**（M8b）— `[locale]/not-found.tsx` + `[locale]/error.tsx` + 顶级兜底
+- [ ] **Lighthouse headless 基线**（M8b）— `pnpm dlx lighthouse`；真机分数 [user-pending]
+
+### M8a 已完成（M8a SEO + 路由）
+
+- [x] **隐私政策与服务条款页面** — `/privacy` `/terms` 三语 SSG，Footer/Header 联动
+- [x] **`/sizes` `/paper` `/templates` 列表页** — 三 SEO 着陆页 + JSON-LD ItemList
+- [x] **sitemap.xml + robots.txt** — 24 条 hreflang URL，`/dev/` 屏蔽
+- [x] **三语 namespace 同步** — Sizes / Paper.list / Templates / Legal / Errors / Studio.mobile / Nav.menu / Footer groups / Export.wechatHint
+
+### V1.1（M8 主动延后）
+
+- [ ] **历史会话 IndexedDB**（V1.1）— PRD §5.9 写「页面关闭即清空」，IndexedDB 与该约束矛盾，留 V1.1 重新设计
+- [ ] **撤销 / 重做（zundo）**（V1.1）— 涉及 background / crop / layout 三 store 中间件改造，M8 时间盒不动
+- [ ] **`/sizes/[id]` `/paper/[id]` `/templates/[id]` 详情页**（V1.1）— 列表页 + ItemList 已能让爬虫覆盖 47 条 spec id；141 张三语文案维护成本高，等真自然流量再决定
 - [ ] **HSV / 渐变背景**（V1.1，扩 BackgroundPanel）— 当前只支持 HEX，已足够 V1
-- [ ] **撤销 / 重做**（PRD §5.9 历史会话，V1.1）— 背景色切换历史走 zundo
-- [ ] **`/studio?tab=export` 等 deeplink**（M8）— 目前 tab 状态只在内存，不写 URL
 - [ ] **CropFrame 8 把手（含边把手）**（V1.1）— 当前只 4 个角，多数场景已足够
-- [ ] **face-detect 性能基准**（M8 打磨期）— 目前仅依赖单测，没单独 `/dev/face-perf` 路由
-- [ ] **MediaPipe 模型 SHA 校验**（M2-T03 同期，等 R2 接入再上）
+- [ ] **face-detect 性能基准**（V1.1）— 目前仅依赖单测，没单独 `/dev/face-perf` 路由
+- [ ] **MediaPipe 模型 SHA 校验**（V1.1，等 R2 接入再上）
 - [ ] **混排单元图片改用 face-detect frame**（V1.1）— M6 兜底用 `centerCrop`，未来可对每个 spec 跑一次 face-detect 复用 frame
 - [ ] **PDF 单测**（V1.1）— 当前 jsPDF 走 happy-dom 不便测，留到能跑 jsdom 浏览器集成时补
 - [ ] **Layout `manual.cells` UI**（V1.1）— schema 已经预留，做一个像素级拖拽编辑器

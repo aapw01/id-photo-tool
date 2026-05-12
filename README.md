@@ -87,6 +87,25 @@ pnpm models:fetch
 > 如果上游模型更新，脚本会因 SHA-384 不匹配在运行时报错——届时更新
 > [`integrity.ts`](src/features/segmentation/integrity.ts) 的 `MODEL_SHA384` 常量即可。
 
+## 页面
+
+所有正式路由都按 `/[locale]/...` 三语 SSG 出（locale ∈ `zh-Hans` / `zh-Hant` / `en`，默认 `zh-Hans`）。
+
+| 路由           | 内容                                                         |
+| -------------- | ------------------------------------------------------------ |
+| `/`            | 首页 · 落地 + 上传                                           |
+| `/studio`      | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）    |
+| `/specs`       | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate     |
+| `/sizes`       | 28 条内置照片规格列表（SEO 着陆页）                          |
+| `/paper`       | 7 条内置相纸规格列表（SEO 着陆页）                           |
+| `/templates`   | 12 条内置排版模板列表（SEO 着陆页）                          |
+| `/privacy`     | 隐私政策                                                     |
+| `/terms`       | 服务条款                                                     |
+| `/sitemap.xml` | 自动收录全部上述路由 × 三 locale（hreflang alternates 齐全） |
+| `/robots.txt`  | 公开抓取规则                                                 |
+
+dev-only 路由（`/dev/*`）默认隐藏；需 `NEXT_PUBLIC_ENABLE_DEV_PAGES=1` 才会编译。
+
 ## 技术栈
 
 - Next.js 16（App Router）+ React 19 + TypeScript

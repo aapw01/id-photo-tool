@@ -2,12 +2,16 @@ import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Crop, Layout, Lock, Scaling } from 'lucide-react'
 
+import { JsonLd } from '@/components/jsonld'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { UploadDropzone } from '@/components/upload-dropzone'
 import { SegmentationPrewarm } from '@/features/segmentation/segmentation-prewarm'
 import { hasLocale } from 'next-intl'
+import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
+import { webApplicationSchema } from '@/lib/seo/jsonld'
+import { buildMetadata } from '@/lib/seo/metadata'
 import { notFound } from 'next/navigation'
 
 interface HomePageProps {
@@ -16,11 +20,14 @@ interface HomePageProps {
 
 export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'Home' })
-  return {
+  return buildMetadata({
+    locale: locale as Locale,
+    path: '/',
     title: t('heroTitle'),
     description: t('heroSubtitle'),
-  }
+  })
 }
 
 const featureIcons = {
@@ -93,6 +100,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </section>
       </main>
       <SiteFooter />
+      <JsonLd data={webApplicationSchema(locale as Locale)} />
     </>
   )
 }

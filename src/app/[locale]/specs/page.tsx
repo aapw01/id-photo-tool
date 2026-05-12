@@ -6,7 +6,9 @@ import { notFound } from 'next/navigation'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { SpecManagerShell } from '@/features/spec-manager/spec-manager-shell'
+import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
+import { buildMetadata } from '@/lib/seo/metadata'
 
 interface SpecsPageProps {
   params: Promise<{ locale: string }>
@@ -14,11 +16,14 @@ interface SpecsPageProps {
 
 export async function generateMetadata({ params }: SpecsPageProps): Promise<Metadata> {
   const { locale } = await params
+  if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'SpecManager' })
-  return {
+  return buildMetadata({
+    locale: locale as Locale,
+    path: '/specs',
     title: t('title'),
     description: t('subtitle'),
-  }
+  })
 }
 
 export default async function SpecsPage({ params }: SpecsPageProps) {
