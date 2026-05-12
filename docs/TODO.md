@@ -80,6 +80,7 @@
   - [x] T06 Worker 协议 + 骨架（stub session，T07–T10 接入真 ort）— 2026-05-12
   - [x] T07 模型加载器 + Cache API 持久化 + 重试 — 2026-05-12
   - [x] T08 预处理：cover-crop → NCHW Float32 张量 — 2026-05-12
+  - [x] T09 后处理：mask → 原图分辨率 RGBA + inverse crop — 2026-05-12
 - [ ] 组 C · React 集成（T12–T14）
 - [ ] 组 D · Studio 路由（T15–T17）
 - [ ] 组 E · 验证（T18–T20）
