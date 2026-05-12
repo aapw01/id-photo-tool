@@ -14,7 +14,6 @@ import { Download, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
-import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { centerCrop } from '@/features/crop/auto-center'
 import {
   extractForegroundCapped,
@@ -23,13 +22,13 @@ import {
   type BgColor,
 } from '@/features/background/composite'
 import { buildFilename } from '@/features/export'
+import { canvasToBlob } from '@/features/export/export-single'
 import { aspectRatio, derivePixels } from '@/lib/spec-units'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
-import { canvasToBlob } from '@/features/export/export-single'
-
 import { exportLayoutPdf } from './export-pdf'
 import { renderLayout } from './render-layout'
+import { makeSpecResolver } from './spec-resolver'
 import { useLayoutStore } from './store'
 
 interface LayoutActionsProps {
@@ -148,8 +147,9 @@ export function LayoutActions({
     // closed at the end of the callback.
     let maxCellLong = 0
     const uniqueSpecIds = new Set<string>(template.items.map((it) => it.photoSpecId))
+    const resolveSpec = makeSpecResolver(activeCropSpec ?? null)
     for (const id of uniqueSpecIds) {
-      const spec = BUILTIN_PHOTO_SPECS.find((s) => s.id === id)
+      const spec = resolveSpec(id)
       if (!spec) continue
       const r = derivePixels(spec)
       maxCellLong = Math.max(maxCellLong, r.width_px, r.height_px)
@@ -171,7 +171,7 @@ export function LayoutActions({
 
     try {
       for (const id of uniqueSpecIds) {
-        const spec = BUILTIN_PHOTO_SPECS.find((s) => s.id === id)
+        const spec = resolveSpec(id)
         if (!spec) continue
         const frame =
           spec.id === activeCropSpec?.id && activeCropFrame
@@ -234,7 +234,7 @@ export function LayoutActions({
       const result = renderLayout({
         paper,
         template,
-        getSpec: (id) => BUILTIN_PHOTO_SPECS.find((s) => s.id === id) ?? null,
+        getSpec: makeSpecResolver(activeCropSpec ?? null),
         getCellImage: (spec) => images.get(spec.id) ?? null,
         settingsOverride: settings,
       })
@@ -245,7 +245,7 @@ export function LayoutActions({
     } finally {
       setBusy(null)
     }
-  }, [busy, paper, template, settings, pngFilename, prepareCellImages, t])
+  }, [busy, paper, template, settings, pngFilename, prepareCellImages, t, activeCropSpec])
 
   const onDownloadPdf = useCallback(async () => {
     if (busy) return
@@ -255,7 +255,7 @@ export function LayoutActions({
       const { blob } = await exportLayoutPdf({
         paper,
         template,
-        getSpec: (id) => BUILTIN_PHOTO_SPECS.find((s) => s.id === id) ?? null,
+        getSpec: makeSpecResolver(activeCropSpec ?? null),
         getCellImageDataUrl: async (spec) => {
           const canvas = images.get(spec.id)
           return canvas ? canvas.toDataURL('image/png') : null
@@ -268,7 +268,7 @@ export function LayoutActions({
     } finally {
       setBusy(null)
     }
-  }, [busy, paper, template, settings, pdfFilename, prepareCellImages, t])
+  }, [busy, paper, template, settings, pdfFilename, prepareCellImages, t, activeCropSpec])
 
   return (
     <section className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">

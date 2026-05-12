@@ -259,7 +259,8 @@
       "title": "拼版方案",
       "subtitle": "選擇與目前相紙相容的內建拼版。",
       "empty": "目前沒有適合此相紙的內建方案，請使用下方的混排編輯器。",
-      "totalCount": "共 {count} 張"
+      "totalCount": "共 {count} 張",
+      "syncedBadge": "已選尺寸"
     },
     "mix": {
       "title": "自訂混排",

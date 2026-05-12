@@ -25,7 +25,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 
-import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { centerCrop } from '@/features/crop/auto-center'
 import { extractForeground, parseHex, type BgColor } from '@/features/background/composite'
 import { localizeText } from '@/lib/i18n-text'
@@ -33,6 +32,7 @@ import { derivePixels, aspectRatio } from '@/lib/spec-units'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
 import { renderLayout, type RenderLayoutResult } from './render-layout'
+import { makeSpecResolver } from './spec-resolver'
 import { useLayoutStore } from './store'
 
 // Cap the preview canvas at 800 CSS pixels on its longest side so
@@ -177,9 +177,10 @@ export function LayoutPreview({
 
       const uniqueSpecIds = new Set<string>(template.items.map((it) => it.photoSpecId))
       const map = new Map<string, HTMLCanvasElement>()
+      const resolveSpec = makeSpecResolver(activeCropSpec ?? null)
 
       for (const id of uniqueSpecIds) {
-        const spec = BUILTIN_PHOTO_SPECS.find((s) => s.id === id)
+        const spec = resolveSpec(id)
         if (!spec) continue
         const frame =
           spec.id === activeCropSpec?.id && activeCropFrame
@@ -219,7 +220,7 @@ export function LayoutPreview({
       const result = renderLayout({
         paper,
         template,
-        getSpec: (id) => BUILTIN_PHOTO_SPECS.find((s) => s.id === id) ?? null,
+        getSpec: makeSpecResolver(activeCropSpec ?? null),
         getCellImage: (spec) => cellImages.get(spec.id) ?? null,
         settingsOverride: settings,
         dpi: PREVIEW_DPI,
@@ -240,7 +241,7 @@ export function LayoutPreview({
     return () => {
       cancelled = true
     }
-  }, [paper, template, settings, cellImages, onRendered])
+  }, [paper, template, settings, cellImages, activeCropSpec, onRendered])
 
   const aspect = useMemo(() => `${paper.width_mm} / ${paper.height_mm}`, [paper])
   const maxWidth =

@@ -10,13 +10,14 @@
  * studio renders normally.
  */
 
+import { useMemo } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { localizeText } from '@/lib/i18n-text'
 import { cn } from '@/lib/utils'
-import type { LayoutTemplate } from '@/types/spec'
+import type { LayoutTemplate, PhotoSpec } from '@/types/spec'
 
 import { useLayoutStore } from './store'
 
@@ -26,7 +27,11 @@ function isCustomMix(template: LayoutTemplate): boolean {
   return template.id.startsWith(CUSTOM_PREFIX)
 }
 
-export function MixedEditor() {
+interface MixedEditorProps {
+  activeCropSpec: PhotoSpec | null
+}
+
+export function MixedEditor({ activeCropSpec }: MixedEditorProps) {
   const t = useTranslations('Layout.mix')
   const locale = useLocale()
 
@@ -35,6 +40,16 @@ export function MixedEditor() {
   const setTemplate = useLayoutStore((s) => s.setTemplate)
 
   const items = template.items
+
+  // The select drop-downs need to include the active inline-custom
+  // spec when it isn't in `BUILTIN_PHOTO_SPECS` — otherwise the user
+  // can't add their own size to a mix, or sees a blank label when the
+  // synced template already references it.
+  const availableSpecs = useMemo<PhotoSpec[]>(() => {
+    if (!activeCropSpec) return BUILTIN_PHOTO_SPECS
+    if (BUILTIN_PHOTO_SPECS.some((s) => s.id === activeCropSpec.id)) return BUILTIN_PHOTO_SPECS
+    return [activeCropSpec, ...BUILTIN_PHOTO_SPECS]
+  }, [activeCropSpec])
 
   function commit(nextItems: LayoutTemplate['items']) {
     if (nextItems.length === 0) {
@@ -90,7 +105,7 @@ export function MixedEditor() {
 
   function addRow() {
     const used = new Set(items.map((it) => it.photoSpecId))
-    const next = BUILTIN_PHOTO_SPECS.find((s) => !used.has(s.id))
+    const next = availableSpecs.find((s) => !used.has(s.id))
     if (!next) return
     commit([...items, { photoSpecId: next.id, count: 1 }])
   }
@@ -121,7 +136,7 @@ export function MixedEditor() {
 
       <ul className="space-y-2">
         {items.map((item, idx) => {
-          const spec = BUILTIN_PHOTO_SPECS.find((s) => s.id === item.photoSpecId)
+          const spec = availableSpecs.find((s) => s.id === item.photoSpecId)
           return (
             <li
               key={`${item.photoSpecId}-${idx}`}
@@ -133,7 +148,7 @@ export function MixedEditor() {
                 className="min-w-0 flex-1 rounded-sm border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-xs text-[var(--color-text)]"
                 aria-label={t('selectSpec')}
               >
-                {BUILTIN_PHOTO_SPECS.map((s) => (
+                {availableSpecs.map((s) => (
                   <option key={s.id} value={s.id}>
                     {localizeText(s.name, locale)}
                   </option>

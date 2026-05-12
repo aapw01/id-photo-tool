@@ -259,7 +259,8 @@
       "title": "Layout",
       "subtitle": "Pick a builtin arrangement compatible with the chosen paper.",
       "empty": "No builtin layouts fit this paper yet — drop into mixed mode below.",
-      "totalCount": "{count} photos"
+      "totalCount": "{count} photos",
+      "syncedBadge": "Your size"
     },
     "mix": {
       "title": "Mixed photos",
