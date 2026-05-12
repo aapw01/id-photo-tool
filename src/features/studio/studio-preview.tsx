@@ -27,6 +27,12 @@ import { compositeOnto, extractForeground, type BgColor } from '@/features/backg
 interface StudioPreviewProps {
   bitmap: ImageBitmap
   mask: ImageData | null
+  /**
+   * Decontaminated foreground RGBA produced by the segmentation
+   * worker. When its dimensions match `bitmap`, the preview skips the
+   * main-thread `extractForeground` pixel passes (M5 P2-2).
+   */
+  foreground?: ImageData | null
   bg: BgColor
   showCompare?: boolean
   /**
@@ -68,6 +74,7 @@ async function resizeMask(mask: ImageData, w: number, h: number): Promise<ImageD
 export function StudioPreview({
   bitmap,
   mask,
+  foreground: precomputedForeground,
   bg,
   showCompare = false,
   overlay,
@@ -88,6 +95,29 @@ export function StudioPreview({
         setForeground((prev) => {
           prev?.close?.()
           return null
+        })
+        return
+      }
+      // Fast path (M5 P2-2): when the worker already produced a
+      // decontaminated foreground that matches `bitmap` pixel-for-
+      // pixel, wrap it as an ImageBitmap and skip the matte +
+      // spill suppression passes entirely. `previewBitmap` and the
+      // worker foreground are both capped at the same long side, so
+      // dimensions agree whenever the user landed here via the
+      // studio flow.
+      if (
+        precomputedForeground &&
+        precomputedForeground.width === bitmap.width &&
+        precomputedForeground.height === bitmap.height
+      ) {
+        const fg = await createImageBitmap(precomputedForeground)
+        if (cancelled) {
+          fg.close?.()
+          return
+        }
+        setForeground((prev) => {
+          prev?.close?.()
+          return fg
         })
         return
       }
@@ -117,7 +147,7 @@ export function StudioPreview({
     return () => {
       cancelled = true
     }
-  }, [bitmap, mask])
+  }, [bitmap, mask, precomputedForeground])
 
   // Cleanup foreground on unmount.
   useEffect(() => {

@@ -27,6 +27,14 @@ export interface StudioState {
   previewBitmap: ImageBitmap | null
   /** Last successful mask. */
   mask: ImageData | null
+  /**
+   * Decontaminated foreground RGBA produced by the segmentation worker
+   * (alpha matte + spill suppression already applied). Long side capped
+   * at the worker's foreground budget so this stays cheap to hold.
+   * Export hooks use this directly when the target resolution fits
+   * inside the cap; otherwise they rebuild on the main thread.
+   */
+  foreground: ImageData | null
   /** Inference metadata for UI ("WebGPU · 234 ms"). */
   lastInference: { backend: SegmentResult['backend']; durationMs: number } | null
 
@@ -48,13 +56,25 @@ async function decodeFile(file: File): Promise<ImageBitmap> {
   })
 }
 
+class PreviewAbortError extends Error {
+  constructor() {
+    super('preview downscale aborted')
+    this.name = 'PreviewAbortError'
+  }
+}
+
 /**
  * Produce a downscaled `ImageBitmap` from `source` with the longest
  * side capped at `PREVIEW_LONGSIDE_PX`. Returns the same reference
  * when the source is already small enough — callers can then re-use
  * the original bitmap without paying for an unnecessary draw.
+ *
+ * Cancellation: `signal.aborted` is checked after every async
+ * boundary. When a faster-arriving setFile aborts mid-downscale,
+ * we throw `PreviewAbortError` so the caller can close the partial
+ * result rather than leaving a dangling ImageBitmap.
  */
-async function makePreviewBitmap(source: ImageBitmap): Promise<ImageBitmap> {
+async function makePreviewBitmap(source: ImageBitmap, signal: AbortSignal): Promise<ImageBitmap> {
   const longest = Math.max(source.width, source.height)
   if (longest <= PREVIEW_LONGSIDE_PX) return source
 
@@ -74,13 +94,20 @@ async function makePreviewBitmap(source: ImageBitmap): Promise<ImageBitmap> {
         ctx.imageSmoothingQuality = 'high'
         ctx.drawImage(source, 0, 0, w, h)
         if (typeof off.transferToImageBitmap === 'function') {
+          if (signal.aborted) throw new PreviewAbortError()
           return off.transferToImageBitmap()
         }
         if (typeof createImageBitmap === 'function') {
-          return await createImageBitmap(off)
+          const fresh = await createImageBitmap(off)
+          if (signal.aborted) {
+            fresh.close?.()
+            throw new PreviewAbortError()
+          }
+          return fresh
         }
       }
-    } catch {
+    } catch (err) {
+      if (err instanceof PreviewAbortError) throw err
       // fall through to the DOM canvas path
     }
   }
@@ -95,7 +122,12 @@ async function makePreviewBitmap(source: ImageBitmap): Promise<ImageBitmap> {
     ctx.drawImage(source, 0, 0, w, h)
   }
   if (typeof createImageBitmap === 'function') {
-    return await createImageBitmap(canvas)
+    const fresh = await createImageBitmap(canvas)
+    if (signal.aborted) {
+      fresh.close?.()
+      throw new PreviewAbortError()
+    }
+    return fresh
   }
   // Last-ditch fallback — return the original. Preview will be slower
   // but functional.
@@ -110,21 +142,41 @@ function closePreview(state: Pick<StudioState, 'bitmap' | 'previewBitmap'>): voi
   }
 }
 
+// One in-flight downscale at a time. Living at module scope keeps
+// `setFile` callable in arbitrary order without each invocation
+// having to coordinate via the store's own state.
+let previewAbortController: AbortController | null = null
+
 export const useStudioStore = create<StudioState>((set, get) => ({
   file: null,
   bitmap: null,
   previewBitmap: null,
   mask: null,
+  foreground: null,
   lastInference: null,
 
   async setFile(file) {
+    // Cancel any in-flight downscale before swapping the bitmap. The
+    // previous controller is replaced even when `file === null` so a
+    // pending downscale doesn't write into the cleared state.
+    previewAbortController?.abort()
+    const controller = new AbortController()
+    previewAbortController = controller
+
     // Release any previous bitmap(s) before swapping in a new one.
     const prev = get()
     closePreview(prev)
     if (prev.bitmap) prev.bitmap.close()
 
     if (!file) {
-      set({ file: null, bitmap: null, previewBitmap: null, mask: null, lastInference: null })
+      set({
+        file: null,
+        bitmap: null,
+        previewBitmap: null,
+        mask: null,
+        foreground: null,
+        lastInference: null,
+      })
       return
     }
 
@@ -132,15 +184,29 @@ export const useStudioStore = create<StudioState>((set, get) => ({
     try {
       bitmap = await decodeFile(file)
     } catch (err) {
-      set({ file: null, bitmap: null, previewBitmap: null, mask: null, lastInference: null })
+      set({
+        file: null,
+        bitmap: null,
+        previewBitmap: null,
+        mask: null,
+        foreground: null,
+        lastInference: null,
+      })
       throw err
     }
     // Set the full-res bitmap immediately so anything that needs it
     // (export, layout) doesn't wait on the downscale step. The preview
     // bitmap follows on the next microtask.
-    set({ file, bitmap, previewBitmap: bitmap, mask: null, lastInference: null })
+    set({
+      file,
+      bitmap,
+      previewBitmap: bitmap,
+      mask: null,
+      foreground: null,
+      lastInference: null,
+    })
     try {
-      const preview = await makePreviewBitmap(bitmap)
+      const preview = await makePreviewBitmap(bitmap, controller.signal)
       // Guard against the user replacing the photo before downscale
       // completes — only swap in the preview when the underlying
       // bitmap still matches.
@@ -151,21 +217,33 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       }
     } catch {
       // Preview generation is best-effort. The original bitmap is
-      // already wired up as the fallback above.
+      // already wired up as the fallback above. Aborts also land here
+      // and need no extra handling — the next setFile already owns the
+      // up-to-date state.
     }
   },
 
   setMask(mask, meta) {
     set({
       mask,
+      foreground: meta?.foreground ?? null,
       lastInference: meta ? { backend: meta.backend, durationMs: meta.durationMs } : null,
     })
   },
 
   reset() {
+    previewAbortController?.abort()
+    previewAbortController = null
     const prev = get()
     closePreview(prev)
     if (prev.bitmap) prev.bitmap.close()
-    set({ file: null, bitmap: null, previewBitmap: null, mask: null, lastInference: null })
+    set({
+      file: null,
+      bitmap: null,
+      previewBitmap: null,
+      mask: null,
+      foreground: null,
+      lastInference: null,
+    })
   },
 }))

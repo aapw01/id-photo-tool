@@ -5,6 +5,7 @@ import {
   type WorkerHandlerDeps,
 } from '@/features/segmentation/worker-router'
 import type {
+  ForegroundResult,
   SegmentSession,
   ProgressCallback,
   MaskBuffer,
@@ -173,6 +174,105 @@ describe('createWorkerHandler', () => {
 
     const errorMsg = rec.posts.find((p) => p.type === 'error')
     expect(errorMsg).toMatchObject({ kind: 'inference', id: 's' })
+  })
+
+  it('includes the worker-produced foreground when withForeground=true', async () => {
+    const { rec, post } = makeRecorder()
+    const session: SegmentSession = {
+      backend: 'wasm',
+      async run(bitmap: ImageBitmap) {
+        return makeMask(bitmap.width, bitmap.height)
+      },
+    }
+    const fg: ForegroundResult = {
+      data: new Uint8ClampedArray(8 * 6 * 4),
+      width: 8,
+      height: 6,
+    }
+    const processForeground = vi.fn(async (): Promise<ForegroundResult> => fg)
+    const handler = createWorkerHandler({
+      post,
+      load: async () => session,
+      processForeground,
+    })
+    handler.__setSessionForTesting(session)
+    handler({
+      type: 'segment',
+      id: 'r',
+      bitmap: makeBitmap(8, 8),
+      withForeground: true,
+      foregroundMaxLongSide: 8,
+    })
+    await new Promise((r) => setTimeout(r, 0))
+
+    expect(processForeground).toHaveBeenCalledTimes(1)
+    const result = rec.posts.find((p) => p.type === 'result') as Extract<
+      SegmentResponse,
+      { type: 'result' }
+    >
+    expect(result).toBeDefined()
+    expect(result.foreground).toBe(fg.data.buffer)
+    expect(result.foregroundWidth).toBe(8)
+    expect(result.foregroundHeight).toBe(6)
+    expect(rec.transfers[rec.transfers.length - 1]).toContain(fg.data.buffer)
+  })
+
+  it('omits the foreground when withForeground is unset', async () => {
+    const { rec, post } = makeRecorder()
+    const session: SegmentSession = {
+      backend: 'wasm',
+      async run(bitmap: ImageBitmap) {
+        return makeMask(bitmap.width, bitmap.height)
+      },
+    }
+    const processForeground = vi.fn(async (): Promise<ForegroundResult | null> => null)
+    const handler = createWorkerHandler({
+      post,
+      load: async () => session,
+      processForeground,
+    })
+    handler.__setSessionForTesting(session)
+    handler({ type: 'segment', id: 'r', bitmap: makeBitmap(4, 4) })
+    await new Promise((r) => setTimeout(r, 0))
+
+    expect(processForeground).not.toHaveBeenCalled()
+    const result = rec.posts.find((p) => p.type === 'result') as Extract<
+      SegmentResponse,
+      { type: 'result' }
+    >
+    expect(result.foreground).toBeUndefined()
+    expect(result.foregroundWidth).toBeUndefined()
+    expect(result.foregroundHeight).toBeUndefined()
+  })
+
+  it('treats a failing processForeground as non-fatal', async () => {
+    const { rec, post } = makeRecorder()
+    const session: SegmentSession = {
+      backend: 'wasm',
+      async run(bitmap: ImageBitmap) {
+        return makeMask(bitmap.width, bitmap.height)
+      },
+    }
+    const processForeground = vi.fn(async (): Promise<ForegroundResult> => {
+      throw new Error('offscreen tainted')
+    })
+    const handler = createWorkerHandler({
+      post,
+      load: async () => session,
+      processForeground,
+    })
+    handler.__setSessionForTesting(session)
+    handler({ type: 'segment', id: 'r', bitmap: makeBitmap(4, 4), withForeground: true })
+    await new Promise((r) => setTimeout(r, 0))
+
+    const result = rec.posts.find((p) => p.type === 'result') as Extract<
+      SegmentResponse,
+      { type: 'result' }
+    >
+    expect(result).toBeDefined()
+    expect(result.foreground).toBeUndefined()
+    const errorMsg = rec.posts.find((p) => p.type === 'error')
+    expect(errorMsg).toBeUndefined()
   })
 
   it('emits an error response for an unknown message type', () => {

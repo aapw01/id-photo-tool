@@ -13,9 +13,12 @@
  * defined here, so the swap is transparent.
  */
 
+import { applyAlphaMatteToImageData } from '@/features/background/composite'
+
 import { loadModel, type LoadModelOptions } from './model-loader'
 import { createOrtSession } from './ort-session'
 import type { Backend, ProgressPhase } from './worker-protocol'
+import { DEFAULT_FOREGROUND_MAX_LONGSIDE } from './worker-protocol'
 
 export type ProgressCallback = (phase: ProgressPhase, loaded?: number, total?: number) => void
 
@@ -124,4 +127,73 @@ export async function runSegment(
   const mask = await session.run(bitmap)
   const durationMs = performance.now() - t0
   return { mask, durationMs, backend: session.backend }
+}
+
+export interface ForegroundResult {
+  /** RGBA buffer: `applyAlphaMatteToImageData` already applied. */
+  data: Uint8ClampedArray
+  width: number
+  height: number
+}
+
+export interface ProcessForegroundOptions {
+  /** Long-side cap in pixels. Defaults to {@link DEFAULT_FOREGROUND_MAX_LONGSIDE}. */
+  maxLongSide?: number
+}
+
+/**
+ * Worker-side foreground builder: draws the original `bitmap` and the
+ * `mask` (resampled if needed) at the capped working size, then runs
+ * `applyAlphaMatteToImageData` so the main thread can skip the heavy
+ * pixel passes.
+ *
+ * Only runs inside contexts that expose `OffscreenCanvas` + `ImageData`
+ * (Dedicated workers, and modern main threads). Returns `null` when
+ * those globals are absent so the caller falls back to the main-thread
+ * implementation.
+ */
+export async function processForeground(
+  bitmap: ImageBitmap,
+  mask: MaskBuffer,
+  opts: ProcessForegroundOptions = {},
+): Promise<ForegroundResult | null> {
+  if (typeof OffscreenCanvas === 'undefined' || typeof ImageData === 'undefined') {
+    return null
+  }
+
+  const maxLongSide = Math.max(1, Math.floor(opts.maxLongSide ?? DEFAULT_FOREGROUND_MAX_LONGSIDE))
+  const longest = Math.max(bitmap.width, bitmap.height)
+  const scale = longest > maxLongSide ? maxLongSide / longest : 1
+  const w = Math.max(1, Math.round(bitmap.width * scale))
+  const h = Math.max(1, Math.round(bitmap.height * scale))
+
+  const orig = new OffscreenCanvas(w, h)
+  const origCtx = orig.getContext('2d')
+  if (!origCtx) return null
+  origCtx.imageSmoothingEnabled = true
+  origCtx.imageSmoothingQuality = 'high'
+  origCtx.drawImage(bitmap, 0, 0, w, h)
+  const origImage = origCtx.getImageData(0, 0, w, h)
+
+  let maskBuffer: Uint8ClampedArray
+  if (mask.width === w && mask.height === h) {
+    maskBuffer = mask.data
+  } else {
+    const maskSrc = new OffscreenCanvas(mask.width, mask.height)
+    const maskSrcCtx = maskSrc.getContext('2d')
+    if (!maskSrcCtx) return null
+    maskSrcCtx.putImageData(new ImageData(mask.data, mask.width, mask.height), 0, 0)
+
+    const maskDst = new OffscreenCanvas(w, h)
+    const maskDstCtx = maskDst.getContext('2d')
+    if (!maskDstCtx) return null
+    maskDstCtx.imageSmoothingEnabled = true
+    maskDstCtx.imageSmoothingQuality = 'high'
+    maskDstCtx.drawImage(maskSrc, 0, 0, w, h)
+    maskBuffer = maskDstCtx.getImageData(0, 0, w, h).data
+  }
+
+  applyAlphaMatteToImageData(origImage.data, maskBuffer, w, h, origImage.data)
+
+  return { data: origImage.data, width: w, height: h }
 }

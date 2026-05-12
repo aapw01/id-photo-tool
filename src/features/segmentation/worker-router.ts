@@ -13,6 +13,7 @@
 
 import {
   loadSession as defaultLoadSession,
+  processForeground as defaultProcessForeground,
   runSegment as defaultRunSegment,
   type LoadSessionOptions,
   type ProgressCallback,
@@ -26,6 +27,8 @@ export interface WorkerHandlerDeps {
   load?: (opts: LoadSessionOptions) => Promise<SegmentSession>
   /** Defaults to segment-core.runSegment. Swap for tests. */
   runSegment?: typeof defaultRunSegment
+  /** Defaults to segment-core.processForeground. Swap for tests. */
+  processForeground?: typeof defaultProcessForeground
 }
 
 export function classifyError(
@@ -55,6 +58,7 @@ export interface WorkerHandler {
 export function createWorkerHandler(deps: WorkerHandlerDeps): WorkerHandler {
   const load = deps.load ?? defaultLoadSession
   const runSegment = deps.runSegment ?? defaultRunSegment
+  const processForeground = deps.processForeground ?? defaultProcessForeground
 
   let session: SegmentSession | null = null
   let initPromise: Promise<SegmentSession> | null = null
@@ -90,22 +94,49 @@ export function createWorkerHandler(deps: WorkerHandlerDeps): WorkerHandler {
     }
   }
 
-  async function handleSegment(id: string, bitmap: ImageBitmap) {
+  async function handleSegment(
+    id: string,
+    bitmap: ImageBitmap,
+    withForeground: boolean,
+    foregroundMaxLongSide: number | undefined,
+  ) {
     try {
       const s = await ensureSession(id)
       const { mask, durationMs, backend } = await runSegment(s, bitmap, makeProgress(id))
-      deps.post(
-        {
-          type: 'result',
-          id,
-          mask: mask.data.buffer,
-          width: mask.width,
-          height: mask.height,
-          backend,
-          durationMs,
-        },
-        [mask.data.buffer],
-      )
+
+      // Foreground extraction runs on the same MaskBuffer before the
+      // mask buffer is transferred back to the main thread. A failure
+      // here (e.g. OffscreenCanvas tainted) is non-fatal: drop the
+      // foreground and let the caller fall back to the main-thread
+      // path. The mask itself is still useful.
+      let foreground: Awaited<ReturnType<typeof processForeground>> = null
+      if (withForeground) {
+        try {
+          foreground = await processForeground(bitmap, mask, {
+            maxLongSide: foregroundMaxLongSide,
+          })
+        } catch {
+          foreground = null
+        }
+      }
+
+      const transfer: Transferable[] = [mask.data.buffer]
+      const response: SegmentResponse = {
+        type: 'result',
+        id,
+        mask: mask.data.buffer,
+        width: mask.width,
+        height: mask.height,
+        backend,
+        durationMs,
+      }
+      if (foreground) {
+        response.foreground = foreground.data.buffer
+        response.foregroundWidth = foreground.width
+        response.foregroundHeight = foreground.height
+        transfer.push(foreground.data.buffer)
+      }
+      deps.post(response, transfer)
     } catch (err) {
       const { kind, reason } = classifyError(err, 'inference')
       deps.post({ type: 'error', id, kind, reason })
@@ -120,7 +151,12 @@ export function createWorkerHandler(deps: WorkerHandlerDeps): WorkerHandler {
         void handleInit(msg.id, msg.forceBackend)
         return
       case 'segment':
-        void handleSegment(msg.id, msg.bitmap)
+        void handleSegment(
+          msg.id,
+          msg.bitmap,
+          msg.withForeground ?? false,
+          msg.foregroundMaxLongSide,
+        )
         return
       default: {
         // Exhaustiveness check; in practice the type system + the

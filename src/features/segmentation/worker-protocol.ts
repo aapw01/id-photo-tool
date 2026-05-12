@@ -17,7 +17,26 @@ export type ErrorKind = 'network' | 'integrity' | 'init' | 'inference' | 'unknow
 /** Messages the main thread sends to the worker. */
 export type SegmentRequest =
   | { type: 'init'; id: string; forceBackend?: Backend }
-  | { type: 'segment'; id: string; bitmap: ImageBitmap }
+  | {
+      type: 'segment'
+      id: string
+      bitmap: ImageBitmap
+      /**
+       * Ask the worker to also produce a decontaminated foreground RGBA
+       * buffer (alpha matte + spill suppression already applied). Lets
+       * the main thread skip ~200-400 ms of pixel work on 20MP captures.
+       *
+       * Defaults to `false` for backward compatibility with existing
+       * callers (tests, the perf benchmark page).
+       */
+      withForeground?: boolean
+      /**
+       * Long-side cap for the foreground buffer when `withForeground`
+       * is true. Defaults to `DEFAULT_FOREGROUND_MAX_LONGSIDE` (1600 px)
+       * to match `extractForegroundCapped`'s working canvas size.
+       */
+      foregroundMaxLongSide?: number
+    }
 
 /** Messages the worker posts back to the main thread. */
 export type SegmentResponse =
@@ -37,8 +56,21 @@ export type SegmentResponse =
       height: number
       backend: Backend
       durationMs: number
+      /**
+       * Optional decontaminated foreground buffer (RGBA, premultiplied
+       * by the alpha matte and spill-suppressed). Present only when the
+       * matching request set `withForeground: true`. `foregroundWidth`
+       * and `foregroundHeight` describe its dimensions; they may be
+       * smaller than `width`/`height` when the long-side cap kicked in.
+       */
+      foreground?: ArrayBuffer
+      foregroundWidth?: number
+      foregroundHeight?: number
     }
   | { type: 'error'; id: string; reason: string; kind: ErrorKind }
+
+/** Default long-side cap for worker-produced foregrounds. */
+export const DEFAULT_FOREGROUND_MAX_LONGSIDE = 1600
 
 /**
  * Type guards — handy for narrowing in tests and in the host hook.

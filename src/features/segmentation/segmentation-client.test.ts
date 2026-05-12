@@ -151,6 +151,35 @@ describe('createSegmentationClient', () => {
     await expect(segP).resolves.toMatchObject({ backend: 'webgpu', durationMs: 5 })
   })
 
+  it('decodes the worker-produced foreground into an ImageData', async () => {
+    const segPromise = client.segment(makeBitmap(8, 8), { withForeground: true })
+    const req = fake.posted[0]
+    expect(req?.type).toBe('segment')
+    // Plumb-through check: the client must forward `withForeground` to the worker.
+    expect(req && 'withForeground' in req ? req.withForeground : undefined).toBe(true)
+
+    const id = req!.id
+    const mask = new Uint8ClampedArray(8 * 8 * 4)
+    const fg = new Uint8ClampedArray(8 * 6 * 4).fill(123)
+    fake.emit({
+      type: 'result',
+      id,
+      mask: mask.buffer,
+      width: 8,
+      height: 8,
+      backend: 'wasm',
+      durationMs: 11,
+      foreground: fg.buffer,
+      foregroundWidth: 8,
+      foregroundHeight: 6,
+    })
+    const result = await segPromise
+    expect(result.foreground).toBeDefined()
+    expect(result.foreground?.width).toBe(8)
+    expect(result.foreground?.height).toBe(6)
+    expect(result.foreground?.data?.[0]).toBe(123)
+  })
+
   it('honors AbortSignal.aborted before send', async () => {
     const controller = new AbortController()
     controller.abort()

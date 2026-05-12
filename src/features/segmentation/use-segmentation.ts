@@ -41,7 +41,10 @@ export interface UseSegmentation {
   error: ClientError | null
   backend: Backend | null
   warmup: () => Promise<void>
-  segment: (bitmap: ImageBitmap, signal?: AbortSignal) => Promise<SegmentResult>
+  segment: (
+    bitmap: ImageBitmap,
+    opts?: { signal?: AbortSignal; withForeground?: boolean; foregroundMaxLongSide?: number },
+  ) => Promise<SegmentResult>
 }
 
 // Module-scope singleton so a hook mounted twice (strict mode) does not
@@ -123,8 +126,8 @@ export function useSegmentation(options: UseSegmentationOptions = {}): UseSegmen
     }
   }, [])
 
-  const segment = useCallback(
-    async (bitmap: ImageBitmap, signal?: AbortSignal) => {
+  const segment = useCallback<UseSegmentation['segment']>(
+    async (bitmap, opts) => {
       const client = clientRef.current
       if (!client) throw new Error('useSegmentation: not mounted')
       // Make sure the model is loaded before posting a segment request.
@@ -138,7 +141,9 @@ export function useSegmentation(options: UseSegmentationOptions = {}): UseSegmen
       try {
         const result = await client.segment(bitmap, {
           onProgress: (p) => setProgress(p),
-          signal,
+          signal: opts?.signal,
+          withForeground: opts?.withForeground,
+          foregroundMaxLongSide: opts?.foregroundMaxLongSide,
         })
         setProgress(null)
         setState('ready')

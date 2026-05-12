@@ -32,6 +32,27 @@ export interface SegmentResult {
   mask: ImageData
   backend: Backend
   durationMs: number
+  /**
+   * Decontaminated foreground RGBA, produced inside the worker when
+   * the request set `withForeground: true`. Absent when the worker
+   * couldn't build it (no OffscreenCanvas in the test environment,
+   * `getImageData` failure, etc.); callers must fall back to the
+   * main-thread `extractForegroundCapped` path in that case.
+   */
+  foreground?: ImageData
+}
+
+export interface SegmentOptions {
+  onProgress?: (p: ClientProgress) => void
+  signal?: AbortSignal
+  /**
+   * Ask the worker to also build a decontaminated foreground buffer.
+   * Defaults to `false` so existing callers (tests, perf benchmark) are
+   * unaffected. Studio runs set this to `true`.
+   */
+  withForeground?: boolean
+  /** Long-side cap for the worker-produced foreground (px). */
+  foregroundMaxLongSide?: number
 }
 
 export interface SegmentationClient {
@@ -39,10 +60,7 @@ export interface SegmentationClient {
     onProgress?: (p: ClientProgress) => void
     forceBackend?: Backend
   }): Promise<{ backend: Backend }>
-  segment(
-    bitmap: ImageBitmap,
-    opts?: { onProgress?: (p: ClientProgress) => void; signal?: AbortSignal },
-  ): Promise<SegmentResult>
+  segment(bitmap: ImageBitmap, opts?: SegmentOptions): Promise<SegmentResult>
   dispose(): void
 }
 
@@ -96,7 +114,16 @@ export function createSegmentationClient(workerFactory: () => Worker): Segmentat
         if (entry.expect === 'result') {
           const data = new Uint8ClampedArray(msg.mask)
           const imageData = new ImageData(data, msg.width, msg.height)
-          entry.resolve({ mask: imageData, backend: msg.backend, durationMs: msg.durationMs })
+          const result: SegmentResult = {
+            mask: imageData,
+            backend: msg.backend,
+            durationMs: msg.durationMs,
+          }
+          if (msg.foreground && msg.foregroundWidth && msg.foregroundHeight) {
+            const fgData = new Uint8ClampedArray(msg.foreground)
+            result.foreground = new ImageData(fgData, msg.foregroundWidth, msg.foregroundHeight)
+          }
+          entry.resolve(result)
           complete(msg.id)
         }
         return
@@ -168,7 +195,16 @@ export function createSegmentationClient(workerFactory: () => Worker): Segmentat
       const promise = track<SegmentResult>(id, 'result', opts)
       // Bitmap is transferable; do NOT keep using it after this call —
       // the browser detaches it once postMessage completes.
-      send({ type: 'segment', id, bitmap }, [bitmap])
+      send(
+        {
+          type: 'segment',
+          id,
+          bitmap,
+          withForeground: opts?.withForeground,
+          foregroundMaxLongSide: opts?.foregroundMaxLongSide,
+        },
+        [bitmap],
+      )
       return promise
     },
     dispose() {
