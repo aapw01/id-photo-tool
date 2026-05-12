@@ -201,3 +201,24 @@
     transform: translateX(25%);
   }
 }
+
+/*
+ * Respect `prefers-reduced-motion: reduce`. We damp every animation /
+ * transition / scroll-behavior to a near-instant state so users with
+ * vestibular sensitivity don't have to fight the UI. The opacity /
+ * cross-fade transitions in tw-animate-css (e.g. Dialog, Sheet) are
+ * still useful as discrete state changes so we keep them visible but
+ * short (40ms) rather than zeroing them out.
+ *
+ * Pattern follows MDN: https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 40ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 40ms !important;
+    scroll-behavior: auto !important;
+  }
+}

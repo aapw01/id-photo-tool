@@ -20,14 +20,22 @@
 
 import type { FaceDetector } from '@mediapipe/tasks-vision'
 
+import packageJson from '../../../package.json'
+
 import { silenceMediaPipeBootNoise } from './silence-mediapipe-noise'
 
-// Keep these in sync with package.json. We could read from
-// `package.json` at build time, but Next 16 strips that JSON during
-// edge compilation, so hard-coding is simpler and less error-prone.
-const MEDIAPIPE_VERSION = '0.10.35'
+/**
+ * MediaPipe Tasks Vision pinned version, sourced from package.json so
+ * a `pnpm update` automatically rolls the CDN URL forward. Mirrors the
+ * pattern in `src/features/segmentation/runtime-config.ts:44` for
+ * onnxruntime-web.
+ */
+const MEDIAPIPE_VERSION = (packageJson.dependencies['@mediapipe/tasks-vision'] ?? '').replace(
+  /^[\^~]/,
+  '',
+)
 
-const DEFAULT_WASM_BASE = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MEDIAPIPE_VERSION}/wasm`
+const DEFAULT_WASM_BASE = `https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MEDIAPIPE_VERSION || 'latest'}/wasm`
 
 const DEFAULT_MODEL_URL =
   'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite'

@@ -8,7 +8,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dev/', '/api/'],
+        // Dev pages live under `/[locale]/dev/...`, so the leading wildcard
+        // is necessary; the bare `/dev/` form keeps things explicit for the
+        // (currently unused) root-level case.
+        disallow: ['/dev/', '*/dev/*', '/api/'],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

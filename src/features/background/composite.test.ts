@@ -1,7 +1,8 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   applyAlphaMatteToImageData,
   compositeIntoImageData,
+  extractForeground,
   extractForegroundCapped,
   parseHex,
   scaleFrameForForeground,
@@ -494,5 +495,60 @@ describe('extractForegroundCapped', () => {
     const fg = await extractForegroundCapped(bitmap as unknown as ImageBitmap, mask)
     expect((fg as { width: number }).width).toBe(800)
     expect((fg as { height: number }).height).toBe(600)
+  })
+})
+
+describe('extractForeground fallback', () => {
+  // The preferred pixel path reads `getImageData` and applies the
+  // matte / spill suppression in-place. Tainted canvases (or restricted
+  // OffscreenCanvas implementations) throw on that call — `composite`
+  // must fall back to the GPU `destination-in` path so the user still
+  // gets a cutout. Force the fallback by stubbing `getImageData` to
+  // throw and assert the call completes without error.
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('uses the destination-in path when getImageData throws', async () => {
+    const proto =
+      typeof globalThis.OffscreenCanvas !== 'undefined'
+        ? (globalThis.OffscreenCanvas.prototype.getContext as unknown as undefined)
+        : undefined
+    // Stub the 2D context's getImageData to throw for the first call
+    // and let subsequent calls (the fallback mask canvas) succeed.
+    const realGetContext = HTMLCanvasElement.prototype.getContext
+    let firstCall = true
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(function (
+      this: HTMLCanvasElement,
+      kind: string,
+    ) {
+      const ctx = realGetContext.call(this, kind as '2d') as CanvasRenderingContext2D | null
+      if (!ctx) return ctx
+      if (kind === '2d' && firstCall) {
+        firstCall = false
+        const original = ctx.getImageData.bind(ctx)
+        ctx.getImageData = ((...args: Parameters<typeof original>) => {
+          if (firstCall === false) throw new Error('tainted')
+          return original(...args)
+        }) as typeof ctx.getImageData
+      }
+      return ctx
+    } as typeof HTMLCanvasElement.prototype.getContext)
+    void proto
+
+    const bitmap = document.createElement('canvas')
+    bitmap.width = 4
+    bitmap.height = 4
+    const mask: ImageData = {
+      data: new Uint8ClampedArray(4 * 4 * 4).fill(255),
+      width: 4,
+      height: 4,
+      colorSpace: 'srgb',
+    }
+
+    const fg = await extractForeground(bitmap as unknown as ImageBitmap, mask)
+    expect(fg).toBeDefined()
+    expect((fg as { width: number }).width).toBe(4)
+    expect((fg as { height: number }).height).toBe(4)
   })
 })
