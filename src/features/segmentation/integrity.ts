@@ -12,7 +12,8 @@
  *   3. Commit; the value is part of the security boundary.
  */
 
-export const MODEL_SHA384 = '' as const
+export const MODEL_SHA384 =
+  'sha384-UR4U6sRE6EBfNeXg13vkxmg0i02TO61xKTTZ8HO0zfrdaffLJN17ZuC8/iivopZA' as const
 
 export const MODEL_FILENAME = 'modnet.q.onnx'
 

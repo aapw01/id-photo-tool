@@ -25,11 +25,19 @@ import { dirname, resolve } from 'node:path'
 
 const REPO_ROOT = resolve(import.meta.dirname, '..')
 
-// HF_ENDPOINT lets users in restricted networks point at a mirror like
-// https://hf-mirror.com. Default to the official endpoint.
-const HF_ENDPOINT = (process.env.HF_ENDPOINT ?? 'https://huggingface.co').replace(/\/$/, '')
-const MODEL_PATH = '/Xenova/modnet/resolve/main/onnx/model_quantized.onnx'
-const MODEL_URL = `${HF_ENDPOINT}${MODEL_PATH}`
+// Source list, tried in order. ModelScope is first because it mirrors the
+// exact same Xenova/modnet repo, returns 200 directly (no xethub redirect),
+// and is fast / unrestricted from mainland China. Hugging Face is kept as a
+// fallback for environments where ModelScope is unreachable.
+//
+// Override with MODEL_URL=<your-cdn>/modnet.q.onnx for self-hosted copies.
+const SOURCES = process.env.MODEL_URL
+  ? [process.env.MODEL_URL]
+  : [
+      'https://www.modelscope.cn/models/Xenova/modnet/resolve/master/onnx/model_quantized.onnx',
+      // HF_ENDPOINT lets users override the host (e.g. https://hf-mirror.com).
+      `${(process.env.HF_ENDPOINT ?? 'https://huggingface.co').replace(/\/$/, '')}/Xenova/modnet/resolve/main/onnx/model_quantized.onnx`,
+    ]
 
 const TARGET = resolve(REPO_ROOT, 'public/_models/modnet.q.onnx')
 const MIN_SIZE = 6 * 1024 * 1024 // 6 MB — model_quantized.onnx is ~6.63 MB
@@ -55,36 +63,27 @@ async function readExisting() {
   return await readFile(TARGET)
 }
 
-async function downloadViaFetch() {
-  const res = await fetch(MODEL_URL, { redirect: 'follow' })
+async function downloadViaFetch(url) {
+  const res = await fetch(url, { redirect: 'follow' })
   if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`)
   const buf = Buffer.from(await res.arrayBuffer())
   if (buf.byteLength < MIN_SIZE) {
-    throw new Error(`Downloaded payload is suspiciously small (${buf.byteLength} bytes). Got HTML?`)
+    throw new Error(`Payload too small (${buf.byteLength} bytes); got HTML?`)
   }
   return buf
 }
 
 /**
- * Fallback for environments where Node's fetch chokes on multi-hop HF
- * redirects (Node 26 + xethub TLS). curl handles it without issue.
+ * curl fallback for environments where Node's fetch chokes on multi-hop
+ * redirects (e.g. Node 26 + HF xethub TLS).
  */
-async function downloadViaCurl() {
+async function downloadViaCurl(url) {
   await mkdir(dirname(TARGET), { recursive: true })
   const tmpPath = `${TARGET}.part`
   return await new Promise((res, rej) => {
     const child = spawn(
       'curl',
-      [
-        '-fsSL', // fail on HTTP errors, follow redirects, silent w/ errors
-        '--retry',
-        '3',
-        '--retry-delay',
-        '2',
-        '-o',
-        tmpPath,
-        MODEL_URL,
-      ],
+      ['-fsSL', '--retry', '2', '--retry-delay', '2', '--max-time', '300', '-o', tmpPath, url],
       { stdio: 'inherit' },
     )
     child.on('error', rej)
@@ -96,8 +95,8 @@ async function downloadViaCurl() {
       }
       try {
         const buf = await readFile(tmpPath)
+        await unlink(tmpPath).catch(() => {})
         if (buf.byteLength < MIN_SIZE) {
-          await unlink(tmpPath).catch(() => {})
           rej(new Error(`curl payload too small (${buf.byteLength} bytes)`))
           return
         }
@@ -110,26 +109,31 @@ async function downloadViaCurl() {
 }
 
 async function download() {
-  console.log(`→ Downloading from ${MODEL_URL}`)
   let lastErr
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    const transport = attempt === 1 ? 'fetch' : 'curl'
-    try {
-      const buf = transport === 'fetch' ? await downloadViaFetch() : await downloadViaCurl()
-      console.log(`✓ Downloaded via ${transport} (attempt ${attempt})`)
-      return buf
-    } catch (err) {
-      lastErr = err
-      console.warn(`  attempt ${attempt}/${MAX_ATTEMPTS} (${transport}) failed: ${err.message}`)
-      if (attempt < MAX_ATTEMPTS) {
-        const wait = 1000 * attempt
-        await new Promise((r) => setTimeout(r, wait))
+  for (const url of SOURCES) {
+    console.log(`→ Trying ${url}`)
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      const transport = attempt === 1 ? 'fetch' : 'curl'
+      try {
+        const buf = transport === 'fetch' ? await downloadViaFetch(url) : await downloadViaCurl(url)
+        console.log(`✓ Downloaded via ${transport} (source #${SOURCES.indexOf(url) + 1})`)
+        return buf
+      } catch (err) {
+        lastErr = err
+        console.warn(`  attempt ${attempt}/${MAX_ATTEMPTS} (${transport}) failed: ${err.message}`)
+        if (attempt < MAX_ATTEMPTS) {
+          await new Promise((r) => setTimeout(r, 1000 * attempt))
+        }
       }
     }
+    console.warn(`  giving up on this source, trying next...`)
   }
   throw new Error(
-    `Could not download MODNet after ${MAX_ATTEMPTS} attempts. ` +
-      `If you're in a restricted network, set HF_ENDPOINT=https://hf-mirror.com and retry.\n` +
+    `All ${SOURCES.length} sources failed.\n` +
+      `Try one of:\n` +
+      `  1. HTTPS_PROXY=http://127.0.0.1:7890 pnpm models:fetch\n` +
+      `  2. Download manually, then: pnpm models:fetch --from-file <path>\n` +
+      `  3. MODEL_URL=https://your-cdn/modnet.q.onnx pnpm models:fetch\n` +
       `Last error: ${lastErr?.message}`,
   )
 }

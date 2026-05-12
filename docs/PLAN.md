@@ -238,36 +238,37 @@
 
 ## 6. 决策日志（Decision Log）
 
-| 日期       | 决策                                                | 备选方案                                                     | 理由                                                                   |
-| ---------- | --------------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| 2026-05-11 | 选定 Next.js 15 + Cloudflare Pages                  | Vite + Vercel；纯 SPA + GitHub Pages                         | SEO 友好 + 国内访问稳 + 免费                                           |
-| 2026-05-11 | 抠图主模型用 MODNet（量化）                         | MediaPipe Selfie（太粗）/ RMBG-1.4（太大）/ BiRefNet（更大） | 体积 + 质量 + 人像专用平衡最佳                                         |
-| 2026-05-11 | 三层数据模型 PhotoSpec / PaperSpec / LayoutTemplate | 单一 Size 模型                                               | 三者天然解耦，扩展性强                                                 |
-| 2026-05-11 | V1 完全免费 + 无登录                                | Freemium / 广告                                              | 先验证市场，避免 UI 复杂化                                             |
-| 2026-05-11 | i18n 简繁人工双写，不用 OpenCC                      | 自动转换                                                     | UI 用词差异大，自动转换不可靠                                          |
-| 2026-05-11 | 推理走 ONNX Runtime Web                             | transformers.js / TensorFlow.js                              | 性能最佳 + WebGPU 支持 + 模型生态广                                    |
-| 2026-05-11 | 主统计用 Cloudflare Web Analytics                   | GA4 / 友盟                                                   | 无 cookie + 隐私友好 + 免费                                            |
-| 2026-05-11 | 抠图采用单模型方案（非双模型）                      | Fast (MediaPipe) + HQ (RMBG)                                 | MODNet 在证件照场景已够；架构更简单                                    |
-| 2026-05-11 | 产品名定为 **Pixfit · 像配**                        | Snapfit / Frameo / Sizely / IDfit                            | 短、好记、双关（pixel + fit / 像 + 配）；pix-fit.com 可获得            |
-| 2026-05-11 | 品牌主色 **Emerald (#10B981)**                      | Indigo (#6366F1) / 自定义                                    | 翡翠绿 + 暖白基底，清新专业，与"匹配规格"的精确感形成温度平衡          |
-| 2026-05-11 | M1 启动前先写 DESIGN.md                             | M1 直接写代码                                                | 视觉/交互一致性提前对齐，避免开发返工                                  |
-| 2026-05-11 | MODNet 模型直接复用 `Xenova/modnet` INT8 ONNX       | 自己写 onnxruntime quantize 脚本（Python）                   | 上游已发布合格 INT8 版本（6.63 MB），省 1 个工作日并消除工具链依赖     |
-| 2026-05-11 | 模型经 `public/_models/` 走 static asset            | 直接接入 Cloudflare R2 + cdn.pix-fit.com                     | 不让 R2 阻塞 M2 开发；CF Workers static asset 自带 CDN，部署阶段再切换 |
+| 日期       | 决策                                                | 备选方案                                                     | 理由                                                                        |
+| ---------- | --------------------------------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| 2026-05-11 | 选定 Next.js 15 + Cloudflare Pages                  | Vite + Vercel；纯 SPA + GitHub Pages                         | SEO 友好 + 国内访问稳 + 免费                                                |
+| 2026-05-11 | 抠图主模型用 MODNet（量化）                         | MediaPipe Selfie（太粗）/ RMBG-1.4（太大）/ BiRefNet（更大） | 体积 + 质量 + 人像专用平衡最佳                                              |
+| 2026-05-11 | 三层数据模型 PhotoSpec / PaperSpec / LayoutTemplate | 单一 Size 模型                                               | 三者天然解耦，扩展性强                                                      |
+| 2026-05-11 | V1 完全免费 + 无登录                                | Freemium / 广告                                              | 先验证市场，避免 UI 复杂化                                                  |
+| 2026-05-11 | i18n 简繁人工双写，不用 OpenCC                      | 自动转换                                                     | UI 用词差异大，自动转换不可靠                                               |
+| 2026-05-11 | 推理走 ONNX Runtime Web                             | transformers.js / TensorFlow.js                              | 性能最佳 + WebGPU 支持 + 模型生态广                                         |
+| 2026-05-11 | 主统计用 Cloudflare Web Analytics                   | GA4 / 友盟                                                   | 无 cookie + 隐私友好 + 免费                                                 |
+| 2026-05-11 | 抠图采用单模型方案（非双模型）                      | Fast (MediaPipe) + HQ (RMBG)                                 | MODNet 在证件照场景已够；架构更简单                                         |
+| 2026-05-11 | 产品名定为 **Pixfit · 像配**                        | Snapfit / Frameo / Sizely / IDfit                            | 短、好记、双关（pixel + fit / 像 + 配）；pix-fit.com 可获得                 |
+| 2026-05-11 | 品牌主色 **Emerald (#10B981)**                      | Indigo (#6366F1) / 自定义                                    | 翡翠绿 + 暖白基底，清新专业，与"匹配规格"的精确感形成温度平衡               |
+| 2026-05-11 | M1 启动前先写 DESIGN.md                             | M1 直接写代码                                                | 视觉/交互一致性提前对齐，避免开发返工                                       |
+| 2026-05-11 | MODNet 模型直接复用 `Xenova/modnet` INT8 ONNX       | 自己写 onnxruntime quantize 脚本（Python）                   | 上游已发布合格 INT8 版本（6.63 MB），省 1 个工作日并消除工具链依赖          |
+| 2026-05-11 | 模型经 `public/_models/` 走 static asset            | 直接接入 Cloudflare R2 + cdn.pix-fit.com                     | 不让 R2 阻塞 M2 开发；CF Workers static asset 自带 CDN，部署阶段再切换      |
+| 2026-05-12 | 模型下载默认走 ModelScope（HF 作 fallback）         | 强制走 HF + 让用户自配代理                                   | ModelScope 是 HF 国内镜像，同源同 etag，直连可达；HF 走 xethub 在大陆被劫持 |
 
 ---
 
 ## 7. 风险与缓解（同步自 PRD §12）
 
-| 风险                      | 状态   | 缓解策略                                                                           | 负责人 |
-| ------------------------- | ------ | ---------------------------------------------------------------------------------- | ------ |
-| MODNet 商用 license       | 待跟进 | 上线前确认；备选 U²-Netp                                                           | TBD    |
-| 国内访问 huggingface 不稳 | 已发生 | 提供 `--from-file` 导入 + 代理 / 镜像说明（见 README §模型资产）；最终走 R2 自托管 | —      |
-| iOS Safari WebGPU 兼容    | 已规避 | 自动降级 WASM                                                                      | —      |
-| 用户上传他人照片          | 待处理 | ToS 明示责任声明                                                                   | TBD    |
-| 规格官方数据过时          | 待处理 | 每个 spec 标注核对日期                                                             | TBD    |
-| localStorage 跨设备丢失   | 已规避 | 提供 JSON 导出备份                                                                 | —      |
-| HEIC 解码性能             | 已规避 | 大文件提示先转 JPG                                                                 | —      |
-| 国内域名 / 备案           | 待跟进 | 优先 CF Pages 全球分发                                                             | TBD    |
+| 风险                      | 状态   | 缓解策略                                                                                                                   | 负责人 |
+| ------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------- | ------ |
+| MODNet 商用 license       | 待跟进 | 上线前确认；备选 U²-Netp                                                                                                   | TBD    |
+| 国内访问 huggingface 不稳 | 已规避 | 默认源切到 ModelScope（同源镜像，X-Linked-Etag 一致），HF 作为 fallback；保留代理 / `--from-file` 路径；最终切到 R2 自托管 | —      |
+| iOS Safari WebGPU 兼容    | 已规避 | 自动降级 WASM                                                                                                              | —      |
+| 用户上传他人照片          | 待处理 | ToS 明示责任声明                                                                                                           | TBD    |
+| 规格官方数据过时          | 待处理 | 每个 spec 标注核对日期                                                                                                     | TBD    |
+| localStorage 跨设备丢失   | 已规避 | 提供 JSON 导出备份                                                                                                         | —      |
+| HEIC 解码性能             | 已规避 | 大文件提示先转 JPG                                                                                                         | —      |
+| 国内域名 / 备案           | 待跟进 | 优先 CF Pages 全球分发                                                                                                     | TBD    |
 
 状态值：⬜ 待处理 / 🟡 待跟进 / 🟢 已规避 / 🔴 已发生
 

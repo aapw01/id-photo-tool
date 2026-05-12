@@ -50,32 +50,42 @@ pnpm cf:build       # 用 OpenNext 打包为 Cloudflare Worker
 pnpm models:fetch
 ```
 
-脚本会把 `model_quantized.onnx`（约 6.63 MB，INT8）下载到 `public/_models/modnet.q.onnx`
-并打印 SHA-384 摘要，请把它写入 [`src/features/segmentation/integrity.ts`](src/features/segmentation/integrity.ts)
-的 `MODEL_SHA384` 常量后再提交。
+脚本会按顺序尝试 **ModelScope（国内镜像，默认）→ Hugging Face**，自动落到 `public/_models/modnet.q.onnx`
+（约 6.32 MB，INT8 量化，SHA-256 `92e49898...`）。模型 SHA-384 摘要已经固化在
+[`src/features/segmentation/integrity.ts`](src/features/segmentation/integrity.ts) 的 `MODEL_SHA384`
+常量中——下载完成后运行时会自动校验。
 
-### 国内网络下载
+> ModelScope 是阿里维护的 Hugging Face 国内镜像，提供与 HF 完全相同的文件（`X-Linked-Etag` 一致），
+> 国内直连可达；HF 当前所有权重都走 `cas-bridge.xethub.hf.co`，在大陆常被 DNS 劫持。
 
-Hugging Face 当前把权重文件托管在 `cas-bridge.xethub.hf.co`，在中国大陆常被劫持/阻断。
-若 `pnpm models:fetch` 在你的网络下失败，三种解决方式（任选其一）：
+### 备用下载方式
 
-1. **设置代理后重试**（最简单）
+如果默认下载失败（公司内网限制等），三种 fallback：
+
+1. **从浏览器手动下载**（最直观）
+   - ModelScope（推荐）：<https://www.modelscope.cn/models/Xenova/modnet/resolve/master/onnx/model_quantized.onnx>
+   - Hugging Face（需可访问）：<https://huggingface.co/Xenova/modnet/resolve/main/onnx/model_quantized.onnx?download=true>
+
+   然后导入：
+
+   ```bash
+   pnpm models:fetch --from-file ~/Downloads/model_quantized.onnx
+   ```
+
+2. **设置代理**
 
    ```bash
    HTTPS_PROXY=http://127.0.0.1:7890 pnpm models:fetch
    ```
 
-2. **从其他设备下载好后导入**
+3. **指定自定义 URL**（例如部署到 R2 后用自己的 CDN）
 
    ```bash
-   pnpm models:fetch --from-file ./model_quantized.onnx
+   MODEL_URL=https://cdn.pix-fit.com/models/modnet.q.onnx pnpm models:fetch
    ```
 
-3. **切换 HF 镜像**（注意 hf-mirror 仍会把权重重定向到 xethub，未必有效）
-
-   ```bash
-   HF_ENDPOINT=https://hf-mirror.com pnpm models:fetch
-   ```
+> 如果上游模型更新，脚本会因 SHA-384 不匹配在运行时报错——届时更新
+> [`integrity.ts`](src/features/segmentation/integrity.ts) 的 `MODEL_SHA384` 常量即可。
 
 ## 技术栈
 

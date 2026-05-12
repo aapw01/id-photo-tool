@@ -71,10 +71,10 @@
 > 本节只跟踪「跨小组的高层进度」，每个 task 的状态以 `tasks/M2.md §6` 进度表为准。
 
 - [x] 撰写 `docs/tasks/M2.md`（原子任务拆分）— 2026-05-11
-- [ ] 组 A · 模型资产准备（T01–T03）
-  - [/] T01 脚本就绪 + integrity 模块就绪；**待用户在可访问 HF 的网络运行 `pnpm models:fetch`**，把打印的 SHA-384 填入 `src/features/segmentation/integrity.ts` 的 `MODEL_SHA384`
-  - [/] T02 模块就绪，等 T01 真 hash 回填后补一组正向 / 负向断言
-  - [ ] T03 等 Cloudflare R2 接入
+- [x] 组 A · 模型资产准备（T01–T03）— 2026-05-12（T03 R2 已规划但延后到 Cloudflare 接入后）
+  - [x] T01 脚本默认走 ModelScope 镜像，4 秒下完；SHA-384 已固化 — 2026-05-12
+  - [x] T02 integrity 模块 + 4 条断言（含真实模型正向 + 1 字节篡改）— 2026-05-12
+  - [ ] T03 R2 / cdn.pix-fit.com — 等 Cloudflare 控制台接入
 - [ ] 组 B · 抠图运行时（T05–T11）
 - [ ] 组 C · React 集成（T12–T14）
 - [ ] 组 D · Studio 路由（T15–T17）
