@@ -16,7 +16,7 @@ export type ErrorKind = 'network' | 'integrity' | 'init' | 'inference' | 'unknow
 
 /** Messages the main thread sends to the worker. */
 export type SegmentRequest =
-  | { type: 'init'; id: string }
+  | { type: 'init'; id: string; forceBackend?: Backend }
   | { type: 'segment'; id: string; bitmap: ImageBitmap }
 
 /** Messages the worker posts back to the main thread. */

@@ -35,7 +35,10 @@ export interface SegmentResult {
 }
 
 export interface SegmentationClient {
-  init(opts?: { onProgress?: (p: ClientProgress) => void }): Promise<{ backend: Backend }>
+  init(opts?: {
+    onProgress?: (p: ClientProgress) => void
+    forceBackend?: Backend
+  }): Promise<{ backend: Backend }>
   segment(
     bitmap: ImageBitmap,
     opts?: { onProgress?: (p: ClientProgress) => void; signal?: AbortSignal },
@@ -156,7 +159,7 @@ export function createSegmentationClient(workerFactory: () => Worker): Segmentat
       if (disposed) return Promise.reject<{ backend: Backend }>(disposedError())
       const id = makeId('init')
       const promise = track<{ backend: Backend }>(id, 'ready', opts)
-      send({ type: 'init', id })
+      send({ type: 'init', id, forceBackend: opts?.forceBackend })
       return promise
     },
     segment(bitmap, opts) {

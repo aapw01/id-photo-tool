@@ -33,6 +33,8 @@ export interface LoadSessionOptions {
   onProgress?: ProgressCallback
   modelBuffer?: ArrayBuffer
   loaderOptions?: Omit<LoadModelOptions, 'onProgress'>
+  /** Force a specific backend for benchmarking / fallback testing. */
+  forceBackend?: Backend
   __useStubSession?: boolean
 }
 
@@ -75,7 +77,9 @@ export async function loadSession(opts: LoadSessionOptions = {}): Promise<Segmen
 
   onProgress?.('init', 1, 1)
   if (__useStubSession) return new StubSession(buffer)
-  return createOrtSession(buffer)
+  return createOrtSession(buffer, {
+    forceBackend: opts.forceBackend,
+  })
 }
 
 class StubSession implements SegmentSession {

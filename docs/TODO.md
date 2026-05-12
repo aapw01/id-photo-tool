@@ -41,6 +41,29 @@
   - 创建 site → 复制脚本片段 → 在 `[locale]/layout.tsx` 注入或走边缘注入
   - cookie-less，不需要 token 字符串放在代码里
 
+### 1.3 M2 真机回填（兼容性矩阵 + 性能基准）
+
+> AI 已经在 macOS headless Chromium 148 跑通 WebGPU + WASM 两个后端。其它真机需要你打开浏览器跑一次。
+
+启动方式：
+
+```bash
+NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm build && \
+NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
+# 浏览器打开 http://localhost:3000/en/dev/perf
+# 1) 点 "Use a 512×768 synthetic photo"（或上传一张真人像）
+# 2) 点 "Run benchmark"
+# 3) 点 "Copy JSON" → 粘贴给我，我会回填 PLAN §6.5 / §6.6
+```
+
+待跑环境：
+
+- [ ] macOS Chrome（桌面、有 GUI）
+- [ ] macOS Safari 17+（验证 WebGPU 是否可用）
+- [ ] iOS Safari 17+（手机真机）
+- [ ] Android Chrome（手机真机）
+- [ ] Windows / Linux Chrome（如果有的话）
+
 ---
 
 ## 2. M1 阶段遗留待优化项（不阻塞 M2）
@@ -91,6 +114,10 @@
   - [x] T15 /studio 三语 SSR + 工作台 shell — 2026-05-12
   - [x] T16 zustand 跨页面 store + UploadDropzone 自动跳转 — 2026-05-12
   - [x] T17 Mask 预览（destination-in 合成）+ 透明 PNG 导出 — 2026-05-12
+- [x] 组 E · 验证（T18–T20）— 2026-05-12（T20 待真机回填）
+  - [x] T18 Worker 单测：worker-router + classifyError 共 7 条 — 2026-05-12
+  - [x] T19 /dev/perf 基准工具 + 首批数据落 PLAN §6.5 — 2026-05-12
+  - [~] T20 兼容性矩阵骨架（PLAN §6.6）— 仅 Chromium 148 headless 已跑通；待用户在真机跑 Chrome 桌面 / Safari / iOS / Android 一次以回填
 - [ ] 组 C · React 集成（T12–T14）
 - [ ] 组 D · Studio 路由（T15–T17）
 - [ ] 组 E · 验证（T18–T20）
