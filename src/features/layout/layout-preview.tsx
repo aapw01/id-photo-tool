@@ -27,8 +27,7 @@ import { useTranslations } from 'next-intl'
 
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { centerCrop } from '@/features/crop/auto-center'
-import { extractForeground, type BgColor } from '@/features/background/composite'
-import { exportSingle } from '@/features/export'
+import { extractForeground, parseHex, type BgColor } from '@/features/background/composite'
 import { derivePixels, aspectRatio } from '@/lib/spec-units'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
@@ -64,6 +63,57 @@ export function pickCellSource(
     return { source: foreground, bg, format: 'png-flat' }
   }
   return { source: bitmap, bg: { kind: 'transparent' }, format: 'png-alpha' }
+}
+
+/**
+ * Paint a single layout cell directly into an in-memory canvas.
+ *
+ * Why we skip the export pipeline here: `exportSingle` funnels through
+ * Pica's worker-backed Lanczos resampler, which fails to bootstrap
+ * inside Turbopack's blob-worker scope (the worker body references
+ * `__turbopack_context__`, which is not defined in a raw blob URL).
+ * The promise either rejected uncaught or never resolved, leaving the
+ * `cellImages` map empty and the preview as grey placeholders.
+ *
+ * The layout preview only needs a downscaled cell — fitness for
+ * cell-size, not 600 DPI final-quality — so a single native drawImage
+ * with `high` smoothing is more than enough. We keep this as a
+ * separate fast-path so the export panel keeps Pica for the final
+ * print-quality output, where the extra fidelity actually matters.
+ *
+ * Mutates nothing; returns a fresh DOM canvas ready to hand to
+ * `renderLayout`.
+ */
+export function paintCellCanvas(
+  source: CanvasImageSource,
+  bg: BgColor,
+  frame: { x: number; y: number; w: number; h: number },
+  targetPixels: { width: number; height: number },
+): HTMLCanvasElement {
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.max(1, Math.round(targetPixels.width))
+  canvas.height = Math.max(1, Math.round(targetPixels.height))
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return canvas
+  if (bg.kind === 'color') {
+    const rgb = parseHex(bg.hex) ?? { r: 255, g: 255, b: 255 }
+    ctx.fillStyle = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+  }
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(
+    source,
+    Math.max(0, Math.round(frame.x)),
+    Math.max(0, Math.round(frame.y)),
+    Math.max(1, Math.round(frame.w)),
+    Math.max(1, Math.round(frame.h)),
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  )
+  return canvas
 }
 
 interface LayoutPreviewProps {
@@ -116,7 +166,12 @@ export function LayoutPreview({
         foreground?.close?.()
         return
       }
-      const { source, bg: effectiveBg, format } = pickCellSource(bitmap, foreground, bg)
+      // `format` is not consumed here — the fast-path paints into a fresh
+      // canvas and the bg colour decides whether we fill or leave alpha
+      // through. The full export pipeline (`exportSingle`) is what
+      // consumes `format` for blob mime selection; that's wired up
+      // through `ExportPanel` instead.
+      const { source, bg: effectiveBg } = pickCellSource(bitmap, foreground, bg)
 
       const uniqueSpecIds = new Set<string>(template.items.map((it) => it.photoSpecId))
       const map = new Map<string, HTMLCanvasElement>()
@@ -129,23 +184,12 @@ export function LayoutPreview({
             ? activeCropFrame
             : centerCrop({ width: bitmap.width, height: bitmap.height }, aspectRatio(spec))
         try {
-          const result = await exportSingle({
-            foreground: source,
-            bg: effectiveBg,
-            format,
-            targetPixels: pickTargetPixels(spec),
+          const canvas = paintCellCanvas(
+            source as unknown as CanvasImageSource,
+            effectiveBg,
             frame,
-          })
-          // `result.blob` is already produced but we want an in-memory
-          // canvas, so re-decode then paint. Faster than blob → image
-          // → canvas in tight loops.
-          const decoded = await blobToBitmap(result.blob)
-          const canvas = document.createElement('canvas')
-          canvas.width = decoded.width
-          canvas.height = decoded.height
-          const ctx = canvas.getContext('2d')
-          if (ctx) ctx.drawImage(decoded, 0, 0)
-          decoded.close?.()
+            pickTargetPixels(spec),
+          )
           map.set(id, canvas)
         } catch {
           // Skip this spec — placeholder will render in its place.
@@ -238,21 +282,5 @@ function pickTargetPixels(spec: PhotoSpec): { width: number; height: number } {
   return {
     width: Math.max(1, Math.round(resolved.width_px * scale)),
     height: Math.max(1, Math.round(resolved.height_px * scale)),
-  }
-}
-
-async function blobToBitmap(blob: Blob): Promise<ImageBitmap> {
-  if (typeof createImageBitmap === 'function') {
-    return createImageBitmap(blob)
-  }
-  // Fallback path — happy-dom / older browsers. Decode through <img>.
-  const url = URL.createObjectURL(blob)
-  try {
-    const img = new Image()
-    img.src = url
-    await img.decode()
-    return img as unknown as ImageBitmap
-  } finally {
-    URL.revokeObjectURL(url)
   }
 }

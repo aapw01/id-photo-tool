@@ -146,8 +146,11 @@ export function composeMaskIntoOriginal(
  *
  * Defaults were picked by eye against a set of failure photos
  * (dark hair + busy backgrounds, dark clothing on white seamless,
- * sunglasses + neutral wall): `cutoff = 0.18`, `contrast = 1.6` zaps
- * the visible halo without eating into real hair strands.
+ * sunglasses + neutral wall): `cutoff = 0.22`, `contrast = 1.8` zaps
+ * the visible halo without eating into real hair strands. The 0.18/1.6
+ * preset from the first polish round left a faint red ring on red
+ * backgrounds; bumping both knobs trades a sliver of micro-edge
+ * softness for a clean cut-out.
  *
  * Caller can pass `{ contrast: 1, cutoff: 0 }` to disable.
  */
@@ -155,8 +158,8 @@ export function refineAlpha(
   alpha: Uint8Array,
   opts: { cutoff?: number; contrast?: number } = {},
 ): Uint8Array {
-  const cutoff = opts.cutoff ?? 0.18
-  const contrast = opts.contrast ?? 1.6
+  const cutoff = opts.cutoff ?? 0.22
+  const contrast = opts.contrast ?? 1.8
   const loByte = cutoff * 255
   const hiByte = (1 - cutoff) * 255
   const out = new Uint8Array(alpha.length)
@@ -174,6 +177,156 @@ export function refineAlpha(
     out[i] = normalised <= 0 ? 0 : normalised >= 1 ? 255 : Math.round(normalised * 255)
   }
   return out
+}
+
+/**
+ * Sample an average RGB colour from the "outer ring" of an RGBA buffer —
+ * i.e. pixels that are *near* the subject (any opaque alpha neighbour
+ * within `radius` px) but themselves transparent (alpha < `alphaLow`).
+ *
+ * These pixels are the strongest signal for the original photo's
+ * background colour around the subject; if they cluster on one colour
+ * we use that as the unmix target for semi-alpha decontamination.
+ *
+ * Implementation: a two-pass separable dilation produces a binary
+ * `near-subject` mask in O(N · 2r) time, then we accumulate matching
+ * pixels in one more O(N) pass. Returns `null` when the ring is empty
+ * (e.g. fully-opaque buffer or no clear background pixels), in which
+ * case decontamination is skipped.
+ */
+export function estimateOuterRingBg(
+  rgba: Uint8ClampedArray | Uint8Array,
+  width: number,
+  height: number,
+  opts: { radius?: number; alphaLow?: number; alphaHigh?: number } = {},
+): { r: number; g: number; b: number } | null {
+  const radius = Math.max(1, Math.floor(opts.radius ?? 6))
+  const alphaLow = opts.alphaLow ?? 12
+  const alphaHigh = opts.alphaHigh ?? 240
+  const total = width * height
+  if (total <= 0 || rgba.length < total * 4) return null
+
+  const subject = new Uint8Array(total)
+  for (let i = 0; i < total; i++) {
+    if (rgba[i * 4 + 3]! >= alphaHigh) subject[i] = 1
+  }
+
+  // Horizontal dilation: row[x] = 1 if any of subject[x-r..x+r] is 1.
+  // Separable: keep a running count of subject pixels in the sliding
+  // window, which collapses each row to O(W) instead of O(W · r).
+  const horiz = new Uint8Array(total)
+  for (let y = 0; y < height; y++) {
+    const rowOff = y * width
+    let count = 0
+    for (let x = 0; x < Math.min(radius + 1, width); x++) {
+      count += subject[rowOff + x]!
+    }
+    for (let x = 0; x < width; x++) {
+      horiz[rowOff + x] = count > 0 ? 1 : 0
+      const addIdx = x + radius + 1
+      if (addIdx < width) count += subject[rowOff + addIdx]!
+      const dropIdx = x - radius
+      if (dropIdx >= 0) count -= subject[rowOff + dropIdx]!
+    }
+  }
+
+  // Vertical dilation of the horiz buffer produces the full square
+  // dilation. Sliding sum again, this time over a column.
+  const dilated = new Uint8Array(total)
+  for (let x = 0; x < width; x++) {
+    let count = 0
+    for (let y = 0; y < Math.min(radius + 1, height); y++) {
+      count += horiz[y * width + x]!
+    }
+    for (let y = 0; y < height; y++) {
+      dilated[y * width + x] = count > 0 ? 1 : 0
+      const addY = y + radius + 1
+      if (addY < height) count += horiz[addY * width + x]!
+      const dropY = y - radius
+      if (dropY >= 0) count -= horiz[dropY * width + x]!
+    }
+  }
+
+  let r = 0
+  let g = 0
+  let b = 0
+  let n = 0
+  for (let i = 0; i < total; i++) {
+    if (!dilated[i]) continue
+    if (subject[i]) continue
+    const a = rgba[i * 4 + 3]!
+    if (a > alphaLow) continue
+    r += rgba[i * 4 + 0]!
+    g += rgba[i * 4 + 1]!
+    b += rgba[i * 4 + 2]!
+    n++
+  }
+  if (n === 0) return null
+  return { r: r / n, g: g / n, b: b / n }
+}
+
+/**
+ * Decontaminate the colour halo around the matte's soft edge.
+ *
+ * Why: MODNet's alpha is correct, but the original photo's RGB at the
+ * subject boundary is already a *mix* of subject and the photo's
+ * original background colour (e.g. a red wall behind dark hair). Naive
+ * `destination-in` keeps those mixed RGB values, so when the user
+ * picks a transparent / different bg the old colour leaks through as a
+ * visible ring.
+ *
+ * Fix: for every semi-alpha pixel, recover the *pure* foreground RGB
+ * by unmixing the assumed background colour using the standard
+ * compositing equation in reverse:
+ *
+ *     out_rgb = (rgb - (1 - α) · bg_rgb) / α
+ *
+ * The bg colour is estimated once from the outer-ring sample
+ * (`estimateOuterRingBg`); when the ring is empty we skip the pass and
+ * leave RGB untouched so we never *introduce* bad colour.
+ *
+ * Mutates `rgba` in place; cheap (single O(N) pass after the dilation).
+ * Callers can pass an explicit `bg` to skip auto-estimation, useful
+ * for tests and for gradient backgrounds where the global mean is a
+ * poor estimator (the function falls back to a no-op then).
+ */
+export function decontaminateEdges(
+  rgba: Uint8ClampedArray | Uint8Array,
+  width: number,
+  height: number,
+  opts: {
+    bg?: { r: number; g: number; b: number }
+    radius?: number
+    alphaMin?: number
+    alphaMax?: number
+  } = {},
+): { applied: number; bg: { r: number; g: number; b: number } | null } {
+  const alphaMin = opts.alphaMin ?? 8
+  const alphaMax = opts.alphaMax ?? 248
+  const total = width * height
+  if (total <= 0 || rgba.length < total * 4) return { applied: 0, bg: null }
+
+  const bg = opts.bg ?? estimateOuterRingBg(rgba, width, height, { radius: opts.radius })
+  if (!bg) return { applied: 0, bg: null }
+  const bgR = bg.r
+  const bgG = bg.g
+  const bgB = bg.b
+
+  let applied = 0
+  for (let i = 0; i < total; i++) {
+    const a = rgba[i * 4 + 3]!
+    if (a <= alphaMin || a >= alphaMax) continue
+    const alpha = a / 255
+    const inv = 1 - alpha
+    const r = (rgba[i * 4 + 0]! - inv * bgR) / alpha
+    const g = (rgba[i * 4 + 1]! - inv * bgG) / alpha
+    const b = (rgba[i * 4 + 2]! - inv * bgB) / alpha
+    rgba[i * 4 + 0] = r <= 0 ? 0 : r >= 255 ? 255 : Math.round(r)
+    rgba[i * 4 + 1] = g <= 0 ? 0 : g >= 255 ? 255 : Math.round(g)
+    rgba[i * 4 + 2] = b <= 0 ? 0 : b >= 255 ? 255 : Math.round(b)
+    applied++
+  }
+  return { applied, bg }
 }
 
 /**

@@ -13,7 +13,7 @@ import { describe, expect, it } from 'vitest'
 
 import type { BgColor } from '@/features/background/composite'
 
-import { pickCellSource } from './layout-preview'
+import { paintCellCanvas, pickCellSource } from './layout-preview'
 
 const fakeBitmap = (id: string): ImageBitmap =>
   ({ width: 100, height: 100, __id: id }) as unknown as ImageBitmap
@@ -49,5 +49,76 @@ describe('pickCellSource', () => {
     expect(result.source).toBe(foreground)
     expect(result.bg).toEqual({ kind: 'transparent' })
     expect(result.format).toBe('png-flat')
+  })
+})
+
+describe('paintCellCanvas', () => {
+  it('produces a DOM canvas sized to targetPixels', () => {
+    const src = document.createElement('canvas')
+    src.width = 64
+    src.height = 64
+    const out = paintCellCanvas(
+      src,
+      { kind: 'transparent' },
+      { x: 0, y: 0, w: 64, h: 64 },
+      { width: 80, height: 100 },
+    )
+    expect(out.tagName).toBe('CANVAS')
+    expect(out.width).toBe(80)
+    expect(out.height).toBe(100)
+  })
+
+  it('fills a solid background colour before drawing the source (recorded ops)', () => {
+    const src = document.createElement('canvas')
+    src.width = 10
+    src.height = 10
+    const out = paintCellCanvas(
+      src,
+      { kind: 'color', hex: '#2F5BFF' },
+      { x: 0, y: 0, w: 10, h: 10 },
+      { width: 10, height: 10 },
+    )
+    const ctx = out.getContext('2d') as unknown as {
+      __drawCalls?: { method: string; args: unknown[] }[]
+      fillStyle?: string
+    }
+    const calls = ctx.__drawCalls ?? []
+    // The fast-path must emit a fillRect before the drawImage so the
+    // bg colour shows through transparent regions of the source.
+    const methods = calls.map((c) => c.method)
+    expect(methods.indexOf('fillRect')).toBeGreaterThanOrEqual(0)
+    expect(methods.indexOf('drawImage')).toBeGreaterThan(methods.indexOf('fillRect'))
+  })
+
+  it('skips the fill when bg is transparent (alpha-preserving path)', () => {
+    const src = document.createElement('canvas')
+    src.width = 8
+    src.height = 8
+    const out = paintCellCanvas(
+      src,
+      { kind: 'transparent' },
+      { x: 0, y: 0, w: 8, h: 8 },
+      { width: 8, height: 8 },
+    )
+    const ctx = out.getContext('2d') as unknown as {
+      __drawCalls?: { method: string; args: unknown[] }[]
+    }
+    const methods = (ctx.__drawCalls ?? []).map((c) => c.method)
+    expect(methods).not.toContain('fillRect')
+    expect(methods).toContain('drawImage')
+  })
+
+  it('clamps frame coords so a zero-area frame still returns a usable canvas', () => {
+    const src = document.createElement('canvas')
+    src.width = 8
+    src.height = 8
+    const out = paintCellCanvas(
+      src,
+      { kind: 'transparent' },
+      { x: -1, y: -1, w: 0, h: 0 },
+      { width: 4, height: 4 },
+    )
+    expect(out.width).toBe(4)
+    expect(out.height).toBe(4)
   })
 })

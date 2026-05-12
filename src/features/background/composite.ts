@@ -19,6 +19,8 @@
  * it well under that.
  */
 
+import { decontaminateEdges } from '@/features/segmentation/postprocess'
+
 /** A background choice: either transparent or a CSS hex colour. */
 export type BgColor = { kind: 'transparent' } | { kind: 'color'; hex: string }
 
@@ -162,6 +164,24 @@ export async function extractForeground(
   ctx.globalCompositeOperation = 'destination-in'
   ctx.drawImage(maskCanvas as unknown as CanvasImageSource, 0, 0, w, h)
   ctx.globalCompositeOperation = 'source-over'
+
+  // Decontaminate the soft alpha ring: `destination-in` keeps the
+  // original photo's RGB for semi-transparent edge pixels, which on
+  // busy / coloured backgrounds means the old bg colour bleeds through
+  // as a visible halo around the hair. `decontaminateEdges` samples
+  // the outer ring of low-alpha-but-near-subject pixels for the bg
+  // estimate, then unmixes that colour from every semi-alpha pixel.
+  // No-op when the buffer doesn't have a clean outer ring (e.g.
+  // photos shot against a gradient or already on transparent).
+  try {
+    const imgData = ctx.getImageData(0, 0, w, h)
+    decontaminateEdges(imgData.data, w, h)
+    ctx.putImageData(imgData, 0, 0)
+  } catch {
+    // Some canvases (tainted, restricted offscreen) refuse getImageData;
+    // in that case we keep the raw destination-in output. The visible
+    // halo is the same as before this pass landed — not a regression.
+  }
 
   if (canvas instanceof OffscreenCanvas) {
     return canvas.transferToImageBitmap()
