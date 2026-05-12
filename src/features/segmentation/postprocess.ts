@@ -131,6 +131,52 @@ export function composeMaskIntoOriginal(
 }
 
 /**
+ * Apply a contrast curve + low-end cutoff to a uint8 alpha plane.
+ *
+ * Why: MODNet's matte output is genuinely soft on portrait edges, which
+ * is great for hair detail but bleeds through as a *halo* — a wide ring
+ * of partially-transparent pixels — whenever the photo has a busy or
+ * coloured background. Re-mapping the curve with a small low-end clip
+ * and a steeper slope around the boundary removes most of that halo
+ * while keeping the genuine edge transition.
+ *
+ *   normalised = (alpha / 255 - 0.5) * contrast + 0.5
+ *   alpha_in  < cutoff * 255          → 0
+ *   alpha_in  > (1 - cutoff) * 255    → 255
+ *
+ * Defaults were picked by eye against a set of failure photos
+ * (dark hair + busy backgrounds, dark clothing on white seamless,
+ * sunglasses + neutral wall): `cutoff = 0.18`, `contrast = 1.6` zaps
+ * the visible halo without eating into real hair strands.
+ *
+ * Caller can pass `{ contrast: 1, cutoff: 0 }` to disable.
+ */
+export function refineAlpha(
+  alpha: Uint8Array,
+  opts: { cutoff?: number; contrast?: number } = {},
+): Uint8Array {
+  const cutoff = opts.cutoff ?? 0.18
+  const contrast = opts.contrast ?? 1.6
+  const loByte = cutoff * 255
+  const hiByte = (1 - cutoff) * 255
+  const out = new Uint8Array(alpha.length)
+  for (let i = 0; i < alpha.length; i++) {
+    const a = alpha[i]!
+    if (a <= loByte) {
+      out[i] = 0
+      continue
+    }
+    if (a >= hiByte) {
+      out[i] = 255
+      continue
+    }
+    const normalised = (a / 255 - 0.5) * contrast + 0.5
+    out[i] = normalised <= 0 ? 0 : normalised >= 1 ? 255 : Math.round(normalised * 255)
+  }
+  return out
+}
+
+/**
  * End-to-end postprocess: model output Float32 → RGBA ImageData at the
  * original photo's full resolution. T18 wraps this in the segmentation
  * worker so the main thread receives a transferable buffer.
@@ -148,5 +194,6 @@ export function postprocessMask(
     )
   }
   const uint8 = maskFloatToUint8(modelOutput)
-  return composeMaskIntoOriginal(uint8, modelSize, modelSize, origWidth, origHeight, crop)
+  const refined = refineAlpha(uint8)
+  return composeMaskIntoOriginal(refined, modelSize, modelSize, origWidth, origHeight, crop)
 }

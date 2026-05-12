@@ -11,7 +11,7 @@
  * instead. If detection failed outright we surface that error.
  */
 
-import { AlertTriangle, Info, Loader2 } from 'lucide-react'
+import { AlertTriangle, Info } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslations } from 'next-intl'
 
@@ -28,7 +28,6 @@ export function ComplianceBanner() {
   const spec = useCropStore((s) => s.spec)
   const frame = useCropStore((s) => s.frame)
   const face = useCropStore((s) => s.face)
-  const detecting = useCropStore((s) => s.detecting)
   const faceError = useCropStore((s) => s.faceError)
   const warnings = useCropStore((s) => s.warnings)
 
@@ -40,13 +39,12 @@ export function ComplianceBanner() {
     return checkCompliance(frame, face, spec)
   }, [spec, frame, face])
 
-  if (detecting) {
-    return (
-      <Banner tone="info" icon={<Loader2 className="size-4 animate-spin" aria-hidden />}>
-        {td('running')}
-      </Banner>
-    )
-  }
+  // Note: the "detecting" branch was deliberately removed.
+  // autoCenter already gives the user a centred-crop fallback frame
+  // immediately, so a perpetual spinner banner adds noise without
+  // adding value — especially when the MediaPipe CDN is unreachable.
+  // Detection results (or the absence thereof) are still surfaced via
+  // the faceError / no-face branches below.
 
   if (faceError) {
     return (

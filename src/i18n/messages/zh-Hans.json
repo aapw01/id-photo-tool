@@ -105,7 +105,7 @@
       "openPanel": "打开设置面板",
       "closePanel": "关闭设置面板",
       "panelTitle": "{tab} 设置",
-      "panelSummary": "调整当前 {tab} 的参数。"
+      "panelSummary": "调整此面板的参数"
     }
   },
   "Crop": {
@@ -133,7 +133,6 @@
       "hideGuides": "隐藏参考线"
     },
     "detect": {
-      "running": "正在检测人脸…",
       "failed": "人脸检测失败，请手动调整裁剪框",
       "noFace": "未检测到人脸 · 将按比例居中裁剪"
     },
@@ -149,6 +148,12 @@
   },
   "Background": {
     "title": "背景颜色",
+    "cutout": {
+      "title": "先抠图再换背景",
+      "hint": "更换背景颜色需要先把人像抠出来。可以现在开始抠图，也可以先选好颜色，抠图完成后会自动套用。",
+      "start": "开始抠图",
+      "running": "抠图中…"
+    },
     "presets": "预设",
     "custom": "自定义",
     "recent": "最近使用",
@@ -182,6 +187,7 @@
     "compressUnsupported": "压缩仅对 JPG / WebP 有效",
     "kbHint": "二分搜索质量并按需缩小像素，命中目标 ±5% 区间",
     "compressMiss": "最接近的结果为 {kb} KB，可尝试增大目标或继续缩小像素",
+    "alphaNeedsCutout": "PNG 透明背景需要先抠图",
     "downloadFailed": "未能生成文件，请尝试其他格式",
     "filenamePreview": "文件名",
     "actions": {

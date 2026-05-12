@@ -131,6 +131,15 @@
   --radius: var(--radius-md);
 }
 
+/*
+ * shadcn semantic utilities that don't collide with the Pixfit
+ * `@theme` block above. We intentionally do NOT redeclare
+ * `--color-primary`, `--color-accent`, `--color-border` etc. here:
+ * they're already brand tokens in the `@theme` block, and re-binding
+ * them to `var(--primary)` would create a self-reference chain
+ * (`--color-primary -> --primary -> --color-primary`) that resolves
+ * to invalid in the browser, killing every `bg-[var(--color-primary)]`.
+ */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -138,17 +147,14 @@
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 }

@@ -19,7 +19,7 @@
  * staged without a mask; subsequent runs are explicit (Retry).
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { UploadDropzone } from '@/components/upload-dropzone'
@@ -95,13 +95,11 @@ export function StudioWorkspace() {
     }
   }, [segment, setMask])
 
-  const lastRun = useRef<ImageBitmap | null>(null)
-  useEffect(() => {
-    if (!bitmap || mask) return
-    if (lastRun.current === bitmap) return
-    lastRun.current = bitmap
-    void runSegmentation()
-  }, [bitmap, mask, runSegmentation])
+  // Background removal is intentionally opt-in. Users who only need
+  // to crop or arrange a print layout should not pay the model
+  // download + inference cost. The BackgroundPanel exposes a
+  // "Start cut-out" CTA when the user actually wants to change the
+  // background colour.
 
   const onReset = useCallback(() => {
     void setFile(null)
@@ -144,7 +142,13 @@ export function StudioWorkspace() {
   const sidePanel = (
     <>
       {tab === 'background' ? (
-        <BackgroundPanel showCompare={showCompare} onToggleCompare={setShowCompare} />
+        <BackgroundPanel
+          hasMask={!!mask}
+          segmentationState={state}
+          onStartSegmentation={() => void runSegmentation()}
+          showCompare={showCompare}
+          onToggleCompare={setShowCompare}
+        />
       ) : null}
       {tab === 'size' ? <SpecPicker /> : null}
       {tab === 'layout' ? (

@@ -20,10 +20,12 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
+import { Loader2, Sparkles } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import type { SegmentationState } from '@/features/segmentation/use-segmentation'
 import { cn } from '@/lib/utils'
 
 import { ColorSwatch } from './color-swatch'
@@ -32,11 +34,21 @@ import { isSameColor, PRESET_SWATCHES } from './presets'
 import { useBackgroundStore } from './store'
 
 interface BackgroundPanelProps {
+  /** True once the segmentation worker has produced a mask. */
+  hasMask: boolean
+  segmentationState: SegmentationState
+  onStartSegmentation: () => void
   showCompare: boolean
   onToggleCompare: (v: boolean) => void
 }
 
-export function BackgroundPanel({ showCompare, onToggleCompare }: BackgroundPanelProps) {
+export function BackgroundPanel({
+  hasMask,
+  segmentationState,
+  onStartSegmentation,
+  showCompare,
+  onToggleCompare,
+}: BackgroundPanelProps) {
   const t = useTranslations('Background')
   const tNames = useTranslations('Background.presetNames')
 
@@ -57,11 +69,38 @@ export function BackgroundPanel({ showCompare, onToggleCompare }: BackgroundPane
     setColor({ kind: 'color', hex: toHex(draftRgb) })
   }
 
+  const busySeg = segmentationState === 'loading-model' || segmentationState === 'inferring'
+
   return (
     <section className="space-y-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <header>
         <h3 className="text-sm font-medium text-[var(--color-text)]">{t('title')}</h3>
       </header>
+
+      {!hasMask ? (
+        <div className="space-y-3 rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-divider)] p-3">
+          <div className="flex items-start gap-2">
+            <Sparkles
+              className="mt-0.5 size-4 shrink-0 text-[var(--color-primary-dk)]"
+              aria-hidden
+            />
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-[var(--color-text)]">{t('cutout.title')}</p>
+              <p className="text-xs text-[var(--color-text-mute)]">{t('cutout.hint')}</p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            onClick={onStartSegmentation}
+            disabled={busySeg}
+            className="w-full"
+            style={{ touchAction: 'manipulation' }}
+          >
+            {busySeg ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
+            {busySeg ? t('cutout.running') : t('cutout.start')}
+          </Button>
+        </div>
+      ) : null}
 
       {/* Presets */}
       <div className="space-y-2">

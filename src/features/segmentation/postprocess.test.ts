@@ -4,6 +4,7 @@ import {
   composeMaskIntoOriginal,
   maskFloatToUint8,
   postprocessMask,
+  refineAlpha,
 } from '@/features/segmentation/postprocess'
 
 describe('maskFloatToUint8', () => {
@@ -74,6 +75,37 @@ describe('composeMaskIntoOriginal', () => {
     expect(out.data[idx + 1]).toBe(255) // G
     expect(out.data[idx + 2]).toBe(255) // B
     expect(out.data[idx + 3]).toBe(200) // A from mask
+  })
+})
+
+describe('refineAlpha', () => {
+  it('clips low-alpha halo to fully transparent', () => {
+    // Anything <= cutoff*255 (default 0.18*255 ≈ 45.9) maps to 0; the
+    // contrast curve flattens just-past-cutoff values further until a
+    // hand-off point around (cutoff + 1/contrast/2) * 255 ≈ 0.50 → 80 or so.
+    const out = refineAlpha(new Uint8Array([0, 20, 40, 45]))
+    expect(Array.from(out)).toEqual([0, 0, 0, 0])
+    // A pixel well past the kill zone should produce a non-zero output.
+    const past = refineAlpha(new Uint8Array([90]))
+    expect(past[0]).toBeGreaterThan(0)
+  })
+
+  it('saturates near-opaque alpha to 255', () => {
+    const out = refineAlpha(new Uint8Array([210, 230, 245, 255]))
+    expect(Array.from(out)).toEqual([255, 255, 255, 255])
+  })
+
+  it('keeps the midpoint unchanged with default contrast', () => {
+    const out = refineAlpha(new Uint8Array([128]))
+    // 128/255 ≈ 0.502; centred contrast leaves it ≈ 128 (within rounding)
+    expect(out[0]).toBeGreaterThan(125)
+    expect(out[0]).toBeLessThan(132)
+  })
+
+  it('acts as identity when cutoff=0 and contrast=1', () => {
+    const input = new Uint8Array([0, 30, 60, 100, 200, 255])
+    const out = refineAlpha(input, { cutoff: 0, contrast: 1 })
+    expect(Array.from(out)).toEqual(Array.from(input))
   })
 })
 

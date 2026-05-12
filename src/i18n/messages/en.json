@@ -105,7 +105,7 @@
       "openPanel": "Open settings panel",
       "closePanel": "Close settings panel",
       "panelTitle": "{tab} settings",
-      "panelSummary": "Adjust the {tab} options for your photo."
+      "panelSummary": "Adjust this panel."
     }
   },
   "Crop": {
@@ -133,7 +133,6 @@
       "hideGuides": "Hide guides"
     },
     "detect": {
-      "running": "Detecting face…",
       "failed": "Face detection failed — drag the frame manually.",
       "noFace": "No face detected — falling back to a centred crop."
     },
@@ -149,6 +148,12 @@
   },
   "Background": {
     "title": "Background color",
+    "cutout": {
+      "title": "Cut out the subject first",
+      "hint": "Background colour changes need the subject isolated. Run cut-out now, or pick a colour and we'll apply it once you do.",
+      "start": "Start cut-out",
+      "running": "Cutting out…"
+    },
     "presets": "Presets",
     "custom": "Custom",
     "recent": "Recently used",
@@ -182,6 +187,7 @@
     "compressUnsupported": "Compression only applies to JPG / WebP.",
     "kbHint": "We binary-search quality and downscale if necessary to land in ±5% of the target.",
     "compressMiss": "Closest result was {kb} KB — try a larger target or downscale further.",
+    "alphaNeedsCutout": "PNG with transparency needs the subject cut out first.",
     "downloadFailed": "Couldn't produce the file — try a different format.",
     "filenamePreview": "Filename",
     "actions": {

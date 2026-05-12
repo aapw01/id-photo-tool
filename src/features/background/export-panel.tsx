@@ -69,6 +69,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       await null
       if (cancelled) return
       if (!mask) {
+        // No cut-out yet — `exportSource` falls back to the raw bitmap.
         setForeground((prev) => {
           prev?.close?.()
           return null
@@ -90,6 +91,13 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       cancelled = true
     }
   }, [bitmap, mask])
+
+  // The actual byte source we hand to the export pipeline. When the
+  // user hasn't cut out the subject yet we fall back to the original
+  // bitmap so single-photo export still works for crop-only or
+  // layout-only workflows. The `bg` colour is then ignored by the
+  // pipeline because the original bitmap is opaque.
+  const exportSource: ImageBitmap | null = foreground ?? bitmap
 
   // Refresh the default target KB when the spec changes. We only nudge
   // the value if the spec carries an explicit rule — otherwise users
@@ -120,13 +128,13 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     return { width: bitmap.width, height: bitmap.height }
   }, [spec, frame, bitmap])
 
-  // Estimate file sizes for every format using the cached foreground.
+  // Estimate file sizes for every format using whichever source we have.
   useEffect(() => {
     let cancelled = false
     const work = async () => {
       await null
       if (cancelled) return
-      if (!foreground) {
+      if (!exportSource) {
         setEstimates({ 'png-alpha': null, 'png-flat': null, jpg: null, webp: null })
         return
       }
@@ -138,9 +146,16 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       }
       await Promise.all(
         FORMATS.map(async (f) => {
+          // png-alpha needs a real cut-out to preserve transparency. If
+          // the user hasn't cut out the subject yet, skip the estimate
+          // and let the UI grey out the option.
+          if (f === 'png-alpha' && !foreground) {
+            next[f] = null
+            return
+          }
           try {
             const result = await exportSingle({
-              foreground,
+              foreground: exportSource,
               bg,
               format: f,
               targetPixels,
@@ -160,7 +175,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     return () => {
       cancelled = true
     }
-  }, [foreground, bg, targetPixels, frame, quality])
+  }, [exportSource, foreground, bg, targetPixels, frame, quality])
 
   // Filename preview: layout/single/compressed swap based on toggle.
   const filename = useMemo(() => {
@@ -188,12 +203,12 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const supportsCompress = format === 'jpg' || format === 'webp'
 
   const onDownload = useCallback(async () => {
-    if (!foreground) return
+    if (!exportSource) return
     try {
       let blob: Blob
       if (compress && supportsCompress) {
         const result = await compressToKB({
-          source: foreground,
+          source: exportSource,
           targetKB,
           format: format === 'jpg' ? 'jpg' : 'webp',
           initialWidth: targetPixels.width,
@@ -205,7 +220,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         }
       } else {
         const result = await exportSingle({
-          foreground,
+          foreground: exportSource,
           bg,
           format,
           targetPixels,
@@ -226,7 +241,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       toast.error(t('downloadFailed'))
     }
   }, [
-    foreground,
+    exportSource,
     compress,
     supportsCompress,
     targetKB,
@@ -240,12 +255,15 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   ])
 
   const onCopy = useCallback(async () => {
-    if (!foreground) return
+    if (!exportSource) return
     try {
       const result = await exportSingle({
-        foreground,
+        foreground: exportSource,
         bg,
-        format: 'png-alpha',
+        // Without a mask we can't deliver a real transparent PNG.
+        // Fall back to png-flat so the clipboard image still matches
+        // what's on screen.
+        format: foreground ? 'png-alpha' : 'png-flat',
         targetPixels,
         frame: frame ?? null,
       })
@@ -255,9 +273,12 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     } catch {
       toast.error(t('copyFailed'))
     }
-  }, [foreground, bg, targetPixels, frame, t])
+  }, [exportSource, foreground, bg, targetPixels, frame, t])
 
-  const blocked = disabled || !mask || !foreground
+  // png-alpha only makes sense with a real cut-out; everything else
+  // works with either the cut-out or the raw bitmap.
+  const formatNeedsMask = format === 'png-alpha'
+  const blocked = disabled || !exportSource || (formatNeedsMask && !foreground)
 
   return (
     <section className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -272,19 +293,25 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
           {FORMATS.map((f) => {
             const active = format === f
             const kb = estimates[f]
+            const requiresMask = f === 'png-alpha'
+            const optionDisabled = requiresMask && !foreground
             return (
               <button
                 key={f}
                 type="button"
                 role="radio"
                 aria-checked={active}
-                onClick={() => setFormat(f)}
+                aria-disabled={optionDisabled}
+                disabled={optionDisabled}
+                onClick={() => !optionDisabled && setFormat(f)}
+                title={optionDisabled ? t('alphaNeedsCutout') : undefined}
                 className={cn(
                   'flex h-auto flex-col items-start gap-1 rounded-md border px-3 py-2 text-left transition-colors',
                   'focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
                   active
                     ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)]'
                     : 'border-[var(--color-border)] bg-transparent hover:bg-[var(--color-divider)]',
+                  optionDisabled && 'cursor-not-allowed opacity-50 hover:bg-transparent',
                 )}
               >
                 <span className="text-sm text-[var(--color-text)]">

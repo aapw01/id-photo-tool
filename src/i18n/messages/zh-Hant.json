@@ -105,7 +105,7 @@
       "openPanel": "開啟設定面板",
       "closePanel": "關閉設定面板",
       "panelTitle": "{tab} 設定",
-      "panelSummary": "調整當前 {tab} 的參數。"
+      "panelSummary": "調整此面板的參數"
     }
   },
   "Crop": {
@@ -133,7 +133,6 @@
       "hideGuides": "隱藏輔助線"
     },
     "detect": {
-      "running": "正在偵測人臉…",
       "failed": "人臉偵測失敗，請手動調整裁切框",
       "noFace": "未偵測到人臉 · 將依比例置中裁切"
     },
@@ -149,6 +148,12 @@
   },
   "Background": {
     "title": "背景顏色",
+    "cutout": {
+      "title": "先去背再換背景",
+      "hint": "更換背景顏色需要先把人像去背。可以現在開始去背，也可以先選好顏色，去背完成後會自動套用。",
+      "start": "開始去背",
+      "running": "去背中…"
+    },
     "presets": "預設",
     "custom": "自訂",
     "recent": "最近使用",
@@ -182,6 +187,7 @@
     "compressUnsupported": "壓縮僅適用於 JPG / WebP",
     "kbHint": "二元搜尋品質並視需要縮小像素，命中目標 ±5% 區間",
     "compressMiss": "最接近的結果為 {kb} KB，可嘗試加大目標或進一步縮小像素",
+    "alphaNeedsCutout": "PNG 透明背景需要先去背",
     "downloadFailed": "無法產生檔案，請嘗試其他格式",
     "filenamePreview": "檔名",
     "actions": {
