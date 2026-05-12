@@ -1,21 +1,30 @@
 #!/usr/bin/env node
 /**
- * Pull the MODNet INT8 ONNX model into public/_models/.
+ * Pull a MODNet ONNX variant into public/_models/.
  *
- * Upstream:   https://huggingface.co/Xenova/modnet  (Apache-2.0)
- * Local path: public/_models/modnet.q.onnx (~6.63 MB)
+ * Pixfit ships two variants (see src/features/segmentation/runtime-config.ts):
+ *   - modnet-fp16 (~13 MB) — recommended default, keeps full alpha dynamic range
+ *   - modnet-int8 (~6.6 MB) — quantized fallback for tight-bandwidth users
  *
- * The model is not committed to git. CI and contributors run
- * `pnpm models:fetch` once; the file is cached under public/ thereafter.
+ * Both upstream files live in `Xenova/modnet` (Apache-2.0). Variants are
+ * downloaded from ModelScope first (China-friendly mirror, same etag),
+ * Hugging Face second. Files are not committed to git — CI / contributors
+ * run `pnpm models:fetch` once and cache locally.
  *
- * Verification: file size sanity check (must look like a model, not an
- * HTML error page) plus a SHA-384 digest that is wired into the runtime
- * integrity check (see src/features/segmentation/integrity.ts).
+ * Verification: file size sanity check plus a SHA-384 digest that you
+ * paste back into MODEL_VARIANTS[<id>].sha384 in runtime-config.ts.
  *
  * Usage:
- *   pnpm models:fetch          # download if missing
- *   pnpm models:fetch --force  # re-download and overwrite
- *   pnpm models:fetch --print  # don't write, just compute & print the SHA
+ *   pnpm models:fetch                        # fp16 (default)
+ *   pnpm models:fetch --variant int8         # legacy INT8 fallback
+ *   pnpm models:fetch --variant fp16 --force # re-download
+ *   pnpm models:fetch --print                # only compute & print the SHA
+ *   pnpm models:fetch --from-file ./local.onnx --variant fp16
+ *
+ * Override hosts:
+ *   MODEL_URL=...        — bypass registry, pull from this URL
+ *   HF_ENDPOINT=...      — alternative HF mirror (e.g. hf-mirror.com)
+ *   HTTPS_PROXY=...      — proxy for restricted networks
  */
 import { existsSync } from 'node:fs'
 import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises'
@@ -24,36 +33,62 @@ import { spawn } from 'node:child_process'
 import { dirname, resolve } from 'node:path'
 
 const REPO_ROOT = resolve(import.meta.dirname, '..')
-
-// Source list, tried in order. ModelScope is first because it mirrors the
-// exact same Xenova/modnet repo, returns 200 directly (no xethub redirect),
-// and is fast / unrestricted from mainland China. Hugging Face is kept as a
-// fallback for environments where ModelScope is unreachable.
-//
-// Override with MODEL_URL=<your-cdn>/modnet.q.onnx for self-hosted copies.
-const SOURCES = process.env.MODEL_URL
-  ? [process.env.MODEL_URL]
-  : [
-      'https://www.modelscope.cn/models/Xenova/modnet/resolve/master/onnx/model_quantized.onnx',
-      // HF_ENDPOINT lets users override the host (e.g. https://hf-mirror.com).
-      `${(process.env.HF_ENDPOINT ?? 'https://huggingface.co').replace(/\/$/, '')}/Xenova/modnet/resolve/main/onnx/model_quantized.onnx`,
-    ]
-
-const TARGET = resolve(REPO_ROOT, 'public/_models/modnet.q.onnx')
-const MIN_SIZE = 6 * 1024 * 1024 // 6 MB — model_quantized.onnx is ~6.63 MB
 const MAX_ATTEMPTS = 3
+
+/**
+ * Registry mirror of src/features/segmentation/runtime-config.ts. Kept
+ * in sync by convention — the SHA in the runtime config is what gates
+ * production; this script just helps you compute / verify it.
+ */
+const VARIANTS = {
+  fp16: {
+    path: 'modnet.fp16.onnx',
+    minSize: 12 * 1024 * 1024, // ~13 MB; reject anything < 12
+    sources: [
+      'https://www.modelscope.cn/models/Xenova/modnet/resolve/master/onnx/model_fp16.onnx',
+      'https://huggingface.co/Xenova/modnet/resolve/main/onnx/model_fp16.onnx',
+    ],
+  },
+  int8: {
+    path: 'modnet.q.onnx',
+    minSize: 6 * 1024 * 1024, // ~6.63 MB
+    sources: [
+      'https://www.modelscope.cn/models/Xenova/modnet/resolve/master/onnx/model_quantized.onnx',
+      'https://huggingface.co/Xenova/modnet/resolve/main/onnx/model_quantized.onnx',
+    ],
+  },
+}
+
 const rawArgs = process.argv.slice(2)
 const args = new Set(rawArgs)
 const FORCE = args.has('--force')
 const PRINT_ONLY = args.has('--print')
 
-// `--from-file <path>` skips the network entirely and copies a local file in.
-// Useful when the runner cannot reach huggingface.co (e.g. cas-bridge.xethub
-// blocked, GFW, no VPN).
+const variantIdx = rawArgs.indexOf('--variant')
+const VARIANT_ID = variantIdx >= 0 ? rawArgs[variantIdx + 1] : 'fp16'
+const VARIANT = VARIANTS[VARIANT_ID]
+if (!VARIANT) {
+  console.error(
+    `Unknown --variant "${VARIANT_ID}". Valid: ${Object.keys(VARIANTS).join(', ')}.`,
+  )
+  process.exit(2)
+}
+
+const SOURCES = process.env.MODEL_URL
+  ? [process.env.MODEL_URL]
+  : VARIANT.sources.map((url) =>
+      url.startsWith('https://huggingface.co/') && process.env.HF_ENDPOINT
+        ? url.replace('https://huggingface.co', process.env.HF_ENDPOINT.replace(/\/$/, ''))
+        : url,
+    )
+
+const TARGET = resolve(REPO_ROOT, `public/_models/${VARIANT.path}`)
+const MIN_SIZE = VARIANT.minSize
+
 const fromFileIdx = rawArgs.indexOf('--from-file')
 const FROM_FILE = fromFileIdx >= 0 ? rawArgs[fromFileIdx + 1] : null
 
-async function sha384Base64(buf) {
+function sha384Base64(buf) {
   const digest = createHash('sha384').update(buf).digest('base64')
   return `sha384-${digest}`
 }
@@ -131,12 +166,14 @@ async function download() {
   throw new Error(
     `All ${SOURCES.length} sources failed.\n` +
       `Try one of:\n` +
-      `  1. HTTPS_PROXY=http://127.0.0.1:7890 pnpm models:fetch\n` +
-      `  2. Download manually, then: pnpm models:fetch --from-file <path>\n` +
-      `  3. MODEL_URL=https://your-cdn/modnet.q.onnx pnpm models:fetch\n` +
+      `  1. HTTPS_PROXY=http://127.0.0.1:7890 pnpm models:fetch --variant ${VARIANT_ID}\n` +
+      `  2. Download manually, then: pnpm models:fetch --variant ${VARIANT_ID} --from-file <path>\n` +
+      `  3. MODEL_URL=https://your-cdn/${VARIANT.path} pnpm models:fetch --variant ${VARIANT_ID}\n` +
       `Last error: ${lastErr?.message}`,
   )
 }
+
+console.log(`→ Variant: ${VARIANT_ID} (${VARIANT.path})`)
 
 let buf
 if (FROM_FILE) {
@@ -161,9 +198,10 @@ if (FROM_FILE) {
   buf = (await readExisting()) ?? (await download())
 }
 
-const sri = await sha384Base64(buf)
+const sri = sha384Base64(buf)
 console.log(`✓ SHA-384: ${sri}`)
 console.log(`  size:    ${buf.byteLength} bytes (${(buf.byteLength / 1024 / 1024).toFixed(2)} MB)`)
 console.log(
-  `\nWire this SRI into src/features/segmentation/integrity.ts:\n  export const MODEL_SHA384 = '${sri}'\n`,
+  `\nWire this SRI into src/features/segmentation/runtime-config.ts:\n` +
+    `  MODEL_VARIANTS['modnet-${VARIANT_ID}'].sha384 = '${sri}'\n`,
 )

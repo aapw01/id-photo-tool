@@ -1,9 +1,15 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { IntegrityError, MODEL_SHA384, verifyModel } from '@/features/segmentation/integrity'
+import {
+  IntegrityError,
+  MODEL_FILENAME,
+  MODEL_SHA384,
+  verifyModel,
+} from '@/features/segmentation/integrity'
+import { MODEL_VARIANTS } from '@/features/segmentation/runtime-config'
 
-const MODEL_PATH = resolve(import.meta.dirname, '../../../public/_models/modnet.q.onnx')
+const MODEL_PATH = resolve(import.meta.dirname, `../../../public/_models/${MODEL_FILENAME}`)
 
 describe('verifyModel', () => {
   const sampleBuf = new TextEncoder().encode('hello pixfit').buffer
@@ -48,5 +54,26 @@ describe('verifyModel', () => {
     const tampered = new Uint8Array(buf)
     tampered[0] = tampered[0]! ^ 0xff
     await expect(verifyModel(tampered.buffer)).rejects.toBeInstanceOf(IntegrityError)
+  })
+})
+
+describe('MODEL_VARIANTS registry', () => {
+  it('declares both modnet-fp16 (default) and modnet-int8 (fallback)', () => {
+    expect(Object.keys(MODEL_VARIANTS).sort()).toEqual(['modnet-fp16', 'modnet-int8'])
+  })
+
+  it('every registered variant carries a non-empty sha384-* hash', () => {
+    for (const variant of Object.values(MODEL_VARIANTS)) {
+      expect(variant.sha384).toMatch(/^sha384-[A-Za-z0-9+/]+=*$/)
+      expect(variant.path).toMatch(/\.onnx$/)
+      expect(variant.approxBytes).toBeGreaterThan(1_000_000)
+      expect(variant.sources.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('exposes the active variant via MODEL_SHA384 / MODEL_FILENAME', () => {
+    const active = Object.values(MODEL_VARIANTS).find((v) => v.sha384 === MODEL_SHA384)
+    expect(active).toBeDefined()
+    expect(active!.path).toBe(MODEL_FILENAME)
   })
 })

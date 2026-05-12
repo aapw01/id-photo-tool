@@ -1,21 +1,22 @@
 /**
  * Subresource Integrity (SRI) constants for the MODNet ONNX model.
  *
- * The value is filled in by `pnpm models:fetch` — see scripts/fetch-model.mjs
- * for how the digest is computed. While the model is not yet present on this
- * machine the constant is intentionally empty; runtime code is expected to
- * either skip the check (dev with `?skip-integrity=1`) or fail closed.
+ * The single source of truth is the per-variant `sha384` entries in
+ * runtime-config.ts. This module re-exports the currently active hash
+ * (`MODEL_SHA384`) so callers can keep importing from one place and the
+ * verify helper does not need to know which variant is in use.
  *
  * Update procedure:
- *   1. Run `pnpm models:fetch` (or `pnpm models:fetch --from-file ./local.onnx`)
- *   2. Copy the printed `sha384-...` value here.
+ *   1. `pnpm models:fetch --variant <id>` (or `--from-file <path>`)
+ *   2. Copy the printed `sha384-...` value into MODEL_VARIANTS[<id>].sha384
+ *      in runtime-config.ts.
  *   3. Commit; the value is part of the security boundary.
  */
 
-export const MODEL_SHA384 =
-  'sha384-UR4U6sRE6EBfNeXg13vkxmg0i02TO61xKTTZ8HO0zfrdaffLJN17ZuC8/iivopZA' as const
+import { MODEL_SHA384 as ACTIVE_MODEL_SHA384, MODEL_VARIANT } from './runtime-config'
 
-export const MODEL_FILENAME = 'modnet.q.onnx'
+export const MODEL_SHA384 = ACTIVE_MODEL_SHA384
+export const MODEL_FILENAME = MODEL_VARIANT.path
 
 export class IntegrityError extends Error {
   override name = 'IntegrityError'
@@ -34,14 +35,17 @@ export async function verifyModel(
 ): Promise<ArrayBuffer> {
   if (!MODEL_SHA384) {
     if (options.allowEmpty) {
+      // No active integrity hash — only happens during the bootstrap of
+      // a new variant. Loud-but-non-fatal so the missing hash gets
+      // noticed in dev tools before it ships.
       console.warn(
         '[segmentation] MODEL_SHA384 is empty — skipping integrity check. ' +
-          'Run `pnpm models:fetch` and commit the printed digest before shipping.',
+          'Run `pnpm models:fetch --variant <id>` and commit the printed digest before shipping.',
       )
       return buf
     }
     throw new IntegrityError(
-      'MODEL_SHA384 is empty; cannot verify model. See src/features/segmentation/integrity.ts.',
+      'MODEL_SHA384 is empty; cannot verify model. See src/features/segmentation/runtime-config.ts.',
     )
   }
 

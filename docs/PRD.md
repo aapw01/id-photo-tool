@@ -166,9 +166,9 @@
 
 **技术选型**：
 
-- 主模型：**MODNet**（人像专用，量化后 ~6MB）
+- 主模型：**MODNet**（人像专用；M9 起默认 FP16 ~13 MB，INT8 ~6.6 MB 作为带宽 fallback，通过 `NEXT_PUBLIC_SEG_MODEL=modnet-int8` 切换）
 - 运行时：**ONNX Runtime Web**（WebGPU 优先，WASM 回退）
-- 后续：可选"高清精修"模式（RMBG-1.4 或 BiRefNet，V1.1）
+- 后续：可选"高清精修"模式（BiRefNet portrait V1.1，license 友好但体积 >100 MB，仅作为按需精修）
 
 **关键行为**：
 
