@@ -5,10 +5,17 @@
  *
  * Rules of thumb (TECH_DESIGN §5.4.2):
  *
- *   1. Estimate head height (chin → forehead) from MediaPipe keypoints.
+ *   1. Estimate head height (chin → forehead, hair-inclusive) from
+ *      MediaPipe keypoints AND the detector bbox. BlazeFace's "forehead"
+ *      via keypoints lands at the hairline and the bbox top caps near the
+ *      eyebrows — neither covers hair. We therefore also extrapolate from
+ *      the bbox (`bbox.y − bbox.h × 0.18`) and pick whichever sits higher
+ *      so the resulting span actually contains the hair on top.
  *   2. Frame height = head_height / targetHeadRatio.
  *   3. Frame width  = frame_height × spec.aspect.
- *   4. Frame top    = eyeY − frame_height × eyeFromTopRatio.
+ *   4. Frame top    = eyeY − frame_height × eyeFromTopRatio. If this
+ *      would slice into the hair (head-top sits within 4 % of the frame
+ *      top), grow `frame_height` first so the hair has breathing room.
  *   5. Frame left   = headCenterX − frame_width / 2.
  *   6. Clamp the frame into the image bounds. If the spec aspect
  *      forces the frame to overflow even after clamping, scale down.
@@ -28,6 +35,17 @@ interface ImageSize {
 const DEFAULT_HEAD_RATIO = 0.65
 const DEFAULT_EYE_FROM_TOP = 0.38
 
+// Conservative hair allowance expressed as a fraction of the face
+// detector bbox height. BlazeFace's bbox typically caps around the
+// eyebrows, so ~18 % above the bbox top covers short-to-medium hair on
+// most subjects without venturing too far into background pixels.
+const HAIR_ALLOWANCE_RATIO = 0.18
+
+// Minimum vertical clearance between the estimated head-top and the
+// frame top, expressed as a fraction of the frame height. Keeps the
+// hair from rendering flush with the crop edge.
+const TOP_PADDING_RATIO = 0.04
+
 const MIDPOINT = <T>(a: [T, T] | undefined): number | undefined => {
   if (!a) return undefined
   return (Number(a[0]) + Number(a[1])) / 2
@@ -41,10 +59,15 @@ const MIDPOINT = <T>(a: [T, T] | undefined): number | undefined => {
  * Approximations:
  *   - eyeY    = average of left/right eye Y
  *   - eyeToChin     ≈ 1.7 × mouth-to-eye distance
- *   - eyeToForehead ≈ 1.5 × mouth-to-eye distance
+ *   - eyeToForehead ≈ 1.5 × mouth-to-eye distance (lands ≈ hairline)
  *
  * These coefficients come from the canonical "five-eye, three-fifths"
- * face proportions used by portrait artists.
+ * face proportions used by portrait artists. The keypoint-derived
+ * "forehead" excludes hair, so we also derive a second estimate from
+ * the detector bbox (`bbox.y − bbox.h × HAIR_ALLOWANCE_RATIO`) and use
+ * whichever sits higher up the image — the resulting `foreheadY` then
+ * represents the visible head-top (hair included), which is what
+ * downstream framing and compliance checks actually care about.
  */
 export function estimateHeadVerticalSpan(face: FaceDetection): {
   eyeY: number
@@ -56,14 +79,18 @@ export function estimateHeadVerticalSpan(face: FaceDetection): {
   const eyeR = face.keypoints[1]
   const mouth = face.keypoints[3]
 
+  const foreheadFromBbox = face.bbox.y - face.bbox.h * HAIR_ALLOWANCE_RATIO
+
   // Fall back to the bbox when keypoints are missing.
   if (!eyeL || !eyeR || !mouth) {
     const cx = face.bbox.x + face.bbox.w / 2
     const top = face.bbox.y
-    const bot = face.bbox.y + face.bbox.h
+    const bot = top + face.bbox.h
     return {
       eyeY: top + face.bbox.h * 0.42,
-      foreheadY: top,
+      // bbox-derived hair allowance: lifts the head-top above the
+      // eyebrow-line bbox cap so hair is included.
+      foreheadY: foreheadFromBbox,
       chinY: bot,
       headCenterX: cx,
     }
@@ -72,7 +99,8 @@ export function estimateHeadVerticalSpan(face: FaceDetection): {
   const eyeY = (eyeL.y + eyeR.y) / 2
   const eyeToMouth = mouth.y - eyeY
   const chinY = eyeY + 1.7 * eyeToMouth
-  const foreheadY = eyeY - 1.5 * eyeToMouth
+  // Take whichever estimate sits higher (smaller Y) so hair is included.
+  const foreheadY = Math.min(eyeY - 1.5 * eyeToMouth, foreheadFromBbox)
   const headCenterX = (eyeL.x + eyeR.x) / 2
 
   return { eyeY, chinY, foreheadY, headCenterX }
@@ -93,6 +121,15 @@ export function estimateHeadVerticalSpan(face: FaceDetection): {
  * aspect ratio) so the head still lands at the spec's intended
  * eye-from-top / centered-X position. The frame ends up smaller, but
  * the head composition is correct.
+ *
+ * The frame may also need to *grow* before any clamping/shrinking
+ * happens: when `estimateHeadVerticalSpan` reports a tall head
+ * (lots of hair) and the spec's `eyeFromTopRatio` is small, the
+ * natural frame top can land below the hair, leaving the head poking
+ * out at the top. We expand `frameH` upfront so the head-top sits at
+ * least `TOP_PADDING_RATIO × frameH` below the frame top, then let
+ * the existing shrink pass mop up any resulting image-bound
+ * overflow.
  */
 export function autoCenter(
   image: ImageSize,
@@ -114,6 +151,20 @@ export function autoCenter(
 
   let frameH = headHeight / targetHeadRatio
   let frameW = frameH * aspect
+
+  // Reserve a small vertical padding above the head. Without this, the
+  // hair-aware `foreheadY` can still kiss the frame top when the spec's
+  // eyeFromTopRatio is small relative to the eye-to-hair distance.
+  // Solve `eyeY − frameH × eyeFromTopRatio ≤ foreheadY − topPaddingPx`
+  // for the smallest `frameH` that leaves room; if it's larger than the
+  // natural frameH, grow.
+  const safeEyeFromTopRatio = Math.max(eyeFromTopRatio, 0.01)
+  const topPaddingPx = frameH * TOP_PADDING_RATIO
+  const frameHMin = (eyeY - foreheadY + topPaddingPx) / safeEyeFromTopRatio
+  if (frameHMin > frameH) {
+    frameH = frameHMin
+    frameW = frameH * aspect
+  }
 
   // The natural frame might be wider or taller than the image. If so,
   // shrink uniformly to the image bounds while keeping the aspect.

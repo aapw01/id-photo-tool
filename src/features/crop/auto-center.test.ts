@@ -77,9 +77,39 @@ describe('estimateHeadVerticalSpan', () => {
       confidence: 0.8,
     }
     const span = estimateHeadVerticalSpan(face)
-    expect(span.foreheadY).toBe(50)
+    // foreheadY now includes a bbox-derived hair allowance
+    // (bbox.y − bbox.h × 0.18 = 50 − 43.2 = 6.8) so it sits *above* the
+    // raw bbox top instead of flush with it.
+    expect(span.foreheadY).toBeCloseTo(6.8, 5)
     expect(span.chinY).toBe(290)
     expect(span.headCenterX).toBe(200)
+  })
+
+  it('picks the higher of the keypoint and bbox forehead estimates', () => {
+    // Synthetic portrait face with hair-tall bbox: the bbox-derived
+    // forehead (1100 − 1900 × 0.18 = 758) sits well above the keypoint
+    // estimate (eyeY − 1.5 × eyeToMouth = 1850 − 900 = 950). The min of
+    // the two is what we keep — that's the hair-inclusive head-top.
+    const face: FaceDetection = {
+      bbox: { x: 1100, y: 1100, w: 1450, h: 1900 },
+      keypoints: [
+        { x: 1500, y: 1850 },
+        { x: 2150, y: 1850 },
+        { x: 1820, y: 2150 },
+        { x: 1820, y: 2450 },
+        { x: 1180, y: 1880 },
+        { x: 2460, y: 1880 },
+      ],
+      confidence: 0.95,
+    }
+    const span = estimateHeadVerticalSpan(face)
+    const foreheadFromBbox = 1100 - 1900 * 0.18
+    const foreheadFromKeypoints = 1850 - 1.5 * 600
+    expect(span.foreheadY).toBeCloseTo(Math.min(foreheadFromBbox, foreheadFromKeypoints), 5)
+    expect(span.foreheadY).toBeCloseTo(758, 5)
+    // chin stays from the keypoint estimate.
+    expect(span.chinY).toBeCloseTo(1850 + 1.7 * 600, 5)
+    expect(span.headCenterX).toBe(1825)
   })
 })
 
@@ -246,6 +276,40 @@ describe('autoCenter — shrink instead of jamming', () => {
     // Head centred horizontally inside the new frame (within 1 px).
     const headCenterInFrame = frame.x + frame.w / 2
     expect(Math.abs(headCenterInFrame - 200)).toBeLessThan(1)
+  })
+
+  it('reserves top-padding above the hair for a 美国签证 spec on a tall portrait', () => {
+    // Regression for the "head jammed against the top edge" bug: with
+    // hair-aware foreheadY, the auto-frame leaves at least ~3 % of its
+    // height as clearance between the visible head-top and the frame
+    // top — even though the keypoint-derived forehead would have put
+    // the head-top several hundred px lower.
+    const image = { width: 3648, height: 5472 }
+    const face: FaceDetection = {
+      bbox: { x: 1100, y: 1100, w: 1450, h: 1900 },
+      keypoints: [
+        { x: 1500, y: 1850 }, // left-eye
+        { x: 2150, y: 1850 }, // right-eye
+        { x: 1820, y: 2150 }, // nose
+        { x: 1820, y: 2450 }, // mouth
+        { x: 1180, y: 1880 }, // left-ear
+        { x: 2460, y: 1880 }, // right-ear
+      ],
+      confidence: 0.95,
+    }
+
+    const frame = autoCenter(image, usVisa, face)
+
+    expect(frame.x).toBeGreaterThanOrEqual(0)
+    expect(frame.y).toBeGreaterThanOrEqual(0)
+    expect(frame.x + frame.w).toBeLessThanOrEqual(image.width + 0.01)
+    expect(frame.y + frame.h).toBeLessThanOrEqual(image.height + 0.01)
+    // Square aspect (us-visa).
+    expect(frame.w / frame.h).toBeCloseTo(1, 3)
+    // Hair-top estimate (bbox-derived) lies inside the frame with at
+    // least ~3 % top padding. 1100 − 1900 × 0.18 = 758.
+    const hairTop = 1100 - 1900 * 0.18
+    expect(frame.y + frame.h * 0.03).toBeLessThanOrEqual(hairTop)
   })
 
   it('keeps the resulting frame inside the image bounds across edge-case face placements', () => {

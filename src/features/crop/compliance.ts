@@ -17,6 +17,13 @@
  *
  * `severity: 'error'` should block export; `'warn'` is shown as a soft
  * banner.
+ *
+ * NOTE: We share `estimateHeadVerticalSpan` with `auto-center.ts`, so
+ * the hair-aware head-top estimate (bbox-derived hair allowance) flows
+ * into the head-too-small / head-too-large bands here too. That is
+ * intentional: the official photo specs measure head height from chin
+ * to crown-of-hair, so this estimate matches the spec definition more
+ * faithfully than the keypoint-only forehead approximation did.
  */
 
 import { estimateHeadVerticalSpan } from './auto-center'
