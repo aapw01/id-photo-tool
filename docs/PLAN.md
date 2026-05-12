@@ -12,10 +12,10 @@
 | ---------- | ----------------------------------------------------------------------------------------- |
 | 产品名     | **Pixfit · 像配**                                                                         |
 | 域名       | `pix-fit.com`（已确认可注册）                                                             |
-| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅（代码完成 / 真机兼容性矩阵待回填）**                      |
+| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M7 ✅（M5 / M6 并行进行；真机兼容性矩阵待回填）**       |
 | 最近更新   | 2026-05-12                                                                                |
-| 进度       | M1–M4 完成；M4 智能裁剪 15/15 任务 ✅；28 条规格 + 7 张相纸；MediaPipe 单测全过           |
-| 一句话进度 | /studio 端到端通：上传 → 抠图 → 选规格 → 自动裁剪 → 换底色 → PNG/JPG 导出全部 client-side |
+| 进度       | M1–M4 + M7 完成；M7 规格管理 11/11 任务 ✅；50 新单测；/specs 三语 SSG                    |
+| 一句话进度 | /studio 端到端通；/specs 可创建 / 复制 / 删除自定义规格 + JSON 导入导出 + 反向校验依赖    |
 
 ---
 
@@ -32,6 +32,7 @@
 | M2 任务清单        | [tasks/M2.md](./tasks/M2.md)       | v0.1（20 个原子任务，19 完成 + 1 待真机回填） |
 | M3 任务清单        | [tasks/M3.md](./tasks/M3.md)       | v0.1（10 个原子任务，全部完成）               |
 | M4 任务清单        | [tasks/M4.md](./tasks/M4.md)       | v0.1（15 个原子任务，全部完成）               |
+| M7 任务清单        | [tasks/M7.md](./tasks/M7.md)       | v0.1（11 个原子任务，全部完成）               |
 | 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成）                               |
 
 ---
@@ -48,7 +49,7 @@
 | M4     | 照片规格 + 智能裁剪 | ✅ 代码完成 / 真机兼容性待回填 ([M4.md](./tasks/M4.md)) | 1.5 周     |
 | M5     | 导出 + 压缩         | ⬜ 未开始                                               | 1 周       |
 | M6     | 相纸 + 排版         | ⬜ 未开始                                               | 1.5 周     |
-| M7     | 规格管理            | ⬜ 未开始                                               | 0.5 周     |
+| M7     | 规格管理            | ✅ 代码完成 / 真机端到端待回填 ([M7.md](./tasks/M7.md)) | 0.5 周     |
 | M8     | SEO + 移动端 + 打磨 | ⬜ 未开始                                               | 1.5 周     |
 
 **预计总工期**：8–10 周（单人 / 兼职节奏）
@@ -195,14 +196,23 @@
 
 **交付物**：
 
-- [ ] 规格管理弹窗（三 tab：照片 / 相纸 / 排版）
-- [ ] CRUD 表单 + zod 校验
-- [ ] localStorage 存储 + 加载合并
-- [ ] "另存为副本" 功能
-- [ ] JSON 导入 / 导出
-- [ ] 反向校验（删除前提示依赖）
+- [x] `src/features/spec-manager/` 模块：`schema / storage / merge / crud / dependency-check / import-export / store` — 七个文件，纯函数 + 一个 zustand store
+- [x] `localStorage['pixfit:specs:v1']` 持久化（容错 4 类异常，写入前再过 zod）
+- [x] `mergeById` 用户覆盖内置（同 id 原地替换，新 id 追加）
+- [x] CRUD 行为：内置项不可删 / 不可改 id；更新强制 pin `id + builtin: false`
+- [x] `exportToJSON` Blob + `pixfit-specs-YYYYMMDD.json` 文件名；`importFromJSON` 走 zod，错误码 4 类
+- [x] `findDependents`（photo + paper）含 manual cells 路径
+- [x] `/specs` 三语 SSG 路由 + 三 tab Shell（Photo / Paper / Layout）
+- [x] PhotoSpec / PaperSpec 表单：name 三语 + 尺寸 + DPI + region + 推荐底色 + alias；`aria-invalid` 字段高亮
+- [x] Delete 对话框列出受影响 LayoutTemplate
+- [x] `SpecManager.*` 三语 i18n（190 keys 完全对齐）
+- [x] Footer 入口 + 50 新单测（总测试数 215，对比 M4 完成时的 165）
 
-**验收**：用户创建一个自定义照片规格 → 重新打开浏览器仍存在 → 导出 JSON → 清缓存 → 导入 JSON 恢复。
+**验收**：
+- /specs 三语 200，本地化标题命中（curl smoke）
+- 创建一条自定义规格 → reload 后仍在；导出 JSON → 清掉 customs → 导入 JSON → 列表恢复（pure-fn 单测覆盖；真机 reload 需用户回填 §1.3）
+- 内置规格点 Delete 按钮被前置拒绝；改 id 在 update 路径被强制 pin 回原 id
+- 165 → 215 单测全过；`lint / typecheck / build / i18n:check` 全绿
 
 #### M8 · SEO + 移动端 + 打磨
 
@@ -288,6 +298,9 @@
 | 2026-05-12 | CropFrame 自研（无第三方裁剪库）                    | react-easy-crop / react-image-crop                           | 这两个库锁死 16/9 或 1/1，并且不支持 image-pixel space；自研代码 ~250 行可控               |
 | 2026-05-12 | 选 spec 自动套用 `background.recommended`           | 只在 background 面板手动改                                   | 签证 80% 都要白底，第一次套用降低用户认知负担；用户改过任何颜色后就不再覆盖                |
 | 2026-05-12 | 裁剪后导出使用 canvas drawImage 高质量缩放          | Pica / 自实现 Lanczos                                        | M4 阶段直接 drawImage 已足够；M5 上 Pica 时统一替换重采样核                                |
+| 2026-05-12 | 规格 localStorage key 用 `pixfit:specs:v1`          | PRD §9.4.1 的 `id-photo-tool:specs:v1`                       | 命名与新品牌一致，便于 M8 删旧域名痕迹；`:v1` 留 schema 版本扩展位                          |
+| 2026-05-12 | `saveSpecs()` 写入前再过一次 `SpecsV1Schema`        | 仅在调用方校验 / 不校验直写                                  | CRUD 已校验，但 store / 测试 / 导入是多入口；统一在持久化边界兜底，避免脏数据 round-trip   |
+| 2026-05-12 | 用户同 id 项整体覆盖内置项，`builtin:false` 一并写  | 字段级 patch / 复制后允许同 id 内置存活                      | 删除保护只看 `builtin` 标志：用户主动改写后理应能再删除；行为简单且与 PRD §9.4.2 一致      |
 
 ---
 
@@ -449,6 +462,7 @@ docs(prd): clarify HEIC handling boundary
 | 2026-05-12 | 0.3  | M1+M2 代码完成、决策日志增补、性能基线（M2-T19）与兼容性矩阵（M2-T20）骨架                                    |
 | 2026-05-12 | 0.4  | M3 换底色 10/10 任务代码完成；新增 6.7 背景切换性能基线（P50 8.3ms / P95 9.1ms）                              |
 | 2026-05-12 | 0.5  | M4 智能裁剪 15/15 任务代码完成；28 条规格 + 7 张相纸数据落地；MediaPipe + auto-center + compliance 单测 28 个 |
+| 2026-05-12 | 0.7  | M7 规格管理 11/11 任务代码完成；`features/spec-manager/` 七文件 + `/specs` 三语 SSG + 50 新单测（215 共计）   |
 
 ---
 

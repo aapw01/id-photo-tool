@@ -5,6 +5,7 @@ import { Logo } from '@/components/logo'
 
 export function SiteFooter() {
   const t = useTranslations('Footer')
+  const tSpec = useTranslations('SpecManager')
   const year = new Date().getFullYear()
 
   return (
@@ -19,6 +20,12 @@ export function SiteFooter() {
         </div>
 
         <nav aria-label="footer" className="flex flex-wrap items-center gap-4 text-sm">
+          <Link
+            href="/specs"
+            className="text-[var(--color-text-mute)] hover:text-[var(--color-text)]"
+          >
+            {tSpec('footerLink')}
+          </Link>
           <Link
             href="/privacy"
             className="text-[var(--color-text-mute)] hover:text-[var(--color-text)]"

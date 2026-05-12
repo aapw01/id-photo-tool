@@ -189,7 +189,34 @@ NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
 
 ---
 
-## 6. M5+ 长期事项收集池
+## 6. M7 · 规格管理 ✅（代码完成，真机端到端待回填）
+
+> 详细任务清单见 [`tasks/M7.md`](./tasks/M7.md)（11 个原子任务）。
+> M5 / M6 是另一位 agent 负责的并行里程碑，M7 提前完成是因为模块边界清晰、依赖少（只读 BUILTIN_PHOTO_SPECS / BUILTIN_PAPER_SPECS）。
+
+- [x] 组 A · 数据层 — `schema / storage / merge / crud / dependency-check / import-export` 六个纯模块 — 2026-05-12
+- [x] 组 B · 单测 — 50 个新单测，覆盖 5 模块的容错路径（总测 165 → 215）— 2026-05-12
+- [x] 组 C · UI — `store.ts` zustand + `photo-spec-form` / `paper-spec-form` + `spec-manager-shell` — 2026-05-12
+- [x] 组 D · 入口 + i18n — `/specs` 三语 SSG + Footer 入口 + 三语 190 keys 完全对齐 — 2026-05-12
+- [x] 组 E · 验证 — `pnpm lint / typecheck / test (215) / i18n:check / build` 全绿；三语 /specs curl 200 — 2026-05-12
+- [~] 真机端到端验证（待用户回填到 §1.3）：
+  - 创建一条自定义照片规格 → 关闭浏览器 → 重开应仍存在
+  - Export JSON → 清浏览器存储 → Import JSON → 列表完整恢复
+  - 复制 builtin "美国签证" → 编辑名称 → 在 /studio 的 spec-picker 看到副本
+
+**关键决策**（同步至 PLAN §6 决策日志）：
+
+- localStorage key 采用 `pixfit:specs:v1`（替代 PRD §9.4.1 草案里的 `id-photo-tool:specs:v1`，与新品牌一致）
+- `saveSpecs()` 在持久化边界再过一次 zod，作为多入口（CRUD / replaceAll / 导入）的统一兜底
+- 用户同 id 项整体覆盖 builtin，`builtin: false` 一并写入；删除保护只看 `builtin` 标志
+
+**导入策略说明**：当前 `replaceAll` 直接覆盖用户自定义集合（不做 diff 合并）。这是 M7 的简化实现：用户角度"导出 → 导入"是完整快照，等同于备份恢复。M8 打磨阶段可以再加 diff UI（"将导入 X 条；其中 Y 条覆盖现有"）。
+
+参考：[`tasks/M7.md`](./tasks/M7.md) · [`PLAN.md §3.2 M7`](./PLAN.md)
+
+---
+
+## 7. M5+ 长期事项收集池
 
 收到反馈、读 PRD/TECH_DESIGN 时发现但尚未排期的小事，丢到这里，到对应里程碑再消化。
 

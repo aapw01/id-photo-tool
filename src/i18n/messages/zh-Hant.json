@@ -157,6 +157,104 @@
     "copyFailed": "複製失敗，請嘗試下載",
     "size": "約 {kb} KB"
   },
+  "SpecManager": {
+    "title": "規格管理",
+    "subtitle": "管理你的照片規格、相紙規格與排版模板。內建項目不可修改，但可以複製後再自訂。",
+    "footerLink": "規格管理",
+    "tabs": {
+      "photo": "照片規格",
+      "paper": "相紙規格",
+      "layout": "排版模板"
+    },
+    "toolbar": {
+      "import": "匯入 JSON",
+      "export": "匯出 JSON",
+      "new": "新增",
+      "duplicate": "複製為自訂"
+    },
+    "list": {
+      "builtin": "內建",
+      "custom": "自訂",
+      "empty": "尚無自訂項目",
+      "builtinHint": "內建規格不可修改，可點選「複製為自訂」建立可編輯的副本",
+      "edit": "編輯",
+      "delete": "刪除"
+    },
+    "form": {
+      "createTitle": "新增{kind}",
+      "editTitle": "編輯「{name}」",
+      "fields": {
+        "id": "ID",
+        "idHint": "小寫字母、數字與連字號；建立後無法修改",
+        "nameZh": "名稱 (簡體中文)",
+        "nameZhHant": "名稱 (繁體中文)",
+        "nameEn": "名稱 (English)",
+        "category": "分類",
+        "region": "地區 (ISO 3166-1，兩位字母)",
+        "widthMm": "寬度 (mm)",
+        "heightMm": "高度 (mm)",
+        "dpi": "DPI",
+        "alias": "別名",
+        "bgRecommended": "建議背景 (#hex)",
+        "paperId": "相紙 ID"
+      },
+      "save": "儲存",
+      "cancel": "取消"
+    },
+    "kinds": {
+      "photo": "照片規格",
+      "paper": "相紙規格",
+      "layout": "排版模板"
+    },
+    "toast": {
+      "created": "已儲存「{name}」",
+      "updated": "已更新「{name}」",
+      "deleted": "已刪除「{name}」",
+      "duplicated": "已依內建規格建立副本「{name}」",
+      "exported": "已匯出 {count} 條自訂規格",
+      "imported": "已匯入 {photo} 張照片 / {paper} 張相紙 / {layout} 套排版",
+      "validationError": "表單欄位有誤，請檢查後再儲存",
+      "saveFailed": "儲存失敗：{message}",
+      "deleteFailed": "刪除失敗：{message}",
+      "importFailed": "匯入失敗：{message}"
+    },
+    "delete": {
+      "title": "刪除「{name}」？",
+      "body": "將刪除此自訂項目。內建規格不會受影響。",
+      "withDependentsBody": "有 {count} 個排版模板引用了此規格，刪除後這些模板會回退到對應的內建規格或失效。",
+      "dependentsHeading": "受影響的模板",
+      "confirm": "刪除",
+      "cancel": "取消"
+    },
+    "import": {
+      "title": "匯入規格",
+      "hint": "選擇從 Pixfit 匯出的 JSON 檔案",
+      "browse": "選擇檔案",
+      "preview": "將匯入 {photo} 張照片 / {paper} 張相紙 / {layout} 套排版（會覆蓋現有自訂內容）",
+      "confirm": "覆蓋現有自訂內容並匯入",
+      "errors": {
+        "empty-input": "檔案為空",
+        "invalid-json": "不是合法的 JSON：{message}",
+        "invalid-schema": "資料格式不符（{issues} 項問題）",
+        "unsupported-version": "不支援的版本，目前僅支援 v1"
+      }
+    },
+    "layout": {
+      "comingSoon": "排版模板編輯器將隨 M6 上線。目前可匯入 / 匯出 / 刪除既有模板，但無法新增。"
+    },
+    "empty": {
+      "title": "選擇左側項目以檢視詳情",
+      "subtitle": "或點選「新增」建立屬於你的規格"
+    },
+    "categories": {
+      "cn-id": "中國證件",
+      "cn-paper": "中國相紙",
+      "travel-permit": "通行證",
+      "visa": "海外簽證",
+      "exam": "考試報名",
+      "custom": "自訂"
+    }
+  },
   "Segmentation": {
     "states": {
       "idle": "準備就緒",
