@@ -22,13 +22,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Copy, Download, Smartphone } from 'lucide-react'
+import { Copy, Download, Smartphone, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { buildFilename, compressToKB, exportSingle, type ExportFormat } from '@/features/export'
+import { useStudioTabStore } from '@/features/studio/studio-tab-store'
 import { derivePixels } from '@/lib/spec-units'
 import { useIsWeChat } from '@/lib/ua'
 import { cn } from '@/lib/utils'
@@ -51,7 +52,10 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const t = useTranslations('Export')
 
   const [foreground, setForeground] = useState<ImageBitmap | null>(null)
-  const [format, setFormat] = useState<ExportFormat>('png-alpha')
+  // png-alpha needs a real cut-out to mean anything. If the user
+  // hasn't run segmentation yet, default to png-flat so the Download
+  // button isn't silently disabled when they land on this tab.
+  const [format, setFormat] = useState<ExportFormat>(() => (mask ? 'png-alpha' : 'png-flat'))
   const [quality, setQuality] = useState<number>(0.92)
   const [compress, setCompress] = useState<boolean>(false)
   // Suggest the spec's maxKB when present, otherwise a sensible default.
@@ -91,6 +95,23 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       cancelled = true
     }
   }, [bitmap, mask])
+
+  // If the mask is dropped (user replaced their photo) while we're
+  // sitting on png-alpha, downgrade to png-flat so the Download
+  // button keeps working without the user noticing the silent block.
+  useEffect(() => {
+    if (mask) return
+    if (format !== 'png-alpha') return
+    let cancelled = false
+    void (async () => {
+      await null
+      if (cancelled) return
+      setFormat('png-flat')
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [mask, format])
 
   // The actual byte source we hand to the export pipeline. When the
   // user hasn't cut out the subject yet we fall back to the original
@@ -324,6 +345,28 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
             )
           })}
         </div>
+        {!foreground ? (
+          <button
+            type="button"
+            onClick={() => useStudioTabStore.getState().setTab('background')}
+            className={cn(
+              'flex w-full items-start gap-2 rounded-md border border-dashed border-[var(--color-border)]',
+              'bg-[var(--color-divider)] px-3 py-2 text-left transition-colors',
+              'hover:bg-[var(--color-primary-soft)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
+            )}
+          >
+            <Sparkles
+              className="mt-0.5 size-4 shrink-0 text-[var(--color-primary-dk)]"
+              aria-hidden
+            />
+            <span className="flex flex-col gap-0.5">
+              <span className="text-xs text-[var(--color-text)]">{t('alphaCutoutHint')}</span>
+              <span className="text-xs font-medium text-[var(--color-primary-dk)]">
+                {t('alphaGoToBackground')}
+              </span>
+            </span>
+          </button>
+        ) : null}
         <p className="text-xs text-[var(--color-text-mute)]">
           {t(isAlpha ? 'hint.alpha' : 'hint.flat')}
         </p>

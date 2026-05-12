@@ -58,10 +58,12 @@ export function ComplianceBanner() {
 
   if (warnings.length === 0) {
     if (!face) {
-      // useful onboarding signal when MediaPipe finished but found nothing
+      // No face detected (CDN down, photo without a person, ...) — we
+      // already auto-centred the crop, so this banner just confirms
+      // that fact and tells the user they can drag to fine-tune.
       return (
         <Banner tone="info" icon={<Info className="size-4" aria-hidden />}>
-          {td('noFace')}
+          {td('autoCentered')}
         </Banner>
       )
     }

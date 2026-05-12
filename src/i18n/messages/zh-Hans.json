@@ -106,6 +106,9 @@
       "closePanel": "关闭设置面板",
       "panelTitle": "{tab} 设置",
       "panelSummary": "调整此面板的参数"
+    },
+    "cta": {
+      "export": "导出当前作品"
     }
   },
   "Crop": {
@@ -113,6 +116,9 @@
     "subtitle": "选择规格后自动按比例裁剪并居中头部",
     "search": "搜索规格 (如 美国签证、申根、二寸)",
     "noMatches": "没有匹配的规格",
+    "customSection": "自定义",
+    "manageCustom": "管理自定义尺寸",
+    "createCustom": "新建自定义尺寸",
     "categories": {
       "cn-id": "中国证件",
       "cn-paper": "中国相纸",
@@ -134,7 +140,8 @@
     },
     "detect": {
       "failed": "人脸检测失败，请手动调整裁剪框",
-      "noFace": "未检测到人脸 · 将按比例居中裁剪"
+      "noFace": "未检测到人脸 · 将按比例居中裁剪",
+      "autoCentered": "已自动居中。需要时可拖动裁剪框微调位置。"
     },
     "warnings": {
       "title": "构图建议",
@@ -188,6 +195,8 @@
     "kbHint": "二分搜索质量并按需缩小像素，命中目标 ±5% 区间",
     "compressMiss": "最接近的结果为 {kb} KB，可尝试增大目标或继续缩小像素",
     "alphaNeedsCutout": "PNG 透明背景需要先抠图",
+    "alphaCutoutHint": "想导出透明背景？需要先把人像抠出来。",
+    "alphaGoToBackground": "去背景面板开始抠图 →",
     "downloadFailed": "未能生成文件，请尝试其他格式",
     "filenamePreview": "文件名",
     "actions": {

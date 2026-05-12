@@ -106,6 +106,9 @@
       "closePanel": "Close settings panel",
       "panelTitle": "{tab} settings",
       "panelSummary": "Adjust this panel."
+    },
+    "cta": {
+      "export": "Export now"
     }
   },
   "Crop": {
@@ -113,6 +116,9 @@
     "subtitle": "Pick a spec to lock the aspect ratio and auto-center the head.",
     "search": "Search specs (US visa, Schengen, 2-inch…)",
     "noMatches": "No specs match your search",
+    "customSection": "Custom",
+    "manageCustom": "Manage custom sizes",
+    "createCustom": "Create a custom size",
     "categories": {
       "cn-id": "China ID",
       "cn-paper": "China paper",
@@ -134,7 +140,8 @@
     },
     "detect": {
       "failed": "Face detection failed — drag the frame manually.",
-      "noFace": "No face detected — falling back to a centred crop."
+      "noFace": "No face detected — falling back to a centred crop.",
+      "autoCentered": "Auto-centred. Drag the crop frame to fine-tune."
     },
     "warnings": {
       "title": "Composition hints",
@@ -188,6 +195,8 @@
     "kbHint": "We binary-search quality and downscale if necessary to land in ±5% of the target.",
     "compressMiss": "Closest result was {kb} KB — try a larger target or downscale further.",
     "alphaNeedsCutout": "PNG with transparency needs the subject cut out first.",
+    "alphaCutoutHint": "Want a transparent background? Cut out the subject first.",
+    "alphaGoToBackground": "Open the Background tab to cut out →",
     "downloadFailed": "Couldn't produce the file — try a different format.",
     "filenamePreview": "Filename",
     "actions": {

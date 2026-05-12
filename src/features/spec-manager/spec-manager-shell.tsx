@@ -36,9 +36,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { RegionFlag } from '@/components/region-flag'
+import { localizeText } from '@/lib/i18n-text'
 import { derivePixels } from '@/lib/spec-units'
 import { cn } from '@/lib/utils'
-import type { I18nText, LayoutTemplate, PaperSpec, PhotoSpec } from '@/types/spec'
+import type { LayoutTemplate, PaperSpec, PhotoSpec } from '@/types/spec'
 
 import { findDependents } from './dependency-check'
 import { exportToJSON, parseSpecsJson, exportFilename } from './import-export'
@@ -370,7 +371,7 @@ function PhotoColumn({
   onDelete,
 }: PhotoColumnProps) {
   const t = useTranslations('SpecManager')
-  const locale = useLocale() as keyof I18nText
+  const locale = useLocale()
   const grouped = useMemo(() => groupByBuiltin(list, customIds), [list, customIds])
   return (
     <section
@@ -432,7 +433,7 @@ function PaperColumn({
   onDelete,
 }: PaperColumnProps) {
   const t = useTranslations('SpecManager')
-  const locale = useLocale() as keyof I18nText
+  const locale = useLocale()
   const grouped = useMemo(() => groupByBuiltin(list, customIds), [list, customIds])
 
   return (
@@ -481,7 +482,7 @@ interface LayoutColumnProps {
 
 function LayoutColumn({ list }: LayoutColumnProps) {
   const t = useTranslations('SpecManager')
-  const locale = useLocale() as keyof I18nText
+  const locale = useLocale()
   return (
     <section
       aria-label={t('tabs.layout')}
@@ -497,7 +498,7 @@ function LayoutColumn({ list }: LayoutColumnProps) {
           {list.map((tpl) => (
             <li key={tpl.id} className="rounded-md border border-[var(--color-border)] px-3 py-2">
               <p className="text-sm font-medium text-[var(--color-text)]">
-                {tpl.name[locale] ?? tpl.name.en}
+                {localizeText(tpl.name, locale)}
               </p>
               <p className="font-mono text-xs text-[var(--color-text-mute)]">
                 {tpl.id} · {tpl.paperId}
@@ -544,7 +545,7 @@ interface PhotoRowProps {
   onEdit?: () => void
   onDuplicate?: () => void
   onDelete?: () => void
-  locale: keyof I18nText
+  locale: string
 }
 
 function PhotoRow({
@@ -580,7 +581,7 @@ function PhotoRow({
         )}
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm text-[var(--color-text)]">
-            {spec.name[locale] ?? spec.name.en}
+            {localizeText(spec.name, locale)}
           </p>
           <p className="font-mono text-xs text-[var(--color-text-mute)]">
             {spec.width_mm}×{spec.height_mm} mm · {resolved.width_px}×{resolved.height_px} px
@@ -634,7 +635,7 @@ interface PaperRowProps {
   onEdit?: () => void
   onDuplicate?: () => void
   onDelete?: () => void
-  locale: keyof I18nText
+  locale: string
 }
 
 function PaperRow({
@@ -666,7 +667,7 @@ function PaperRow({
         <span className="inline-block size-5 rounded-sm bg-[var(--color-divider)]" aria-hidden />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm text-[var(--color-text)]">
-            {spec.name[locale] ?? spec.name.en}
+            {localizeText(spec.name, locale)}
           </p>
           <p className="font-mono text-xs text-[var(--color-text-mute)]">
             {spec.width_mm}×{spec.height_mm} mm · {resolved.width_px}×{resolved.height_px} px
@@ -738,7 +739,7 @@ function DetailPane({
   onSubmitPaper,
 }: DetailPaneProps) {
   const t = useTranslations('SpecManager')
-  const locale = useLocale() as keyof I18nText
+  const locale = useLocale()
 
   if (editor.mode === 'idle') {
     return (
@@ -812,14 +813,14 @@ function DetailPane({
   return <PaperCard spec={target} locale={locale} />
 }
 
-function PhotoCard({ spec, locale }: { spec: PhotoSpec; locale: keyof I18nText }) {
+function PhotoCard({ spec, locale }: { spec: PhotoSpec; locale: string }) {
   const resolved = derivePixels(spec)
   return (
     <section className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
       <header>
         <p className="font-mono text-xs text-[var(--color-text-weak)]">{spec.id}</p>
         <h3 className="text-lg font-medium text-[var(--color-text)]">
-          {spec.name[locale] ?? spec.name.en}
+          {localizeText(spec.name, locale)}
         </h3>
       </header>
       <dl className="grid grid-cols-2 gap-3 text-sm">
@@ -835,14 +836,14 @@ function PhotoCard({ spec, locale }: { spec: PhotoSpec; locale: keyof I18nText }
   )
 }
 
-function PaperCard({ spec, locale }: { spec: PaperSpec; locale: keyof I18nText }) {
+function PaperCard({ spec, locale }: { spec: PaperSpec; locale: string }) {
   const resolved = derivePixels(spec)
   return (
     <section className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
       <header>
         <p className="font-mono text-xs text-[var(--color-text-weak)]">{spec.id}</p>
         <h3 className="text-lg font-medium text-[var(--color-text)]">
-          {spec.name[locale] ?? spec.name.en}
+          {localizeText(spec.name, locale)}
         </h3>
       </header>
       <dl className="grid grid-cols-2 gap-3 text-sm">
@@ -881,7 +882,7 @@ interface DeleteDialogProps {
 
 function DeleteDialog({ pending, templates, onCancel, onConfirm }: DeleteDialogProps) {
   const t = useTranslations('SpecManager')
-  const locale = useLocale() as keyof I18nText
+  const locale = useLocale()
 
   const dependents = useMemo(() => {
     if (!pending) return []
@@ -916,7 +917,7 @@ function DeleteDialog({ pending, templates, onCancel, onConfirm }: DeleteDialogP
                   {dependents.map((tpl) => (
                     <li key={tpl.id} className="flex items-center justify-between gap-2">
                       <span className="truncate text-[var(--color-text)]">
-                        {tpl.name[locale] ?? tpl.name.en}
+                        {localizeText(tpl.name, locale)}
                       </span>
                       <span className="font-mono text-xs text-[var(--color-text-weak)]">
                         {tpl.id}

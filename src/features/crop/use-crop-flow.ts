@@ -29,7 +29,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 import { useBackgroundStore } from '@/features/background/store'
-import type { I18nText } from '@/types/spec'
+import { localizeText } from '@/lib/i18n-text'
 
 import { autoCenter } from './auto-center'
 import { checkCompliance } from './compliance'
@@ -44,7 +44,7 @@ import { useCropStore } from './spec-store'
  */
 export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean): void {
   const tCrop = useTranslations('Crop')
-  const locale = useLocale() as keyof I18nText
+  const locale = useLocale()
 
   const spec = useCropStore((s) => s.spec)
   const frame = useCropStore((s) => s.frame)
@@ -166,7 +166,7 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
     setBgColor({ kind: 'color', hex: spec.background.recommended })
     toast.success(
       tCrop('bgSuggested', {
-        name: spec.name[locale] ?? spec.name.en,
+        name: localizeText(spec.name, locale),
       }),
     )
   }, [spec, bgKind, setBgColor, tCrop, locale])

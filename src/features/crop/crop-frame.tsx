@@ -237,6 +237,15 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
           <div className="absolute inset-x-0 top-2/3 h-px bg-[rgba(255,255,255,0.4)]" />
           <div className="absolute inset-y-0 left-1/3 w-px bg-[rgba(255,255,255,0.4)]" />
           <div className="absolute inset-y-0 left-2/3 w-px bg-[rgba(255,255,255,0.4)]" />
+          {/* Center axis — emphasises true centre over the rule-of-thirds. */}
+          <div
+            className="absolute inset-x-0 top-1/2 h-px -translate-y-px border-t border-dashed border-[rgba(255,255,255,0.7)]"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-y-0 left-1/2 w-px -translate-x-px border-l border-dashed border-[rgba(255,255,255,0.7)]"
+            aria-hidden
+          />
         </div>
 
         {(['nw', 'ne', 'sw', 'se'] as const).map((corner) => (

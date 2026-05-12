@@ -106,6 +106,9 @@
       "closePanel": "關閉設定面板",
       "panelTitle": "{tab} 設定",
       "panelSummary": "調整此面板的參數"
+    },
+    "cta": {
+      "export": "匯出當前作品"
     }
   },
   "Crop": {
@@ -113,6 +116,9 @@
     "subtitle": "選擇規格後會自動依比例裁切並置中頭部",
     "search": "搜尋規格（如 美國簽證、申根、二吋）",
     "noMatches": "沒有符合的規格",
+    "customSection": "自訂",
+    "manageCustom": "管理自訂尺寸",
+    "createCustom": "新增自訂尺寸",
     "categories": {
       "cn-id": "中國證件",
       "cn-paper": "中國相紙",
@@ -134,7 +140,8 @@
     },
     "detect": {
       "failed": "人臉偵測失敗，請手動調整裁切框",
-      "noFace": "未偵測到人臉 · 將依比例置中裁切"
+      "noFace": "未偵測到人臉 · 將依比例置中裁切",
+      "autoCentered": "已自動置中。需要時可拖動裁切框微調位置。"
     },
     "warnings": {
       "title": "構圖建議",
@@ -188,6 +195,8 @@
     "kbHint": "二元搜尋品質並視需要縮小像素，命中目標 ±5% 區間",
     "compressMiss": "最接近的結果為 {kb} KB，可嘗試加大目標或進一步縮小像素",
     "alphaNeedsCutout": "PNG 透明背景需要先去背",
+    "alphaCutoutHint": "想匯出透明背景？需要先把人像去背。",
+    "alphaGoToBackground": "前往背景面板開始去背 →",
     "downloadFailed": "無法產生檔案，請嘗試其他格式",
     "filenamePreview": "檔名",
     "actions": {

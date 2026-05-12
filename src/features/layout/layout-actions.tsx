@@ -81,12 +81,19 @@ export function LayoutActions({
     }
   }, [template.id, paper.id])
 
-  const ready = useMemo(() => !!mask, [mask])
+  // Layout export works against the raw bitmap too — users who only
+  // crop + tile shouldn't need to run segmentation first. We only
+  // gate on `bitmap` so the buttons stay reactive once a photo
+  // exists.
+  const ready = useMemo(() => !!bitmap, [bitmap])
 
   const prepareCellImages = useCallback(async (): Promise<Map<string, HTMLCanvasElement>> => {
     const map = new Map<string, HTMLCanvasElement>()
-    if (!mask) return map
-    const fg = await extractForeground(bitmap, mask)
+    // Source pixels for each cell: cut-out + chosen bg when the user
+    // has run segmentation; otherwise the original bitmap (the spec
+    // background colour is irrelevant — the bitmap is opaque).
+    const foreground: ImageBitmap | null = mask ? await extractForeground(bitmap, mask) : null
+    const source: ImageBitmap = foreground ?? bitmap
     try {
       const uniqueSpecIds = new Set<string>(template.items.map((it) => it.photoSpecId))
       for (const id of uniqueSpecIds) {
@@ -98,7 +105,7 @@ export function LayoutActions({
             : centerCrop({ width: bitmap.width, height: bitmap.height }, aspectRatio(spec))
         const resolved = derivePixels(spec)
         const result = await exportSingle({
-          foreground: fg,
+          foreground: source,
           bg,
           format: 'png-flat',
           targetPixels: { width: resolved.width_px, height: resolved.height_px },
@@ -114,7 +121,7 @@ export function LayoutActions({
         map.set(id, canvas)
       }
     } finally {
-      fg.close?.()
+      foreground?.close?.()
     }
     return map
   }, [bitmap, mask, bg, activeCropSpec, activeCropFrame, template])

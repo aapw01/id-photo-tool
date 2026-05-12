@@ -23,11 +23,12 @@
  */
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { centerCrop } from '@/features/crop/auto-center'
 import { extractForeground, parseHex, type BgColor } from '@/features/background/composite'
+import { localizeText } from '@/lib/i18n-text'
 import { derivePixels, aspectRatio } from '@/lib/spec-units'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
@@ -136,6 +137,7 @@ export function LayoutPreview({
   onRendered,
 }: LayoutPreviewProps) {
   const t = useTranslations('Layout.preview')
+  const locale = useLocale()
   const paper = useLayoutStore((s) => s.paper)
   const template = useLayoutStore((s) => s.template)
   const settings = useLayoutStore((s) => s.settings)
@@ -262,7 +264,9 @@ export function LayoutPreview({
       {overflow.length > 0 ? (
         <p className="rounded-md border border-[var(--color-warning,#f59e0b)] bg-[var(--color-warning-soft,#fef3c7)] px-3 py-2 text-xs text-[var(--color-warning-text,#92400e)]">
           {t('overflow', {
-            list: overflow.map((o) => `${o.spec.name.en} × ${o.count}`).join(', '),
+            list: overflow
+              .map((o) => `${localizeText(o.spec.name, locale)} × ${o.count}`)
+              .join(', '),
           })}
         </p>
       ) : null}
