@@ -16,7 +16,6 @@
     "paper": "Paper",
     "templates": "Layouts",
     "docs": "Docs",
-    "github": "GitHub",
     "menu": {
       "open": "Open menu",
       "close": "Close menu",
@@ -76,8 +75,7 @@
     }
   },
   "LanguageSwitcher": {
-    "label": "Change language",
-    "current": "Current language"
+    "label": "Change language"
   },
   "Studio": {
     "title": "Studio",

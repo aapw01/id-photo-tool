@@ -126,4 +126,43 @@ describe('detectFace', () => {
     await detectFace(fakeBitmap())
     expect(createFromOptions).toHaveBeenCalledTimes(1)
   })
+
+  it('throws FaceDetectError(timeout) when the loader hangs past the deadline', async () => {
+    // Stub the module so createFromOptions never resolves — mimics the
+    // jsDelivr / GCS CDN being unreachable in restricted networks.
+    __setTasksVisionModuleForTesting({
+      FaceDetector: {
+        createFromOptions: vi.fn(() => new Promise(() => {})),
+      } as unknown as never,
+      FilesetResolver: {
+        forVisionTasks: vi.fn(async () => ({})),
+      } as unknown as never,
+    } as never)
+
+    vi.useFakeTimers()
+    try {
+      const promise = detectFace(fakeBitmap(), { timeoutMs: 50 })
+      vi.advanceTimersByTime(60)
+      await expect(promise).rejects.toMatchObject({
+        name: 'FaceDetectError',
+        kind: 'timeout',
+      })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('resolves before the deadline when the detector is quick', async () => {
+    installFakeModule(() => ({ detections: [] }))
+    const result = await detectFace(fakeBitmap(), { timeoutMs: 1_000 })
+    expect(result).toBeNull()
+  })
+
+  it('disables the timeout when opts.timeoutMs is 0', async () => {
+    installFakeModule(() => ({ detections: [] }))
+    // Just verifies the call returns rather than instrumenting timer
+    // behaviour; the contract is that 0 = no race against a deadline.
+    const result = await detectFace(fakeBitmap(), { timeoutMs: 0 })
+    expect(result).toBeNull()
+  })
 })

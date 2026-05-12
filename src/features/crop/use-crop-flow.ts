@@ -24,7 +24,7 @@
  * workspace.
  */
 
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
@@ -96,30 +96,45 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
   /* 2. autoCenter on spec change                                   */
   /* -------------------------------------------------------------- */
 
+  // We track three things across renders:
+  //   - `lastSpecId`     — which spec the current `frame` was computed for
+  //   - `lastUsedFace`   — the face passed into the last autoCenter call
+  //                        (so we can detect "face just arrived")
+  //   - `lastAutoFrame`  — the exact frame autoCenter produced; if the
+  //                        user has dragged, `frame` !== this value and
+  //                        we won't clobber their work on face arrival.
   const lastSpecId = useRef<string | null>(null)
-  const lastFaceRef = useRef(face)
-  useLayoutEffect(() => {
-    lastFaceRef.current = face
-  }, [face])
+  const lastUsedFace = useRef<typeof face>(null)
+  const lastAutoFrame = useRef<typeof frame>(null)
 
   useEffect(() => {
     if (!bitmap || !spec) {
       lastSpecId.current = null
+      lastUsedFace.current = null
+      lastAutoFrame.current = null
       return
     }
-    // Re-run when spec changes OR when the face becomes available
-    // after a spec was already chosen.
-    if (lastSpecId.current === spec.id && frame) return
-    if (detecting) return // wait for detection to settle
+    const specChanged = lastSpecId.current !== spec.id
+    const userDragged = frame !== null && frame !== lastAutoFrame.current
+    const faceArrived = !!face && !lastUsedFace.current
+
+    // Re-run on:
+    //   - spec change (always)
+    //   - first paint when no frame exists yet
+    //   - face arriving for the first time, *if* the user hasn't
+    //     dragged the auto-frame manually
+    if (!specChanged && frame && !(faceArrived && !userDragged)) return
 
     lastSpecId.current = spec.id
-    const next = autoCenter(
-      { width: bitmap.width, height: bitmap.height },
-      spec,
-      lastFaceRef.current,
-    )
+    lastUsedFace.current = face
+    // Don't gate on `detecting`: an initial centred-crop is more
+    // useful than a perpetual spinner when the MediaPipe CDN is
+    // unreachable. The effect re-fires once `face` resolves and
+    // upgrades the frame in place.
+    const next = autoCenter({ width: bitmap.width, height: bitmap.height }, spec, face)
+    lastAutoFrame.current = next
     setFrame(next)
-  }, [bitmap, spec, face, detecting, frame, setFrame])
+  }, [bitmap, spec, face, frame, setFrame])
 
   /* -------------------------------------------------------------- */
   /* 3. Recompute compliance whenever frame or face changes         */

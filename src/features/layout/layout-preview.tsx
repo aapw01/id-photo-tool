@@ -42,6 +42,30 @@ import { useLayoutStore } from './store'
 const PREVIEW_MAX_CSS_PX = 800
 const PREVIEW_DPI = 150
 
+/**
+ * Pick the right source + background pair for the per-cell export.
+ *
+ * Before the mask arrives we tile the *original* bitmap with the
+ * background pinned to transparent; once segmentation lands we switch
+ * to the cut-out foreground composed onto the user's chosen colour.
+ * Extracted so the contract is easy to unit-test (see
+ * `layout-preview.test.ts`).
+ */
+export function pickCellSource(
+  bitmap: ImageBitmap,
+  foreground: ImageBitmap | null,
+  bg: BgColor,
+): {
+  source: ImageBitmap
+  bg: BgColor
+  format: 'png-flat' | 'png-alpha'
+} {
+  if (foreground) {
+    return { source: foreground, bg, format: 'png-flat' }
+  }
+  return { source: bitmap, bg: { kind: 'transparent' }, format: 'png-alpha' }
+}
+
 interface LayoutPreviewProps {
   bitmap: ImageBitmap
   mask: ImageData | null
@@ -74,20 +98,25 @@ export function LayoutPreview({
   // 1. Prepare a per-spec cell image whenever the cropped foreground
   // or active spec changes. Keyed by photoSpecId so the renderer can
   // look them up cheaply.
+  //
+  // When `mask` hasn't arrived yet (segmentation is still warming up
+  // or failed) we fall back to the raw bitmap — the user sees their
+  // actual photo tiled across the paper instead of grey placeholders.
+  // The previous behaviour painted nothing until segmentation finished;
+  // that was indistinguishable from a broken render when the WebGPU
+  // backend stalled or the model fetch was slow.
   useEffect(() => {
     let cancelled = false
     const work = async () => {
       await null
       if (cancelled) return
-      if (!mask) {
-        setCellImages(new Map())
-        return
-      }
-      const fg = await extractForeground(bitmap, mask)
+
+      const foreground: ImageBitmap | null = mask ? await extractForeground(bitmap, mask) : null
       if (cancelled) {
-        fg.close?.()
+        foreground?.close?.()
         return
       }
+      const { source, bg: effectiveBg, format } = pickCellSource(bitmap, foreground, bg)
 
       const uniqueSpecIds = new Set<string>(template.items.map((it) => it.photoSpecId))
       const map = new Map<string, HTMLCanvasElement>()
@@ -101,9 +130,9 @@ export function LayoutPreview({
             : centerCrop({ width: bitmap.width, height: bitmap.height }, aspectRatio(spec))
         try {
           const result = await exportSingle({
-            foreground: fg,
-            bg,
-            format: 'png-flat',
+            foreground: source,
+            bg: effectiveBg,
+            format,
             targetPixels: pickTargetPixels(spec),
             frame,
           })
@@ -122,7 +151,7 @@ export function LayoutPreview({
           // Skip this spec — placeholder will render in its place.
         }
       }
-      fg.close?.()
+      foreground?.close?.()
       if (cancelled) return
       setCellImages(map)
     }

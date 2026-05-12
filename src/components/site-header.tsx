@@ -1,10 +1,9 @@
 import { useTranslations } from 'next-intl'
-import { ArrowUpRight, Wand2 } from 'lucide-react'
+import { Wand2 } from 'lucide-react'
 
 import { Link } from '@/i18n/navigation'
 import { Logo } from '@/components/logo'
 import { LanguageSwitcher } from '@/components/language-switcher'
-import { GitHubIcon } from '@/components/brand-icons'
 import { SiteMobileNav } from '@/components/site-mobile-nav'
 
 export function SiteHeader() {
@@ -44,16 +43,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <a
-            href="https://github.com/pixfit/pixfit"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden h-9 items-center gap-1 rounded-[var(--radius-md)] px-3 text-sm text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)] md:inline-flex"
-          >
-            <GitHubIcon className="size-4" />
-            <span className="hidden lg:inline">{t('github')}</span>
-            <ArrowUpRight className="size-3 opacity-60 lg:hidden" aria-hidden="true" />
-          </a>
           <LanguageSwitcher />
           <Link
             href="/studio"

@@ -16,7 +16,6 @@
     "paper": "相紙",
     "templates": "排版模板",
     "docs": "文件",
-    "github": "GitHub",
     "menu": {
       "open": "開啟導覽",
       "close": "關閉導覽",
@@ -76,8 +75,7 @@
     }
   },
   "LanguageSwitcher": {
-    "label": "切換語言",
-    "current": "當前語言"
+    "label": "切換語言"
   },
   "Studio": {
     "title": "工作台",

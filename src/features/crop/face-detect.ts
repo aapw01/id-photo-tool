@@ -10,6 +10,8 @@
  *
  * Errors are classified into:
  *   - `model-fetch`  failure to download WASM or tflite
+ *   - `timeout`      model download took longer than DEFAULT_TIMEOUT_MS,
+ *                    typically a network issue (China-side CDN flaky)
  *   - `runtime`      crash during `.detect()`
  *   - `no-face`      detector ran but found nothing of confidence
  */
@@ -20,7 +22,7 @@ import type { FaceDetection } from '@/types/spec'
 
 import { getFaceDetector } from './mediapipe-loader'
 
-export type FaceDetectErrorKind = 'model-fetch' | 'runtime' | 'no-face' | 'unknown'
+export type FaceDetectErrorKind = 'model-fetch' | 'timeout' | 'runtime' | 'no-face' | 'unknown'
 
 export class FaceDetectError extends Error {
   readonly kind: FaceDetectErrorKind
@@ -32,11 +34,38 @@ export class FaceDetectError extends Error {
 }
 
 /**
+ * Default cap for end-to-end face detection. We hit the wider net of
+ * WASM (~2 MB) + tflite (~230 KB) downloads on first call; anything
+ * beyond 10s strongly suggests the CDN is unreachable, and we'd
+ * rather let users fall back to centred-crop than stare at a spinner.
+ */
+export const DEFAULT_TIMEOUT_MS = 10_000
+
+export interface DetectFaceOptions {
+  /** Override the abort timeout in milliseconds. Pass `0` to disable. */
+  timeoutMs?: number
+}
+
+/**
  * Detect the most prominent face in `bitmap`. Returns `null` when the
  * detector ran successfully but did not find a face — callers should
  * treat that as "fall back to centred-crop", not as an error.
+ *
+ * Throws `FaceDetectError('timeout')` when the work exceeds
+ * `opts.timeoutMs` (defaults to 10 s). Throws `model-fetch` when the
+ * loader rejected; `runtime` when the in-process detect crashed.
  */
-export async function detectFace(bitmap: ImageBitmap): Promise<FaceDetection | null> {
+export async function detectFace(
+  bitmap: ImageBitmap,
+  opts: DetectFaceOptions = {},
+): Promise<FaceDetection | null> {
+  const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS
+  const work = doDetect(bitmap)
+  if (timeoutMs <= 0) return work
+  return withTimeout(work, timeoutMs)
+}
+
+async function doDetect(bitmap: ImageBitmap): Promise<FaceDetection | null> {
   let detector: FaceDetector
   try {
     detector = await getFaceDetector()
@@ -87,4 +116,28 @@ export async function detectFace(bitmap: ImageBitmap): Promise<FaceDetection | n
 function stringifyError(err: unknown): string {
   if (err instanceof Error) return err.message
   return String(err)
+}
+
+/**
+ * Race `promise` against a timer. Resolves with the promise's value
+ * when it wins, otherwise throws `FaceDetectError('timeout')`. The
+ * original promise keeps running — MediaPipe doesn't expose a cancel
+ * hook — but we discard its result.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new FaceDetectError('timeout', `face detection timed out after ${ms} ms`))
+    }, ms)
+    promise.then(
+      (value) => {
+        clearTimeout(timer)
+        resolve(value)
+      },
+      (err) => {
+        clearTimeout(timer)
+        reject(err)
+      },
+    )
+  })
 }

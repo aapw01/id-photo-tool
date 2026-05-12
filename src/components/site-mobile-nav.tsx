@@ -13,7 +13,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { GitHubIcon } from '@/components/brand-icons'
 
 const NAV_KEYS = ['studio', 'sizes', 'paper', 'templates'] as const
 
@@ -66,18 +65,6 @@ export function SiteMobileNav() {
               })}
             </ul>
           </nav>
-
-          <div className="mt-6 border-t border-[var(--color-border)] pt-4">
-            <a
-              href="https://github.com/pixfit/pixfit"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm text-[var(--color-text-mute)] hover:text-[var(--color-text)]"
-            >
-              <GitHubIcon className="size-4" />
-              <span>{t('github')}</span>
-            </a>
-          </div>
         </SheetBody>
       </SheetContent>
     </Sheet>
