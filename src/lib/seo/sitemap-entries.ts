@@ -16,14 +16,19 @@ interface RouteSpec {
   priority: number
 }
 
-/** Routes that should be indexed across every locale. */
+/**
+ * Routes that should be indexed across every locale.
+ *
+ * `/specs` is intentionally absent: the tool is no-login and uses an
+ * inline custom-size form in the studio, so the spec manager is a
+ * power-user side path we'd rather not promote via sitemap.
+ */
 export const SITEMAP_ROUTES: RouteSpec[] = [
   { path: '/', changeFrequency: 'weekly', priority: 1 },
   { path: '/studio', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/sizes', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/paper', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/templates', changeFrequency: 'monthly', priority: 0.7 },
-  { path: '/specs', changeFrequency: 'monthly', priority: 0.6 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
 ]

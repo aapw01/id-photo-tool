@@ -20,9 +20,9 @@
  * change.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Copy, Download, Smartphone, Sparkles } from 'lucide-react'
+import { Copy, Download, Loader2, Smartphone, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -48,6 +48,11 @@ interface ExportPanelProps {
 
 const FORMATS: ExportFormat[] = ['png-alpha', 'png-flat', 'jpg', 'webp']
 
+/** Long-side cap (in pixels) for the size-estimate preview canvas. */
+const ESTIMATE_LONGSIDE_PX = 1280
+/** Tail-debounce window for the file-size estimate effect. */
+const ESTIMATE_DEBOUNCE_MS = 400
+
 export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportPanelProps) {
   const t = useTranslations('Export')
 
@@ -66,6 +71,16 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     jpg: null,
     webp: null,
   })
+  // Tracks whether an export is in flight so the button reflects busy
+  // status — large bitmaps can take a couple of seconds and a silent
+  // click looks broken.
+  const [downloading, setDownloading] = useState<boolean>(false)
+  const [copying, setCopying] = useState<boolean>(false)
+  // Set of in-flight object URLs we have to revoke later. Revoking
+  // immediately after `.click()` races the browser's download fetch on
+  // Safari; we wait 30s then clean up. The ref also lets the unmount
+  // effect tidy any URLs that outlived the component.
+  const pendingUrls = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     let cancelled = false
@@ -149,54 +164,97 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     return { width: bitmap.width, height: bitmap.height }
   }, [spec, frame, bitmap])
 
-  // Estimate file sizes for every format using whichever source we have.
+  // Estimate file sizes for the *currently selected* format only (plus
+  // its alpha cousin when a cut-out is available). Estimating all four
+  // formats simultaneously — as we used to — runs four full Lanczos
+  // passes on every quality-slider tick / mask change, which on a 20MP
+  // photo starves the click handler that triggers the actual download.
+  //
+  // The estimate is a hint, not an exact byte count, so we also run it
+  // on a downscaled preview canvas (long side ≤ 1280px). The reported
+  // size is scaled back up by the pixel-area ratio. Off-by-30% is fine
+  // for "is this going to be 50KB or 5MB".
+  //
+  // Tail-debounced by 400ms so dragging the quality slider doesn't
+  // hammer the encoder on every tick.
   useEffect(() => {
     let cancelled = false
-    const work = async () => {
-      await null
-      if (cancelled) return
-      if (!exportSource) {
+    if (!exportSource) {
+      // React 19: defer the setState past the synchronous effect body.
+      void (async () => {
+        await null
+        if (cancelled) return
         setEstimates({ 'png-alpha': null, 'png-flat': null, jpg: null, webp: null })
-        return
+      })()
+      return () => {
+        cancelled = true
       }
-      const next: Record<ExportFormat, number | null> = {
-        'png-alpha': null,
-        'png-flat': null,
-        jpg: null,
-        webp: null,
-      }
-      await Promise.all(
-        FORMATS.map(async (f) => {
-          // png-alpha needs a real cut-out to preserve transparency. If
-          // the user hasn't cut out the subject yet, skip the estimate
-          // and let the UI grey out the option.
+    }
+
+    const handle = setTimeout(() => {
+      void (async () => {
+        if (cancelled) return
+
+        // Pick the at-most-two formats we'll estimate this pass.
+        const wanted: ExportFormat[] = [format]
+        if (foreground) {
+          if (format === 'png-flat') wanted.push('png-alpha')
+          else if (format === 'png-alpha') wanted.push('png-flat')
+        }
+
+        // Build a downscaled preview source so encoding is bounded by
+        // ~1280² pixels regardless of the user's input bitmap.
+        const longest = Math.max(targetPixels.width, targetPixels.height)
+        const scale = longest > ESTIMATE_LONGSIDE_PX ? ESTIMATE_LONGSIDE_PX / longest : 1
+        const previewW = Math.max(1, Math.round(targetPixels.width * scale))
+        const previewH = Math.max(1, Math.round(targetPixels.height * scale))
+        const previewFrame = frame
+          ? {
+              x: frame.x,
+              y: frame.y,
+              w: frame.w,
+              h: frame.h,
+            }
+          : null
+        // Reported bytes ≈ measured bytes × (target_area / preview_area).
+        const sizeMultiplier = scale === 1 ? 1 : 1 / (scale * scale)
+
+        const next: Record<ExportFormat, number | null> = {
+          'png-alpha': null,
+          'png-flat': null,
+          jpg: null,
+          webp: null,
+        }
+        for (const f of wanted) {
           if (f === 'png-alpha' && !foreground) {
             next[f] = null
-            return
+            continue
           }
           try {
             const result = await exportSingle({
               foreground: exportSource,
               bg,
               format: f,
-              targetPixels,
-              frame: frame ?? null,
+              targetPixels: { width: previewW, height: previewH },
+              frame: previewFrame,
               quality: f === 'jpg' || f === 'webp' ? quality : undefined,
             })
-            next[f] = result.blob.size
+            if (cancelled) return
+            next[f] = Math.round(result.blob.size * sizeMultiplier)
           } catch {
             next[f] = null
           }
-        }),
-      )
-      if (cancelled) return
-      setEstimates(next)
-    }
-    void work()
+        }
+        if (cancelled) return
+        setEstimates(next)
+      })()
+    }, ESTIMATE_DEBOUNCE_MS)
+
     return () => {
       cancelled = true
+      clearTimeout(handle)
     }
-  }, [exportSource, foreground, bg, targetPixels, frame, quality])
+  }, [exportSource, foreground, bg, targetPixels, frame, quality, format])
 
   // Filename preview: layout/single/compressed swap based on toggle.
   const filename = useMemo(() => {
@@ -225,6 +283,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
 
   const onDownload = useCallback(async () => {
     if (!exportSource) return
+    setDownloading(true)
     try {
       let blob: Blob
       if (compress && supportsCompress) {
@@ -251,15 +310,25 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         blob = result.blob
       }
 
+      const url = URL.createObjectURL(blob)
+      pendingUrls.current.add(url)
       const a = document.createElement('a')
-      a.href = URL.createObjectURL(blob)
+      a.href = url
       a.download = filename
       document.body.appendChild(a)
       a.click()
       a.remove()
-      URL.revokeObjectURL(a.href)
+      // Safari can race the revoke against the download fetch when we
+      // revoke synchronously after click. Wait long enough for any
+      // browser to have started its download stream.
+      setTimeout(() => {
+        URL.revokeObjectURL(url)
+        pendingUrls.current.delete(url)
+      }, 30_000)
     } catch {
       toast.error(t('downloadFailed'))
+    } finally {
+      setDownloading(false)
     }
   }, [
     exportSource,
@@ -277,6 +346,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
 
   const onCopy = useCallback(async () => {
     if (!exportSource) return
+    setCopying(true)
     try {
       const result = await exportSingle({
         foreground: exportSource,
@@ -293,13 +363,26 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       toast.success(t('copied'))
     } catch {
       toast.error(t('copyFailed'))
+    } finally {
+      setCopying(false)
     }
   }, [exportSource, foreground, bg, targetPixels, frame, t])
+
+  // Tidy any object URLs that are still hanging around at unmount —
+  // the 30s deferred-revoke timer might still be pending.
+  useEffect(() => {
+    const urls = pendingUrls.current
+    return () => {
+      for (const url of urls) URL.revokeObjectURL(url)
+      urls.clear()
+    }
+  }, [])
 
   // png-alpha only makes sense with a real cut-out; everything else
   // works with either the cut-out or the raw bitmap.
   const formatNeedsMask = format === 'png-alpha'
-  const blocked = disabled || !exportSource || (formatNeedsMask && !foreground)
+  const busy = downloading || copying
+  const blocked = disabled || !exportSource || (formatNeedsMask && !foreground) || busy
 
   return (
     <section className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -450,18 +533,28 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
           onClick={() => void onDownload()}
           disabled={blocked}
           style={{ touchAction: 'manipulation' }}
+          aria-busy={downloading}
         >
-          <Download className="size-4" aria-hidden />
-          {t('actions.download')}
+          {downloading ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <Download className="size-4" aria-hidden />
+          )}
+          {downloading ? t('actions.downloading') : t('actions.download')}
         </Button>
         <Button
           variant="ghost"
           onClick={() => void onCopy()}
           disabled={blocked}
           style={{ touchAction: 'manipulation' }}
+          aria-busy={copying}
         >
-          <Copy className="size-4" aria-hidden />
-          {t('actions.copy')}
+          {copying ? (
+            <Loader2 className="size-4 animate-spin" aria-hidden />
+          ) : (
+            <Copy className="size-4" aria-hidden />
+          )}
+          {copying ? t('actions.copying') : t('actions.copy')}
         </Button>
       </div>
 

@@ -40,6 +40,31 @@ interface StudioPreviewProps {
 const CHECKERBOARD_CLASS =
   'bg-[image:linear-gradient(45deg,var(--color-divider)_25%,transparent_25%),linear-gradient(-45deg,var(--color-divider)_25%,transparent_25%),linear-gradient(45deg,transparent_75%,var(--color-divider)_75%),linear-gradient(-45deg,transparent_75%,var(--color-divider)_75%)] bg-[length:24px_24px] bg-[position:0_0,0_12px,12px_-12px,-12px_0px]'
 
+/**
+ * Downscale an `ImageData` mask to fit a target width / height. Used
+ * exclusively by the preview path so a full-resolution segmentation
+ * mask can be paired with a preview-sized bitmap without re-running
+ * inference. Native `drawImage` is plenty for an 8-bit alpha matte.
+ */
+async function resizeMask(mask: ImageData, w: number, h: number): Promise<ImageData> {
+  const srcCanvas = document.createElement('canvas')
+  srcCanvas.width = mask.width
+  srcCanvas.height = mask.height
+  const srcCtx = srcCanvas.getContext('2d')
+  if (!srcCtx) return mask
+  srcCtx.putImageData(mask, 0, 0)
+
+  const dstCanvas = document.createElement('canvas')
+  dstCanvas.width = w
+  dstCanvas.height = h
+  const dstCtx = dstCanvas.getContext('2d')
+  if (!dstCtx) return mask
+  dstCtx.imageSmoothingEnabled = true
+  dstCtx.imageSmoothingQuality = 'high'
+  dstCtx.drawImage(srcCanvas, 0, 0, w, h)
+  return dstCtx.getImageData(0, 0, w, h)
+}
+
 export function StudioPreview({
   bitmap,
   mask,
@@ -66,7 +91,19 @@ export function StudioPreview({
         })
         return
       }
-      const fg = await extractForeground(bitmap, mask)
+      // The bitmap prop may be a downscaled `previewBitmap` (see
+      // studio/store) while the mask is sized to the full-res source.
+      // Resize the mask to match so `extractForeground` can pair the
+      // alpha matte pixel-for-pixel with the displayed bitmap. The
+      // mask is only used by the preview here — the export and layout
+      // pipelines always pair the full bitmap with the full mask, so
+      // output fidelity is unaffected.
+      const fittedMask =
+        mask.width === bitmap.width && mask.height === bitmap.height
+          ? mask
+          : await resizeMask(mask, bitmap.width, bitmap.height)
+      if (cancelled) return
+      const fg = await extractForeground(bitmap, fittedMask)
       if (cancelled) {
         fg.close?.()
         return

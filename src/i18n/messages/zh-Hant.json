@@ -116,7 +116,12 @@
     "subtitle": "選擇規格後會自動依比例裁切並置中頭部",
     "search": "搜尋規格（如 美國簽證、申根、二吋）",
     "noMatches": "沒有符合的規格",
-    "customSection": "自訂",
+    "customSection": "自訂尺寸",
+    "customW": "寬度 (mm)",
+    "customH": "高度 (mm)",
+    "customDpi": "DPI",
+    "customApply": "套用為目前尺寸",
+    "customNamePrefix": "自訂",
     "manageCustom": "管理自訂尺寸",
     "createCustom": "新增自訂尺寸",
     "categories": {
@@ -201,7 +206,9 @@
     "filenamePreview": "檔名",
     "actions": {
       "download": "下載",
-      "copy": "複製到剪貼簿"
+      "downloading": "正在匯出…",
+      "copy": "複製到剪貼簿",
+      "copying": "正在複製…"
     },
     "hint": {
       "alpha": "支援 alpha 通道的格式會保留透明背景",

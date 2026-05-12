@@ -55,6 +55,7 @@ export function StudioWorkspace() {
 
   const file = useStudioStore((s) => s.file)
   const bitmap = useStudioStore((s) => s.bitmap)
+  const previewBitmap = useStudioStore((s) => s.previewBitmap)
   const mask = useStudioStore((s) => s.mask)
   const lastInference = useStudioStore((s) => s.lastInference)
   const setMask = useStudioStore((s) => s.setMask)
@@ -260,7 +261,10 @@ export function StudioWorkspace() {
           />
         ) : (
           <StudioPreview
-            bitmap={bitmap}
+            // Preview uses the downscaled bitmap so drags / tab swaps
+            // don't redraw 20MP every frame. ExportPanel & LayoutPanel
+            // still get the full-res bitmap for final quality output.
+            bitmap={previewBitmap ?? bitmap}
             mask={mask}
             bg={bg}
             showCompare={showCompare}

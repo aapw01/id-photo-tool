@@ -116,7 +116,12 @@
     "subtitle": "选择规格后自动按比例裁剪并居中头部",
     "search": "搜索规格 (如 美国签证、申根、二寸)",
     "noMatches": "没有匹配的规格",
-    "customSection": "自定义",
+    "customSection": "自定义尺寸",
+    "customW": "宽度 (mm)",
+    "customH": "高度 (mm)",
+    "customDpi": "DPI",
+    "customApply": "应用为当前尺寸",
+    "customNamePrefix": "自定义",
     "manageCustom": "管理自定义尺寸",
     "createCustom": "新建自定义尺寸",
     "categories": {
@@ -201,7 +206,9 @@
     "filenamePreview": "文件名",
     "actions": {
       "download": "下载",
-      "copy": "复制到剪贴板"
+      "downloading": "正在导出…",
+      "copy": "复制到剪贴板",
+      "copying": "正在复制…"
     },
     "hint": {
       "alpha": "支持 alpha 通道的格式将保留透明背景",

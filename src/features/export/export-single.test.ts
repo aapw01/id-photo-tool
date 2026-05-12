@@ -152,6 +152,25 @@ describe('exportSingle', () => {
     expect(spy).toHaveBeenCalledWith(expect.any(Function), 'image/webp', 0.85)
   })
 
+  it('skips the resampler when target dims match source and no frame is set', async () => {
+    // Native 20MP-style scenario: target == source dims, no frame. The
+    // fast path should still produce a non-empty PNG blob; we don't
+    // assert that Pica was untouched (that's an internal optimisation),
+    // but the call must succeed quickly without resampling.
+    const source = makeSource()
+    const r = await exportSingle({
+      foreground: source,
+      bg: { kind: 'transparent' },
+      format: 'png-alpha',
+      targetPixels: { width: source.width, height: source.height },
+    })
+    expect(r.blob).toBeInstanceOf(Blob)
+    expect(r.blob.size).toBeGreaterThan(0)
+    expect(r.width).toBe(source.width)
+    expect(r.height).toBe(source.height)
+    expect(r.mimeType).toBe('image/png')
+  })
+
   it('overrides the default quality when the caller passes one', async () => {
     const source = makeSource()
     const spy = vi.spyOn(HTMLCanvasElement.prototype, 'toBlob')

@@ -3,10 +3,7 @@ import { useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
 import { Logo } from '@/components/logo'
 
-const PRODUCT_LINKS = [
-  { href: '/studio', key: 'studio' },
-  { href: '/specs', key: 'specs' },
-] as const
+const PRODUCT_LINKS = [{ href: '/studio', key: 'studio' }] as const
 
 const BROWSE_LINKS = [
   { href: '/sizes', key: 'sizes' },

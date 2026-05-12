@@ -8,33 +8,32 @@
  *      auxiliary fields (region code, alias).
  *   2. Category chips — horizontal scroll; "All" + the 5 builtin
  *      categories. Tapping a chip narrows the visible list.
- *   3. Custom specs section — user-defined specs persisted via the
- *      spec-manager store. Rendered above the built-ins when present;
- *      hidden on first paint until the store has rehydrated from
- *      localStorage (avoids SSR / hydration mismatch).
+ *   3. Custom-size inline form — a width / height / DPI quick form. The
+ *      Apply button builds an *ephemeral* PhotoSpec and pipes it into
+ *      the crop store; no persistence so the no-login tool stays
+ *      single-page. Replaces the previous "/specs" detour that broke
+ *      the in-studio flow.
  *   4. Built-in spec list — flag + name + size subtitle; the active
  *      one gets an emerald ring and a tick.
  *   5. Selected-spec info card — physical & pixel size, recommended
  *      background, file rules if any.
- *   6. Custom-spec management entry — links to /specs.
- *   7. Bottom CTA — "Export now" jumps the Studio to the Export tab.
+ *   6. Bottom CTA — "Export now" jumps the Studio to the Export tab.
  *
- * The picker is purely declarative: it reads `useCropStore()` and
- * `useSpecManagerStore()` and calls `setSpec` / route changes. Coupling
- * to face detection / auto-center lives up in StudioWorkspace.
+ * The picker is purely declarative: it reads `useCropStore()` and calls
+ * `setSpec` / route changes. Coupling to face detection / auto-center
+ * lives up in StudioWorkspace.
  */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
-import { Check, Download, Plus, Search, Settings2 } from 'lucide-react'
+import { Check, Download, Search } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { RegionFlag } from '@/components/region-flag'
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
-import { useSpecManagerStore } from '@/features/spec-manager/store'
 import { useStudioTabStore } from '@/features/studio/studio-tab-store'
-import { Link } from '@/i18n/navigation'
 import { localizeText } from '@/lib/i18n-text'
 import { derivePixels } from '@/lib/spec-units'
 import { cn } from '@/lib/utils'
@@ -46,6 +45,13 @@ type Filter = 'all' | PhotoCategory
 
 const FILTERS: readonly Filter[] = ['all', 'cn-id', 'cn-paper', 'travel-permit', 'visa', 'exam']
 
+const CUSTOM_W_DEFAULT_MM = 35
+const CUSTOM_H_DEFAULT_MM = 49
+const CUSTOM_DPIS = [200, 300, 600] as const
+const CUSTOM_DPI_DEFAULT = 300
+const CUSTOM_MM_MIN = 10
+const CUSTOM_MM_MAX = 200
+
 export function SpecPicker() {
   const t = useTranslations('Crop')
   const tCat = useTranslations('Crop.categories')
@@ -55,47 +61,14 @@ export function SpecPicker() {
   const activeSpec = useCropStore((s) => s.spec)
   const setSpec = useCropStore((s) => s.setSpec)
 
-  // Pull custom specs from the persisted spec-manager store. We
-  // rehydrate from localStorage on mount the same way SpecManagerShell
-  // does, and hide the custom section until hydrated to avoid SSR
-  // mismatch. Built-in specs are always available so the picker is
-  // usable on the first paint.
-  const hydrated = useSpecManagerStore((s) => s.hydrated)
-  const rehydrate = useSpecManagerStore((s) => s.rehydrate)
-  const customSpecs = useSpecManagerStore((s) => s.customPhotoSpecs)
-
-  useEffect(() => {
-    let cancelled = false
-    void (async () => {
-      await null
-      if (cancelled) return
-      if (!hydrated) rehydrate()
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [hydrated, rehydrate])
-
   const setTab = useStudioTabStore((s) => s.setTab)
 
   const [filter, setFilter] = useState<Filter>('all')
   const [query, setQuery] = useState('')
 
-  // Custom user specs are kept separate so we can render a labelled
-  // section above the built-ins. They go through the same filter +
-  // search as the built-ins for consistency.
-  const visibleCustom = useMemo(() => {
-    if (!hydrated) return [] as PhotoSpec[]
-    const q = query.trim().toLowerCase()
-    return customSpecs.filter((s) => {
-      if (filter !== 'all' && s.category !== filter) return false
-      if (!q) return true
-      const hay = [s.name.zh, s.name['zh-Hant'], s.name.en, s.id, s.region ?? '']
-        .join(' ')
-        .toLowerCase()
-      return hay.includes(q)
-    })
-  }, [customSpecs, filter, query, hydrated])
+  const [customW, setCustomW] = useState<number>(CUSTOM_W_DEFAULT_MM)
+  const [customH, setCustomH] = useState<number>(CUSTOM_H_DEFAULT_MM)
+  const [customDpi, setCustomDpi] = useState<number>(CUSTOM_DPI_DEFAULT)
 
   const visibleBuiltin = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -109,7 +82,34 @@ export function SpecPicker() {
     })
   }, [filter, query])
 
-  const noMatches = visibleBuiltin.length === 0 && visibleCustom.length === 0
+  const customValid =
+    Number.isFinite(customW) &&
+    Number.isFinite(customH) &&
+    customW >= CUSTOM_MM_MIN &&
+    customW <= CUSTOM_MM_MAX &&
+    customH >= CUSTOM_MM_MIN &&
+    customH <= CUSTOM_MM_MAX
+
+  const applyCustom = () => {
+    if (!customValid) return
+    const w = Math.round(customW)
+    const h = Math.round(customH)
+    const prefix = t('customNamePrefix')
+    const customSpec: PhotoSpec = {
+      id: `custom-${Date.now()}`,
+      builtin: false,
+      category: 'custom',
+      name: {
+        zh: `${prefix} ${w}×${h}`,
+        'zh-Hant': `${prefix} ${w}×${h}`,
+        en: `${prefix} ${w}×${h}`,
+      },
+      width_mm: w,
+      height_mm: h,
+      dpi: customDpi,
+    }
+    setSpec(customSpec)
+  }
 
   return (
     <section className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -149,64 +149,88 @@ export function SpecPicker() {
         ))}
       </div>
 
+      {/* Inline custom-size form — replaces the previous /specs detour. */}
+      <div className="space-y-2 rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-divider)] p-3">
+        <p className="text-xs font-medium text-[var(--color-text)]">{t('customSection')}</p>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="space-y-1">
+            <Label htmlFor="custom-w" className="text-xs text-[var(--color-text-mute)]">
+              {t('customW')}
+            </Label>
+            <Input
+              id="custom-w"
+              type="number"
+              min={CUSTOM_MM_MIN}
+              max={CUSTOM_MM_MAX}
+              step={1}
+              value={customW}
+              onChange={(e) => setCustomW(Number(e.target.value) || 0)}
+              className="h-8 font-mono text-xs"
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="custom-h" className="text-xs text-[var(--color-text-mute)]">
+              {t('customH')}
+            </Label>
+            <Input
+              id="custom-h"
+              type="number"
+              min={CUSTOM_MM_MIN}
+              max={CUSTOM_MM_MAX}
+              step={1}
+              value={customH}
+              onChange={(e) => setCustomH(Number(e.target.value) || 0)}
+              className="h-8 font-mono text-xs"
+            />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="custom-dpi" className="text-xs text-[var(--color-text-mute)]">
+            {t('customDpi')}
+          </Label>
+          <select
+            id="custom-dpi"
+            value={customDpi}
+            onChange={(e) => setCustomDpi(Number(e.target.value))}
+            className="h-8 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 font-mono text-xs text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none"
+          >
+            {CUSTOM_DPIS.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Button
+          size="sm"
+          className="w-full"
+          onClick={applyCustom}
+          disabled={!customValid}
+          style={{ touchAction: 'manipulation' }}
+        >
+          {t('customApply')}
+        </Button>
+      </div>
+
       <ul className="max-h-[420px] space-y-1 overflow-y-auto">
-        {noMatches ? (
+        {visibleBuiltin.length === 0 ? (
           <li className="p-3 text-center text-sm text-[var(--color-text-weak)]">
             {t('noMatches')}
           </li>
         ) : (
-          <>
-            {visibleCustom.length > 0 ? (
-              <li className="px-2 pt-1 pb-1 text-[10px] font-medium tracking-wider text-[var(--color-text-weak)] uppercase">
-                {t('customSection')}
-              </li>
-            ) : null}
-            {visibleCustom.map((spec) => (
-              <SpecRow
-                key={spec.id}
-                spec={spec}
-                isActive={activeSpec?.id === spec.id}
-                onSelect={setSpec}
-                locale={locale}
-              />
-            ))}
-            {visibleBuiltin.map((spec) => (
-              <SpecRow
-                key={spec.id}
-                spec={spec}
-                isActive={activeSpec?.id === spec.id}
-                onSelect={setSpec}
-                locale={locale}
-              />
-            ))}
-          </>
+          visibleBuiltin.map((spec) => (
+            <SpecRow
+              key={spec.id}
+              spec={spec}
+              isActive={activeSpec?.id === spec.id}
+              onSelect={setSpec}
+              locale={locale}
+            />
+          ))
         )}
       </ul>
 
       {activeSpec ? <ActiveSpecCard spec={activeSpec} /> : null}
-
-      <div className="flex flex-col gap-2 border-t border-[var(--color-border)] pt-3">
-        <Link
-          href="/specs"
-          className={cn(
-            'inline-flex items-center justify-center gap-2 rounded-md border border-[var(--color-border)] bg-transparent px-3 py-2 text-xs text-[var(--color-text)] transition-colors',
-            'hover:bg-[var(--color-divider)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
-          )}
-        >
-          <Settings2 className="size-3.5" aria-hidden />
-          {t('manageCustom')}
-        </Link>
-        <Link
-          href="/specs"
-          className={cn(
-            'inline-flex items-center justify-center gap-2 rounded-md border border-dashed border-[var(--color-border)] bg-transparent px-3 py-2 text-xs text-[var(--color-text)] transition-colors',
-            'hover:bg-[var(--color-divider)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
-          )}
-        >
-          <Plus className="size-3.5" aria-hidden />
-          {t('createCustom')}
-        </Link>
-      </div>
 
       <Button variant="default" className="w-full" onClick={() => setTab('export')}>
         <Download className="size-4" aria-hidden />

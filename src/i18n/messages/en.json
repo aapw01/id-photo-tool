@@ -116,7 +116,12 @@
     "subtitle": "Pick a spec to lock the aspect ratio and auto-center the head.",
     "search": "Search specs (US visa, Schengen, 2-inch…)",
     "noMatches": "No specs match your search",
-    "customSection": "Custom",
+    "customSection": "Custom size",
+    "customW": "Width (mm)",
+    "customH": "Height (mm)",
+    "customDpi": "DPI",
+    "customApply": "Use this size",
+    "customNamePrefix": "Custom",
     "manageCustom": "Manage custom sizes",
     "createCustom": "Create a custom size",
     "categories": {
@@ -201,7 +206,9 @@
     "filenamePreview": "Filename",
     "actions": {
       "download": "Download",
-      "copy": "Copy to clipboard"
+      "downloading": "Preparing…",
+      "copy": "Copy to clipboard",
+      "copying": "Copying…"
     },
     "hint": {
       "alpha": "Alpha-capable formats keep the transparent background intact.",

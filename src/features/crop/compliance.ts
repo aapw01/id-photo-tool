@@ -9,7 +9,11 @@
  *   head-too-large      head height ratio > spec's upper bound (×1.05 grace)
  *   eye-too-high        eye Y / frame H < spec's lower bound
  *   eye-too-low         eye Y / frame H > spec's upper bound
- *   face-not-found      face was null (no detection); shown as info, not error
+ *   face-not-found      kept on the type union so the banner switch
+ *                       stays exhaustive; we deliberately never emit
+ *                       it — the friendly "Auto-centred" Info banner
+ *                       replaces the persistent yellow warning when
+ *                       no face is detected.
  *
  * `severity: 'error'` should block export; `'warn'` is shown as a soft
  * banner.
@@ -33,9 +37,9 @@ export interface ComplianceWarning {
 export interface ComplianceResult {
   warnings: ComplianceWarning[]
   /** Head height divided by frame height, or null when no face. */
-  headRatio: number | null
+  headRatio: null | number
   /** Eye line distance from frame top, normalised, or null when no face. */
-  eyeFromTop: number | null
+  eyeFromTop: null | number
 }
 
 const HEAD_GRACE = 0.05 // ±5% — beyond this, surface a warning
@@ -47,8 +51,12 @@ export function checkCompliance(
   spec: PhotoSpec,
 ): ComplianceResult {
   if (!face) {
+    // Don't emit `face-not-found`: it nags the user with a yellow
+    // warning every time detection failed (CDN unreachable, photo
+    // without a person, ...). The friendly "Auto-centred" Info banner
+    // already covers this case.
     return {
-      warnings: [{ code: 'face-not-found', severity: 'warn' }],
+      warnings: [],
       headRatio: null,
       eyeFromTop: null,
     }

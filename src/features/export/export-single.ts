@@ -56,12 +56,23 @@ export async function exportSingle(opts: ExportOptions): Promise<ExportResult> {
   // and hand that to Pica so the Lanczos kernel has all the original
   // signal to work with. Skipping the crop when no frame is provided
   // keeps a single-resample fast path.
-  const cropSource = frame ? cropAtNativeResolution(foreground, frame) : foreground
-  const fgCanvas = await resample({
-    source: cropSource,
-    targetWidth: width,
-    targetHeight: height,
-  })
+  //
+  // Fast-path: when no crop is requested and the target dimensions
+  // already match the source, there's no signal Pica can recover —
+  // running its Lanczos kernel on a 20MP photo would burn seconds for
+  // a perceptually identical result. Bypass `resample()` entirely and
+  // promote the source to an HTMLCanvasElement so `flattenIfNeeded`
+  // can stamp the background on top.
+  const sourceWidth = (foreground as { width: number }).width
+  const sourceHeight = (foreground as { height: number }).height
+  const skipResample = !frame && width === sourceWidth && height === sourceHeight
+  const fgCanvas = skipResample
+    ? toHtmlCanvas(foreground)
+    : await resample({
+        source: frame ? cropAtNativeResolution(foreground, frame) : foreground,
+        targetWidth: width,
+        targetHeight: height,
+      })
 
   // Step 2 — flatten onto a bg colour when the format demands it.
   const flat = flattenIfNeeded(fgCanvas, opts.bg, format)
@@ -106,6 +117,29 @@ function pickQuality(format: ExportFormat, override?: number): number | undefine
  * with the full pixel signal. Output is a DOM canvas because Pica's
  * input contract expects HTMLCanvasElement / ImageBitmap.
  */
+/**
+ * Promote an `ImageBitmap` / `OffscreenCanvas` / `HTMLCanvasElement`
+ * to a DOM canvas with a single draw. Used by the resample-skip fast
+ * path so `flattenIfNeeded` can stamp a background on top without
+ * pulling Pica into the call chain.
+ */
+function toHtmlCanvas(
+  source: ImageBitmap | HTMLCanvasElement | OffscreenCanvas,
+): HTMLCanvasElement {
+  if (typeof HTMLCanvasElement !== 'undefined' && source instanceof HTMLCanvasElement) {
+    return source
+  }
+  const w = Math.max(1, (source as { width: number }).width)
+  const h = Math.max(1, (source as { height: number }).height)
+  const c = document.createElement('canvas')
+  c.width = w
+  c.height = h
+  const ctx = c.getContext('2d')
+  if (!ctx) return c
+  ctx.drawImage(source as unknown as CanvasImageSource, 0, 0)
+  return c
+}
+
 function cropAtNativeResolution(
   source: ImageBitmap | HTMLCanvasElement | OffscreenCanvas,
   frame: NonNullable<ExportOptions['frame']>,

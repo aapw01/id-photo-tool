@@ -29,10 +29,15 @@ function face(opts: {
 }
 
 describe('checkCompliance', () => {
-  it('face-not-found when face is null', () => {
+  it('no warning when face detection failed', () => {
+    // The yellow `face-not-found` banner used to nag every time
+    // detection failed (CDN unreachable, photo without a person). The
+    // friendly "Auto-centred" Info banner replaces it; compliance now
+    // returns an empty warning list when `face === null`.
     const res = checkCompliance({ x: 0, y: 0, w: 100, h: 100 }, null, cnInch)
-    expect(res.warnings.map((w) => w.code)).toEqual(['face-not-found'])
+    expect(res.warnings).toHaveLength(0)
     expect(res.headRatio).toBeNull()
+    expect(res.eyeFromTop).toBeNull()
   })
 
   it('autoCenter output passes compliance for the same spec', () => {
