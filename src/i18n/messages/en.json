@@ -58,6 +58,23 @@
     "label": "Change language",
     "current": "Current language"
   },
+  "Studio": {
+    "title": "Studio",
+    "subtitle": "Upload a portrait to cut out, recolor the background, crop, and lay out.",
+    "empty": {
+      "title": "No photo yet",
+      "subtitle": "Upload a portrait to get started"
+    },
+    "actions": {
+      "replace": "Replace photo",
+      "downloadPng": "Download transparent PNG",
+      "retry": "Run again"
+    },
+    "stats": {
+      "size": "{w} × {h}",
+      "inference": "{backend} · {ms} ms"
+    }
+  },
   "Segmentation": {
     "states": {
       "idle": "Ready",

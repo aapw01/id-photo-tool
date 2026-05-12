@@ -58,6 +58,23 @@
     "label": "切換語言",
     "current": "當前語言"
   },
+  "Studio": {
+    "title": "工作台",
+    "subtitle": "上傳一張人像照片，開始去背、換底色、裁切與排版",
+    "empty": {
+      "title": "尚未選擇照片",
+      "subtitle": "上傳一張人像以開始"
+    },
+    "actions": {
+      "replace": "換一張照片",
+      "downloadPng": "下載透明 PNG",
+      "retry": "重新去背"
+    },
+    "stats": {
+      "size": "{w} × {h}",
+      "inference": "{backend} · {ms} ms"
+    }
+  },
   "Segmentation": {
     "states": {
       "idle": "準備就緒",

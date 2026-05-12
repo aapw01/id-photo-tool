@@ -87,6 +87,10 @@
   - [x] T12 SegmentationClient + useSegmentation hook + 引用计数 — 2026-05-12
   - [x] T13 桌面 idleCallback prewarm + CTA hover trigger — 2026-05-12
   - [x] T14 Toaster + SegmentationFeedback 浮动条 — 2026-05-12
+- [x] 组 D · Studio 路由（T15–T17）— 2026-05-12
+  - [x] T15 /studio 三语 SSR + 工作台 shell — 2026-05-12
+  - [x] T16 zustand 跨页面 store + UploadDropzone 自动跳转 — 2026-05-12
+  - [x] T17 Mask 预览（destination-in 合成）+ 透明 PNG 导出 — 2026-05-12
 - [ ] 组 C · React 集成（T12–T14）
 - [ ] 组 D · Studio 路由（T15–T17）
 - [ ] 组 E · 验证（T18–T20）

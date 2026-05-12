@@ -58,6 +58,23 @@
     "label": "切换语言",
     "current": "当前语言"
   },
+  "Studio": {
+    "title": "工作台",
+    "subtitle": "上传一张人像照片，开始抠图、换底色、裁剪与排版",
+    "empty": {
+      "title": "还没有照片",
+      "subtitle": "上传一张人像以开始"
+    },
+    "actions": {
+      "replace": "换一张照片",
+      "downloadPng": "下载透明 PNG",
+      "retry": "重新抠图"
+    },
+    "stats": {
+      "size": "{w} × {h}",
+      "inference": "{backend} · {ms} ms"
+    }
+  },
   "Segmentation": {
     "states": {
       "idle": "准备就绪",

@@ -5,20 +5,28 @@ import { Upload } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { cn } from '@/lib/utils'
+import { useRouter } from '@/i18n/navigation'
+import { useStudioStore } from '@/features/studio/store'
 
 interface UploadDropzoneProps {
-  /** Receives the selected file. T19 is UI-only; wiring to the studio comes in M2. */
+  /**
+   * Optional custom handler. If omitted, the dropzone stages the file
+   * into the Studio store and navigates to `/studio` — the default
+   * behaviour wired in M2-T16.
+   */
   onSelect?: (file: File) => void
   accept?: string
   className?: string
 }
 
 /**
- * Visual-only upload dropzone for the M1 landing page.
+ * Upload dropzone shared between the landing page and the studio.
  *
- * - Drag enter / leave / drop are tracked locally and reflected via classes.
- * - File selection is forwarded via `onSelect`, but no upload happens — this
- *   is intentionally inert until M2 wires it to the Studio state machine.
+ * - Drag enter / leave / drop are reflected locally via classes.
+ * - When no custom `onSelect` is provided, the picked file is staged
+ *   into the Studio store and the user is routed to /studio. This
+ *   keeps the landing page as the canonical entry point while still
+ *   letting Studio reuse the same component (with a custom handler).
  */
 export function UploadDropzone({
   onSelect,
@@ -28,14 +36,32 @@ export function UploadDropzone({
   const t = useTranslations('Home.uploadDropzone')
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
+  const setFile = useStudioStore((s) => s.setFile)
+
+  const handleFile = useCallback(
+    async (file: File) => {
+      if (onSelect) {
+        onSelect(file)
+        return
+      }
+      try {
+        await setFile(file)
+        router.push('/studio')
+      } catch {
+        // Decode failure surfaces in the studio toast; here we just stay put.
+      }
+    },
+    [onSelect, router, setFile],
+  )
 
   const onFiles = useCallback(
     (files: FileList | null) => {
       const file = files?.[0]
       if (!file) return
-      onSelect?.(file)
+      void handleFile(file)
     },
-    [onSelect],
+    [handleFile],
   )
 
   return (
