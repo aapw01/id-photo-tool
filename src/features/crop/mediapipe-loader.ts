@@ -20,6 +20,8 @@
 
 import type { FaceDetector } from '@mediapipe/tasks-vision'
 
+import { silenceMediaPipeBootNoise } from './silence-mediapipe-noise'
+
 // Keep these in sync with package.json. We could read from
 // `package.json` at build time, but Next 16 strips that JSON during
 // edge compilation, so hard-coding is simpler and less error-prone.
@@ -58,6 +60,11 @@ async function loadModule(): Promise<TasksVisionModule> {
  */
 export async function getFaceDetector(): Promise<FaceDetector> {
   if (detectorPromise) return detectorPromise
+
+  // Wasm boot logs fire on the next `detect()` call; install the
+  // console filter before that happens so dev-terminal noise stays
+  // out of the user's stack-trace surface.
+  silenceMediaPipeBootNoise()
 
   detectorPromise = (async () => {
     const { FaceDetector: Cls, FilesetResolver } = await loadModule()

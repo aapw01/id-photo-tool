@@ -51,13 +51,13 @@ let ortPromise: Promise<OrtModule> | null = null
 function loadOrt(): Promise<OrtModule> {
   if (!ortPromise) {
     ortPromise = // The dynamic import path is a literal string; bundlers split it
-    // into its own chunk. Cast through unknown to satisfy our local
-    // structural type.
-    (import('onnxruntime-web/webgpu') as Promise<unknown>).then((mod) => {
-      const ort = mod as OrtModule
-      ort.env.wasm.wasmPaths = ORT_BASE_URL
-      return ort
-    })
+      // into its own chunk. Cast through unknown to satisfy our local
+      // structural type.
+      (import('onnxruntime-web/webgpu') as Promise<unknown>).then((mod) => {
+        const ort = mod as OrtModule
+        ort.env.wasm.wasmPaths = ORT_BASE_URL
+        return ort
+      })
   }
   return ortPromise
 }
@@ -147,7 +147,7 @@ class OrtSession implements SegmentSession {
       throw new Error('OrtSession: model does not expose input/output names')
     }
 
-    const { tensor, shape, origWidth, origHeight, crop } = await preprocessBitmap(
+    const { tensor, shape, origWidth, origHeight, layout } = await preprocessBitmap(
       bitmap,
       MODEL_SIZE,
     )
@@ -163,7 +163,7 @@ class OrtSession implements SegmentSession {
       throw new Error(`OrtSession: expected Float32 output, got ${outputData.constructor.name}`)
     }
 
-    const image = postprocessMask(outputData, origWidth, origHeight, crop, MODEL_SIZE)
+    const image = postprocessMask(outputData, origWidth, origHeight, layout, MODEL_SIZE)
     return { data: image.data, width: image.width, height: image.height }
   }
 }

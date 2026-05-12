@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { computeCoverCrop, imageDataToTensor, MODEL_SIZE } from '@/features/segmentation/preprocess'
+import {
+  computeCoverCrop,
+  computeLetterbox,
+  imageDataToTensor,
+  MODEL_SIZE,
+} from '@/features/segmentation/preprocess'
 
 describe('computeCoverCrop', () => {
   it('returns the full source rect when aspect ratios match', () => {
@@ -31,6 +36,40 @@ describe('computeCoverCrop', () => {
   it('throws on non-positive dimensions', () => {
     expect(() => computeCoverCrop(0, 100, 10, 10)).toThrow(RangeError)
     expect(() => computeCoverCrop(100, 100, -5, 10)).toThrow(RangeError)
+  })
+})
+
+describe('computeLetterbox', () => {
+  it('returns full-canvas layout when aspect ratios match', () => {
+    const l = computeLetterbox(512, 512, 256, 256)
+    expect(l).toEqual({ dx: 0, dy: 0, dw: 256, dh: 256, scale: 0.5 })
+  })
+
+  it('centres a portrait source vertically and adds horizontal padding bands', () => {
+    // 709×945 (the user-reported failure case) into 512×512 model:
+    // scale = 512/945 ≈ 0.542, dw ≈ 385, dh = 512, dx ≈ 64, dy = 0.
+    const l = computeLetterbox(709, 945, 512, 512)
+    expect(l.scale).toBeCloseTo(512 / 945, 4)
+    expect(l.dh).toBe(512)
+    expect(l.dy).toBe(0)
+    expect(l.dw).toBeLessThan(512)
+    expect(l.dx).toBeGreaterThan(0)
+    // No source row is outside the canvas — the whole portrait is reachable.
+    expect(l.dy + l.dh).toBe(512)
+  })
+
+  it('centres a landscape source horizontally and adds vertical padding bands', () => {
+    const l = computeLetterbox(1200, 600, 512, 512)
+    expect(l.scale).toBeCloseTo(512 / 1200, 4)
+    expect(l.dw).toBe(512)
+    expect(l.dx).toBe(0)
+    expect(l.dh).toBeLessThan(512)
+    expect(l.dy).toBeGreaterThan(0)
+  })
+
+  it('throws on non-positive dimensions', () => {
+    expect(() => computeLetterbox(0, 100, 10, 10)).toThrow(RangeError)
+    expect(() => computeLetterbox(100, 100, 10, -1)).toThrow(RangeError)
   })
 })
 

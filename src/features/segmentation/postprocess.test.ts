@@ -319,12 +319,12 @@ describe('decontaminateEdges', () => {
 })
 
 describe('postprocessMask end-to-end', () => {
-  it('runs a 4x4 float mask through to a 16x16 RGBA buffer', () => {
+  it('runs a 4x4 float mask through to a 16x16 RGBA buffer using a full-canvas layout', () => {
     const modelOut = new Float32Array(4 * 4).fill(0.5)
-    const out = postprocessMask(modelOut, 16, 16, { sx: 4, sy: 4, sw: 8, sh: 8 }, 4)
+    const out = postprocessMask(modelOut, 16, 16, { dx: 0, dy: 0, dw: 4, dh: 4, scale: 0.25 }, 4)
     expect(out.width).toBe(16)
     expect(out.height).toBe(16)
-    // Center pixel should be inside the crop and have alpha ≈ 128.
+    // Centre pixel should sit inside the resampled letterbox and read alpha ≈ 128.
     const idx = (8 * 16 + 8) * 4
     expect(out.data[idx + 3]).toBeGreaterThan(120)
     expect(out.data[idx + 3]).toBeLessThan(135)
@@ -332,7 +332,32 @@ describe('postprocessMask end-to-end', () => {
 
   it('rejects mismatched model output sizes', () => {
     expect(() =>
-      postprocessMask(new Float32Array(10), 16, 16, { sx: 0, sy: 0, sw: 16, sh: 16 }, 4),
+      postprocessMask(new Float32Array(10), 16, 16, { dx: 0, dy: 0, dw: 4, dh: 4, scale: 1 }, 4),
     ).toThrow(RangeError)
+  })
+
+  it('keeps every row of the source covered by mask — no cover-crop top/bottom drop', () => {
+    // Portrait source (6×10), letterboxed into a 4×4 model. The letterbox
+    // dw=2, dh=4, dx=1, dy=0. Fill the inner two columns with a vertical
+    // ramp so the resampled mask is well-defined; fill the padding band
+    // with 0 just like the preprocess step.
+    const modelW = 4
+    const modelH = 4
+    const mask = new Float32Array(modelW * modelH).fill(0)
+    for (let y = 0; y < modelH; y++) {
+      mask[y * modelW + 1] = (y + 1) / modelH
+      mask[y * modelW + 2] = (y + 1) / modelH
+    }
+    const out = postprocessMask(mask, 6, 10, { dx: 1, dy: 0, dw: 2, dh: 4, scale: 0.4 }, modelW)
+    expect(out.width).toBe(6)
+    expect(out.height).toBe(10)
+
+    // The very top row of the *source* must have a non-zero mask value
+    // somewhere across its width, proving the model output covers it.
+    let topRowMax = 0
+    for (let x = 0; x < 6; x++) {
+      topRowMax = Math.max(topRowMax, out.data[(0 * 6 + x) * 4 + 3]!)
+    }
+    expect(topRowMax).toBeGreaterThan(0)
   })
 })

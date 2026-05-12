@@ -11,7 +11,7 @@
  * worker's concern — see segment-core in T08/T09.
  */
 
-import type { CropWindow } from './preprocess'
+import type { CropWindow, Letterbox } from './preprocess'
 
 /**
  * Convert MODNet's raw float output to uint8 alpha values. Values are
@@ -331,7 +331,7 @@ export function postprocessMask(
   modelOutput: Float32Array,
   origWidth: number,
   origHeight: number,
-  crop: CropWindow,
+  layout: Letterbox,
   modelSize: number,
 ): { data: Uint8ClampedArray; width: number; height: number } {
   if (modelOutput.length !== modelSize * modelSize) {
@@ -341,5 +341,62 @@ export function postprocessMask(
   }
   const uint8 = maskFloatToUint8(modelOutput)
   const refined = refineAlpha(uint8)
-  return composeMaskIntoOriginal(refined, modelSize, modelSize, origWidth, origHeight, crop)
+  return composeMaskFromLetterbox(refined, modelSize, modelSize, origWidth, origHeight, layout)
+}
+
+/**
+ * Crop the model output to the letterbox inner region, resample it
+ * back to the source's full resolution, and pack into an RGBA buffer.
+ *
+ * Because the preprocess step scaled the *entire* source into the
+ * letterbox, every source pixel maps to a real model-output sample —
+ * no rows are dropped, and there is no longer a horizontal cut-off at
+ * the edges of a cover-crop window.
+ */
+export function composeMaskFromLetterbox(
+  mask: Uint8Array,
+  modelW: number,
+  modelH: number,
+  origW: number,
+  origH: number,
+  layout: Letterbox,
+): { data: Uint8ClampedArray; width: number; height: number } {
+  if (modelW <= 0 || modelH <= 0 || origW <= 0 || origH <= 0) {
+    throw new RangeError('composeMaskFromLetterbox: dimensions must be positive')
+  }
+  if (mask.length < modelW * modelH) {
+    throw new RangeError(
+      `composeMaskFromLetterbox: mask length ${mask.length} too short for ${modelW}×${modelH}`,
+    )
+  }
+  const dx0 = Math.max(0, Math.min(modelW, Math.round(layout.dx)))
+  const dy0 = Math.max(0, Math.min(modelH, Math.round(layout.dy)))
+  const dx1 = Math.max(dx0, Math.min(modelW, Math.round(layout.dx + layout.dw)))
+  const dy1 = Math.max(dy0, Math.min(modelH, Math.round(layout.dy + layout.dh)))
+  const innerW = dx1 - dx0
+  const innerH = dy1 - dy0
+
+  const data = new Uint8ClampedArray(origW * origH * 4)
+  if (innerW <= 0 || innerH <= 0) {
+    return { data, width: origW, height: origH }
+  }
+
+  const inner = new Uint8Array(innerW * innerH)
+  for (let y = 0; y < innerH; y++) {
+    const srcRow = (dy0 + y) * modelW + dx0
+    const dstRow = y * innerW
+    for (let x = 0; x < innerW; x++) {
+      inner[dstRow + x] = mask[srcRow + x]!
+    }
+  }
+
+  const placed = bilinearResize(inner, innerW, innerH, origW, origH)
+  for (let i = 0; i < origW * origH; i++) {
+    const base = i * 4
+    data[base + 0] = 255
+    data[base + 1] = 255
+    data[base + 2] = 255
+    data[base + 3] = placed[i]!
+  }
+  return { data, width: origW, height: origH }
 }
