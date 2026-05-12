@@ -142,20 +142,77 @@
   },
   "Export": {
     "title": "Export",
-    "subtitle": "Download the current photo. More formats arrive with the layout module.",
+    "subtitle": "Pick a format, dial in the quality, and download.",
+    "format": {
+      "label": "Format",
+      "png-alpha": "PNG · transparent",
+      "png-flat": "PNG · with background",
+      "jpg": "JPG",
+      "webp": "WebP"
+    },
+    "quality": "Encoder quality",
+    "qualityLockedByCompress": "Quality is set automatically while compressing to a target size.",
+    "compressToKB": "Compress to target size",
+    "compressUnsupported": "Compression only applies to JPG / WebP.",
+    "kbHint": "We binary-search quality and downscale if necessary to land in ±5% of the target.",
+    "compressMiss": "Closest result was {kb} KB — try a larger target or downscale further.",
+    "downloadFailed": "Couldn't produce the file — try a different format.",
+    "filenamePreview": "Filename",
     "actions": {
-      "png": "Download PNG",
-      "jpg": "Download JPG",
+      "download": "Download",
       "copy": "Copy to clipboard"
     },
     "hint": {
-      "png": "PNG preserves the current background; transparent stays transparent.",
-      "jpg": "JPG doesn't support transparency — transparent areas become white.",
-      "copy": "Paste directly into chat apps or documents."
+      "alpha": "Alpha-capable formats keep the transparent background intact.",
+      "flat": "Flat formats bake the current background colour into the export."
     },
     "copied": "Copied to clipboard",
     "copyFailed": "Copy failed — try downloading instead",
     "size": "≈{kb} KB"
+  },
+  "Paper": {
+    "title": "Paper",
+    "subtitle": "Pick the print paper your photos will tile onto."
+  },
+  "Layout": {
+    "templates": {
+      "title": "Layout",
+      "subtitle": "Pick a builtin arrangement compatible with the chosen paper.",
+      "empty": "No builtin layouts fit this paper yet — drop into mixed mode below.",
+      "totalCount": "{count} photos"
+    },
+    "mix": {
+      "title": "Mixed photos",
+      "subtitle": "Override the template with your own count per spec.",
+      "customName": "Custom mix",
+      "add": "Add row",
+      "remove": "Remove {name}",
+      "decrease": "Fewer of this spec",
+      "increase": "More of this spec",
+      "selectSpec": "Pick a photo spec"
+    },
+    "settings": {
+      "title": "Layout settings",
+      "subtitle": "Margins, gaps, separators and crop marks.",
+      "margin": "Margin",
+      "gap": "Gap between photos",
+      "showSeparator": "Show separators",
+      "showCutGuides": "Show cut marks",
+      "backgroundColor": "Paper background"
+    },
+    "preview": {
+      "canvasLabel": "Layout preview",
+      "overflow": "Some photos didn't fit: {list}. Try a larger paper or thinner gaps."
+    },
+    "actions": {
+      "title": "Download",
+      "subtitle": "PNG keeps it raster; PDF stays vector for print shops.",
+      "png": "Download PNG",
+      "pdf": "Download PDF",
+      "preparing": "Preparing…",
+      "downloadFailed": "Couldn't produce the layout — try a smaller paper or fewer photos.",
+      "filenamePreview": "Filename"
+    }
   },
   "Segmentation": {
     "states": {

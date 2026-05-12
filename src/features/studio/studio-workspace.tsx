@@ -33,6 +33,7 @@ import { Guidelines } from '@/features/crop/guidelines'
 import { SpecPicker } from '@/features/crop/spec-picker'
 import { useCropStore } from '@/features/crop/spec-store'
 import { useCropFlow } from '@/features/crop/use-crop-flow'
+import { LayoutPanel, LayoutPreview } from '@/features/layout'
 import { SegmentationFeedback } from '@/features/segmentation/segmentation-feedback'
 import { useSegmentation } from '@/features/segmentation/use-segmentation'
 
@@ -135,13 +136,23 @@ export function StudioWorkspace() {
       {tab === 'size' ? <ComplianceBanner /> : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-        <StudioPreview
-          bitmap={bitmap}
-          mask={mask}
-          bg={bg}
-          showCompare={showCompare}
-          overlay={cropOverlay}
-        />
+        {tab === 'layout' ? (
+          <LayoutPreview
+            bitmap={bitmap}
+            mask={mask}
+            bg={bg}
+            activeCropSpec={cropSpec ?? null}
+            activeCropFrame={cropFrame ?? null}
+          />
+        ) : (
+          <StudioPreview
+            bitmap={bitmap}
+            mask={mask}
+            bg={bg}
+            showCompare={showCompare}
+            overlay={cropOverlay}
+          />
+        )}
 
         <aside className="space-y-4">
           <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -180,6 +191,15 @@ export function StudioWorkspace() {
             <BackgroundPanel showCompare={showCompare} onToggleCompare={setShowCompare} />
           ) : null}
           {tab === 'size' ? <SpecPicker /> : null}
+          {tab === 'layout' ? (
+            <LayoutPanel
+              bitmap={bitmap}
+              mask={mask}
+              bg={bg}
+              activeCropSpec={cropSpec ?? null}
+              activeCropFrame={cropFrame ?? null}
+            />
+          ) : null}
           {tab === 'export' ? (
             <ExportPanel
               bitmap={bitmap}

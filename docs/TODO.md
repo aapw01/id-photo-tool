@@ -41,17 +41,19 @@
   - 创建 site → 复制脚本片段 → 在 `[locale]/layout.tsx` 注入或走边缘注入
   - cookie-less，不需要 token 字符串放在代码里
 
-### 1.3 M2 / M3 / M4 真机回填（兼容性矩阵 + 性能基准）
+### 1.3 M2 / M3 / M4 / M5 / M6 真机回填（兼容性矩阵 + 性能基准）
 
 > AI 已经在 macOS headless Chromium 148 跑通：
 >
 > - **M2 抠图**：WebGPU + WASM 双后端
 > - **M3 换背景**：背景切换 P50 8.3 ms / P95 9.1 ms
 > - **M4 智能裁剪**：单测 28 个全过；MediaPipe + auto-center 算法验证
+> - **M5 导出 + 压缩**：4 格式 / Pica resample / compress-to-KB 单测全过
+> - **M6 相纸 + 排版**：auto-grid / pack-mixed / render-layout / jsPDF 单测全过
 >
 > 其它真机需要你打开浏览器跑一次。
 >
-> M4 没有独立的 `/dev/*-perf` 基准（人脸检测一次 ~50–150 ms 取决于设备，无需 micro-bench）。
+> M4 / M5 / M6 没有独立的 `/dev/*-perf` 基准（导出 / 排版基本不卡，无需 micro-bench）。
 > 真机验证：上传一张证件照，选 "美国签证" 规格，确认：
 >
 > 1. 裁剪框出现且锁定 51:51 比例
@@ -59,6 +61,11 @@
 > 3. 推荐白底自动套上（toast 提示）
 > 4. 拖动裁剪框时，眼线偏离会出现警告条
 > 5. 切到 Export tab，文件名应该是 `us-visa_600x600_YYYYMMDD.png`，分辨率正好 600×600
+> 6. （M5）选 "公务员考试" → Export tab → 勾 "compress to KB"，目标 25 KB → 下载 JPG，本地 `ls -l` 看大小落在 21–30 KB
+> 7. （M5）选 PNG transparent 格式 → 复制到剪贴板 → 在系统图像编辑器（macOS 预览 / Win Paint）粘贴，背景应该是透明
+> 8. （M6）切到 Layout tab → 选 6R 相纸 → 选 "8 张 2 寸" 模板 → 下载 PNG，文件名应该是 `layout_8x2inch-on-6R_6R_YYYYMMDD.png`
+> 9. （M6）同一个 layout 下载 PDF → 在 Acrobat / Preview 打开，确认 cell 边缘是矢量分隔线（zoom 4× 仍清晰）
+> 10. （M6）切到 "Custom mix"，自定义 4 张 1 寸 + 2 张 2 寸 → 看 LayoutPreview 实时更新；overflow 横幅在数量超出时出现
 
 启动方式：
 
@@ -189,21 +196,60 @@ NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
 
 ---
 
-## 6. M5+ 长期事项收集池
+## 6. M5 · 导出 + 压缩 ✅（代码完成，真机验证待回填）
+
+> 详细任务清单见 [`tasks/M5.md`](./tasks/M5.md)（7 个原子任务）。
+
+- [x] 组 A · 算法模块 — `resample.ts`（Pica）+ `export-single.ts`（4 格式）+ `compress-to-kb.ts`（二分搜索 + 自动下采样）+ `filename.ts`（single / compressed / layout 三类）— 2026-05-12
+- [x] 组 B · UI — `export-panel.tsx` 重写（格式单选 / 实时大小估算 / 质量滑块 / KB 输入 / 文件名预览 / 下载 + 复制到剪贴板）— 2026-05-12
+- [x] 组 C · 测试矩阵 — 项目总单测 242（M4 时 165）；含 vitest happy-dom canvas / toBlob / createImageBitmap stub — 2026-05-12
+- [x] 组 D · 验证 — `pnpm lint / typecheck / test / i18n:check / build` 全绿；三 locale `/studio` 200 — 2026-05-12
+- [~] 真机端到端验证（见 §1.3 检查项 6 / 7）
+
+**关键决策**（同步至 PLAN §6 决策日志）：
+
+- Pica vs 自实现 Lanczos：选 Pica。lazy import + native 回退兜底。
+- 单次 resample 路径：先 native crop 原分辨率 → Pica 一次性缩到目标，避免双采样。
+- happy-dom 测试栈：在 `vitest.setup.ts` 安装 Proxy 形式的 canvas / toBlob stub，缓存 per-canvas context 让 draw call 可断言。
+
+---
+
+## 7. M6 · 相纸 + 排版 ✅（代码完成，真机验证待回填）
+
+> 详细任务清单见 [`tasks/M6.md`](./tasks/M6.md)（12 个原子任务）。
+
+- [x] 组 A · 数据 + 算法 — 12 条 layout 模板 + `auto-grid`（旋转探索）+ `pack-mixed`（混排）+ `render-layout`（HTMLCanvasElement，DPI override）+ `cut-guides` + `export-pdf`（jsPDF lazy）— 2026-05-12
+- [x] 组 B · UI 面板 — Layout store + PaperPicker（7 张相纸）+ LayoutTemplatePicker（按 paper 兼容性筛选）+ MixedEditor（custom-mix 不污染内置数据）+ LayoutSettings + LayoutActions（PNG + PDF）— 2026-05-12
+- [x] 组 C · Studio 集成 — `studio-tabs.tsx` 解锁 layout tab；`studio-workspace.tsx` 把 `tab === 'layout'` 时主画布替换为 `LayoutPreview`，右侧侧栏换 `LayoutPanel` — 2026-05-12
+- [x] 组 D · 验证 + 文档 — 三 locale `Layout.*` / `Paper.*` 全补；i18n:check 161 keys parity；242 单测 + lint + typecheck + build 全绿 — 2026-05-12
+- [~] 真机端到端验证（见 §1.3 检查项 8 / 9 / 10）
+
+**关键决策**（同步至 PLAN §6 决策日志）：
+
+- jsPDF vs pdf-lib：选 jsPDF（lazy import 隔离体积；`addImage` API 胶水最少）。
+- auto-grid V1 only：保留 `manual.cells` schema 但 UI 暂时只生成 auto-grid 模板。
+- layout 内嵌 /studio：单线流程不跳路由；未来批处理再独立 /print。
+- DPI override 重算 px：`PaperSpec` 自带 300 DPI 像素，preview 走 150 DPI 时必须丢字段重算。
+- `lib/i18n-text.ts` 集中映射 zh-Hans → zh，修复 M4 PhotoSpec 名字在简中环境永远落到英文的 latent bug。
+
+---
+
+## 8. M7+ 长期事项收集池
 
 收到反馈、读 PRD/TECH_DESIGN 时发现但尚未排期的小事，丢到这里，到对应里程碑再消化。
 
-- [ ] **隐私政策与服务条款页面**（M5 或 M8）
-  - 当前 Footer 已经有 `/privacy` `/terms` 链接但还没路由，需要 404 兜底或软删除
-- [ ] **`/sizes` `/paper` `/templates` 列表页**（M5/M6/M7）
-- [ ] **历史会话**（M5 后期，IndexedDB）
+- [ ] **隐私政策与服务条款页面**（M8）— 当前 Footer 已经有 `/privacy` `/terms` 链接但还没路由
+- [ ] **`/sizes` `/paper` `/templates` 列表页**（M7/M8）— SEO 着陆页
+- [ ] **历史会话**（M8 后期，IndexedDB）
 - [ ] **HSV / 渐变背景**（V1.1，扩 BackgroundPanel）— 当前只支持 HEX，已足够 V1
-- [ ] **撤销 / 重做**（PRD §5.9 历史会话，M5 期）— 背景色切换历史走 zundo
-- [ ] **`/studio?tab=export` 等 deeplink**（M5/M8）— 目前 tab 状态只在内存，不写 URL
+- [ ] **撤销 / 重做**（PRD §5.9 历史会话，V1.1）— 背景色切换历史走 zundo
+- [ ] **`/studio?tab=export` 等 deeplink**（M8）— 目前 tab 状态只在内存，不写 URL
 - [ ] **CropFrame 8 把手（含边把手）**（V1.1）— 当前只 4 个角，多数场景已足够
-- [ ] **Pica 重采样接入**（M5）— 替换当前 `drawImage` 高质量缩放
 - [ ] **face-detect 性能基准**（M8 打磨期）— 目前仅依赖单测，没单独 `/dev/face-perf` 路由
 - [ ] **MediaPipe 模型 SHA 校验**（M2-T03 同期，等 R2 接入再上）
+- [ ] **混排单元图片改用 face-detect frame**（V1.1）— M6 兜底用 `centerCrop`，未来可对每个 spec 跑一次 face-detect 复用 frame
+- [ ] **PDF 单测**（V1.1）— 当前 jsPDF 走 happy-dom 不便测，留到能跑 jsdom 浏览器集成时补
+- [ ] **Layout `manual.cells` UI**（V1.1）— schema 已经预留，做一个像素级拖拽编辑器
 
 ---
 

@@ -142,20 +142,77 @@
   },
   "Export": {
     "title": "导出",
-    "subtitle": "单张照片可直接下载，更多格式将随排版功能上线",
+    "subtitle": "选择格式、调整压缩参数后下载",
+    "format": {
+      "label": "格式",
+      "png-alpha": "PNG · 透明背景",
+      "png-flat": "PNG · 实底背景",
+      "jpg": "JPG",
+      "webp": "WebP"
+    },
+    "quality": "编码质量",
+    "qualityLockedByCompress": "压缩到指定大小时质量由算法自动选择",
+    "compressToKB": "压缩到指定 KB",
+    "compressUnsupported": "压缩仅对 JPG / WebP 有效",
+    "kbHint": "二分搜索质量并按需缩小像素，命中目标 ±5% 区间",
+    "compressMiss": "最接近的结果为 {kb} KB，可尝试增大目标或继续缩小像素",
+    "downloadFailed": "未能生成文件，请尝试其他格式",
+    "filenamePreview": "文件名",
     "actions": {
-      "png": "下载 PNG",
-      "jpg": "下载 JPG",
+      "download": "下载",
       "copy": "复制到剪贴板"
     },
     "hint": {
-      "png": "PNG 会保留当前背景，透明背景将保留 alpha 通道",
-      "jpg": "JPG 不支持透明，将以白色填充透明区域",
-      "copy": "复制后可直接粘贴到聊天工具或文档"
+      "alpha": "支持 alpha 通道的格式将保留透明背景",
+      "flat": "实底格式会把当前背景色烘焙到导出图像中"
     },
     "copied": "已复制到剪贴板",
     "copyFailed": "复制失败，请尝试下载",
     "size": "约 {kb} KB"
+  },
+  "Paper": {
+    "title": "相纸",
+    "subtitle": "选择拼版输出的相纸规格。"
+  },
+  "Layout": {
+    "templates": {
+      "title": "拼版方案",
+      "subtitle": "选择与当前相纸匹配的内置拼版。",
+      "empty": "暂无适配此相纸的内置方案，请使用下方的混排编辑器。",
+      "totalCount": "共 {count} 张"
+    },
+    "mix": {
+      "title": "自定义混排",
+      "subtitle": "按需调整每个规格的份数。",
+      "customName": "自定义混排",
+      "add": "新增一行",
+      "remove": "移除 {name}",
+      "decrease": "减少数量",
+      "increase": "增加数量",
+      "selectSpec": "选择照片规格"
+    },
+    "settings": {
+      "title": "排版设置",
+      "subtitle": "调整边距、间距、分隔线与裁切标记。",
+      "margin": "页边距",
+      "gap": "照片间距",
+      "showSeparator": "显示分隔线",
+      "showCutGuides": "显示裁切标记",
+      "backgroundColor": "相纸底色"
+    },
+    "preview": {
+      "canvasLabel": "拼版预览",
+      "overflow": "下列照片未能放下：{list}。请换更大的相纸或减小间距。"
+    },
+    "actions": {
+      "title": "下载",
+      "subtitle": "PNG 为位图；PDF 保持矢量，便于送印。",
+      "png": "下载 PNG",
+      "pdf": "下载 PDF",
+      "preparing": "准备中…",
+      "downloadFailed": "无法生成排版，请尝试更换相纸或减少照片数量。",
+      "filenamePreview": "文件名"
+    }
   },
   "Segmentation": {
     "states": {

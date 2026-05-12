@@ -28,7 +28,7 @@ interface TabDef {
 const TABS: readonly TabDef[] = [
   { id: 'background', labelKey: 'background', available: true },
   { id: 'size', labelKey: 'size', available: true },
-  { id: 'layout', labelKey: 'layout', available: false },
+  { id: 'layout', labelKey: 'layout', available: true },
   { id: 'export', labelKey: 'export', available: true },
 ]
 

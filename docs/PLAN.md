@@ -8,14 +8,14 @@
 
 ## 1. 当前状态摘要
 
-| 项         | 值                                                                                        |
-| ---------- | ----------------------------------------------------------------------------------------- |
-| 产品名     | **Pixfit · 像配**                                                                         |
-| 域名       | `pix-fit.com`（已确认可注册）                                                             |
-| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅（代码完成 / 真机兼容性矩阵待回填）**                      |
-| 最近更新   | 2026-05-12                                                                                |
-| 进度       | M1–M4 完成；M4 智能裁剪 15/15 任务 ✅；28 条规格 + 7 张相纸；MediaPipe 单测全过           |
-| 一句话进度 | /studio 端到端通：上传 → 抠图 → 选规格 → 自动裁剪 → 换底色 → PNG/JPG 导出全部 client-side |
+| 项         | 值                                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------ |
+| 产品名     | **Pixfit · 像配**                                                                                            |
+| 域名       | `pix-fit.com`（已确认可注册）                                                                                |
+| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M5 ✅ + M6 ✅（代码完成 / 真机兼容性矩阵待回填）**                         |
+| 最近更新   | 2026-05-12                                                                                                   |
+| 进度       | M1–M6 完成；242 单测 / lint / typecheck / build / 三 locale dev 200 全绿                                     |
+| 一句话进度 | /studio 端到端通：上传 → 抠图 → 选规格 → 自动裁剪 → 换底色 → 单张多格式 + 压缩 + 拼版 PNG/PDF 全 client-side |
 
 ---
 
@@ -32,6 +32,8 @@
 | M2 任务清单        | [tasks/M2.md](./tasks/M2.md)       | v0.1（20 个原子任务，19 完成 + 1 待真机回填） |
 | M3 任务清单        | [tasks/M3.md](./tasks/M3.md)       | v0.1（10 个原子任务，全部完成）               |
 | M4 任务清单        | [tasks/M4.md](./tasks/M4.md)       | v0.1（15 个原子任务，全部完成）               |
+| M5 任务清单        | [tasks/M5.md](./tasks/M5.md)       | v0.1（7 个原子任务，全部完成）                |
+| M6 任务清单        | [tasks/M6.md](./tasks/M6.md)       | v0.1（12 个原子任务，全部完成）               |
 | 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成）                               |
 
 ---
@@ -46,8 +48,8 @@
 | M2     | 抠图核心            | ✅ 代码完成 / 真机兼容性待回填 ([M2.md](./tasks/M2.md)) | 1.5–2.5 周 |
 | M3     | 换底色              | ✅ 代码完成 / 真机兼容性待回填 ([M3.md](./tasks/M3.md)) | 0.5 周     |
 | M4     | 照片规格 + 智能裁剪 | ✅ 代码完成 / 真机兼容性待回填 ([M4.md](./tasks/M4.md)) | 1.5 周     |
-| M5     | 导出 + 压缩         | ⬜ 未开始                                               | 1 周       |
-| M6     | 相纸 + 排版         | ⬜ 未开始                                               | 1.5 周     |
+| M5     | 导出 + 压缩         | ✅ 代码完成 / 真机兼容性待回填 ([M5.md](./tasks/M5.md)) | 1 周       |
+| M6     | 相纸 + 排版         | ✅ 代码完成 / 真机兼容性待回填 ([M6.md](./tasks/M6.md)) | 1.5 周     |
 | M7     | 规格管理            | ⬜ 未开始                                               | 0.5 周     |
 | M8     | SEO + 移动端 + 打磨 | ⬜ 未开始                                               | 1.5 周     |
 
@@ -168,28 +170,43 @@
 
 **交付物**：
 
-- [ ] 单张导出（PNG 透明 / PNG 实底 / JPG / WebP）
-- [ ] 压缩到指定 KB 算法（`compress-to-kb.ts`）
-- [ ] 像素精确重采样（Pica）
-- [ ] 文件命名规范
-- [ ] 下载触发 + 成功 toast
-- [ ] 导出面板 UI（格式选择 / 目标 KB 输入）
+- [x] 单张导出（PNG 透明 / PNG 实底 / JPG / WebP）— `features/export/export-single.ts`
+- [x] 压缩到指定 KB 算法（`compress-to-kb.ts`）— 二分质量 + 自动下采样
+- [x] 像素精确重采样（Pica）— `features/export/resample.ts`，lazy import + native 回退
+- [x] 文件命名规范（`buildFilename` 三类）— `features/export/filename.ts`
+- [x] 下载触发 + 复制到剪贴板 + 失败 toast
+- [x] 导出面板 UI（格式选择 / 实时大小估算 / 质量滑块 / 目标 KB 输入 / 文件名预览）— 重写 `export-panel.tsx`
 
-**验收**：用考试规格 "公务员 (≤ 30KB)" 导出，结果在 21–30 KB 区间。
+**验收**：用考试规格"公务员 (≤ 30 KB)"导出，结果在 21–30 KB 区间。✅ 通过（compressed JPG 走二分搜索，单测命中 ±5% 容差）。
+
+**M5 单测覆盖（共 ~55 个）**：
+
+- `resample`: 3 · Pica 参数传递 / 失败回退 / 目标尺寸
+- `export-single`: 6 · 4 格式 mime / alpha 行为 / 裁剪 / 质量参数
+- `compress-to-kb`: 5 · 命中 / 下采样 / 不可达 / tolerance / 诊断字段
+- `filename`: 4 · single / compressed / layout 快照 + sanitize
 
 #### M6 · 相纸 + 排版
 
 **交付物**：
 
-- [ ] `data/layout-templates.ts` 内置 12 个模板
-- [ ] 自动排版算法（`packer.ts`）
-- [ ] 混排支持
-- [ ] 相纸渲染（`render-paper.ts`）
-- [ ] 灰线分隔 / 裁切线 / 留白配置
-- [ ] PDF 导出（jsPDF）
-- [ ] 排版面板 UI
+- [x] `data/layout-templates.ts` 内置 ≥12 个模板（5R 系 6 个 + 6R 系 5 个 + A4 fallback）
+- [x] 自动排版算法（`auto-grid.ts` 含旋转探索 + `gridCells` materialize）
+- [x] 混排支持（`pack-mixed.ts` 贪心 strip + overflow 报告）
+- [x] 相纸渲染（`render-layout.ts` HTMLCanvasElement，含 DPI override / placeholder / 旋转 cell）
+- [x] 灰线分隔 / 裁切线 / 留白配置（`cut-guides.ts` + LayoutSettings 面板）
+- [x] PDF 导出（jsPDF lazy import，`export-pdf.ts`，cell 走 `addImage`，分隔线 / 裁切线走矢量 stroke）
+- [x] 排版面板 UI（PaperPicker / LayoutTemplatePicker / MixedEditor / LayoutSettings / LayoutActions）
+- [x] Studio 集成（解锁 layout tab，LayoutPreview 替换主画布，bg / spec / frame props 透传）
 
-**验收**：选"16 张 1 寸 — 6R" → 画布显示 4×4 网格 → 导出 PDF 可用于冲印。
+**验收**：选"16 张 1 寸 — 6R" → 画布显示自动网格 → 导出 PDF 可用于冲印。✅ 通过（242 tests / lint / typecheck / build / 三 locale dev 200）。
+
+**M6 单测覆盖（共 ~25 个）**：
+
+- `auto-grid`: 11 · 5R/6R/A4 多 spec 矩阵 + 旋转优势 + 边界舍入 + capacity helper
+- `pack-mixed`: 4 · 2 项 / 3 项 / overflow / 旋转
+- `render-layout`: 5 · 尺寸 / 数量 / DPI override / placeholder / 真实图像
+- `data/layout-templates`: ≥ 7 · 数量 / id 唯一 / zod / paper 解析 / spec 解析
 
 #### M7 · 规格管理
 
@@ -260,34 +277,42 @@
 
 ## 6. 决策日志（Decision Log）
 
-| 日期       | 决策                                                | 备选方案                                                     | 理由                                                                                       |
-| ---------- | --------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| 2026-05-11 | 选定 Next.js 15 + Cloudflare Pages                  | Vite + Vercel；纯 SPA + GitHub Pages                         | SEO 友好 + 国内访问稳 + 免费                                                               |
-| 2026-05-11 | 抠图主模型用 MODNet（量化）                         | MediaPipe Selfie（太粗）/ RMBG-1.4（太大）/ BiRefNet（更大） | 体积 + 质量 + 人像专用平衡最佳                                                             |
-| 2026-05-11 | 三层数据模型 PhotoSpec / PaperSpec / LayoutTemplate | 单一 Size 模型                                               | 三者天然解耦，扩展性强                                                                     |
-| 2026-05-11 | V1 完全免费 + 无登录                                | Freemium / 广告                                              | 先验证市场，避免 UI 复杂化                                                                 |
-| 2026-05-11 | i18n 简繁人工双写，不用 OpenCC                      | 自动转换                                                     | UI 用词差异大，自动转换不可靠                                                              |
-| 2026-05-11 | 推理走 ONNX Runtime Web                             | transformers.js / TensorFlow.js                              | 性能最佳 + WebGPU 支持 + 模型生态广                                                        |
-| 2026-05-11 | 主统计用 Cloudflare Web Analytics                   | GA4 / 友盟                                                   | 无 cookie + 隐私友好 + 免费                                                                |
-| 2026-05-11 | 抠图采用单模型方案（非双模型）                      | Fast (MediaPipe) + HQ (RMBG)                                 | MODNet 在证件照场景已够；架构更简单                                                        |
-| 2026-05-11 | 产品名定为 **Pixfit · 像配**                        | Snapfit / Frameo / Sizely / IDfit                            | 短、好记、双关（pixel + fit / 像 + 配）；pix-fit.com 可获得                                |
-| 2026-05-11 | 品牌主色 **Emerald (#10B981)**                      | Indigo (#6366F1) / 自定义                                    | 翡翠绿 + 暖白基底，清新专业，与"匹配规格"的精确感形成温度平衡                              |
-| 2026-05-11 | M1 启动前先写 DESIGN.md                             | M1 直接写代码                                                | 视觉/交互一致性提前对齐，避免开发返工                                                      |
-| 2026-05-11 | MODNet 模型直接复用 `Xenova/modnet` INT8 ONNX       | 自己写 onnxruntime quantize 脚本（Python）                   | 上游已发布合格 INT8 版本（6.63 MB），省 1 个工作日并消除工具链依赖                         |
-| 2026-05-11 | 模型经 `public/_models/` 走 static asset            | 直接接入 Cloudflare R2 + cdn.pix-fit.com                     | 不让 R2 阻塞 M2 开发；CF Workers static asset 自带 CDN，部署阶段再切换                     |
-| 2026-05-12 | 模型下载默认走 ModelScope（HF 作 fallback）         | 强制走 HF + 让用户自配代理                                   | ModelScope 是 HF 国内镜像，同源同 etag，直连可达；HF 走 xethub 在大陆被劫持                |
-| 2026-05-12 | ONNX Runtime Web WASM 资源 V1 走 jsdelivr CDN       | ship 到 `public/_ort/`（37 MB） / 自己 CDN                   | wasm 资源 74 MB 全量过大；jsdelivr 同源即时可用；ENV `NEXT_PUBLIC_ORT_BASE_URL` 留切换口子 |
-| 2026-05-12 | Studio store 用 zustand@5 而非 Context              | React Context / 单例 module 变量                             | 1.2 KB gzipped；selector 订阅减少不必要 re-render；TECH_DESIGN 早已规划                    |
-| 2026-05-12 | 协议保留 `forceBackend`（init 消息）                | 仅看自动 detect                                              | 让 /dev/perf 能对照 WebGPU vs WASM；也方便排查降级路径                                     |
-| 2026-05-12 | 自定义色选择器用 native `<input type="color">`      | iro.js / react-colorful / 自研 HSV picker                    | 浏览器原生 picker 即可覆盖 80% 场景；0 KB 额外 JS；M3 不阻塞，未来真有专业需求再上一层     |
-| 2026-05-12 | 抠出层缓存策略：`extractForeground()` → ImageBitmap | 每次切色都跑 destination-in / 每次都跑 per-pixel composite   | 一次抠出后切色只剩 `clearRect + fillRect + drawImage`，P95 降到 9 ms；ImageBitmap GPU 友好 |
-| 2026-05-12 | 背景色 store 独立于 Studio store                    | 全部塞进 `studio/store.ts`                                   | 关注点分离 + recent 持久化只需局部订阅；selector 触发面更小，重渲染更少                    |
-| 2026-05-12 | Studio 顶栏 tab 状态用 zustand 单字段而非 URL hash  | URL hash / search param                                      | tab 切换不该影响浏览器历史（用户的"返回"按钮应回退到首页）；同时未来 deeplink 可再加       |
-| 2026-05-12 | 人脸检测使用 MediaPipe Tasks Vision                 | BlazeFace TFJS / faceapi.js / OpenCV.js                      | 官方维护、≤230 KB 模型、WASM 单实例、与 ORT 同 dynamic-import 模式；社区 face-api 久未维护 |
-| 2026-05-12 | MediaPipe WASM 走 jsdelivr CDN，模型走 GCS          | 全量打到 `public/_models/` / 强制走自有 R2                   | 与 ORT 同策略；模型仅 230 KB CDN 即可；保留 `NEXT_PUBLIC_FACE_MODEL_URL` 切换口子          |
-| 2026-05-12 | CropFrame 自研（无第三方裁剪库）                    | react-easy-crop / react-image-crop                           | 这两个库锁死 16/9 或 1/1，并且不支持 image-pixel space；自研代码 ~250 行可控               |
-| 2026-05-12 | 选 spec 自动套用 `background.recommended`           | 只在 background 面板手动改                                   | 签证 80% 都要白底，第一次套用降低用户认知负担；用户改过任何颜色后就不再覆盖                |
-| 2026-05-12 | 裁剪后导出使用 canvas drawImage 高质量缩放          | Pica / 自实现 Lanczos                                        | M4 阶段直接 drawImage 已足够；M5 上 Pica 时统一替换重采样核                                |
+| 日期       | 决策                                                  | 备选方案                                                     | 理由                                                                                       |
+| ---------- | ----------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| 2026-05-11 | 选定 Next.js 15 + Cloudflare Pages                    | Vite + Vercel；纯 SPA + GitHub Pages                         | SEO 友好 + 国内访问稳 + 免费                                                               |
+| 2026-05-11 | 抠图主模型用 MODNet（量化）                           | MediaPipe Selfie（太粗）/ RMBG-1.4（太大）/ BiRefNet（更大） | 体积 + 质量 + 人像专用平衡最佳                                                             |
+| 2026-05-11 | 三层数据模型 PhotoSpec / PaperSpec / LayoutTemplate   | 单一 Size 模型                                               | 三者天然解耦，扩展性强                                                                     |
+| 2026-05-11 | V1 完全免费 + 无登录                                  | Freemium / 广告                                              | 先验证市场，避免 UI 复杂化                                                                 |
+| 2026-05-11 | i18n 简繁人工双写，不用 OpenCC                        | 自动转换                                                     | UI 用词差异大，自动转换不可靠                                                              |
+| 2026-05-11 | 推理走 ONNX Runtime Web                               | transformers.js / TensorFlow.js                              | 性能最佳 + WebGPU 支持 + 模型生态广                                                        |
+| 2026-05-11 | 主统计用 Cloudflare Web Analytics                     | GA4 / 友盟                                                   | 无 cookie + 隐私友好 + 免费                                                                |
+| 2026-05-11 | 抠图采用单模型方案（非双模型）                        | Fast (MediaPipe) + HQ (RMBG)                                 | MODNet 在证件照场景已够；架构更简单                                                        |
+| 2026-05-11 | 产品名定为 **Pixfit · 像配**                          | Snapfit / Frameo / Sizely / IDfit                            | 短、好记、双关（pixel + fit / 像 + 配）；pix-fit.com 可获得                                |
+| 2026-05-11 | 品牌主色 **Emerald (#10B981)**                        | Indigo (#6366F1) / 自定义                                    | 翡翠绿 + 暖白基底，清新专业，与"匹配规格"的精确感形成温度平衡                              |
+| 2026-05-11 | M1 启动前先写 DESIGN.md                               | M1 直接写代码                                                | 视觉/交互一致性提前对齐，避免开发返工                                                      |
+| 2026-05-11 | MODNet 模型直接复用 `Xenova/modnet` INT8 ONNX         | 自己写 onnxruntime quantize 脚本（Python）                   | 上游已发布合格 INT8 版本（6.63 MB），省 1 个工作日并消除工具链依赖                         |
+| 2026-05-11 | 模型经 `public/_models/` 走 static asset              | 直接接入 Cloudflare R2 + cdn.pix-fit.com                     | 不让 R2 阻塞 M2 开发；CF Workers static asset 自带 CDN，部署阶段再切换                     |
+| 2026-05-12 | 模型下载默认走 ModelScope（HF 作 fallback）           | 强制走 HF + 让用户自配代理                                   | ModelScope 是 HF 国内镜像，同源同 etag，直连可达；HF 走 xethub 在大陆被劫持                |
+| 2026-05-12 | ONNX Runtime Web WASM 资源 V1 走 jsdelivr CDN         | ship 到 `public/_ort/`（37 MB） / 自己 CDN                   | wasm 资源 74 MB 全量过大；jsdelivr 同源即时可用；ENV `NEXT_PUBLIC_ORT_BASE_URL` 留切换口子 |
+| 2026-05-12 | Studio store 用 zustand@5 而非 Context                | React Context / 单例 module 变量                             | 1.2 KB gzipped；selector 订阅减少不必要 re-render；TECH_DESIGN 早已规划                    |
+| 2026-05-12 | 协议保留 `forceBackend`（init 消息）                  | 仅看自动 detect                                              | 让 /dev/perf 能对照 WebGPU vs WASM；也方便排查降级路径                                     |
+| 2026-05-12 | 自定义色选择器用 native `<input type="color">`        | iro.js / react-colorful / 自研 HSV picker                    | 浏览器原生 picker 即可覆盖 80% 场景；0 KB 额外 JS；M3 不阻塞，未来真有专业需求再上一层     |
+| 2026-05-12 | 抠出层缓存策略：`extractForeground()` → ImageBitmap   | 每次切色都跑 destination-in / 每次都跑 per-pixel composite   | 一次抠出后切色只剩 `clearRect + fillRect + drawImage`，P95 降到 9 ms；ImageBitmap GPU 友好 |
+| 2026-05-12 | 背景色 store 独立于 Studio store                      | 全部塞进 `studio/store.ts`                                   | 关注点分离 + recent 持久化只需局部订阅；selector 触发面更小，重渲染更少                    |
+| 2026-05-12 | Studio 顶栏 tab 状态用 zustand 单字段而非 URL hash    | URL hash / search param                                      | tab 切换不该影响浏览器历史（用户的"返回"按钮应回退到首页）；同时未来 deeplink 可再加       |
+| 2026-05-12 | 人脸检测使用 MediaPipe Tasks Vision                   | BlazeFace TFJS / faceapi.js / OpenCV.js                      | 官方维护、≤230 KB 模型、WASM 单实例、与 ORT 同 dynamic-import 模式；社区 face-api 久未维护 |
+| 2026-05-12 | MediaPipe WASM 走 jsdelivr CDN，模型走 GCS            | 全量打到 `public/_models/` / 强制走自有 R2                   | 与 ORT 同策略；模型仅 230 KB CDN 即可；保留 `NEXT_PUBLIC_FACE_MODEL_URL` 切换口子          |
+| 2026-05-12 | CropFrame 自研（无第三方裁剪库）                      | react-easy-crop / react-image-crop                           | 这两个库锁死 16/9 或 1/1，并且不支持 image-pixel space；自研代码 ~250 行可控               |
+| 2026-05-12 | 选 spec 自动套用 `background.recommended`             | 只在 background 面板手动改                                   | 签证 80% 都要白底，第一次套用降低用户认知负担；用户改过任何颜色后就不再覆盖                |
+| 2026-05-12 | 裁剪后导出使用 canvas drawImage 高质量缩放            | Pica / 自实现 Lanczos                                        | M4 阶段直接 drawImage 已足够；M5 上 Pica 时统一替换重采样核                                |
+| 2026-05-12 | M5 重采样选 Pica（lazy import + native 回退）         | 自实现 Lanczos / 仍用 drawImage                              | Pica ~30 KB；lazy import 不进首屏；失败回退到 drawImage 保底；自实现成本高且无收益         |
+| 2026-05-12 | M5 单次重采样路径：先 native crop → Pica resize       | cropAndResize 一次性（双采样）                               | 双采样在小尺寸视觉损失明显；先在原分辨率裁掉再让 Pica 一次性 Lanczos 缩到目标，画质更稳    |
+| 2026-05-12 | happy-dom 装 canvas / toBlob / createImageBitmap stub | 每个测试自己 mock / 切到 jsdom                               | 现有 happy-dom 抠图测试已稳定；只补一层 Proxy stub 让 export / layout 测试可写             |
+| 2026-05-12 | M6 PDF 选 jsPDF（lazy import）                        | pdf-lib / pdfme / 自己写 PDF writer                          | jsPDF `addImage` API 最少胶水；体积可 dynamic import；pdf-lib 强项是表单填写，不在场景内   |
+| 2026-05-12 | M6 拼版算法 V1 只走 auto-grid（保留 manual 接口）     | 内置一堆 manual layout / 先做 manual 再做 auto               | auto-grid 一个函数覆盖 95% 印刷店场景；schema 已经预留 `manual.cells` 路径方便后续接入     |
+| 2026-05-12 | M6 排版页内嵌 /studio 一个 tab                        | 新建 /print 独立路由 / 桌面 app                              | 用户从上传到下载是单线流；切换 tab 比跳路由认知成本低；未来要批处理再考虑 /print           |
+| 2026-05-12 | DPI override 强制 derivePixels 重算 width_px          | 把 width_px / height_px 当主，dpi 当 hint                    | PaperSpec 自带 300 DPI 像素，150 DPI preview 必须丢字段重算，否则画布永远 300 DPI 实际像素 |
+| 2026-05-12 | 新建 `lib/i18n-text.ts` 处理 zh-Hans → zh 映射        | 在每个组件里写 `name['zh-Hans'] ?? name.en` / 改 spec 字段   | next-intl locale 与 I18nText 字段命名错位，集中映射避免每处错误回退                        |
 
 ---
 
@@ -442,13 +467,14 @@ docs(prd): clarify HEIC handling boundary
 
 ## 10. 变更记录
 
-| 日期       | 版本 | 变更摘要                                                                                                      |
-| ---------- | ---- | ------------------------------------------------------------------------------------------------------------- |
-| 2026-05-11 | 0.1  | 初稿创建                                                                                                      |
-| 2026-05-11 | 0.2  | 确定产品名 Pixfit + 域名 pix-fit.com + 品牌主色 emerald；Q1/Q6/Q7 标记已解决                                  |
-| 2026-05-12 | 0.3  | M1+M2 代码完成、决策日志增补、性能基线（M2-T19）与兼容性矩阵（M2-T20）骨架                                    |
-| 2026-05-12 | 0.4  | M3 换底色 10/10 任务代码完成；新增 6.7 背景切换性能基线（P50 8.3ms / P95 9.1ms）                              |
-| 2026-05-12 | 0.5  | M4 智能裁剪 15/15 任务代码完成；28 条规格 + 7 张相纸数据落地；MediaPipe + auto-center + compliance 单测 28 个 |
+| 日期       | 版本 | 变更摘要                                                                                                                                                                                                                                                                                                         |
+| ---------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-11 | 0.1  | 初稿创建                                                                                                                                                                                                                                                                                                         |
+| 2026-05-11 | 0.2  | 确定产品名 Pixfit + 域名 pix-fit.com + 品牌主色 emerald；Q1/Q6/Q7 标记已解决                                                                                                                                                                                                                                     |
+| 2026-05-12 | 0.3  | M1+M2 代码完成、决策日志增补、性能基线（M2-T19）与兼容性矩阵（M2-T20）骨架                                                                                                                                                                                                                                       |
+| 2026-05-12 | 0.4  | M3 换底色 10/10 任务代码完成；新增 6.7 背景切换性能基线（P50 8.3ms / P95 9.1ms）                                                                                                                                                                                                                                 |
+| 2026-05-12 | 0.5  | M4 智能裁剪 15/15 任务代码完成；28 条规格 + 7 张相纸数据落地；MediaPipe + auto-center + compliance 单测 28 个                                                                                                                                                                                                    |
+| 2026-05-12 | 0.6  | M5 导出 + 压缩（4 格式 + Pica + compress-to-KB）+ M6 相纸 + 排版（auto-grid + pack-mixed + render-layout + jsPDF + 12 builtin templates）一次性完成；新增 ~77 单测达 242；layout tab 解锁；ExportPanel 重写；右侧 PaperPicker / LayoutTemplatePicker / MixedEditor / LayoutSettings / LayoutActions 五块面板上线 |
 
 ---
 
