@@ -214,6 +214,104 @@
       "filenamePreview": "Filename"
     }
   },
+  "SpecManager": {
+    "title": "Manage specs",
+    "subtitle": "Manage your photo specs, paper specs, and layout templates. Built-in entries are read-only — duplicate one to start customising.",
+    "footerLink": "Manage specs",
+    "tabs": {
+      "photo": "Photo specs",
+      "paper": "Paper specs",
+      "layout": "Layout templates"
+    },
+    "toolbar": {
+      "import": "Import JSON",
+      "export": "Export JSON",
+      "new": "New",
+      "duplicate": "Duplicate to customise"
+    },
+    "list": {
+      "builtin": "Built-in",
+      "custom": "Custom",
+      "empty": "No custom entries yet",
+      "builtinHint": "Built-in specs are read-only — duplicate one to create an editable copy",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "createTitle": "New {kind}",
+      "editTitle": "Edit “{name}”",
+      "fields": {
+        "id": "ID",
+        "idHint": "Lowercase letters, numbers and dashes — cannot be changed after creation",
+        "nameZh": "Name (Simplified Chinese)",
+        "nameZhHant": "Name (Traditional Chinese)",
+        "nameEn": "Name (English)",
+        "category": "Category",
+        "region": "Region (ISO 3166-1 alpha-2)",
+        "widthMm": "Width (mm)",
+        "heightMm": "Height (mm)",
+        "dpi": "DPI",
+        "alias": "Alias",
+        "bgRecommended": "Recommended background (#hex)",
+        "paperId": "Paper ID"
+      },
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "kinds": {
+      "photo": "photo spec",
+      "paper": "paper spec",
+      "layout": "layout template"
+    },
+    "toast": {
+      "created": "Saved “{name}”",
+      "updated": "Updated “{name}”",
+      "deleted": "Deleted “{name}”",
+      "duplicated": "Created copy “{name}” based on the built-in",
+      "exported": "Exported {count} custom entries",
+      "imported": "Imported {photo} photo / {paper} paper / {layout} layout entries",
+      "validationError": "The form has invalid fields — please review before saving",
+      "saveFailed": "Save failed: {message}",
+      "deleteFailed": "Delete failed: {message}",
+      "importFailed": "Import failed: {message}"
+    },
+    "delete": {
+      "title": "Delete “{name}”?",
+      "body": "This will remove the custom entry. Built-in entries are not affected.",
+      "withDependentsBody": "{count} layout template(s) reference this spec. After deletion they will fall back to the matching built-in (if any) or become invalid.",
+      "dependentsHeading": "Affected templates",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "import": {
+      "title": "Import specs",
+      "hint": "Choose a JSON file exported from Pixfit",
+      "browse": "Choose file",
+      "preview": "Will import {photo} photo / {paper} paper / {layout} layout entries (replaces your existing customisations)",
+      "confirm": "Replace and import",
+      "errors": {
+        "empty-input": "The file is empty.",
+        "invalid-json": "Not valid JSON: {message}",
+        "invalid-schema": "Schema validation failed ({issues} issues).",
+        "unsupported-version": "Unsupported version. Pixfit only imports version 1."
+      }
+    },
+    "layout": {
+      "comingSoon": "The layout-template editor arrives with M6. For now you can import / export / delete existing templates, but creation is disabled."
+    },
+    "empty": {
+      "title": "Select an entry on the left to view its details",
+      "subtitle": "Or click “New” to create your own spec"
+    },
+    "categories": {
+      "cn-id": "China ID",
+      "cn-paper": "China paper",
+      "travel-permit": "Travel permits",
+      "visa": "Visas",
+      "exam": "Exams",
+      "custom": "Custom"
+    }
+  },
   "Segmentation": {
     "states": {
       "idle": "Ready",

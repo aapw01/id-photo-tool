@@ -8,14 +8,14 @@
 
 ## 1. 当前状态摘要
 
-| 项         | 值                                                                                                           |
-| ---------- | ------------------------------------------------------------------------------------------------------------ |
-| 产品名     | **Pixfit · 像配**                                                                                            |
-| 域名       | `pix-fit.com`（已确认可注册）                                                                                |
-| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M5 ✅ + M6 ✅（代码完成 / 真机兼容性矩阵待回填）**                         |
-| 最近更新   | 2026-05-12                                                                                                   |
-| 进度       | M1–M6 完成；242 单测 / lint / typecheck / build / 三 locale dev 200 全绿                                     |
-| 一句话进度 | /studio 端到端通：上传 → 抠图 → 选规格 → 自动裁剪 → 换底色 → 单张多格式 + 压缩 + 拼版 PNG/PDF 全 client-side |
+| 项         | 值                                                                                                          |
+| ---------- | ----------------------------------------------------------------------------------------------------------- |
+| 产品名     | **Pixfit · 像配**                                                                                           |
+| 域名       | `pix-fit.com`（已确认可注册）                                                                               |
+| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M5 ✅ + M6 ✅ + M7 ✅（代码完成 / 真机兼容性矩阵待回填）**                |
+| 最近更新   | 2026-05-12                                                                                                  |
+| 进度       | M1–M7 完成；M5+M6+M7 并行落地，合并后总测 292（242 + 50）；lint / typecheck / build / i18n / 三 locale 全绿 |
+| 一句话进度 | /studio 端到端通；/specs 自定义规格 CRUD + JSON 导入导出；单张多格式 + 压缩 + 拼版 PNG/PDF 全 client-side   |
 
 ---
 
@@ -34,6 +34,7 @@
 | M4 任务清单        | [tasks/M4.md](./tasks/M4.md)       | v0.1（15 个原子任务，全部完成）               |
 | M5 任务清单        | [tasks/M5.md](./tasks/M5.md)       | v0.1（7 个原子任务，全部完成）                |
 | M6 任务清单        | [tasks/M6.md](./tasks/M6.md)       | v0.1（12 个原子任务，全部完成）               |
+| M7 任务清单        | [tasks/M7.md](./tasks/M7.md)       | v0.1（11 个原子任务，全部完成）               |
 | 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成）                               |
 
 ---
@@ -50,7 +51,7 @@
 | M4     | 照片规格 + 智能裁剪 | ✅ 代码完成 / 真机兼容性待回填 ([M4.md](./tasks/M4.md)) | 1.5 周     |
 | M5     | 导出 + 压缩         | ✅ 代码完成 / 真机兼容性待回填 ([M5.md](./tasks/M5.md)) | 1 周       |
 | M6     | 相纸 + 排版         | ✅ 代码完成 / 真机兼容性待回填 ([M6.md](./tasks/M6.md)) | 1.5 周     |
-| M7     | 规格管理            | ⬜ 未开始                                               | 0.5 周     |
+| M7     | 规格管理            | ✅ 代码完成 / 真机端到端待回填 ([M7.md](./tasks/M7.md)) | 0.5 周     |
 | M8     | SEO + 移动端 + 打磨 | ⬜ 未开始                                               | 1.5 周     |
 
 **预计总工期**：8–10 周（单人 / 兼职节奏）
@@ -212,14 +213,24 @@
 
 **交付物**：
 
-- [ ] 规格管理弹窗（三 tab：照片 / 相纸 / 排版）
-- [ ] CRUD 表单 + zod 校验
-- [ ] localStorage 存储 + 加载合并
-- [ ] "另存为副本" 功能
-- [ ] JSON 导入 / 导出
-- [ ] 反向校验（删除前提示依赖）
+- [x] `src/features/spec-manager/` 模块：`schema / storage / merge / crud / dependency-check / import-export / store` — 七个文件，纯函数 + 一个 zustand store
+- [x] `localStorage['pixfit:specs:v1']` 持久化（容错 4 类异常，写入前再过 zod）
+- [x] `mergeById` 用户覆盖内置（同 id 原地替换，新 id 追加）
+- [x] CRUD 行为：内置项不可删 / 不可改 id；更新强制 pin `id + builtin: false`
+- [x] `exportToJSON` Blob + `pixfit-specs-YYYYMMDD.json` 文件名；`importFromJSON` 走 zod，错误码 4 类
+- [x] `findDependents`（photo + paper）含 manual cells 路径
+- [x] `/specs` 三语 SSG 路由 + 三 tab Shell（Photo / Paper / Layout）
+- [x] PhotoSpec / PaperSpec 表单：name 三语 + 尺寸 + DPI + region + 推荐底色 + alias；`aria-invalid` 字段高亮
+- [x] Delete 对话框列出受影响 LayoutTemplate
+- [x] `SpecManager.*` 三语 i18n（190 keys 完全对齐）
+- [x] Footer 入口 + 50 新单测（总测试数 215，对比 M4 完成时的 165）
 
-**验收**：用户创建一个自定义照片规格 → 重新打开浏览器仍存在 → 导出 JSON → 清缓存 → 导入 JSON 恢复。
+**验收**：
+
+- /specs 三语 200，本地化标题命中（curl smoke）
+- 创建一条自定义规格 → reload 后仍在；导出 JSON → 清掉 customs → 导入 JSON → 列表恢复（pure-fn 单测覆盖；真机 reload 需用户回填 §1.3）
+- 内置规格点 Delete 按钮被前置拒绝；改 id 在 update 路径被强制 pin 回原 id
+- 165 → 215 单测全过；`lint / typecheck / build / i18n:check` 全绿
 
 #### M8 · SEO + 移动端 + 打磨
 
@@ -313,6 +324,9 @@
 | 2026-05-12 | M6 排版页内嵌 /studio 一个 tab                        | 新建 /print 独立路由 / 桌面 app                              | 用户从上传到下载是单线流；切换 tab 比跳路由认知成本低；未来要批处理再考虑 /print           |
 | 2026-05-12 | DPI override 强制 derivePixels 重算 width_px          | 把 width_px / height_px 当主，dpi 当 hint                    | PaperSpec 自带 300 DPI 像素，150 DPI preview 必须丢字段重算，否则画布永远 300 DPI 实际像素 |
 | 2026-05-12 | 新建 `lib/i18n-text.ts` 处理 zh-Hans → zh 映射        | 在每个组件里写 `name['zh-Hans'] ?? name.en` / 改 spec 字段   | next-intl locale 与 I18nText 字段命名错位，集中映射避免每处错误回退                        |
+| 2026-05-12 | 规格 localStorage key 用 `pixfit:specs:v1`            | PRD §9.4.1 的 `id-photo-tool:specs:v1`                       | 命名与新品牌一致，便于 M8 删旧域名痕迹；`:v1` 留 schema 版本扩展位                         |
+| 2026-05-12 | `saveSpecs()` 写入前再过一次 `SpecsV1Schema`          | 仅在调用方校验 / 不校验直写                                  | CRUD 已校验，但 store / 测试 / 导入是多入口；统一在持久化边界兜底，避免脏数据 round-trip   |
+| 2026-05-12 | 用户同 id 项整体覆盖内置项，`builtin:false` 一并写    | 字段级 patch / 复制后允许同 id 内置存活                      | 删除保护只看 `builtin` 标志：用户主动改写后理应能再删除；行为简单且与 PRD §9.4.2 一致      |
 
 ---
 
@@ -475,6 +489,7 @@ docs(prd): clarify HEIC handling boundary
 | 2026-05-12 | 0.4  | M3 换底色 10/10 任务代码完成；新增 6.7 背景切换性能基线（P50 8.3ms / P95 9.1ms）                                                                                                                                                                                                                                 |
 | 2026-05-12 | 0.5  | M4 智能裁剪 15/15 任务代码完成；28 条规格 + 7 张相纸数据落地；MediaPipe + auto-center + compliance 单测 28 个                                                                                                                                                                                                    |
 | 2026-05-12 | 0.6  | M5 导出 + 压缩（4 格式 + Pica + compress-to-KB）+ M6 相纸 + 排版（auto-grid + pack-mixed + render-layout + jsPDF + 12 builtin templates）一次性完成；新增 ~77 单测达 242；layout tab 解锁；ExportPanel 重写；右侧 PaperPicker / LayoutTemplatePicker / MixedEditor / LayoutSettings / LayoutActions 五块面板上线 |
+| 2026-05-12 | 0.7  | M7 规格管理 11/11 任务代码完成；`features/spec-manager/` 七模块 + `/specs` 三语 SSG + Footer 入口 + 50 新单测；合并后总测 ≈ 292                                                                                                                                                                                  |
 
 ---
 

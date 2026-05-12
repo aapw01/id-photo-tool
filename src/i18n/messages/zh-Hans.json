@@ -214,6 +214,104 @@
       "filenamePreview": "文件名"
     }
   },
+  "SpecManager": {
+    "title": "规格管理",
+    "subtitle": "管理你的照片规格、相纸规格与排版模板。内置项不可修改，但你可以复制并自定义。",
+    "footerLink": "规格管理",
+    "tabs": {
+      "photo": "照片规格",
+      "paper": "相纸规格",
+      "layout": "排版模板"
+    },
+    "toolbar": {
+      "import": "导入 JSON",
+      "export": "导出 JSON",
+      "new": "新建",
+      "duplicate": "复制为自定义"
+    },
+    "list": {
+      "builtin": "内置",
+      "custom": "自定义",
+      "empty": "暂无自定义项",
+      "builtinHint": "内置规格不可修改，可点击「复制为自定义」生成可编辑的副本",
+      "edit": "编辑",
+      "delete": "删除"
+    },
+    "form": {
+      "createTitle": "新建{kind}",
+      "editTitle": "编辑「{name}」",
+      "fields": {
+        "id": "ID",
+        "idHint": "小写字母、数字与连字符；创建后无法修改",
+        "nameZh": "名称 (简体中文)",
+        "nameZhHant": "名称 (繁體中文)",
+        "nameEn": "名称 (English)",
+        "category": "分类",
+        "region": "地区 (ISO 3166-1，两位字母)",
+        "widthMm": "宽度 (mm)",
+        "heightMm": "高度 (mm)",
+        "dpi": "DPI",
+        "alias": "别名",
+        "bgRecommended": "推荐背景 (#hex)",
+        "paperId": "相纸 ID"
+      },
+      "save": "保存",
+      "cancel": "取消"
+    },
+    "kinds": {
+      "photo": "照片规格",
+      "paper": "相纸规格",
+      "layout": "排版模板"
+    },
+    "toast": {
+      "created": "已保存「{name}」",
+      "updated": "已更新「{name}」",
+      "deleted": "已删除「{name}」",
+      "duplicated": "已基于内置规格创建副本「{name}」",
+      "exported": "已导出 {count} 条自定义规格",
+      "imported": "已导入 {photo} 张照片 / {paper} 张相纸 / {layout} 套排版",
+      "validationError": "表单中存在不合法字段，请检查后再保存",
+      "saveFailed": "保存失败：{message}",
+      "deleteFailed": "删除失败：{message}",
+      "importFailed": "导入失败：{message}"
+    },
+    "delete": {
+      "title": "删除「{name}」？",
+      "body": "将删除这条自定义条目。内置规格不会受影响。",
+      "withDependentsBody": "有 {count} 个排版模板引用了这条规格，删除后这些模板会回退到对应的内置规格或失效。",
+      "dependentsHeading": "受影响的模板",
+      "confirm": "删除",
+      "cancel": "取消"
+    },
+    "import": {
+      "title": "导入规格",
+      "hint": "选择从 Pixfit 导出的 JSON 文件",
+      "browse": "选择文件",
+      "preview": "将导入 {photo} 张照片 / {paper} 张相纸 / {layout} 套排版（会覆盖现有自定义内容）",
+      "confirm": "覆盖现有自定义内容并导入",
+      "errors": {
+        "empty-input": "文件为空",
+        "invalid-json": "不是合法的 JSON：{message}",
+        "invalid-schema": "数据格式不匹配（{issues} 个问题）",
+        "unsupported-version": "不支持的版本号，目前仅支持 v1"
+      }
+    },
+    "layout": {
+      "comingSoon": "排版模板编辑器将随 M6 上线。当前可以导入 / 导出 / 删除已有模板，但无法新建。"
+    },
+    "empty": {
+      "title": "选择左侧条目查看详情",
+      "subtitle": "或点击「新建」创建一条属于你的规格"
+    },
+    "categories": {
+      "cn-id": "中国证件",
+      "cn-paper": "中国相纸",
+      "travel-permit": "通行证",
+      "visa": "海外签证",
+      "exam": "考试报名",
+      "custom": "自定义"
+    }
+  },
   "Segmentation": {
     "states": {
       "idle": "准备就绪",
