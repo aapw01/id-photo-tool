@@ -13,9 +13,22 @@
  * defined here, so the swap is transparent.
  */
 
+import { loadModel, type LoadModelOptions } from './model-loader'
 import type { Backend, ProgressPhase } from './worker-protocol'
 
 export type ProgressCallback = (phase: ProgressPhase, loaded?: number, total?: number) => void
+
+/**
+ * Inputs accepted by loadSession. `modelBuffer` is a test seam: pass a
+ * pre-loaded ArrayBuffer to skip the network entirely (used by every
+ * non-integration unit test). In production the worker calls
+ * `loadSession({ onProgress })` and the loader handles caching + fetch.
+ */
+export interface LoadSessionOptions {
+  onProgress?: ProgressCallback
+  modelBuffer?: ArrayBuffer
+  loaderOptions?: Omit<LoadModelOptions, 'onProgress'>
+}
 
 export interface SegmentSession {
   /** Best-effort tag — used to populate `backend` in responses. */
@@ -36,24 +49,36 @@ export interface MaskBuffer {
 }
 
 /**
- * Factory used by the worker. Today it returns a stub that produces a
- * fully-opaque mask matching the input bitmap. The stub keeps the message
- * protocol exercised end-to-end while T07/T08/T09 land the real pipeline.
+ * Factory used by the worker. The session today is a stub that produces
+ * a fully-opaque mask — T08/T09/T10 swap it for a real ort.InferenceSession
+ * built from the loaded ArrayBuffer.
  */
-export async function loadSession(onProgress?: ProgressCallback): Promise<SegmentSession> {
-  onProgress?.('download', 0, 1)
-  // Simulate the model-load latency budget so the host hook's progress
-  // wiring is observable in dev tools. ~50 ms is enough for the UI but
-  // doesn't slow tests perceptibly.
-  await new Promise<void>((res) => setTimeout(res, 50))
-  onProgress?.('download', 1, 1)
-  onProgress?.('init', 1, 1)
+export async function loadSession(opts: LoadSessionOptions = {}): Promise<SegmentSession> {
+  const { onProgress, modelBuffer, loaderOptions } = opts
 
-  return new StubSession()
+  const buffer =
+    modelBuffer ??
+    (await loadModel({
+      ...loaderOptions,
+      onProgress,
+    }))
+
+  onProgress?.('init', 1, 1)
+  return new StubSession(buffer)
 }
 
 class StubSession implements SegmentSession {
   readonly backend: Backend = 'wasm'
+  /**
+   * Holding the buffer keeps it alive across calls and lets us inspect
+   * its size in tests. T08 will replace this field with the real
+   * ort.InferenceSession instance.
+   */
+  readonly modelByteLength: number
+
+  constructor(buffer: ArrayBuffer) {
+    this.modelByteLength = buffer.byteLength
+  }
 
   async run(bitmap: ImageBitmap): Promise<MaskBuffer> {
     const { width, height } = bitmap

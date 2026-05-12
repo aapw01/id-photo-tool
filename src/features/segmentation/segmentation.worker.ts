@@ -54,7 +54,7 @@ function classifyError(
 async function ensureSession(id: string): Promise<SegmentSession> {
   if (session) return session
   if (initPromise) return initPromise
-  initPromise = loadSession(makeProgress(id))
+  initPromise = loadSession({ onProgress: makeProgress(id) })
     .then((s) => {
       session = s
       return s
