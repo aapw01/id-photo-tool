@@ -14,7 +14,7 @@
  * gets a Lanczos pass instead of a soft drawImage.
  */
 
-import { resample } from './resample'
+import { resample, toHtmlCanvas } from './resample'
 import { parseHex, type BgColor } from '@/features/background/composite'
 
 export type ExportFormat = 'png-alpha' | 'png-flat' | 'jpg' | 'webp'
@@ -113,33 +113,10 @@ function pickQuality(format: ExportFormat, override?: number): number | undefine
 
 /**
  * Crop the foreground to the supplied frame at its native resolution.
- * No scaling happens here — the downstream Lanczos resampler does that
- * with the full pixel signal. Output is a DOM canvas because Pica's
- * input contract expects HTMLCanvasElement / ImageBitmap.
+ * No scaling happens here — the downstream resampler does that with
+ * the full pixel signal. Output is a DOM canvas because the resampler
+ * and `flattenIfNeeded` both expect HTMLCanvasElement / ImageBitmap.
  */
-/**
- * Promote an `ImageBitmap` / `OffscreenCanvas` / `HTMLCanvasElement`
- * to a DOM canvas with a single draw. Used by the resample-skip fast
- * path so `flattenIfNeeded` can stamp a background on top without
- * pulling Pica into the call chain.
- */
-function toHtmlCanvas(
-  source: ImageBitmap | HTMLCanvasElement | OffscreenCanvas,
-): HTMLCanvasElement {
-  if (typeof HTMLCanvasElement !== 'undefined' && source instanceof HTMLCanvasElement) {
-    return source
-  }
-  const w = Math.max(1, (source as { width: number }).width)
-  const h = Math.max(1, (source as { height: number }).height)
-  const c = document.createElement('canvas')
-  c.width = w
-  c.height = h
-  const ctx = c.getContext('2d')
-  if (!ctx) return c
-  ctx.drawImage(source as unknown as CanvasImageSource, 0, 0)
-  return c
-}
-
 function cropAtNativeResolution(
   source: ImageBitmap | HTMLCanvasElement | OffscreenCanvas,
   frame: NonNullable<ExportOptions['frame']>,

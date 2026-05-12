@@ -23,4 +23,5 @@ export {
   type CompressOptions,
   type CompressResult,
 } from './compress-to-kb'
-export { resample, type ResampleOptions } from './resample'
+export { resample, toHtmlCanvas, type ResampleOptions } from './resample'
+export { triggerDownload } from './dom-download'

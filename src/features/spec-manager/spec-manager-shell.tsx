@@ -36,6 +36,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { RegionFlag } from '@/components/region-flag'
+import { triggerDownload } from '@/features/export'
 import { localizeText } from '@/lib/i18n-text'
 import { derivePixels } from '@/lib/spec-units'
 import { cn } from '@/lib/utils'
@@ -119,13 +120,7 @@ export function SpecManagerShell() {
       paperSpecs: customPaper,
       layoutTemplates: customLayout,
     })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = exportFilename()
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    URL.revokeObjectURL(a.href)
+    triggerDownload(blob, exportFilename())
     toast.success(t('toast.exported', { count: totalCustom }))
   }, [customPhoto, customPaper, customLayout, totalCustom, t])
 
