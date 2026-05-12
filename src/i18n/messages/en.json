@@ -117,11 +117,20 @@
     "search": "Search specs (US visa, Schengen, 2-inch…)",
     "noMatches": "No specs match your search",
     "customSection": "Custom size",
-    "customW": "Width (mm)",
-    "customH": "Height (mm)",
+    "customUnit": "Unit",
+    "customW": "Width ({unit})",
+    "customH": "Height ({unit})",
     "customDpi": "DPI",
+    "customDpiPxHint": "DPI is fixed when entering pixels directly.",
+    "customRangeHint": "Allowed range: {min}–{max} {unit}",
     "customApply": "Use this size",
     "customNamePrefix": "Custom",
+    "units": {
+      "mm": "mm",
+      "cm": "cm",
+      "inch": "inch",
+      "px": "px"
+    },
     "manageCustom": "Manage custom sizes",
     "createCustom": "Create a custom size",
     "categories": {
@@ -205,6 +214,7 @@
     "cropAppliedHint": "Cropped to your selected spec — adjust on the Size tab if needed.",
     "downloadFailed": "Couldn't produce the file — try a different format.",
     "filenamePreview": "Filename",
+    "fullResHint": "Preserves original resolution — the export may take a couple of seconds.",
     "actions": {
       "download": "Download",
       "downloading": "Preparing…",

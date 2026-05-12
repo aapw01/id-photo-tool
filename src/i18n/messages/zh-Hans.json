@@ -117,11 +117,20 @@
     "search": "搜索规格 (如 美国签证、申根、二寸)",
     "noMatches": "没有匹配的规格",
     "customSection": "自定义尺寸",
-    "customW": "宽度 (mm)",
-    "customH": "高度 (mm)",
+    "customUnit": "单位",
+    "customW": "宽度 ({unit})",
+    "customH": "高度 ({unit})",
     "customDpi": "DPI",
+    "customDpiPxHint": "直接输入像素时 DPI 固定，无需调整。",
+    "customRangeHint": "取值范围：{min}–{max} {unit}",
     "customApply": "应用为当前尺寸",
     "customNamePrefix": "自定义",
+    "units": {
+      "mm": "毫米",
+      "cm": "厘米",
+      "inch": "英寸",
+      "px": "像素"
+    },
     "manageCustom": "管理自定义尺寸",
     "createCustom": "新建自定义尺寸",
     "categories": {
@@ -205,6 +214,7 @@
     "cropAppliedHint": "已按照当前尺寸裁剪 — 修改尺寸可回到尺寸 tab。",
     "downloadFailed": "未能生成文件，请尝试其他格式",
     "filenamePreview": "文件名",
+    "fullResHint": "保持原始分辨率 — 导出可能需要几秒钟",
     "actions": {
       "download": "下载",
       "downloading": "正在导出…",

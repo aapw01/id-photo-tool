@@ -117,11 +117,20 @@
     "search": "搜尋規格（如 美國簽證、申根、二吋）",
     "noMatches": "沒有符合的規格",
     "customSection": "自訂尺寸",
-    "customW": "寬度 (mm)",
-    "customH": "高度 (mm)",
+    "customUnit": "單位",
+    "customW": "寬度 ({unit})",
+    "customH": "高度 ({unit})",
     "customDpi": "DPI",
+    "customDpiPxHint": "直接輸入像素時 DPI 固定，毋須調整。",
+    "customRangeHint": "取值範圍：{min}–{max} {unit}",
     "customApply": "套用為目前尺寸",
     "customNamePrefix": "自訂",
+    "units": {
+      "mm": "毫米",
+      "cm": "公分",
+      "inch": "英吋",
+      "px": "像素"
+    },
     "manageCustom": "管理自訂尺寸",
     "createCustom": "新增自訂尺寸",
     "categories": {
@@ -205,6 +214,7 @@
     "cropAppliedHint": "已按目前尺寸裁剪 — 如需修改請回尺寸分頁。",
     "downloadFailed": "無法產生檔案，請嘗試其他格式",
     "filenamePreview": "檔名",
+    "fullResHint": "保持原始解析度 — 匯出可能需要幾秒鐘",
     "actions": {
       "download": "下載",
       "downloading": "正在匯出…",

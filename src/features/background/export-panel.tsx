@@ -52,6 +52,13 @@ const FORMATS: ExportFormat[] = ['png-alpha', 'png-flat', 'jpg', 'webp']
 const ESTIMATE_LONGSIDE_PX = 1280
 /** Tail-debounce window for the file-size estimate effect. */
 const ESTIMATE_DEBOUNCE_MS = 400
+/**
+ * Long-side cap of the cached preview foreground. Has to match the
+ * default used by `extractForegroundCapped` so the "do I need to
+ * rebuild?" check in `onDownload` / `onCopy` agrees with what the
+ * preview effect actually stashes.
+ */
+const PREVIEW_FG_LONGSIDE_PX = 1600
 
 /**
  * Render `src` into a `previewW × previewH` canvas, applying `frame`
@@ -331,14 +338,45 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const isAlpha = format === 'png-alpha' || format === 'webp'
   const supportsCompress = format === 'jpg' || format === 'webp'
 
+  // Build the foreground actually used for an export. The cached
+  // preview foreground is intentionally capped at
+  // `PREVIEW_FG_LONGSIDE_PX` so the editor stays snappy on 20 MP
+  // photos — but feeding that small bitmap into a full-res download
+  // (e.g. target 3648×5472 or a >1600 spec) upscales it and the
+  // result looks blurry. When the target exceeds the cache, build a
+  // one-shot foreground sized for *this* export only. The caller is
+  // responsible for closing the one-shot bitmap once the export is
+  // done; the cached preview foreground is never touched.
+  const acquireExportForeground = useCallback(async (): Promise<{
+    source: ImageBitmap
+    oneShot: ImageBitmap | null
+  }> => {
+    const targetLong = Math.max(targetPixels.width, targetPixels.height)
+    const cachedLong = foreground ? Math.max(foreground.width, foreground.height) : 0
+    const needsFullRes = !!mask && targetLong > cachedLong
+    if (!needsFullRes) {
+      return { source: foreground ?? bitmap, oneShot: null }
+    }
+    // Add a small headroom so the resampler downscales (sharp) rather
+    // than upscales (blurry) — matches `derivePixels` rounding slop.
+    const oneShot = await extractForegroundCapped(bitmap, mask!, {
+      maxLongSide: Math.max(PREVIEW_FG_LONGSIDE_PX, Math.ceil(targetLong * 1.05)),
+    })
+    return { source: oneShot, oneShot }
+  }, [bitmap, mask, foreground, targetPixels])
+
   const onDownload = useCallback(async () => {
     if (!exportSource) return
     setDownloading(true)
+    let oneShot: ImageBitmap | null = null
     try {
+      const acquired = await acquireExportForeground()
+      oneShot = acquired.oneShot
+      const source = acquired.source
       let blob: Blob
       if (compress && supportsCompress) {
         const result = await compressToKB({
-          source: exportSource,
+          source,
           targetKB,
           format: format === 'jpg' ? 'jpg' : 'webp',
           initialWidth: targetPixels.width,
@@ -358,12 +396,12 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
               frame,
               bitmap.width,
               bitmap.height,
-              (exportSource as { width: number }).width,
-              (exportSource as { height: number }).height,
+              (source as { width: number }).width,
+              (source as { height: number }).height,
             )
           : null
         const result = await exportSingle({
-          foreground: exportSource,
+          foreground: source,
           bg,
           format,
           targetPixels,
@@ -391,10 +429,12 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     } catch {
       toast.error(t('downloadFailed'))
     } finally {
+      oneShot?.close?.()
       setDownloading(false)
     }
   }, [
     exportSource,
+    acquireExportForeground,
     bitmap,
     compress,
     supportsCompress,
@@ -411,18 +451,22 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const onCopy = useCallback(async () => {
     if (!exportSource) return
     setCopying(true)
+    let oneShot: ImageBitmap | null = null
     try {
+      const acquired = await acquireExportForeground()
+      oneShot = acquired.oneShot
+      const source = acquired.source
       const sourceFrame = frame
         ? scaleFrameForForeground(
             frame,
             bitmap.width,
             bitmap.height,
-            (exportSource as { width: number }).width,
-            (exportSource as { height: number }).height,
+            (source as { width: number }).width,
+            (source as { height: number }).height,
           )
         : null
       const result = await exportSingle({
-        foreground: exportSource,
+        foreground: source,
         bg,
         // Without a mask we can't deliver a real transparent PNG.
         // Fall back to png-flat so the clipboard image still matches
@@ -437,9 +481,10 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     } catch {
       toast.error(t('copyFailed'))
     } finally {
+      oneShot?.close?.()
       setCopying(false)
     }
-  }, [exportSource, bitmap, foreground, bg, targetPixels, frame, t])
+  }, [exportSource, acquireExportForeground, bitmap, foreground, bg, targetPixels, frame, t])
 
   // Tidy any object URLs that are still hanging around at unmount —
   // the 30s deferred-revoke timer might still be pending.
@@ -456,6 +501,14 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const formatNeedsMask = format === 'png-alpha'
   const busy = downloading || copying
   const blocked = disabled || !exportSource || (formatNeedsMask && !foreground) || busy
+
+  // Show a "preserves original resolution" notice when the export
+  // target exceeds the cached preview foreground. The download path
+  // builds a fresh full-res cut-out on the fly which can take a
+  // couple of seconds — surfacing the cause stops users from thinking
+  // the button is broken.
+  const targetLong = Math.max(targetPixels.width, targetPixels.height)
+  const showFullResHint = targetLong > PREVIEW_FG_LONGSIDE_PX
 
   return (
     <section className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -603,6 +656,9 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         <p className="rounded-md bg-[var(--color-divider)] px-2 py-1 font-mono text-xs break-all text-[var(--color-text)]">
           {filename}
         </p>
+        {showFullResHint ? (
+          <p className="text-xs text-[var(--color-text-mute)]">{t('fullResHint')}</p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-2">

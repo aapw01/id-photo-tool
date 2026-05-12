@@ -119,8 +119,11 @@ describe('autoCenter — with face', () => {
   it('keeps frame inside image bounds when face is near top-left', () => {
     const face = makeFace({ eyeY: 60, mouthY: 130, eyeLX: 50 })
     const frame = autoCenter(image, usVisa, face)
-    expect(frame.x).toBe(0)
-    expect(frame.y).toBe(0)
+    // The frame shrinks (instead of hard-clamping to the edge) so the
+    // head still lands at the spec's intended composition. Bounds are
+    // the contract; edge-pinning is not.
+    expect(frame.x).toBeGreaterThanOrEqual(0)
+    expect(frame.y).toBeGreaterThanOrEqual(0)
     expect(frame.x + frame.w).toBeLessThanOrEqual(image.width + 0.01)
     expect(frame.y + frame.h).toBeLessThanOrEqual(image.height + 0.01)
   })
@@ -167,5 +170,100 @@ describe('autoCenter — degenerate specs', () => {
     const face = makeFace({ eyeY: 500, mouthY: 600, eyeLX: 470 })
     const frame = autoCenter({ width: 1000, height: 1500 }, noComp, face)
     expect(frame.w / frame.h).toBeCloseTo(noComp.width_mm / noComp.height_mm, 2)
+  })
+})
+
+describe('autoCenter — shrink instead of jamming', () => {
+  /**
+   * Regression for the user-reported bug: choosing a 1:1 spec on a
+   * 3648×5472 portrait pushed the natural frame past the image top,
+   * the hard clamp jammed the head against the top edge, and the user
+   * couldn't drag the frame down because the frame already touched
+   * the image edge. The fix shrinks the frame so the head lands at
+   * the spec's eye-from-top ratio without overflowing.
+   */
+  it('shrinks a square spec when the head would overflow the top of a tall portrait', () => {
+    const image = { width: 3648, height: 5472 }
+    const eyeFromTopRatio = 0.625
+    const headHeightRatio = 0.595
+    // 1:1 spec with the exact composition values from the bug report.
+    const squareSpec: PhotoSpec = {
+      ...usVisa,
+      id: 'test-square-shrink',
+      width_mm: 51,
+      height_mm: 51,
+      composition: {
+        headHeightRatio: [headHeightRatio, headHeightRatio],
+        eyeLineFromTop: [eyeFromTopRatio, eyeFromTopRatio],
+      },
+    }
+    // headCenterX ≈ 1824 (= 3648/2). Head spans ~2000 px vertically
+    // (X=625 → forehead 1062, chin 3062). Natural frame height would be
+    // 2000/0.595 ≈ 3361 — taller than the eye position allows once
+    // eye-from-top=0.625, so we must shrink.
+    const face = makeFace({
+      eyeY: 2000,
+      mouthY: 2625,
+      eyeLX: 1794,
+      eyeRX: 1854,
+    })
+
+    const frame = autoCenter(image, squareSpec, face)
+
+    // Frame is smaller than the image's width — proves the shrink path fired.
+    expect(frame.w).toBeLessThan(image.width)
+    expect(frame.h).toBeLessThan(image.height)
+    // Aspect preserved.
+    expect(frame.w / frame.h).toBeCloseTo(1, 3)
+    // Frame inside image bounds.
+    expect(frame.x).toBeGreaterThanOrEqual(0)
+    expect(frame.y).toBeGreaterThanOrEqual(0)
+    expect(frame.x + frame.w).toBeLessThanOrEqual(image.width + 0.01)
+    expect(frame.y + frame.h).toBeLessThanOrEqual(image.height + 0.01)
+    // Eye lands at the spec's eye-from-top ratio (±5 %).
+    const ratio = (2000 - frame.y) / frame.h
+    expect(Math.abs(ratio - eyeFromTopRatio)).toBeLessThan(0.05)
+  })
+
+  it('shrinks a tall 35×45 spec on a landscape image when the head is near the left edge', () => {
+    // headCenterX near the left edge of a 4000×3000 landscape image.
+    // Schengen-style spec is portrait (aspect ≈ 0.778). The natural
+    // frame width would put left < 0; shrinking pulls it back so the
+    // head ends up centred horizontally instead.
+    const image = { width: 4000, height: 3000 }
+    const face = makeFace({
+      eyeY: 1500,
+      mouthY: 2125,
+      eyeLX: 170,
+      eyeRX: 230, // headCenterX = 200
+    })
+
+    const frame = autoCenter(image, schengen, face)
+
+    expect(frame.w).toBeLessThan(image.width)
+    // Aspect preserved.
+    expect(frame.w / frame.h).toBeCloseTo(schengen.width_mm / schengen.height_mm, 3)
+    // Head centred horizontally inside the new frame (within 1 px).
+    const headCenterInFrame = frame.x + frame.w / 2
+    expect(Math.abs(headCenterInFrame - 200)).toBeLessThan(1)
+  })
+
+  it('keeps the resulting frame inside the image bounds across edge-case face placements', () => {
+    const image = { width: 3648, height: 5472 }
+    const cases = [
+      makeFace({ eyeY: 200, mouthY: 320, eyeLX: 180, eyeRX: 240 }), // top
+      makeFace({ eyeY: 5300, mouthY: 5400, eyeLX: 3400, eyeRX: 3460 }), // bottom-right
+      makeFace({ eyeY: 2800, mouthY: 2920, eyeLX: 30, eyeRX: 90 }), // left edge
+      makeFace({ eyeY: 2800, mouthY: 2920, eyeLX: 3560, eyeRX: 3620 }), // right edge
+    ]
+    for (const face of cases) {
+      const frame = autoCenter(image, usVisa, face)
+      expect(frame.x).toBeGreaterThanOrEqual(0)
+      expect(frame.y).toBeGreaterThanOrEqual(0)
+      expect(frame.x + frame.w).toBeLessThanOrEqual(image.width + 0.01)
+      expect(frame.y + frame.h).toBeLessThanOrEqual(image.height + 0.01)
+      // Aspect stays at the spec's 1:1 for us-visa.
+      expect(frame.w / frame.h).toBeCloseTo(1, 3)
+    }
   })
 })

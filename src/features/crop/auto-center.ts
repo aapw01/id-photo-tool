@@ -84,6 +84,15 @@ export function estimateHeadVerticalSpan(face: FaceDetection): {
  * If `face` is non-null, the head is placed per the spec's composition
  * rule. If null, falls back to a centred crop covering the largest
  * area that still respects the spec aspect ratio.
+ *
+ * When the head sits close to an image edge, the natural composition
+ * would push the frame off the image. Hard-clamping the frame in that
+ * case used to jam the head against the edge — the user could no
+ * longer drag the frame down because the top was already at `y=0`.
+ * Instead, we shrink the frame *uniformly* (preserving the spec
+ * aspect ratio) so the head still lands at the spec's intended
+ * eye-from-top / centered-X position. The frame ends up smaller, but
+ * the head composition is correct.
  */
 export function autoCenter(
   image: ImageSize,
@@ -119,12 +128,35 @@ export function autoCenter(
     frameW *= scale
   }
 
+  // Shrink the frame so the head can land at its intended position
+  // instead of being slammed against an image edge by a hard clamp.
+  // The four constraints below are the maximum frame height/width
+  // that still keeps the eye line / horizontal centre inside the
+  // image. We pick the most restrictive and apply it once; if a
+  // second axis still overflows we iterate one more time. Two passes
+  // are enough — the second pass either re-balances perfectly or the
+  // bounded clamp at the end mops up sub-pixel slop.
+  const eyeFromBottomRatio = 1 - eyeFromTopRatio
+  for (let pass = 0; pass < 2; pass++) {
+    let scale = 1
+    const topRoom = eyeY / Math.max(eyeFromTopRatio, 0.01)
+    if (topRoom < frameH) scale = Math.min(scale, topRoom / frameH)
+    const bottomRoom = (image.height - eyeY) / Math.max(eyeFromBottomRatio, 0.01)
+    if (bottomRoom < frameH) scale = Math.min(scale, bottomRoom / frameH)
+    const leftRoom = headCenterX * 2
+    if (leftRoom < frameW) scale = Math.min(scale, leftRoom / frameW)
+    const rightRoom = (image.width - headCenterX) * 2
+    if (rightRoom < frameW) scale = Math.min(scale, rightRoom / frameW)
+    if (scale >= 1) break
+    frameW *= scale
+    frameH *= scale
+  }
+
   let top = eyeY - frameH * eyeFromTopRatio
   let left = headCenterX - frameW / 2
 
-  // Clamp into image bounds without changing size — that would shift
-  // the head off-target. The eye position lands within the allowed
-  // band even after clamping for most real portraits.
+  // Defensive clamp — covers sub-pixel rounding when shrinking landed
+  // right at an edge. Should never shift the head visibly off-target.
   if (left < 0) left = 0
   if (left + frameW > image.width) left = image.width - frameW
   if (top < 0) top = 0

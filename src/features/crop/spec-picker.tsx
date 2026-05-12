@@ -35,7 +35,7 @@ import { RegionFlag } from '@/components/region-flag'
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { useStudioTabStore } from '@/features/studio/studio-tab-store'
 import { localizeText } from '@/lib/i18n-text'
-import { derivePixels } from '@/lib/spec-units'
+import { derivePixels, MM_PER_INCH } from '@/lib/spec-units'
 import { cn } from '@/lib/utils'
 import type { PhotoCategory, PhotoSpec } from '@/types/spec'
 
@@ -45,12 +45,33 @@ type Filter = 'all' | PhotoCategory
 
 const FILTERS: readonly Filter[] = ['all', 'cn-id', 'cn-paper', 'travel-permit', 'visa', 'exam']
 
-const CUSTOM_W_DEFAULT_MM = 35
-const CUSTOM_H_DEFAULT_MM = 49
+/**
+ * Unit options for the inline custom-size form. Order is the picker
+ * order; `mm` stays first so the default matches the previous
+ * behaviour for users who never open the dropdown.
+ */
+const CUSTOM_UNITS = ['mm', 'cm', 'inch', 'px'] as const
+type CustomUnit = (typeof CUSTOM_UNITS)[number]
+
+const CUSTOM_DEFAULTS: Record<CustomUnit, { w: number; h: number; step: number }> = {
+  mm: { w: 35, h: 49, step: 1 },
+  cm: { w: 3.5, h: 4.9, step: 0.1 },
+  inch: { w: 1.4, h: 1.9, step: 0.1 },
+  px: { w: 413, h: 579, step: 1 },
+}
+
+/** Inclusive min / max per unit — keeps custom specs out of silly territory. */
+const CUSTOM_BOUNDS: Record<CustomUnit, { min: number; max: number }> = {
+  mm: { min: 5, max: 500 },
+  cm: { min: 0.5, max: 50 },
+  inch: { min: 0.2, max: 20 },
+  px: { min: 50, max: 8000 },
+}
+
 const CUSTOM_DPIS = [200, 300, 600] as const
 const CUSTOM_DPI_DEFAULT = 300
-const CUSTOM_MM_MIN = 10
-const CUSTOM_MM_MAX = 200
+/** Default DPI we synthesise when the user types px directly. */
+const CUSTOM_PX_DPI = 300
 
 export function SpecPicker() {
   const t = useTranslations('Crop')
@@ -66,8 +87,9 @@ export function SpecPicker() {
   const [filter, setFilter] = useState<Filter>('all')
   const [query, setQuery] = useState('')
 
-  const [customW, setCustomW] = useState<number>(CUSTOM_W_DEFAULT_MM)
-  const [customH, setCustomH] = useState<number>(CUSTOM_H_DEFAULT_MM)
+  const [customUnit, setCustomUnit] = useState<CustomUnit>('mm')
+  const [customW, setCustomW] = useState<number>(CUSTOM_DEFAULTS.mm.w)
+  const [customH, setCustomH] = useState<number>(CUSTOM_DEFAULTS.mm.h)
   const [customDpi, setCustomDpi] = useState<number>(CUSTOM_DPI_DEFAULT)
 
   const visibleBuiltin = useMemo(() => {
@@ -82,31 +104,91 @@ export function SpecPicker() {
     })
   }, [filter, query])
 
+  const bounds = CUSTOM_BOUNDS[customUnit]
+  const inputStep = CUSTOM_DEFAULTS[customUnit].step
   const customValid =
     Number.isFinite(customW) &&
     Number.isFinite(customH) &&
-    customW >= CUSTOM_MM_MIN &&
-    customW <= CUSTOM_MM_MAX &&
-    customH >= CUSTOM_MM_MIN &&
-    customH <= CUSTOM_MM_MAX
+    customW >= bounds.min &&
+    customW <= bounds.max &&
+    customH >= bounds.min &&
+    customH <= bounds.max
+
+  /**
+   * Swap the unit and reset the inputs to that unit's defaults. We
+   * intentionally do NOT try to convert the typed values across units —
+   * that surprises users (typing "35" in mm shouldn't silently become
+   * "3.5 cm" when they switch unit) and the conversion would have to
+   * undo and reapply rounding each step. Defaults are tuned to land on
+   * the typical 2-inch size in each unit.
+   */
+  const changeUnit = (next: CustomUnit) => {
+    if (next === customUnit) return
+    setCustomUnit(next)
+    setCustomW(CUSTOM_DEFAULTS[next].w)
+    setCustomH(CUSTOM_DEFAULTS[next].h)
+  }
 
   const applyCustom = () => {
     if (!customValid) return
-    const w = Math.round(customW)
-    const h = Math.round(customH)
+    // Convert the typed value into mm + an effective DPI so the rest
+    // of the pipeline (which speaks mm + DPI everywhere — see
+    // `derivePixels`) doesn't need to know about units. For px input
+    // we synthesise a fixed DPI so `mmToPx` rounds back to exactly the
+    // pixel count the user asked for.
+    let widthMm: number
+    let heightMm: number
+    let dpi: number
+    let displayLabel: string
+    switch (customUnit) {
+      case 'cm': {
+        widthMm = customW * 10
+        heightMm = customH * 10
+        dpi = customDpi
+        displayLabel = `${formatNumber(customW)}×${formatNumber(customH)}cm`
+        break
+      }
+      case 'inch': {
+        widthMm = customW * MM_PER_INCH
+        heightMm = customH * MM_PER_INCH
+        dpi = customDpi
+        displayLabel = `${formatNumber(customW)}×${formatNumber(customH)}″`
+        break
+      }
+      case 'px': {
+        dpi = CUSTOM_PX_DPI
+        // Round to whole pixels in px mode so the saved spec's
+        // `width_px` / `height_px` agree with what the user typed.
+        const wPx = Math.round(customW)
+        const hPx = Math.round(customH)
+        widthMm = (wPx * MM_PER_INCH) / dpi
+        heightMm = (hPx * MM_PER_INCH) / dpi
+        displayLabel = `${wPx}×${hPx}px`
+        break
+      }
+      case 'mm':
+      default: {
+        widthMm = customW
+        heightMm = customH
+        dpi = customDpi
+        displayLabel = `${formatNumber(customW)}×${formatNumber(customH)}mm`
+        break
+      }
+    }
     const prefix = t('customNamePrefix')
+    const displayName = `${prefix} ${displayLabel}`
     const customSpec: PhotoSpec = {
       id: `custom-${Date.now()}`,
       builtin: false,
       category: 'custom',
       name: {
-        zh: `${prefix} ${w}×${h}`,
-        'zh-Hant': `${prefix} ${w}×${h}`,
-        en: `${prefix} ${w}×${h}`,
+        zh: displayName,
+        'zh-Hant': displayName,
+        en: displayName,
       },
-      width_mm: w,
-      height_mm: h,
-      dpi: customDpi,
+      width_mm: widthMm,
+      height_mm: heightMm,
+      dpi,
     }
     setSpec(customSpec)
   }
@@ -152,17 +234,34 @@ export function SpecPicker() {
       {/* Inline custom-size form — replaces the previous /specs detour. */}
       <div className="space-y-2 rounded-md border border-dashed border-[var(--color-border)] bg-[var(--color-divider)] p-3">
         <p className="text-xs font-medium text-[var(--color-text)]">{t('customSection')}</p>
+        <div className="space-y-1">
+          <Label htmlFor="custom-unit" className="text-xs text-[var(--color-text-mute)]">
+            {t('customUnit')}
+          </Label>
+          <select
+            id="custom-unit"
+            value={customUnit}
+            onChange={(e) => changeUnit(e.target.value as CustomUnit)}
+            className="h-8 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 font-mono text-xs text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none"
+          >
+            {CUSTOM_UNITS.map((u) => (
+              <option key={u} value={u}>
+                {t(`units.${u}` as 'units.mm')}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
             <Label htmlFor="custom-w" className="text-xs text-[var(--color-text-mute)]">
-              {t('customW')}
+              {t('customW', { unit: t(`units.${customUnit}` as 'units.mm') })}
             </Label>
             <Input
               id="custom-w"
               type="number"
-              min={CUSTOM_MM_MIN}
-              max={CUSTOM_MM_MAX}
-              step={1}
+              min={bounds.min}
+              max={bounds.max}
+              step={inputStep}
               value={customW}
               onChange={(e) => setCustomW(Number(e.target.value) || 0)}
               className="h-8 font-mono text-xs"
@@ -170,14 +269,14 @@ export function SpecPicker() {
           </div>
           <div className="space-y-1">
             <Label htmlFor="custom-h" className="text-xs text-[var(--color-text-mute)]">
-              {t('customH')}
+              {t('customH', { unit: t(`units.${customUnit}` as 'units.mm') })}
             </Label>
             <Input
               id="custom-h"
               type="number"
-              min={CUSTOM_MM_MIN}
-              max={CUSTOM_MM_MAX}
-              step={1}
+              min={bounds.min}
+              max={bounds.max}
+              step={inputStep}
               value={customH}
               onChange={(e) => setCustomH(Number(e.target.value) || 0)}
               className="h-8 font-mono text-xs"
@@ -191,8 +290,9 @@ export function SpecPicker() {
           <select
             id="custom-dpi"
             value={customDpi}
+            disabled={customUnit === 'px'}
             onChange={(e) => setCustomDpi(Number(e.target.value))}
-            className="h-8 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 font-mono text-xs text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none"
+            className="h-8 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 font-mono text-xs text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           >
             {CUSTOM_DPIS.map((d) => (
               <option key={d} value={d}>
@@ -200,7 +300,19 @@ export function SpecPicker() {
               </option>
             ))}
           </select>
+          {customUnit === 'px' ? (
+            <p className="text-xs text-[var(--color-text-mute)]">{t('customDpiPxHint')}</p>
+          ) : null}
         </div>
+        {!customValid ? (
+          <p className="text-xs text-[var(--color-warning)]">
+            {t('customRangeHint', {
+              min: formatNumber(bounds.min),
+              max: formatNumber(bounds.max),
+              unit: t(`units.${customUnit}` as 'units.mm'),
+            })}
+          </p>
+        ) : null}
         <Button
           size="sm"
           className="w-full"
@@ -282,6 +394,17 @@ function SpecRow({ spec, isActive, onSelect, locale }: SpecRowProps): React.Reac
       </button>
     </li>
   )
+}
+
+/**
+ * Trim trailing zeros from a fractional number so labels read as
+ * "1.4" rather than "1.4000000000000001". Whole numbers stay free
+ * of an unnecessary decimal point.
+ */
+function formatNumber(value: number): string {
+  if (!Number.isFinite(value)) return String(value)
+  if (Number.isInteger(value)) return String(value)
+  return Number(value.toFixed(2)).toString()
 }
 
 function ActiveSpecCard({ spec }: { spec: PhotoSpec }): React.ReactElement {
