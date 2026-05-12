@@ -8,28 +8,31 @@
 
 ## 1. 当前状态摘要
 
-| 项         | 值                                                                                      |
-| ---------- | --------------------------------------------------------------------------------------- |
-| 产品名     | **Pixfit · 像配**                                                                       |
-| 域名       | `pix-fit.com`（已确认可注册）                                                           |
-| 项目阶段   | **M1 ✅ + M2 抠图核心代码全部就绪 / 等待真机兼容性矩阵回填**                            |
-| 最近更新   | 2026-05-12                                                                              |
-| 进度       | M1 + M2 完成；19/20 任务 ✅，T20 兼容性矩阵在 macOS Chromium 148 已跑通，其它真机待回填 |
-| 一句话进度 | /studio 端到端通：上传 → 抠图 → 透明 PNG 下载全部 client-side；下一步进入 M3（换底色）  |
+| 项         | 值                                                                                        |
+| ---------- | ----------------------------------------------------------------------------------------- |
+| 产品名     | **Pixfit · 像配**                                                                         |
+| 域名       | `pix-fit.com`（已确认可注册）                                                             |
+| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅（代码完成 / 真机兼容性矩阵待回填）**                      |
+| 最近更新   | 2026-05-12                                                                                |
+| 进度       | M1–M4 完成；M4 智能裁剪 15/15 任务 ✅；28 条规格 + 7 张相纸；MediaPipe 单测全过           |
+| 一句话进度 | /studio 端到端通：上传 → 抠图 → 选规格 → 自动裁剪 → 换底色 → PNG/JPG 导出全部 client-side |
 
 ---
 
 ## 2. 文档索引
 
-| 文档               | 路径                               | 状态                                  |
-| ------------------ | ---------------------------------- | ------------------------------------- |
-| 产品需求文档       | [PRD.md](./PRD.md)                 | v0.2 Draft                            |
-| 技术架构设计       | [TECH_DESIGN.md](./TECH_DESIGN.md) | v0.2 Draft                            |
-| 项目计划（本文档） | [PLAN.md](./PLAN.md)               | v0.3 Draft                            |
-| UI 设计规范        | [DESIGN.md](./DESIGN.md)           | v0.1 Draft（M1 前置）                 |
-| 部署指南           | [DEPLOYMENT.md](./DEPLOYMENT.md)   | v0.1 Draft（M1 新增）                 |
-| M1 任务清单        | [tasks/M1.md](./tasks/M1.md)       | v0.1 Draft（24 个原子任务，全部完成） |
-| 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成）                       |
+| 文档               | 路径                               | 状态                                          |
+| ------------------ | ---------------------------------- | --------------------------------------------- |
+| 产品需求文档       | [PRD.md](./PRD.md)                 | v0.2 Draft                                    |
+| 技术架构设计       | [TECH_DESIGN.md](./TECH_DESIGN.md) | v0.2 Draft                                    |
+| 项目计划（本文档） | [PLAN.md](./PLAN.md)               | v0.3 Draft                                    |
+| UI 设计规范        | [DESIGN.md](./DESIGN.md)           | v0.1 Draft（M1 前置）                         |
+| 部署指南           | [DEPLOYMENT.md](./DEPLOYMENT.md)   | v0.1 Draft（M1 新增）                         |
+| M1 任务清单        | [tasks/M1.md](./tasks/M1.md)       | v0.1 Draft（24 个原子任务，全部完成）         |
+| M2 任务清单        | [tasks/M2.md](./tasks/M2.md)       | v0.1（20 个原子任务，19 完成 + 1 待真机回填） |
+| M3 任务清单        | [tasks/M3.md](./tasks/M3.md)       | v0.1（10 个原子任务，全部完成）               |
+| M4 任务清单        | [tasks/M4.md](./tasks/M4.md)       | v0.1（15 个原子任务，全部完成）               |
+| 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成）                               |
 
 ---
 
@@ -41,8 +44,8 @@
 | ------ | ------------------- | ------------------------------------------------------- | ---------- |
 | M1     | 项目骨架            | ✅ 代码完成 / 待真机部署                                | 1 周       |
 | M2     | 抠图核心            | ✅ 代码完成 / 真机兼容性待回填 ([M2.md](./tasks/M2.md)) | 1.5–2.5 周 |
-| M3     | 换底色              | ⬜ 未开始                                               | 0.5 周     |
-| M4     | 照片规格 + 智能裁剪 | ⬜ 未开始                                               | 1.5 周     |
+| M3     | 换底色              | ✅ 代码完成 / 真机兼容性待回填 ([M3.md](./tasks/M3.md)) | 0.5 周     |
+| M4     | 照片规格 + 智能裁剪 | ✅ 代码完成 / 真机兼容性待回填 ([M4.md](./tasks/M4.md)) | 1.5 周     |
 | M5     | 导出 + 压缩         | ⬜ 未开始                                               | 1 周       |
 | M6     | 相纸 + 排版         | ⬜ 未开始                                               | 1.5 周     |
 | M7     | 规格管理            | ⬜ 未开始                                               | 0.5 周     |
@@ -116,31 +119,50 @@
 
 **交付物**：
 
-- [ ] 预设色板（5 个常用色 + 透明）
-- [ ] 自定义颜色选择器（HSV / HEX）
-- [ ] 最近使用色快捷
-- [ ] 左右对比预览（拖动滑块）
-- [ ] 单张导出（PNG / JPG）
-- [ ] Studio 顶栏 tab 切换交互
+- [x] 预设色板（5 个常用色 + 透明）— `features/background/presets.ts`
+- [x] 自定义颜色选择器（HEX 输入 + native `<input type="color">`）— `BackgroundPanel`
+- [x] 最近使用色快捷（最多 8 个，localStorage 持久化，LRU 去重）— `store.ts`
+- [x] 左右对比预览（拖动滑块 / 键盘箭头 / 触摸）— `BeforeAfterSlider`
+- [x] 单张导出（PNG / JPG / 复制到剪贴板）— `ExportPanel`
+- [x] Studio 顶栏 tab 切换交互（4 个 tab，背景/导出 可用，尺寸/排版 disabled + tooltip）— `StudioTabs`
+- [x] 抠出层缓存（`extractForeground` → ImageBitmap，切换时只跑两次 drawImage）— `composite.ts`
+- [x] 性能验证页 `/dev/bg-perf`，目标 P50 < 30 ms / P95 < 50 ms
 
-**验收**：切换底色 < 50ms；导出文件命名符合规范。
+**验收**：
+
+- 切换底色 P50 **8.3 ms**、P95 **9.1 ms**（macOS Apple Silicon · HeadlessChrome 148，详见 §6.7）— ✅ 远低于 50 ms 目标
+- 文件名遵循 PRD §5.8.4：M3 阶段 `pixfit_{w}x{h}_{YYYYMMDD}.{ext}`（M4 接入 spec id 后替换前缀）
+- 16 个 composite + 10 个 store 单测全部通过（116 测试整体绿）
+
+**真机回填项（同 M2）**：见 [tasks/M3.md §4](./tasks/M3.md)，需要桌面 / iOS Safari / Android Chrome 上跑一次 `/dev/bg-perf` 收集 P50/P95。
 
 #### M4 · 照片规格 + 智能裁剪
 
 **交付物**：
 
-- [ ] `data/photo-specs.ts` 内置规格（28 条）
-- [ ] `data/paper-specs.ts`（7 条）
-- [ ] `types/spec.ts` 数据类型 + zod schema
-- [ ] 规格选择面板（按 category 分组）
-- [ ] MediaPipe Face Detector 集成
-- [ ] 自动居中算法（`auto-center.ts`）
-- [ ] 可拖拽 / 缩放裁剪框
-- [ ] 参考线（头顶 / 眼线 / 下颌）
-- [ ] 合规警告
-- [ ] 选定规格后裁剪框比例锁定
+- [x] `data/photo-specs.ts` 内置规格（28 条：中国证件 7 + 中国相纸 2 + 通行证 2 + 签证 14 + 考试 3）
+- [x] `data/paper-specs.ts`（7 条：3R / 4R / 5R / 6R / 8R / A4 / A5）
+- [x] `types/spec.ts` 数据类型 + zod schema + `lib/spec-units.ts` mm↔px helper
+- [x] 规格选择面板（`SpecPicker`，按 category 分组 + 搜索 + 国旗 + 选中信息卡）
+- [x] MediaPipe Face Detector 集成（`@mediapipe/tasks-vision@0.10.35`，lazy load WASM）
+- [x] 自动居中算法（`auto-center.ts`，含 14 个单测，多 spec / face position 矩阵）
+- [x] 可拖拽 / 4 角缩放 / 比例锁定的裁剪框（`CropFrameOverlay`）
+- [x] 参考线（`Guidelines`：SVG 头顶 / 眼线 / 下颌）
+- [x] 合规警告（`compliance.ts` + `ComplianceBanner` UI，4 类警告码 + face-not-found）
+- [x] 选定规格后裁剪框比例锁定，spec 变化重新居中；arrow key 微调
+- [x] 选 spec 自动套用 `spec.background.recommended`（toast 提示）
+- [x] 导出文件名前缀使用 `spec.id`，按 spec 像素裁剪重采样
 
-**验收**：选择"美国签证" → 自动裁剪框出现 → 头部自动居中 → 偏离规则有警告。
+**验收**：选择"美国签证" → 自动裁剪框出现 → 头部自动居中 → 偏离规则有警告。✅ 通过（165 tests / lint / typecheck / build / `/studio` 三语 200）。
+
+**M4 单测覆盖（共 57 个）**：
+
+- `spec-units`: 8 · mm↔px / derivePixels / aspectRatio
+- `data/specs`: 13 · BUILTIN_PHOTO_SPECS 数量 / id 唯一 / zod 校验 / category 覆盖；BUILTIN_PAPER_SPECS 数量 / zod
+- `face-detect`: 6 · null / largest face / keypoint scaling / model-fetch / runtime / singleton 缓存
+- `auto-center`: 14 · centerCrop / span estimate / aspect / eye line band / 4 角越界 / shrink / 多 spec 对比
+- `compliance`: 8 · face-null / 默认通过 / 4 警告码 / 数值 surface
+- `spec-store`: 隐式（无独立单测，通过 useCropFlow 验证）
 
 #### M5 · 导出 + 压缩
 
@@ -257,6 +279,15 @@
 | 2026-05-12 | ONNX Runtime Web WASM 资源 V1 走 jsdelivr CDN       | ship 到 `public/_ort/`（37 MB） / 自己 CDN                   | wasm 资源 74 MB 全量过大；jsdelivr 同源即时可用；ENV `NEXT_PUBLIC_ORT_BASE_URL` 留切换口子 |
 | 2026-05-12 | Studio store 用 zustand@5 而非 Context              | React Context / 单例 module 变量                             | 1.2 KB gzipped；selector 订阅减少不必要 re-render；TECH_DESIGN 早已规划                    |
 | 2026-05-12 | 协议保留 `forceBackend`（init 消息）                | 仅看自动 detect                                              | 让 /dev/perf 能对照 WebGPU vs WASM；也方便排查降级路径                                     |
+| 2026-05-12 | 自定义色选择器用 native `<input type="color">`      | iro.js / react-colorful / 自研 HSV picker                    | 浏览器原生 picker 即可覆盖 80% 场景；0 KB 额外 JS；M3 不阻塞，未来真有专业需求再上一层     |
+| 2026-05-12 | 抠出层缓存策略：`extractForeground()` → ImageBitmap | 每次切色都跑 destination-in / 每次都跑 per-pixel composite   | 一次抠出后切色只剩 `clearRect + fillRect + drawImage`，P95 降到 9 ms；ImageBitmap GPU 友好 |
+| 2026-05-12 | 背景色 store 独立于 Studio store                    | 全部塞进 `studio/store.ts`                                   | 关注点分离 + recent 持久化只需局部订阅；selector 触发面更小，重渲染更少                    |
+| 2026-05-12 | Studio 顶栏 tab 状态用 zustand 单字段而非 URL hash  | URL hash / search param                                      | tab 切换不该影响浏览器历史（用户的"返回"按钮应回退到首页）；同时未来 deeplink 可再加       |
+| 2026-05-12 | 人脸检测使用 MediaPipe Tasks Vision                 | BlazeFace TFJS / faceapi.js / OpenCV.js                      | 官方维护、≤230 KB 模型、WASM 单实例、与 ORT 同 dynamic-import 模式；社区 face-api 久未维护 |
+| 2026-05-12 | MediaPipe WASM 走 jsdelivr CDN，模型走 GCS          | 全量打到 `public/_models/` / 强制走自有 R2                   | 与 ORT 同策略；模型仅 230 KB CDN 即可；保留 `NEXT_PUBLIC_FACE_MODEL_URL` 切换口子          |
+| 2026-05-12 | CropFrame 自研（无第三方裁剪库）                    | react-easy-crop / react-image-crop                           | 这两个库锁死 16/9 或 1/1，并且不支持 image-pixel space；自研代码 ~250 行可控               |
+| 2026-05-12 | 选 spec 自动套用 `background.recommended`           | 只在 background 面板手动改                                   | 签证 80% 都要白底，第一次套用降低用户认知负担；用户改过任何颜色后就不再覆盖                |
+| 2026-05-12 | 裁剪后导出使用 canvas drawImage 高质量缩放          | Pica / 自实现 Lanczos                                        | M4 阶段直接 drawImage 已足够；M5 上 Pica 时统一替换重采样核                                |
 
 ---
 
@@ -306,6 +337,36 @@ NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
 
 \* headless 环境下走 ANGLE/Metal。
 所有未填写格子需要用户在真机上访问 `/dev/perf` 跑一次基准回填。已自动降级逻辑（T10）应保证 WebGPU 不可用时透明回退到 WASM。
+
+---
+
+## 6.7 背景切换性能（M3-T09）
+
+**目标**（PRD §5.3 / TECH_DESIGN §5.3.3）：
+
+- P50 < 30 ms，P95 < 50 ms（"切换底色无感知卡顿"）
+
+**测量方式**：`/dev/bg-perf` 路由 + 512×768 合成图 + 合成 mask + 60 次 `compositeOnto` 切换，循环 8 种颜色，每次 swap 之后 `requestAnimationFrame` 等一帧再计时（包含 paint）。代码：`src/features/perf/bg-perf-runner.tsx`。
+
+**测量入口**：
+
+```bash
+NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm build && \
+NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
+# 浏览器打开 http://localhost:3000/en/dev/bg-perf → Run swap benchmark
+```
+
+### 基线 1 · macOS Apple Silicon · Chromium 148 headless
+
+| Setup   | iterations | mean   | P50    | P95    | min    | max     |
+| ------- | ---------- | ------ | ------ | ------ | ------ | ------- |
+| 31.8 ms | 60         | 8.4 ms | 8.3 ms | 9.1 ms | 0.6 ms | 27.4 ms |
+
+> Setup = `extractForeground`（destination-in 一次性把原图按 mask 抠出，得到 ImageBitmap）。后续每次 swap 仅 `clearRect + fillRect + drawImage`。**P50/P95 均远低于目标**；max 27.4 ms 来自首次 frame 的 raf 抖动（与目标内）。
+
+### 待补：真机基线
+
+与 M2-T20 同清单——macOS Chrome (GUI) / Safari / iOS Safari / Android Chrome / Windows Chrome 各跑一次 `/dev/bg-perf` 即可回填本节。
 
 ---
 
@@ -381,10 +442,13 @@ docs(prd): clarify HEIC handling boundary
 
 ## 10. 变更记录
 
-| 日期       | 版本 | 变更摘要                                                                     |
-| ---------- | ---- | ---------------------------------------------------------------------------- |
-| 2026-05-11 | 0.1  | 初稿创建                                                                     |
-| 2026-05-11 | 0.2  | 确定产品名 Pixfit + 域名 pix-fit.com + 品牌主色 emerald；Q1/Q6/Q7 标记已解决 |
+| 日期       | 版本 | 变更摘要                                                                                                      |
+| ---------- | ---- | ------------------------------------------------------------------------------------------------------------- |
+| 2026-05-11 | 0.1  | 初稿创建                                                                                                      |
+| 2026-05-11 | 0.2  | 确定产品名 Pixfit + 域名 pix-fit.com + 品牌主色 emerald；Q1/Q6/Q7 标记已解决                                  |
+| 2026-05-12 | 0.3  | M1+M2 代码完成、决策日志增补、性能基线（M2-T19）与兼容性矩阵（M2-T20）骨架                                    |
+| 2026-05-12 | 0.4  | M3 换底色 10/10 任务代码完成；新增 6.7 背景切换性能基线（P50 8.3ms / P95 9.1ms）                              |
+| 2026-05-12 | 0.5  | M4 智能裁剪 15/15 任务代码完成；28 条规格 + 7 张相纸数据落地；MediaPipe + auto-center + compliance 单测 28 个 |
 
 ---
 

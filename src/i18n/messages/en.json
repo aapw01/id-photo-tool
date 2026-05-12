@@ -73,7 +73,89 @@
     "stats": {
       "size": "{w} × {h}",
       "inference": "{backend} · {ms} ms"
+    },
+    "tabs": {
+      "background": "Background",
+      "size": "Size",
+      "layout": "Layout",
+      "export": "Export",
+      "comingSoon": "Coming soon"
     }
+  },
+  "Crop": {
+    "title": "Photo spec",
+    "subtitle": "Pick a spec to lock the aspect ratio and auto-center the head.",
+    "search": "Search specs (US visa, Schengen, 2-inch…)",
+    "noMatches": "No specs match your search",
+    "categories": {
+      "cn-id": "China ID",
+      "cn-paper": "China paper",
+      "travel-permit": "Travel permits",
+      "visa": "Visas",
+      "exam": "Exams",
+      "custom": "Custom"
+    },
+    "stats": {
+      "dimensions": "{w} × {h} mm · {wpx} × {hpx} px",
+      "dpi": "{dpi} DPI",
+      "bg": "Recommended bg",
+      "kb": "{min}–{max} KB"
+    },
+    "actions": {
+      "resetFrame": "Reset to center",
+      "showGuides": "Show guides",
+      "hideGuides": "Hide guides"
+    },
+    "detect": {
+      "running": "Detecting face…",
+      "failed": "Face detection failed — drag the frame manually.",
+      "noFace": "No face detected — falling back to a centred crop."
+    },
+    "warnings": {
+      "title": "Composition hints",
+      "head-too-small": "Head is small: currently {ratio}% — spec asks for ~{lo}%–{hi}%",
+      "head-too-large": "Head is large: currently {ratio}% — spec asks for ~{lo}%–{hi}%",
+      "eye-too-high": "Eyes too high: currently {ratio}% from top — spec asks for ~{lo}%–{hi}%",
+      "eye-too-low": "Eyes too low: currently {ratio}% from top — spec asks for ~{lo}%–{hi}%",
+      "face-not-found": "No face detected — can't check composition."
+    },
+    "bgSuggested": "Applied the spec's recommended background: {name}"
+  },
+  "Background": {
+    "title": "Background color",
+    "presets": "Presets",
+    "custom": "Custom",
+    "recent": "Recently used",
+    "recentEmpty": "No recent colors yet",
+    "compare": "Before / after",
+    "compareHint": "Drag the divider to compare backgrounds",
+    "hexInputLabel": "Hex color",
+    "hexInputPlaceholder": "#FFFFFF",
+    "apply": "Apply",
+    "presetNames": {
+      "transparent": "Transparent",
+      "white": "White",
+      "blue": "Visa blue",
+      "red": "ID red",
+      "lightGray": "Light gray"
+    }
+  },
+  "Export": {
+    "title": "Export",
+    "subtitle": "Download the current photo. More formats arrive with the layout module.",
+    "actions": {
+      "png": "Download PNG",
+      "jpg": "Download JPG",
+      "copy": "Copy to clipboard"
+    },
+    "hint": {
+      "png": "PNG preserves the current background; transparent stays transparent.",
+      "jpg": "JPG doesn't support transparency — transparent areas become white.",
+      "copy": "Paste directly into chat apps or documents."
+    },
+    "copied": "Copied to clipboard",
+    "copyFailed": "Copy failed — try downloading instead",
+    "size": "≈{kb} KB"
   },
   "Segmentation": {
     "states": {

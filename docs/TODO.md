@@ -41,22 +41,45 @@
   - 创建 site → 复制脚本片段 → 在 `[locale]/layout.tsx` 注入或走边缘注入
   - cookie-less，不需要 token 字符串放在代码里
 
-### 1.3 M2 真机回填（兼容性矩阵 + 性能基准）
+### 1.3 M2 / M3 / M4 真机回填（兼容性矩阵 + 性能基准）
 
-> AI 已经在 macOS headless Chromium 148 跑通 WebGPU + WASM 两个后端。其它真机需要你打开浏览器跑一次。
+> AI 已经在 macOS headless Chromium 148 跑通：
+>
+> - **M2 抠图**：WebGPU + WASM 双后端
+> - **M3 换背景**：背景切换 P50 8.3 ms / P95 9.1 ms
+> - **M4 智能裁剪**：单测 28 个全过；MediaPipe + auto-center 算法验证
+>
+> 其它真机需要你打开浏览器跑一次。
+>
+> M4 没有独立的 `/dev/*-perf` 基准（人脸检测一次 ~50–150 ms 取决于设备，无需 micro-bench）。
+> 真机验证：上传一张证件照，选 "美国签证" 规格，确认：
+>
+> 1. 裁剪框出现且锁定 51:51 比例
+> 2. 头部自动居中
+> 3. 推荐白底自动套上（toast 提示）
+> 4. 拖动裁剪框时，眼线偏离会出现警告条
+> 5. 切到 Export tab，文件名应该是 `us-visa_600x600_YYYYMMDD.png`，分辨率正好 600×600
 
 启动方式：
 
 ```bash
 NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm build && \
 NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
+
+# 抠图基准
 # 浏览器打开 http://localhost:3000/en/dev/perf
 # 1) 点 "Use a 512×768 synthetic photo"（或上传一张真人像）
 # 2) 点 "Run benchmark"
 # 3) 点 "Copy JSON" → 粘贴给我，我会回填 PLAN §6.5 / §6.6
+
+# 背景切换基准（M3）
+# 浏览器打开 http://localhost:3000/en/dev/bg-perf
+# 1) 默认 60 次迭代即可
+# 2) 点 "Run swap benchmark"
+# 3) 点 "Copy JSON" → 粘贴给我，我回填 PLAN §6.7
 ```
 
-待跑环境：
+待跑环境（两个基准都跑一遍）：
 
 - [ ] macOS Chrome（桌面、有 GUI）
 - [ ] macOS Safari 17+（验证 WebGPU 是否可用）
@@ -118,28 +141,69 @@ NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
   - [x] T18 Worker 单测：worker-router + classifyError 共 7 条 — 2026-05-12
   - [x] T19 /dev/perf 基准工具 + 首批数据落 PLAN §6.5 — 2026-05-12
   - [~] T20 兼容性矩阵骨架（PLAN §6.6）— 仅 Chromium 148 headless 已跑通；待用户在真机跑 Chrome 桌面 / Safari / iOS / Android 一次以回填
-- [ ] 组 C · React 集成（T12–T14）
-- [ ] 组 D · Studio 路由（T15–T17）
-- [ ] 组 E · 验证（T18–T20）
 
 **关键里程碑**：
 
-- [ ] **首版可演示** — 用户上传一张图，能在 `/studio` 看到 mask 预览（T16+T17 完成）
-- [ ] **达到性能 DoD** — 桌面 Chrome 1024² 推理中位数 ≤ 800 ms（T19）
+- [x] **首版可演示** — 用户上传一张图，能在 `/studio` 看到 mask 预览（T16+T17 完成）— 2026-05-12
+- [x] **达到性能 DoD** — `/dev/perf` headless baseline 已落 PLAN §6.5（T19）— 2026-05-12
 
 参考：[`TECH_DESIGN.md §5.2 抠图模块`](./TECH_DESIGN.md)
 
 ---
 
-## 4. M3+ 长期事项收集池
+## 4. M3 · 换底色 ✅（代码完成，真机性能待回填）
+
+> 详细任务清单见 [`tasks/M3.md`](./tasks/M3.md)（10 个原子任务）。
+
+- [x] 组 A · 合成内核 — `composite()` + foreground 缓存 + zustand store（16+10 单测）— 2026-05-12
+- [x] 组 B · 背景面板 — ColorSwatch / BackgroundPanel / BeforeAfterSlider — 2026-05-12
+- [x] 组 C · Studio 集成 + 导出 — Tab 切换 + 接入合成 + PNG/JPG/Copy 三种导出 — 2026-05-12
+- [x] 组 D · 验证 — `/dev/bg-perf` baseline P50 8.3ms / P95 9.1ms — 2026-05-12
+- [~] 真机性能回填（见 §1.3）
+
+**性能验证**：headless 已远超目标（P50 9 ms vs 30 ms 目标 ≈ 1/3 余量；P95 9 ms vs 50 ms ≈ 1/5）。
+
+参考：[`tasks/M3.md`](./tasks/M3.md) · [`PLAN.md §6.7`](./PLAN.md)
+
+---
+
+## 5. M4 · 照片规格 + 智能裁剪 ✅（代码完成，真机验证待回填）
+
+> 详细任务清单见 [`tasks/M4.md`](./tasks/M4.md)（15 个原子任务）。
+
+- [x] 组 A · 数据模型 — `types/spec.ts` zod schema + `lib/spec-units.ts` mm↔px helper + 28 条 PhotoSpec + 7 条 PaperSpec（21 单测）— 2026-05-12
+- [x] 组 B · 算法 + 人脸 — MediaPipe lazy loader + face-detect wrapper + autoCenter + compliance（28 单测）— 2026-05-12
+- [x] 组 C · UI — Spec store + SpecPicker + CropFrameOverlay + Guidelines + ComplianceBanner — 2026-05-12
+- [x] 组 D · Studio 集成 — size tab 解锁 + useCropFlow 串联 + background 推荐自动套用 + 导出文件名 `{spec.id}_*` — 2026-05-12
+- [x] 组 E · 验证 — `pnpm lint / typecheck / test (165) / build` 全绿；三语 /studio 200 — 2026-05-12
+- [~] 真机端到端验证（见 §1.3）
+
+**关键决策**（同步至 PLAN §6 决策日志）：
+
+- 人脸检测用 MediaPipe Tasks Vision（vs faceapi.js）
+- WASM 走 jsdelivr，模型走 GCS；保留 `NEXT_PUBLIC_FACE_MODEL_URL` 切换口子
+- CropFrame 自研 250 行，没引第三方裁剪库
+- spec.background.recommended 第一次访问自动套用（不覆盖用户改过的背景）
+
+参考：[`tasks/M4.md`](./tasks/M4.md) · [`PLAN.md §3.2 M4`](./PLAN.md)
+
+---
+
+## 6. M5+ 长期事项收集池
 
 收到反馈、读 PRD/TECH_DESIGN 时发现但尚未排期的小事，丢到这里，到对应里程碑再消化。
 
 - [ ] **隐私政策与服务条款页面**（M5 或 M8）
   - 当前 Footer 已经有 `/privacy` `/terms` 链接但还没路由，需要 404 兜底或软删除
-- [ ] **`/sizes` `/paper` `/templates` 列表页**（M4/M6）
+- [ ] **`/sizes` `/paper` `/templates` 列表页**（M5/M6/M7）
 - [ ] **历史会话**（M5 后期，IndexedDB）
-- [ ] **国旗 chip 在裁剪选择器**（M4，配合 `flag-icons`）
+- [ ] **HSV / 渐变背景**（V1.1，扩 BackgroundPanel）— 当前只支持 HEX，已足够 V1
+- [ ] **撤销 / 重做**（PRD §5.9 历史会话，M5 期）— 背景色切换历史走 zundo
+- [ ] **`/studio?tab=export` 等 deeplink**（M5/M8）— 目前 tab 状态只在内存，不写 URL
+- [ ] **CropFrame 8 把手（含边把手）**（V1.1）— 当前只 4 个角，多数场景已足够
+- [ ] **Pica 重采样接入**（M5）— 替换当前 `drawImage` 高质量缩放
+- [ ] **face-detect 性能基准**（M8 打磨期）— 目前仅依赖单测，没单独 `/dev/face-perf` 路由
+- [ ] **MediaPipe 模型 SHA 校验**（M2-T03 同期，等 R2 接入再上）
 
 ---
 

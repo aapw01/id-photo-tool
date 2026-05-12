@@ -73,7 +73,89 @@
     "stats": {
       "size": "{w} × {h}",
       "inference": "{backend} · {ms} ms"
+    },
+    "tabs": {
+      "background": "背景",
+      "size": "尺寸",
+      "layout": "排版",
+      "export": "匯出",
+      "comingSoon": "即將上線"
     }
+  },
+  "Crop": {
+    "title": "照片規格",
+    "subtitle": "選擇規格後會自動依比例裁切並置中頭部",
+    "search": "搜尋規格（如 美國簽證、申根、二吋）",
+    "noMatches": "沒有符合的規格",
+    "categories": {
+      "cn-id": "中國證件",
+      "cn-paper": "中國相紙",
+      "travel-permit": "通行證",
+      "visa": "海外簽證",
+      "exam": "考試報名",
+      "custom": "自訂"
+    },
+    "stats": {
+      "dimensions": "{w} × {h} mm · {wpx} × {hpx} px",
+      "dpi": "{dpi} DPI",
+      "bg": "建議背景",
+      "kb": "{min}–{max} KB"
+    },
+    "actions": {
+      "resetFrame": "重新置中",
+      "showGuides": "顯示輔助線",
+      "hideGuides": "隱藏輔助線"
+    },
+    "detect": {
+      "running": "正在偵測人臉…",
+      "failed": "人臉偵測失敗，請手動調整裁切框",
+      "noFace": "未偵測到人臉 · 將依比例置中裁切"
+    },
+    "warnings": {
+      "title": "構圖建議",
+      "head-too-small": "頭部偏小：目前 {ratio}%，規格要求約 {lo}%–{hi}%",
+      "head-too-large": "頭部偏大：目前 {ratio}%，規格要求約 {lo}%–{hi}%",
+      "eye-too-high": "眼線偏高：目前距頂端 {ratio}%，規格要求約 {lo}%–{hi}%",
+      "eye-too-low": "眼線偏低：目前距頂端 {ratio}%，規格要求約 {lo}%–{hi}%",
+      "face-not-found": "未偵測到人臉，無法進行構圖檢查"
+    },
+    "bgSuggested": "已為你套用規格建議背景：{name}"
+  },
+  "Background": {
+    "title": "背景顏色",
+    "presets": "預設",
+    "custom": "自訂",
+    "recent": "最近使用",
+    "recentEmpty": "尚無最近使用紀錄",
+    "compare": "對比預覽",
+    "compareHint": "拖曳滑桿比較換背景前後",
+    "hexInputLabel": "十六進位顏色",
+    "hexInputPlaceholder": "#FFFFFF",
+    "apply": "套用",
+    "presetNames": {
+      "transparent": "透明",
+      "white": "標準白",
+      "blue": "證件藍",
+      "red": "證件紅",
+      "lightGray": "淺灰"
+    }
+  },
+  "Export": {
+    "title": "匯出",
+    "subtitle": "單張照片可直接下載，更多格式將隨排版功能上線",
+    "actions": {
+      "png": "下載 PNG",
+      "jpg": "下載 JPG",
+      "copy": "複製到剪貼簿"
+    },
+    "hint": {
+      "png": "PNG 會保留目前背景，透明背景將保留 alpha 通道",
+      "jpg": "JPG 不支援透明，透明區域會以白色填滿",
+      "copy": "複製後可直接貼到聊天工具或文件"
+    },
+    "copied": "已複製到剪貼簿",
+    "copyFailed": "複製失敗，請嘗試下載",
+    "size": "約 {kb} KB"
   },
   "Segmentation": {
     "states": {

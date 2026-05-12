@@ -1,28 +1,45 @@
 'use client'
 
 /**
- * The Studio workspace shell. Composes:
+ * The Studio workspace shell.
  *
- *   - The Studio store (current file + bitmap + mask)
- *   - useSegmentation (runs MODNet on the staged bitmap)
- *   - StudioPreview (renders original | mask preview)
- *   - SegmentationFeedback (progress strip + error toasts)
- *   - UploadDropzone for the empty-state and "replace photo" flow
+ * Composition (top → bottom, left → right):
  *
- * Drives segmentation automatically when a new bitmap is staged.
- * Subsequent re-runs are explicit (the retry button).
+ *   - Empty state: dropzone + helper copy
+ *   - Loaded state:
+ *       Top row     — top-bar tabs (background | size | layout | export)
+ *       Left card   — the preview canvas, possibly wrapped in the
+ *                     before/after slider when comparison is on
+ *       Right card  — file/stats summary, retry, replace
+ *       Right card  — tab-specific panel (BackgroundPanel or
+ *                     ExportPanel; size/layout panels are M4/M6)
+ *       Footer      — SegmentationFeedback (progress strip + toasts)
+ *
+ * The store automatically kicks off segmentation when a bitmap is
+ * staged without a mask; subsequent runs are explicit (Retry).
  */
 
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { UploadDropzone } from '@/components/upload-dropzone'
 import { Button } from '@/components/ui/button'
+import { BackgroundPanel } from '@/features/background/background-panel'
+import { ExportPanel } from '@/features/background/export-panel'
+import { useBackgroundStore } from '@/features/background/store'
+import { ComplianceBanner } from '@/features/crop/compliance-banner'
+import { CropFrameOverlay } from '@/features/crop/crop-frame'
+import { Guidelines } from '@/features/crop/guidelines'
+import { SpecPicker } from '@/features/crop/spec-picker'
+import { useCropStore } from '@/features/crop/spec-store'
+import { useCropFlow } from '@/features/crop/use-crop-flow'
 import { SegmentationFeedback } from '@/features/segmentation/segmentation-feedback'
 import { useSegmentation } from '@/features/segmentation/use-segmentation'
 
 import { useStudioStore } from './store'
 import { StudioPreview } from './studio-preview'
+import { StudioTabs } from './studio-tabs'
+import { useStudioTabStore } from './studio-tab-store'
 
 export function StudioWorkspace() {
   const t = useTranslations('Studio')
@@ -35,7 +52,20 @@ export function StudioWorkspace() {
   const setMask = useStudioStore((s) => s.setMask)
   const setFile = useStudioStore((s) => s.setFile)
 
+  const bg = useBackgroundStore((s) => s.current)
+  const tab = useStudioTabStore((s) => s.tab)
+
+  // Crop tab state — driven by useCropFlow below.
+  const cropSpec = useCropStore((s) => s.spec)
+  const cropFrame = useCropStore((s) => s.frame)
+  const showGuidelines = useCropStore((s) => s.showGuidelines)
+  const setCropFrame = useCropStore((s) => s.setFrame)
+
+  useCropFlow(bitmap, tab === 'size')
+
   const { segment, state, error } = useSegmentation()
+
+  const [showCompare, setShowCompare] = useState(false)
 
   const runSegmentation = useCallback(async () => {
     const currentFile = useStudioStore.getState().file
@@ -52,8 +82,6 @@ export function StudioWorkspace() {
     }
   }, [segment, setMask])
 
-  // Auto-run segmentation when a fresh bitmap is staged (no mask yet).
-  // Track the last bitmap we ran to avoid double-firing on re-renders.
   const lastRun = useRef<ImageBitmap | null>(null)
   useEffect(() => {
     if (!bitmap || mask) return
@@ -76,105 +104,96 @@ export function StudioWorkspace() {
     )
   }
 
+  // Only show the crop overlay when the size tab is open and we have
+  // a spec + frame. Comparing modes hide the overlay so the slider UI
+  // remains readable.
+  const cropOverlay =
+    tab === 'size' && cropSpec && cropFrame ? (
+      <>
+        <CropFrameOverlay
+          imageW={bitmap.width}
+          imageH={bitmap.height}
+          spec={cropSpec}
+          frame={cropFrame}
+          onChange={setCropFrame}
+        />
+        {showGuidelines ? (
+          <Guidelines
+            imageW={bitmap.width}
+            imageH={bitmap.height}
+            spec={cropSpec}
+            frame={cropFrame}
+          />
+        ) : null}
+      </>
+    ) : null
+
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
-      <StudioPreview bitmap={bitmap} mask={mask} />
-      <aside className="space-y-4">
-        <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between gap-2">
+    <div className="space-y-4">
+      <StudioTabs />
+
+      {tab === 'size' ? <ComplianceBanner /> : null}
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+        <StudioPreview
+          bitmap={bitmap}
+          mask={mask}
+          bg={bg}
+          showCompare={showCompare}
+          overlay={cropOverlay}
+        />
+
+        <aside className="space-y-4">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+            <div className="space-y-2">
               <p className="text-sm font-medium text-[var(--color-text)]">
                 {file?.name ?? 'image'}
               </p>
-            </div>
-            <p className="font-mono text-xs text-[var(--color-text-mute)]">
-              {t('stats.size', { w: bitmap.width, h: bitmap.height })}
-            </p>
-            {lastInference ? (
               <p className="font-mono text-xs text-[var(--color-text-mute)]">
-                {t('stats.inference', {
-                  backend: lastInference.backend,
-                  ms: lastInference.durationMs,
-                })}
+                {t('stats.size', { w: bitmap.width, h: bitmap.height })}
               </p>
-            ) : null}
+              {lastInference ? (
+                <p className="font-mono text-xs text-[var(--color-text-mute)]">
+                  {t('stats.inference', {
+                    backend: lastInference.backend,
+                    ms: lastInference.durationMs,
+                  })}
+                </p>
+              ) : null}
+            </div>
+            <div className="mt-3 flex flex-col gap-2">
+              <Button onClick={onReset} variant="outline" size="sm">
+                {tActions('replace')}
+              </Button>
+              <Button
+                onClick={() => void runSegmentation()}
+                disabled={state === 'loading-model' || state === 'inferring'}
+                variant="ghost"
+                size="sm"
+              >
+                {tActions('retry')}
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <Button onClick={onReset} variant="outline">
-            {tActions('replace')}
-          </Button>
-          <Button
-            onClick={() => runSegmentation()}
-            disabled={state === 'loading-model' || state === 'inferring'}
-            variant="ghost"
-          >
-            {tActions('retry')}
-          </Button>
-          <DownloadPngButton bitmap={bitmap} mask={mask} disabled={!mask || !!error}>
-            {tActions('downloadPng')}
-          </DownloadPngButton>
-        </div>
-      </aside>
+          {tab === 'background' ? (
+            <BackgroundPanel showCompare={showCompare} onToggleCompare={setShowCompare} />
+          ) : null}
+          {tab === 'size' ? <SpecPicker /> : null}
+          {tab === 'export' ? (
+            <ExportPanel
+              bitmap={bitmap}
+              mask={mask}
+              bg={bg}
+              disabled={!!error}
+              spec={cropSpec}
+              frame={cropFrame}
+            />
+          ) : null}
+        </aside>
+      </div>
+
       <SegmentationFeedback />
     </div>
-  )
-}
-
-interface DownloadPngButtonProps {
-  bitmap: ImageBitmap
-  mask: ImageData | null
-  disabled?: boolean
-  children: React.ReactNode
-}
-
-/**
- * Composite the original RGB with the mask's alpha into a single
- * transparent PNG and trigger a download. Runs entirely client-side.
- */
-function DownloadPngButton({ bitmap, mask, disabled, children }: DownloadPngButtonProps) {
-  const handleClick = useCallback(() => {
-    if (!mask) return
-    const canvas = document.createElement('canvas')
-    canvas.width = bitmap.width
-    canvas.height = bitmap.height
-    const ctx = canvas.getContext('2d', { willReadFrequently: false })
-    if (!ctx) return
-
-    // 1. Paint the original RGB.
-    ctx.drawImage(bitmap, 0, 0)
-
-    // 2. Pull pixels, multiply the original's alpha by the mask alpha.
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    const pixels = imageData.data
-    const maskPixels = mask.data
-    const n = pixels.length
-    for (let i = 0, j = 3; i < n; i += 4, j += 4) {
-      // Mask is RGBA where A carries the cutout. Multiply, not replace,
-      // so an already-transparent input pixel stays transparent.
-      const origAlpha = pixels[i + 3] ?? 0
-      const maskAlpha = maskPixels[j] ?? 0
-      pixels[i + 3] = Math.round((origAlpha * maskAlpha) / 255)
-    }
-    ctx.putImageData(imageData, 0, 0)
-
-    canvas.toBlob((blob) => {
-      if (!blob) return
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `pixfit-cutout-${Date.now()}.png`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
-    }, 'image/png')
-  }, [bitmap, mask])
-
-  return (
-    <Button onClick={handleClick} disabled={disabled}>
-      {children}
-    </Button>
   )
 }
