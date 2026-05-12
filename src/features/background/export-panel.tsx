@@ -13,14 +13,16 @@
  *      pipeline runs `compressToKB` and feeds the resulting blob to
  *      the download button. When off, single-blob export runs.
  *
- * The panel reads `spec` + `frame` from the parent (Studio passes
- * them through) and shows a filename preview using `buildFilename`.
- * Size estimates per format render in the small badge next to each
- * format option, refreshed whenever the foreground or settings
- * change.
+ * Most of the orchestration logic lives in focused hooks under
+ * `./export-panel/*` so this file can stay narrowly focused on UI:
+ *
+ *   - `useExportForeground`     — cached preview foreground + one-shot
+ *                                 full-res escape hatch.
+ *   - `useExportTargetPixels`   — the 3-mode pixel-size resolver.
+ *   - `useExportSizeEstimate`   — debounced two-format size estimator.
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Copy, Download, Loader2, Smartphone, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
@@ -28,18 +30,32 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { buildFilename, compressToKB, exportSingle, type ExportFormat } from '@/features/export'
+import {
+  buildFilename,
+  compressToKB,
+  exportSingle,
+  triggerDownload,
+  type ExportFormat,
+} from '@/features/export'
 import { useStudioTabStore } from '@/features/studio/studio-tab-store'
-import { derivePixels } from '@/lib/spec-units'
 import { useIsWeChat } from '@/lib/ua'
 import { cn } from '@/lib/utils'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
-import { extractForegroundCapped, scaleFrameForForeground, type BgColor } from './composite'
+import { scaleFrameForForeground, type BgColor } from './composite'
+import { useExportForeground, PREVIEW_FG_LONGSIDE_PX } from './export-panel/use-export-foreground'
+import { useExportSizeEstimate } from './export-panel/use-export-size-estimate'
+import { useExportTargetPixels } from './export-panel/use-export-target-pixels'
 
 interface ExportPanelProps {
   bitmap: ImageBitmap
   mask: ImageData | null
+  /**
+   * Decontaminated foreground RGBA produced inside the segmentation
+   * worker. When present, the preview cut-out skips the main-thread
+   * alpha-matte + spill suppression passes (M5 P2-2).
+   */
+  foreground?: ImageData | null
   bg: BgColor
   disabled?: boolean
   spec?: PhotoSpec | null
@@ -48,67 +64,17 @@ interface ExportPanelProps {
 
 const FORMATS: ExportFormat[] = ['png-alpha', 'png-flat', 'jpg', 'webp']
 
-/** Long-side cap (in pixels) for the size-estimate preview canvas. */
-const ESTIMATE_LONGSIDE_PX = 1280
-/** Tail-debounce window for the file-size estimate effect. */
-const ESTIMATE_DEBOUNCE_MS = 400
-/**
- * Long-side cap of the cached preview foreground. Has to match the
- * default used by `extractForegroundCapped` so the "do I need to
- * rebuild?" check in `onDownload` / `onCopy` agrees with what the
- * preview effect actually stashes.
- */
-const PREVIEW_FG_LONGSIDE_PX = 1600
-
-/**
- * Render `src` into a `previewW × previewH` canvas, applying `frame`
- * (in original-bitmap pixel space) up front. When `src` has been
- * capped to a working resolution by `extractForegroundCapped`, we
- * rescale `frame` to the source's coord system before drawing. The
- * resulting canvas is already the size the estimate pipeline wants
- * out the other end, so `exportSingle`'s fast path can skip
- * resampling entirely.
- */
-function buildEstimateSource(
-  src: ImageBitmap | HTMLCanvasElement,
-  frame: CropFrame | null | undefined,
-  previewW: number,
-  previewH: number,
-  bitmapW: number,
-  bitmapH: number,
-): HTMLCanvasElement {
-  const c = document.createElement('canvas')
-  c.width = Math.max(1, Math.round(previewW))
-  c.height = Math.max(1, Math.round(previewH))
-  const ctx = c.getContext('2d')
-  if (!ctx) return c
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-  const srcW = (src as { width: number }).width
-  const srcH = (src as { height: number }).height
-  if (frame) {
-    const scaled = scaleFrameForForeground(frame, bitmapW, bitmapH, srcW, srcH)
-    ctx.drawImage(
-      src as CanvasImageSource,
-      scaled.x,
-      scaled.y,
-      scaled.w,
-      scaled.h,
-      0,
-      0,
-      c.width,
-      c.height,
-    )
-  } else {
-    ctx.drawImage(src as CanvasImageSource, 0, 0, srcW, srcH, 0, 0, c.width, c.height)
-  }
-  return c
-}
-
-export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportPanelProps) {
+export function ExportPanel({
+  bitmap,
+  mask,
+  foreground: precomputedForeground,
+  bg,
+  disabled,
+  spec,
+  frame,
+}: ExportPanelProps) {
   const t = useTranslations('Export')
 
-  const [foreground, setForeground] = useState<ImageBitmap | null>(null)
   // png-alpha needs a real cut-out to mean anything. If the user
   // hasn't run segmentation yet, default to png-flat so the Download
   // button isn't silently disabled when they land on this tab.
@@ -124,51 +90,13 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const [keepNativeResolution, setKeepNativeResolution] = useState<boolean>(false)
   // Suggest the spec's maxKB when present, otherwise a sensible default.
   const [targetKB, setTargetKB] = useState<number>(() => spec?.fileRules?.maxKB ?? 100)
-  const [estimates, setEstimates] = useState<Record<ExportFormat, number | null>>({
-    'png-alpha': null,
-    'png-flat': null,
-    jpg: null,
-    webp: null,
-  })
   // Tracks whether an export is in flight so the button reflects busy
   // status — large bitmaps can take a couple of seconds and a silent
   // click looks broken.
   const [downloading, setDownloading] = useState<boolean>(false)
   const [copying, setCopying] = useState<boolean>(false)
-  // Set of in-flight object URLs we have to revoke later. Revoking
-  // immediately after `.click()` races the browser's download fetch on
-  // Safari; we wait 30s then clean up. The ref also lets the unmount
-  // effect tidy any URLs that outlived the component.
-  const pendingUrls = useRef<Set<string>>(new Set())
 
-  useEffect(() => {
-    let cancelled = false
-    const work = async () => {
-      await null
-      if (cancelled) return
-      if (!mask) {
-        // No cut-out yet — `exportSource` falls back to the raw bitmap.
-        setForeground((prev) => {
-          prev?.close?.()
-          return null
-        })
-        return
-      }
-      const fg = await extractForegroundCapped(bitmap, mask)
-      if (cancelled) {
-        fg.close?.()
-        return
-      }
-      setForeground((prev) => {
-        prev?.close?.()
-        return fg
-      })
-    }
-    void work()
-    return () => {
-      cancelled = true
-    }
-  }, [bitmap, mask])
+  const { foreground, acquireFullRes } = useExportForeground(bitmap, mask, precomputedForeground)
 
   // If the mask is dropped (user replaced their photo) while we're
   // sitting on png-alpha, downgrade to png-flat so the Download
@@ -213,124 +141,18 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     }
   }, [spec?.fileRules?.maxKB])
 
-  // The target pixel size resolves in three modes:
-  //   1. spec + frame, default behaviour      → spec's prescribed pixel box
-  //      (e.g. 美国签证 → 602 × 602 @ 300 DPI). The spec wins because the
-  //      printed photo has to land at the right physical size.
-  //   2. spec + frame, `keepNativeResolution` → the frame's native pixel
-  //      dimensions in the original-bitmap coord system. Same aspect as
-  //      the spec, but a higher-resolution file (typical 1500–2500 px
-  //      long side on a modern phone shot). Use when the user wants a
-  //      large file at the spec ratio.
-  //   3. neither spec nor frame              → the original bitmap size,
-  //      i.e. "raw export" (no crop, no resize).
-  const targetPixels = useMemo(() => {
-    if (spec && frame) {
-      if (keepNativeResolution) {
-        return { width: Math.round(frame.w), height: Math.round(frame.h) }
-      }
-      const r = derivePixels(spec)
-      return { width: r.width_px, height: r.height_px }
-    }
-    return { width: bitmap.width, height: bitmap.height }
-  }, [spec, frame, bitmap, keepNativeResolution])
+  const targetPixels = useExportTargetPixels({ bitmap, spec, frame, keepNativeResolution })
 
-  // Estimate file sizes for the *currently selected* format only (plus
-  // its alpha cousin when a cut-out is available). Estimating all four
-  // formats simultaneously — as we used to — runs four full encode
-  // passes on every quality-slider tick / mask change, which on a 20MP
-  // photo starves the click handler that triggers the actual download.
-  //
-  // The estimate is a hint, not an exact byte count, so we run it
-  // against a single downscaled preview canvas (long side ≤ 1280px) that
-  // we draw ONCE per debounce tick. `exportSingle` then takes its fast
-  // path (no frame, target === source dims) and the encode never has to
-  // traverse a 20MP intermediate just to read back the blob size.
-  //
-  // Tail-debounced by 400ms so dragging the quality slider doesn't
-  // hammer the encoder on every tick.
-  useEffect(() => {
-    let cancelled = false
-    if (!exportSource) {
-      // React 19: defer the setState past the synchronous effect body.
-      void (async () => {
-        await null
-        if (cancelled) return
-        setEstimates({ 'png-alpha': null, 'png-flat': null, jpg: null, webp: null })
-      })()
-      return () => {
-        cancelled = true
-      }
-    }
-
-    const handle = setTimeout(() => {
-      void (async () => {
-        if (cancelled) return
-
-        // Pick the at-most-two formats we'll estimate this pass.
-        const wanted: ExportFormat[] = [format]
-        if (foreground) {
-          if (format === 'png-flat') wanted.push('png-alpha')
-          else if (format === 'png-alpha') wanted.push('png-flat')
-        }
-
-        const longest = Math.max(targetPixels.width, targetPixels.height)
-        const scale = longest > ESTIMATE_LONGSIDE_PX ? ESTIMATE_LONGSIDE_PX / longest : 1
-        const previewW = Math.max(1, Math.round(targetPixels.width * scale))
-        const previewH = Math.max(1, Math.round(targetPixels.height * scale))
-
-        // Build the downscaled estimate source once and reuse across
-        // every format we sample this tick. The frame is baked into
-        // this canvas in image-pixel space — so `exportSingle` gets a
-        // canvas that already matches `targetPixels` and the fast path
-        // (no resample) fires for every format below.
-        const estimateSource = buildEstimateSource(
-          exportSource,
-          frame,
-          previewW,
-          previewH,
-          bitmap.width,
-          bitmap.height,
-        )
-        // Reported bytes ≈ measured bytes × (target_area / preview_area).
-        const sizeMultiplier = scale === 1 ? 1 : 1 / (scale * scale)
-
-        const next: Record<ExportFormat, number | null> = {
-          'png-alpha': null,
-          'png-flat': null,
-          jpg: null,
-          webp: null,
-        }
-        for (const f of wanted) {
-          if (f === 'png-alpha' && !foreground) {
-            next[f] = null
-            continue
-          }
-          try {
-            const result = await exportSingle({
-              foreground: estimateSource,
-              bg,
-              format: f,
-              targetPixels: { width: previewW, height: previewH },
-              frame: null,
-              quality: f === 'jpg' || f === 'webp' ? quality : undefined,
-            })
-            if (cancelled) return
-            next[f] = Math.round(result.blob.size * sizeMultiplier)
-          } catch {
-            next[f] = null
-          }
-        }
-        if (cancelled) return
-        setEstimates(next)
-      })()
-    }, ESTIMATE_DEBOUNCE_MS)
-
-    return () => {
-      cancelled = true
-      clearTimeout(handle)
-    }
-  }, [exportSource, foreground, bitmap, bg, targetPixels, frame, quality, format])
+  const estimates = useExportSizeEstimate({
+    exportSource,
+    foreground,
+    bitmap,
+    bg,
+    targetPixels,
+    frame,
+    quality,
+    format,
+  })
 
   // Filename preview: layout/single/compressed swap based on toggle.
   const filename = useMemo(() => {
@@ -357,39 +179,13 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const isAlpha = format === 'png-alpha' || format === 'webp'
   const supportsCompress = format === 'jpg' || format === 'webp'
 
-  // Build the foreground actually used for an export. The cached
-  // preview foreground is intentionally capped at
-  // `PREVIEW_FG_LONGSIDE_PX` so the editor stays snappy on 20 MP
-  // photos — but feeding that small bitmap into a full-res download
-  // (e.g. target 3648×5472 or a >1600 spec) upscales it and the
-  // result looks blurry. When the target exceeds the cache, build a
-  // one-shot foreground sized for *this* export only. The caller is
-  // responsible for closing the one-shot bitmap once the export is
-  // done; the cached preview foreground is never touched.
-  const acquireExportForeground = useCallback(async (): Promise<{
-    source: ImageBitmap
-    oneShot: ImageBitmap | null
-  }> => {
-    const targetLong = Math.max(targetPixels.width, targetPixels.height)
-    const cachedLong = foreground ? Math.max(foreground.width, foreground.height) : 0
-    const needsFullRes = !!mask && targetLong > cachedLong
-    if (!needsFullRes) {
-      return { source: foreground ?? bitmap, oneShot: null }
-    }
-    // Add a small headroom so the resampler downscales (sharp) rather
-    // than upscales (blurry) — matches `derivePixels` rounding slop.
-    const oneShot = await extractForegroundCapped(bitmap, mask!, {
-      maxLongSide: Math.max(PREVIEW_FG_LONGSIDE_PX, Math.ceil(targetLong * 1.05)),
-    })
-    return { source: oneShot, oneShot }
-  }, [bitmap, mask, foreground, targetPixels])
-
   const onDownload = useCallback(async () => {
     if (!exportSource) return
     setDownloading(true)
     let oneShot: ImageBitmap | null = null
     try {
-      const acquired = await acquireExportForeground()
+      const targetLong = Math.max(targetPixels.width, targetPixels.height)
+      const acquired = await acquireFullRes(targetLong)
       oneShot = acquired.oneShot
       const source = acquired.source
       let blob: Blob
@@ -430,21 +226,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         blob = result.blob
       }
 
-      const url = URL.createObjectURL(blob)
-      pendingUrls.current.add(url)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = filename
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      // Safari can race the revoke against the download fetch when we
-      // revoke synchronously after click. Wait long enough for any
-      // browser to have started its download stream.
-      setTimeout(() => {
-        URL.revokeObjectURL(url)
-        pendingUrls.current.delete(url)
-      }, 30_000)
+      triggerDownload(blob, filename)
     } catch {
       toast.error(t('downloadFailed'))
     } finally {
@@ -453,7 +235,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     }
   }, [
     exportSource,
-    acquireExportForeground,
+    acquireFullRes,
     bitmap,
     compress,
     supportsCompress,
@@ -472,7 +254,8 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     setCopying(true)
     let oneShot: ImageBitmap | null = null
     try {
-      const acquired = await acquireExportForeground()
+      const targetLong = Math.max(targetPixels.width, targetPixels.height)
+      const acquired = await acquireFullRes(targetLong)
       oneShot = acquired.oneShot
       const source = acquired.source
       const sourceFrame = frame
@@ -503,17 +286,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       oneShot?.close?.()
       setCopying(false)
     }
-  }, [exportSource, acquireExportForeground, bitmap, foreground, bg, targetPixels, frame, t])
-
-  // Tidy any object URLs that are still hanging around at unmount —
-  // the 30s deferred-revoke timer might still be pending.
-  useEffect(() => {
-    const urls = pendingUrls.current
-    return () => {
-      for (const url of urls) URL.revokeObjectURL(url)
-      urls.clear()
-    }
-  }, [])
+  }, [exportSource, acquireFullRes, bitmap, foreground, bg, targetPixels, frame, t])
 
   // png-alpha only makes sense with a real cut-out; everything else
   // works with either the cut-out or the raw bitmap.
