@@ -2,6 +2,7 @@ allowBuilds:
   '@parcel/watcher': true
   '@swc/core': true
   esbuild: true
+  protobufjs: true
   sharp: true
   simple-git-hooks: true
   unrs-resolver: true
