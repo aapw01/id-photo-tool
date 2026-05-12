@@ -19,7 +19,7 @@
  * staged without a mask; subsequent runs are explicit (Retry).
  */
 
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { UploadDropzone } from '@/components/upload-dropzone'
@@ -34,6 +34,7 @@ import { SpecPicker } from '@/features/crop/spec-picker'
 import { useCropStore } from '@/features/crop/spec-store'
 import { useCropFlow } from '@/features/crop/use-crop-flow'
 import { LayoutPanel, LayoutPreview } from '@/features/layout'
+import { useLayoutStore } from '@/features/layout'
 import { SegmentationFeedback } from '@/features/segmentation/segmentation-feedback'
 import { useSegmentation } from '@/features/segmentation/use-segmentation'
 
@@ -61,12 +62,14 @@ export function StudioWorkspace() {
 
   const bg = useBackgroundStore((s) => s.current)
   const tab = useStudioTabStore((s) => s.tab)
+  const resetLayout = useLayoutStore((s) => s.reset)
 
   // Crop tab state — driven by useCropFlow below.
   const cropSpec = useCropStore((s) => s.spec)
   const cropFrame = useCropStore((s) => s.frame)
   const showGuidelines = useCropStore((s) => s.showGuidelines)
   const setCropFrame = useCropStore((s) => s.setFrame)
+  const resetCrop = useCropStore((s) => s.reset)
 
   useCropFlow(bitmap, tab === 'size')
   useTabDeeplink()
@@ -75,6 +78,7 @@ export function StudioWorkspace() {
 
   const [showCompare, setShowCompare] = useState(false)
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
+  const replaceInputRef = useRef<HTMLInputElement>(null)
 
   const openMobileSheet = useCallback(() => {
     setMobileSheetOpen(true)
@@ -101,9 +105,24 @@ export function StudioWorkspace() {
   // "Start cut-out" CTA when the user actually wants to change the
   // background colour.
 
-  const onReset = useCallback(() => {
-    void setFile(null)
-  }, [setFile])
+  const onReplaceClick = useCallback(() => {
+    replaceInputRef.current?.click()
+  }, [])
+
+  const onReplacementFiles = useCallback(
+    (files: FileList | null) => {
+      const nextFile = files?.[0]
+      if (!nextFile) return
+
+      void (async () => {
+        await setFile(nextFile)
+        resetCrop()
+        resetLayout()
+        setShowCompare(false)
+      })()
+    },
+    [resetCrop, resetLayout, setFile],
+  )
 
   if (!bitmap) {
     return (
@@ -191,7 +210,7 @@ export function StudioWorkspace() {
       </div>
       <div className="mt-3 flex flex-col gap-2">
         <Button
-          onClick={onReset}
+          onClick={onReplaceClick}
           variant="outline"
           size="sm"
           style={{ touchAction: 'manipulation' }}
@@ -213,6 +232,17 @@ export function StudioWorkspace() {
 
   return (
     <div className="space-y-4 pb-20 md:pb-0">
+      <input
+        ref={replaceInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+        className="sr-only"
+        onChange={(e) => {
+          onReplacementFiles(e.target.files)
+          e.currentTarget.value = ''
+        }}
+      />
+
       <div className="hidden md:block">
         <StudioTabs />
       </div>
