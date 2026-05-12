@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
+import { SegmentationPrewarm } from '@/features/segmentation/segmentation-prewarm'
 import { StudioWorkspace } from '@/features/studio/studio-workspace'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
@@ -54,6 +55,15 @@ export default async function StudioPage({ params }: StudioPageProps) {
             </p>
           </header>
 
+          {/* Mounting the prewarm here (rather than the home page)
+              scopes it to actual cut-out intent: the user has navigated
+              to /studio, but we still only fire on hover / focus of
+              [data-warmup-segmentation] or once the user visits the
+              background tab — no idle download on a crop-only flow. */}
+          <SegmentationPrewarm />
+          {/* StudioWorkspace's tab-deeplink hook calls `useSearchParams`,
+              which Next.js requires to sit inside a Suspense boundary
+              so static prerender can bail out and resume on the client. */}
           <Suspense fallback={null}>
             <StudioWorkspace />
           </Suspense>

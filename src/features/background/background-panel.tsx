@@ -100,6 +100,11 @@ export function BackgroundPanel({
             disabled={busySeg}
             className="w-full"
             style={{ touchAction: 'manipulation' }}
+            // Hovering / focusing this CTA is the strongest signal the
+            // user is about to need segmentation. `SegmentationPrewarm`
+            // listens for the attribute and starts the model download
+            // a beat ahead of the click.
+            data-warmup-segmentation=""
           >
             {busySeg ? <Loader2 className="size-4 animate-spin" aria-hidden /> : null}
             {busySeg ? t('cutout.running') : t('cutout.start')}

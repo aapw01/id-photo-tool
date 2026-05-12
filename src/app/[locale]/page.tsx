@@ -6,7 +6,6 @@ import { JsonLd } from '@/components/jsonld'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { UploadDropzone } from '@/components/upload-dropzone'
-import { SegmentationPrewarm } from '@/features/segmentation/segmentation-prewarm'
 import { hasLocale } from 'next-intl'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
@@ -47,7 +46,6 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <>
-      <SegmentationPrewarm />
       <SiteHeader />
       <main className="flex-1">
         <section className="mx-auto max-w-5xl px-6 pt-16 pb-12 sm:pt-24">

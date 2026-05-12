@@ -1,26 +1,42 @@
 'use client'
 
 /**
- * Idle-time model prewarm for hover-capable devices.
+ * Conditional model prewarm for hover-capable devices.
  *
- * On a desktop with a pointer (`(hover: hover)` matches), we kick off
- * `useSegmentation().warmup()` either at the next `requestIdleCallback`
- * or as soon as the user hovers any element tagged with the
- * `data-warmup-segmentation` attribute (whichever comes first).
+ * Triggers (any of the below, on a `(hover: hover)` device, once):
+ *
+ *   - The user hovers / focuses any element tagged with the
+ *     `data-warmup-segmentation` attribute (e.g. the background tab's
+ *     "Start cut-out" CTA).
+ *   - The studio tab store reports the user already visited the
+ *     background tab in this session — they've shown intent to cut out.
+ *   - `idle` prop is set AND `requestIdleCallback` fires (opt-in:
+ *     only pass `idle` from a place that has clear cut-out intent).
  *
  * On mobile / touch we deliberately do nothing — the 6 MB download
- * would burn cellular data without the user actually opening Studio.
- * Their warmup happens when they actually navigate to /studio
- * (M2-T16).
+ * would burn cellular data without explicit user action. The
+ * background panel's explicit CTA covers that path.
  *
- * Render this once near the root of any page where prewarm makes sense
- * (currently: the home hero). It produces no DOM and is safe to remount
- * — the underlying segmentation client is a singleton.
+ * Render this once on the studio page so the model is ready when the
+ * user opens the background tab. Produces no DOM and is safe to
+ * remount — the underlying segmentation client is a singleton.
  */
 
 import { useEffect } from 'react'
 
+import { useStudioTabStore } from '@/features/studio/studio-tab-store'
+
 import { useSegmentation } from './use-segmentation'
+
+interface SegmentationPrewarmProps {
+  /**
+   * When true, schedule the warmup via `requestIdleCallback` even
+   * without an explicit hover / visit. Use sparingly — only on
+   * surfaces where the user has clearly indicated they intend to run
+   * segmentation. Defaults to `false`.
+   */
+  idle?: boolean
+}
 
 type IdleCallbackWindow = {
   requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number
@@ -30,8 +46,12 @@ type IdleCallbackWindow = {
 const PREWARM_DELAY_MS = 1500
 const PREWARM_IDLE_TIMEOUT = 4000
 
-export function SegmentationPrewarm() {
+export function SegmentationPrewarm({ idle = false }: SegmentationPrewarmProps = {}) {
   const { warmup, state } = useSegmentation()
+  // Subscribe so a tab change during the session retriggers the
+  // effect; we read `visited` again inside the body to make the gate
+  // explicit.
+  const visited = useStudioTabStore((s) => s.visited)
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -53,14 +73,26 @@ export function SegmentationPrewarm() {
       void warmup()
     }
 
-    const idleWin = window as unknown as IdleCallbackWindow
-    if (typeof idleWin.requestIdleCallback === 'function') {
-      idleId = idleWin.requestIdleCallback(trigger, { timeout: PREWARM_IDLE_TIMEOUT })
-    } else {
-      timeoutId = window.setTimeout(trigger, PREWARM_DELAY_MS)
+    // Path 1: user already opened the background tab this session.
+    // Treat that as "clear intent" and warm up immediately on the
+    // next microtask.
+    if (visited.has('background')) {
+      queueMicrotask(trigger)
     }
 
-    // Hover on any opt-in element warms up immediately (e.g. CTA).
+    // Path 2: idle prewarm — opt-in via prop, scheduled on the
+    // browser's idle callback so we never compete with first paint.
+    const idleWin = window as unknown as IdleCallbackWindow
+    if (idle) {
+      if (typeof idleWin.requestIdleCallback === 'function') {
+        idleId = idleWin.requestIdleCallback(trigger, { timeout: PREWARM_IDLE_TIMEOUT })
+      } else {
+        timeoutId = window.setTimeout(trigger, PREWARM_DELAY_MS)
+      }
+    }
+
+    // Path 3: hover / focus on any opt-in element triggers immediately.
+    // The CTA in the background panel is the canonical hook.
     const hoverElements = document.querySelectorAll('[data-warmup-segmentation]')
     function onHover() {
       trigger()
@@ -81,7 +113,7 @@ export function SegmentationPrewarm() {
       hoverElements.forEach((el) => el.removeEventListener('pointerenter', onHover))
       hoverElements.forEach((el) => el.removeEventListener('focus', onHover, true))
     }
-  }, [warmup, state])
+  }, [warmup, state, idle, visited])
 
   return null
 }
