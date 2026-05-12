@@ -115,6 +115,13 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const [format, setFormat] = useState<ExportFormat>(() => (mask ? 'png-alpha' : 'png-flat'))
   const [quality, setQuality] = useState<number>(0.92)
   const [compress, setCompress] = useState<boolean>(false)
+  // Escape hatch for users who picked a spec but want a high-
+  // resolution download (e.g. "I selected 美国签证 but still want a
+  // print-quality file"). When `true`, `targetPixels` ignores the
+  // spec's prescribed pixel box and uses the crop frame's native
+  // pixel dimensions instead — same aspect ratio, but a much larger
+  // file because we skip the downscale to 600×600.
+  const [keepNativeResolution, setKeepNativeResolution] = useState<boolean>(false)
   // Suggest the spec's maxKB when present, otherwise a sensible default.
   const [targetKB, setTargetKB] = useState<number>(() => spec?.fileRules?.maxKB ?? 100)
   const [estimates, setEstimates] = useState<Record<ExportFormat, number | null>>({
@@ -206,15 +213,27 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     }
   }, [spec?.fileRules?.maxKB])
 
-  // The target pixel size is the spec's resolved pixel box if both
-  // spec and frame are present; otherwise the source bitmap size.
+  // The target pixel size resolves in three modes:
+  //   1. spec + frame, default behaviour      → spec's prescribed pixel box
+  //      (e.g. 美国签证 → 602 × 602 @ 300 DPI). The spec wins because the
+  //      printed photo has to land at the right physical size.
+  //   2. spec + frame, `keepNativeResolution` → the frame's native pixel
+  //      dimensions in the original-bitmap coord system. Same aspect as
+  //      the spec, but a higher-resolution file (typical 1500–2500 px
+  //      long side on a modern phone shot). Use when the user wants a
+  //      large file at the spec ratio.
+  //   3. neither spec nor frame              → the original bitmap size,
+  //      i.e. "raw export" (no crop, no resize).
   const targetPixels = useMemo(() => {
     if (spec && frame) {
+      if (keepNativeResolution) {
+        return { width: Math.round(frame.w), height: Math.round(frame.h) }
+      }
       const r = derivePixels(spec)
       return { width: r.width_px, height: r.height_px }
     }
     return { width: bitmap.width, height: bitmap.height }
-  }, [spec, frame, bitmap])
+  }, [spec, frame, bitmap, keepNativeResolution])
 
   // Estimate file sizes for the *currently selected* format only (plus
   // its alpha cousin when a cut-out is available). Estimating all four
@@ -515,6 +534,16 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
   const isQualityMax = qualityPercent === 100
   const estimateBytes = estimates[format]
 
+  // Show the original bitmap dimensions alongside the export target so
+  // the user sees "why is my export smaller than my upload" at a
+  // glance: the spec, not the encoder, did most of the shrinking.
+  const sourceLong = Math.max(bitmap.width, bitmap.height)
+  const targetLongPx = Math.max(targetPixels.width, targetPixels.height)
+  const shrinkRatio = sourceLong / Math.max(1, targetLongPx)
+  // Only surface the ratio when it's meaningful — a tiny crop ≈ source
+  // resolution shouldn't say "缩放 1×".
+  const showShrinkRatio = exportFollowsSpec && shrinkRatio >= 1.5
+
   return (
     <section className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <header>
@@ -522,12 +551,46 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         <p className="mt-1 text-xs text-[var(--color-text-mute)]">{t('subtitle')}</p>
       </header>
 
-      <p className="text-xs text-[var(--color-text-mute)]">
-        {t(exportFollowsSpec ? 'dimensionsBySpec' : 'dimensionsByBitmap', {
-          w: targetPixels.width,
-          h: targetPixels.height,
-        })}
-      </p>
+      <div className="space-y-1 rounded-md border border-[var(--color-border)] bg-[var(--color-divider)] px-3 py-2">
+        <p className="font-mono text-xs text-[var(--color-text)]">
+          {exportFollowsSpec
+            ? t('dimensionsCompared', {
+                sw: bitmap.width,
+                sh: bitmap.height,
+                tw: targetPixels.width,
+                th: targetPixels.height,
+              })
+            : t('dimensionsByBitmap', { w: targetPixels.width, h: targetPixels.height })}
+        </p>
+        {exportFollowsSpec ? (
+          <p className="text-xs text-[var(--color-text-mute)]">
+            {keepNativeResolution
+              ? t('dimensionsModeNative')
+              : showShrinkRatio
+                ? t('dimensionsModeSpecWithRatio', { ratio: shrinkRatio.toFixed(1) })
+                : t('dimensionsModeSpec')}
+          </p>
+        ) : null}
+      </div>
+
+      {exportFollowsSpec ? (
+        <div className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2">
+          <input
+            id="keep-native-toggle"
+            type="checkbox"
+            checked={keepNativeResolution}
+            onChange={(e) => setKeepNativeResolution(e.target.checked)}
+            className="mt-0.5 size-4 accent-[var(--color-primary)]"
+          />
+          <Label
+            htmlFor="keep-native-toggle"
+            className="flex flex-col gap-0.5 text-xs leading-snug"
+          >
+            <span className="font-medium text-[var(--color-text)]">{t('keepNativeLabel')}</span>
+            <span className="text-[var(--color-text-mute)]">{t('keepNativeHint')}</span>
+          </Label>
+        </div>
+      ) : null}
 
       {exportFollowsSpec ? (
         <p className="text-xs text-[var(--color-text-mute)]">{t('cropAppliedHint')}</p>
@@ -623,7 +686,11 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
           />
           <p className="font-mono text-xs text-[var(--color-text-mute)]">
             {estimateBytes !== null
-              ? t('estimateLabel', { kb: Math.round(estimateBytes / 1024) })
+              ? t('estimateLabelDetailed', {
+                  kb: Math.round(estimateBytes / 1024),
+                  w: targetPixels.width,
+                  h: targetPixels.height,
+                })
               : '—'}
           </p>
           {compress ? (
