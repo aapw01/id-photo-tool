@@ -77,6 +77,7 @@
   - [ ] T03 R2 / cdn.pix-fit.com — 等 Cloudflare 控制台接入
 - [ ] 组 B · 抠图运行时（T05–T11）
   - [x] T05 onnxruntime-web 安装 + WASM 路径策略 — 2026-05-12
+  - [x] T06 Worker 协议 + 骨架（stub session，T07–T10 接入真 ort）— 2026-05-12
 - [ ] 组 C · React 集成（T12–T14）
 - [ ] 组 D · Studio 路由（T15–T17）
 - [ ] 组 E · 验证（T18–T20）
