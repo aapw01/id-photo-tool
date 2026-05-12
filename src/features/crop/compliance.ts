@@ -49,6 +49,15 @@ export interface ComplianceResult {
   eyeFromTop: null | number
 }
 
+export interface ComplianceHints {
+  /**
+   * Mask-derived head top (image-pixel y, hair-inclusive). Mirrors
+   * the `AutoCenterHints.headTopY` field so compliance and autoCenter
+   * agree on what "head height" means.
+   */
+  headTopY?: number
+}
+
 const HEAD_GRACE = 0.05 // ±5% — beyond this, surface a warning
 const EYE_GRACE = 0.05
 
@@ -56,6 +65,7 @@ export function checkCompliance(
   frame: CropFrame,
   face: FaceDetection | null,
   spec: PhotoSpec,
+  hints: ComplianceHints = {},
 ): ComplianceResult {
   if (!face) {
     // Don't emit `face-not-found`: it nags the user with a yellow
@@ -69,7 +79,10 @@ export function checkCompliance(
     }
   }
 
-  const { eyeY, chinY, foreheadY } = estimateHeadVerticalSpan(face)
+  const span = estimateHeadVerticalSpan(face)
+  const { eyeY, chinY } = span
+  const foreheadY =
+    hints.headTopY != null && Number.isFinite(hints.headTopY) ? hints.headTopY : span.foreheadY
   // Spec head height ratio uses forehead-to-chin span. Guard against
   // weird key-point ordering.
   const headHeight = Math.abs(chinY - foreheadY)

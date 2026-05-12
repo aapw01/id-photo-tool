@@ -131,6 +131,12 @@
       "inch": "英吋",
       "px": "像素"
     },
+    "headSize": {
+      "label": "頭部大小",
+      "smaller": "較小",
+      "larger": "較大",
+      "hint": "在規格允許範圍內調整，匯出仍會通過合規"
+    },
     "manageCustom": "管理自訂尺寸",
     "createCustom": "新增自訂尺寸",
     "categories": {

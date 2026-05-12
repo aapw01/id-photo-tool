@@ -3,30 +3,41 @@
  * optional face detection, return the rectangle to crop so the head
  * sits in the right place according to the spec's composition rule.
  *
+ * Pure, deterministic, allocation-free. Easy to unit test.
+ *
  * Rules of thumb (TECH_DESIGN §5.4.2):
  *
- *   1. Estimate head height (chin → forehead, hair-inclusive) from
- *      MediaPipe keypoints AND the detector bbox. BlazeFace's "forehead"
- *      via keypoints lands at the hairline and the bbox top caps near the
- *      eyebrows — neither covers hair. We therefore also extrapolate from
- *      the bbox (`bbox.y − bbox.h × 0.18`) and pick whichever sits higher
- *      so the resulting span actually contains the hair on top.
- *   2. Frame height = head_height / targetHeadRatio, where
- *      `targetHeadRatio` is the spec's upper bound on head share. The
- *      mid-point used to feel generous — users perceived the head as
- *      "too small" inside lots of padding even though it was inside the
- *      legal range. Pinning to the upper bound keeps us exactly on the
- *      regulatory edge: the head fills as much of the frame as the
- *      spec allows.
+ *   1. Estimate head height (chin → forehead, hair-inclusive). When
+ *      the caller provides `hints.headTopY` — typically derived from
+ *      MODNet's alpha mask — use it directly: that's the most
+ *      accurate signal available. Otherwise fall back to a heuristic
+ *      blend of MediaPipe keypoints and the detector bbox: keypoints
+ *      give a forehead/hairline (`eyeY − 1.5 × eyeToMouth`); the
+ *      detector bbox caps near the eyebrows, so we extrapolate with
+ *      `bbox.y − bbox.h × 0.18` and pick whichever sits higher. The
+ *      result is still hair-aware but error-prone on tall hairdos /
+ *      hats — feeding the mask whenever it's available is preferred.
+ *
+ *   2. Frame height = head_height / targetHeadRatio. The legal head
+ *      share of the frame lives in `spec.composition.headHeightRatio`
+ *      as a band `[lower, upper]`. We pick a value inside the band
+ *      based on `hints.headSizeBias` (0 = lower, 1 = upper, default
+ *      0.5 = mid). Smaller head ratio ⇒ bigger frame ⇒ more padding
+ *      around the head; larger ⇒ tighter frame, head fills more of
+ *      the photo. The UI surfaces this as a slider so the user can
+ *      pick the look they want.
+ *
  *   3. Frame width  = frame_height × spec.aspect.
+ *
  *   4. Frame top    = eyeY − frame_height × eyeFromTopRatio. If this
- *      would slice into the hair (head-top sits within 4 % of the frame
- *      top), grow `frame_height` first so the hair has breathing room.
+ *      would slice into the hair (head-top sits within 4 % of the
+ *      frame top), grow `frame_height` first so the hair has
+ *      breathing room.
+ *
  *   5. Frame left   = headCenterX − frame_width / 2.
+ *
  *   6. Clamp the frame into the image bounds. If the spec aspect
  *      forces the frame to overflow even after clamping, scale down.
- *
- * Pure, deterministic, allocation-free. Easy to unit test.
  */
 
 import type { CropFrame, FaceDetection, PhotoSpec } from '@/types/spec'
@@ -58,19 +69,39 @@ const MIDPOINT = <T>(a: [T, T] | undefined): number | undefined => {
 }
 
 /**
- * Pick the upper bound of a spec composition ratio band.
- *
- * Mid-point gave visibly small heads inside large frames — most
- * subjects "look right" when the head fills as much of the frame as
- * the spec allows. Using the upper bound directly gives the head the
- * biggest legal share of the frame. Compliance still passes since
- * we're hitting the limit exactly, not exceeding it; and for specs
- * that pin the band to a single value (lower == upper) the result is
- * unchanged.
+ * Pick a point inside `[lower, upper]` weighted by `bias ∈ [0, 1]`.
+ * `bias = 0` returns `lower`, `bias = 1` returns `upper`, `bias = 0.5`
+ * returns the midpoint. Used to honour the user's head-size slider
+ * choice within the spec's allowed band.
  */
-const UPPER = (a: [number, number] | undefined): number | undefined => {
+const LERP_IN_BAND = (a: [number, number] | undefined, bias: number): number | undefined => {
   if (!a) return undefined
-  return Number(a[1])
+  const b = clamp01(bias)
+  return Number(a[0]) * (1 - b) + Number(a[1]) * b
+}
+
+const clamp01 = (n: number): number => (n < 0 ? 0 : n > 1 ? 1 : n)
+
+/**
+ * Optional hints that take precedence over the keypoint-only
+ * heuristics inside `autoCenter`. The most useful one is
+ * `headTopY` — when MODNet has already been run, the mask gives
+ * pixel-accurate head-top (hair included), removing all of the
+ * estimation error inherent in BlazeFace's keypoints + bbox.
+ */
+export interface AutoCenterHints {
+  /**
+   * Image-pixel y of the visible head top (hair included). Overrides
+   * the keypoint/bbox heuristic when provided.
+   */
+  headTopY?: number
+  /**
+   * Position within `spec.composition.headHeightRatio` band:
+   *   0   → use `lower` (head occupies the minimum legal share)
+   *   0.5 → midpoint (default)
+   *   1   → use `upper` (head fills the maximum legal share)
+   */
+  headSizeBias?: number
 }
 
 /**
@@ -157,24 +188,32 @@ export function autoCenter(
   image: ImageSize,
   spec: PhotoSpec,
   face: FaceDetection | null,
+  hints: AutoCenterHints = {},
 ): CropFrame {
   const aspect = aspectRatio(spec)
   if (!face) {
     return centerCrop(image, aspect)
   }
 
-  const { eyeY, chinY, foreheadY, headCenterX } = estimateHeadVerticalSpan(face)
+  const span = estimateHeadVerticalSpan(face)
+  const { eyeY, chinY, headCenterX } = span
+  // Prefer the mask-derived head-top when provided — it is pixel
+  // accurate, hair-aware, and immune to the keypoint heuristics'
+  // failure modes (hats, buns, unusual fringes).
+  const foreheadY =
+    hints.headTopY != null && Number.isFinite(hints.headTopY) ? hints.headTopY : span.foreheadY
   const headHeight = Math.max(1, foreheadY - chinY < 0 ? chinY - foreheadY : foreheadY - chinY)
   // NB: forehead is *above* chin in image-pixel space, so foreheadY < chinY.
   // The Math.max above keeps us robust to unusual key-point orderings.
 
-  // Head-to-frame ratio sits at the spec's upper bound so the head
-  // fills the frame as much as the regulation allows. Eye line stays
-  // at the mid-point because that's the visually balanced position —
-  // pushing it to the upper bound would slide the head down inside
-  // the frame and produce more headroom, the opposite of what we
-  // want here.
-  const targetHeadRatio = UPPER(spec.composition?.headHeightRatio) ?? DEFAULT_HEAD_RATIO
+  // Position the head-to-frame ratio inside the spec's allowed band
+  // according to the user's slider preference. Default bias 0.5 sits
+  // at the midpoint; bias 1 picks the upper bound (largest head);
+  // bias 0 picks the lower bound (smallest head). Eye line stays at
+  // the mid-point because that's the visually balanced position.
+  const headBias = hints.headSizeBias ?? 0.5
+  const targetHeadRatio =
+    LERP_IN_BAND(spec.composition?.headHeightRatio, headBias) ?? DEFAULT_HEAD_RATIO
   const eyeFromTopRatio = MIDPOINT(spec.composition?.eyeLineFromTop) ?? DEFAULT_EYE_FROM_TOP
 
   let frameH = headHeight / targetHeadRatio

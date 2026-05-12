@@ -312,44 +312,102 @@ describe('autoCenter — shrink instead of jamming', () => {
     expect(frame.y + frame.h * 0.03).toBeLessThanOrEqual(hairTop)
   })
 
-  it('fills the head to the spec upper bound so the head looks visually dominant', () => {
-    // Regression for the "头很小" feedback: the previous mid-point
-    // bias left an obvious empty band of padding above + below the
-    // head. We now lock the head-to-frame ratio at the spec upper
-    // bound so the head occupies as much of the frame as the
-    // regulation permits.
+  it('fills the head to the spec upper bound when bias=1', () => {
+    // The head-size slider lets the user pick any point inside the
+    // spec's headHeightRatio band. With bias=1 the head should fill
+    // the maximum legal share of the frame, i.e. landing exactly on
+    // the upper bound.
     const image = { width: 3648, height: 5472 }
-    // A typical short-haired subject: keypoint forehead estimate
-    // dominates over the bbox-derived hair allowance.
     const face: FaceDetection = {
       bbox: { x: 1300, y: 1500, w: 1100, h: 1450 },
       keypoints: [
-        { x: 1560, y: 2000 }, // left-eye
-        { x: 2080, y: 2000 }, // right-eye
-        { x: 1820, y: 2200 }, // nose
-        { x: 1820, y: 2400 }, // mouth
-        { x: 1250, y: 2020 }, // left-ear
-        { x: 2380, y: 2020 }, // right-ear
+        { x: 1560, y: 2000 },
+        { x: 2080, y: 2000 },
+        { x: 1820, y: 2200 },
+        { x: 1820, y: 2400 },
+        { x: 1250, y: 2020 },
+        { x: 2380, y: 2020 },
       ],
       confidence: 0.97,
     }
 
-    const frame = autoCenter(image, usVisa, face)
+    const frame = autoCenter(image, usVisa, face, { headSizeBias: 1 })
     const span = estimateHeadVerticalSpan(face)
     const headRatio = (span.chinY - span.foreheadY) / frame.h
     const upperBound = usVisa.composition!.headHeightRatio![1]
 
-    // Head/Frame ratio should land at the upper bound (±1 % for
-    // floating-point slop), proving the change took effect.
     expect(headRatio).toBeCloseTo(upperBound, 2)
-    // Still inside [lower, upper] band — i.e. compliance passes.
     expect(headRatio).toBeLessThanOrEqual(upperBound + 0.005)
     expect(headRatio).toBeGreaterThanOrEqual(usVisa.composition!.headHeightRatio![0])
-    // Frame inside image bounds.
     expect(frame.x).toBeGreaterThanOrEqual(0)
     expect(frame.y).toBeGreaterThanOrEqual(0)
     expect(frame.x + frame.w).toBeLessThanOrEqual(image.width + 0.01)
     expect(frame.y + frame.h).toBeLessThanOrEqual(image.height + 0.01)
+  })
+
+  it('slider bias slides the head ratio through the spec band', () => {
+    // Three biases (lower / mid / upper) should produce three
+    // distinct frame heights, ordered: lower bias → smallest head
+    // share → biggest frame; upper bias → biggest head share →
+    // smallest frame.
+    const image = { width: 3648, height: 5472 }
+    const face: FaceDetection = {
+      bbox: { x: 1300, y: 1500, w: 1100, h: 1450 },
+      keypoints: [
+        { x: 1560, y: 2000 },
+        { x: 2080, y: 2000 },
+        { x: 1820, y: 2200 },
+        { x: 1820, y: 2400 },
+        { x: 1250, y: 2020 },
+        { x: 2380, y: 2020 },
+      ],
+      confidence: 0.97,
+    }
+
+    const small = autoCenter(image, usVisa, face, { headSizeBias: 0 })
+    const mid = autoCenter(image, usVisa, face, { headSizeBias: 0.5 })
+    const big = autoCenter(image, usVisa, face, { headSizeBias: 1 })
+
+    // Smaller head ratio ⇒ bigger frame.
+    expect(small.h).toBeGreaterThan(mid.h)
+    expect(mid.h).toBeGreaterThan(big.h)
+
+    const [lo, hi] = usVisa.composition!.headHeightRatio!
+    const span = estimateHeadVerticalSpan(face)
+    const headHeight = span.chinY - span.foreheadY
+    expect(headHeight / small.h).toBeCloseTo(lo, 2)
+    expect(headHeight / mid.h).toBeCloseTo((lo + hi) / 2, 2)
+    expect(headHeight / big.h).toBeCloseTo(hi, 2)
+  })
+
+  it('honours the mask-derived head-top hint over the heuristic', () => {
+    // Even when the keypoint + bbox heuristic puts the forehead at one
+    // place, a hint from the alpha mask should take precedence — e.g.
+    // a subject with a tall bun where the real head-top sits well above
+    // both estimates.
+    const image = { width: 3648, height: 5472 }
+    const face: FaceDetection = {
+      bbox: { x: 1300, y: 1500, w: 1100, h: 1450 },
+      keypoints: [
+        { x: 1560, y: 2000 },
+        { x: 2080, y: 2000 },
+        { x: 1820, y: 2200 },
+        { x: 1820, y: 2400 },
+        { x: 1250, y: 2020 },
+        { x: 2380, y: 2020 },
+      ],
+      confidence: 0.97,
+    }
+
+    const span = estimateHeadVerticalSpan(face) // heuristic forehead ~1239
+    const maskTop = 600 // much higher up than either estimate
+    const frame = autoCenter(image, usVisa, face, { headTopY: maskTop, headSizeBias: 0.5 })
+
+    // Resulting head height in the compliance-style calculation
+    // should use `maskTop`, not the heuristic forehead.
+    const measuredHeadHeight = (span.chinY - maskTop) / frame.h
+    const [lo, hi] = usVisa.composition!.headHeightRatio!
+    expect(measuredHeadHeight).toBeCloseTo((lo + hi) / 2, 1)
   })
 
   it('keeps the resulting frame inside the image bounds across edge-case face placements', () => {

@@ -24,16 +24,18 @@
  * workspace.
  */
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 
 import { useBackgroundStore } from '@/features/background/store'
+import { useStudioStore } from '@/features/studio/store'
 import { localizeText } from '@/lib/i18n-text'
 
 import { autoCenter } from './auto-center'
 import { checkCompliance } from './compliance'
 import { detectFace, FaceDetectError } from './face-detect'
+import { findHeadTopFromMask } from './head-top-from-mask'
 import { useCropStore } from './spec-store'
 
 /**
@@ -50,12 +52,24 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
   const frame = useCropStore((s) => s.frame)
   const face = useCropStore((s) => s.face)
   const detecting = useCropStore((s) => s.detecting)
+  const headSizeBias = useCropStore((s) => s.headSizeBias)
 
   // Don't react to these in deps — we only need their setters.
   const { setFace, setFrame, setWarnings, setDetecting, setFaceError } = useCropStore.getState()
 
   const bgKind = useBackgroundStore((s) => s.current.kind)
   const setBgColor = useBackgroundStore((s) => s.setColor)
+
+  // The matting mask, when available, gives us pixel-accurate
+  // head-top coordinates — hair-, hat-, and bun-aware. Compute it
+  // once per (mask, face) pair so the heavy scan doesn't run on
+  // every slider change.
+  const mask = useStudioStore((s) => s.mask)
+  const headTopY = useMemo(() => {
+    if (!mask || !bitmap || !face) return undefined
+    const value = findHeadTopFromMask(mask, bitmap.width, bitmap.height, face)
+    return value ?? undefined
+  }, [mask, bitmap, face])
 
   /* -------------------------------------------------------------- */
   /* 1. Face detection                                              */
@@ -96,45 +110,72 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
   /* 2. autoCenter on spec change                                   */
   /* -------------------------------------------------------------- */
 
-  // We track three things across renders:
+  // We track four things across renders:
   //   - `lastSpecId`     — which spec the current `frame` was computed for
   //   - `lastUsedFace`   — the face passed into the last autoCenter call
   //                        (so we can detect "face just arrived")
+  //   - `lastHeadTop`    — the mask-derived head-top last used; lets us
+  //                        recompute when the user runs matting and
+  //                        the better signal arrives
   //   - `lastAutoFrame`  — the exact frame autoCenter produced; if the
   //                        user has dragged, `frame` !== this value and
   //                        we won't clobber their work on face arrival.
+  //   - `lastBias`       — the head-size bias used last time; bias
+  //                        changes always re-run autoCenter so the
+  //                        slider feels responsive.
   const lastSpecId = useRef<string | null>(null)
   const lastUsedFace = useRef<typeof face>(null)
+  const lastHeadTop = useRef<number | undefined>(undefined)
+  const lastBias = useRef<number>(headSizeBias)
   const lastAutoFrame = useRef<typeof frame>(null)
 
   useEffect(() => {
     if (!bitmap || !spec) {
       lastSpecId.current = null
       lastUsedFace.current = null
+      lastHeadTop.current = undefined
       lastAutoFrame.current = null
       return
     }
     const specChanged = lastSpecId.current !== spec.id
     const userDragged = frame !== null && frame !== lastAutoFrame.current
     const faceArrived = !!face && !lastUsedFace.current
+    const headTopRefined = lastHeadTop.current === undefined && headTopY !== undefined
+    const biasChanged = lastBias.current !== headSizeBias
 
     // Re-run on:
     //   - spec change (always)
     //   - first paint when no frame exists yet
     //   - face arriving for the first time, *if* the user hasn't
     //     dragged the auto-frame manually
-    if (!specChanged && frame && !(faceArrived && !userDragged)) return
+    //   - mask producing a head-top hint for the first time (upgrade
+    //     from heuristic to pixel-accurate)
+    //   - slider bias changing — user is actively requesting a resize
+    if (
+      !specChanged &&
+      frame &&
+      !(faceArrived && !userDragged) &&
+      !(headTopRefined && !userDragged) &&
+      !biasChanged
+    ) {
+      return
+    }
 
     lastSpecId.current = spec.id
     lastUsedFace.current = face
+    lastHeadTop.current = headTopY
+    lastBias.current = headSizeBias
     // Don't gate on `detecting`: an initial centred-crop is more
     // useful than a perpetual spinner when the MediaPipe CDN is
     // unreachable. The effect re-fires once `face` resolves and
     // upgrades the frame in place.
-    const next = autoCenter({ width: bitmap.width, height: bitmap.height }, spec, face)
+    const next = autoCenter({ width: bitmap.width, height: bitmap.height }, spec, face, {
+      headTopY,
+      headSizeBias,
+    })
     lastAutoFrame.current = next
     setFrame(next)
-  }, [bitmap, spec, face, frame, setFrame])
+  }, [bitmap, spec, face, frame, setFrame, headTopY, headSizeBias])
 
   /* -------------------------------------------------------------- */
   /* 3. Recompute compliance whenever frame or face changes         */
@@ -145,9 +186,9 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
       setWarnings([])
       return
     }
-    const result = checkCompliance(frame, face, spec)
+    const result = checkCompliance(frame, face, spec, { headTopY })
     setWarnings(result.warnings)
-  }, [spec, frame, face, setWarnings])
+  }, [spec, frame, face, setWarnings, headTopY])
 
   /* -------------------------------------------------------------- */
   /* 4. Apply spec.background.recommended when nothing's set        */

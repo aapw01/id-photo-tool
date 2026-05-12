@@ -108,6 +108,39 @@ if (typeof globalThis.createImageBitmap === 'undefined') {
   })
 }
 
+// happy-dom doesn't expose `ImageData` as a global. The mask helpers
+// construct it directly to pass to compositing / scanning utilities,
+// so install a minimal class-shaped shim. Matches the Web IDL surface
+// the helpers touch (`data`, `width`, `height`).
+if (typeof (globalThis as { ImageData?: unknown }).ImageData === 'undefined') {
+  class ImageDataShim {
+    readonly data: Uint8ClampedArray
+    readonly width: number
+    readonly height: number
+    readonly colorSpace = 'srgb' as const
+    constructor(data: Uint8ClampedArray | number, width?: number, height?: number) {
+      if (typeof data === 'number') {
+        // ImageData(width, height) — synthesise zero-filled bytes.
+        this.width = data
+        this.height = width ?? 0
+        this.data = new Uint8ClampedArray(this.width * this.height * 4)
+      } else {
+        if (width === undefined) {
+          throw new TypeError('ImageData shim requires a width when data is provided')
+        }
+        this.data = data
+        this.width = width
+        this.height = height ?? data.length / (4 * width)
+      }
+    }
+  }
+  Object.defineProperty(globalThis, 'ImageData', {
+    value: ImageDataShim,
+    configurable: true,
+    writable: true,
+  })
+}
+
 // Node 26+ gates Web Storage behind --localstorage-file. Tests rely on
 // the synchronous API for cache logic, so install an in-memory shim
 // when the runtime does not expose one.

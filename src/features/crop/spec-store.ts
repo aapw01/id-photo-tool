@@ -28,6 +28,18 @@ export interface CropState {
   warnings: ComplianceWarning[]
   /** Whether the guideline overlay is shown above the frame. */
   showGuidelines: boolean
+  /**
+   * Position within the active spec's `headHeightRatio` band:
+   *   0   → lower bound (head occupies the minimum legal share)
+   *   0.5 → midpoint
+   *   1   → upper bound (head fills the maximum legal share)
+   *
+   * Defaults to `1` so first-time users see a tight, head-dominant
+   * crop — matching common user expectations for ID photos. The
+   * slider in the UI lets them slide back towards a smaller head if
+   * they want more headroom.
+   */
+  headSizeBias: number
 
   setSpec: (spec: PhotoSpec | null) => void
   setFrame: (frame: CropFrame | null) => void
@@ -36,8 +48,11 @@ export interface CropState {
   setFaceError: (err: string | null) => void
   setWarnings: (w: ComplianceWarning[]) => void
   setShowGuidelines: (v: boolean) => void
+  setHeadSizeBias: (v: number) => void
   reset: () => void
 }
+
+const DEFAULT_HEAD_SIZE_BIAS = 1
 
 export const useCropStore = create<CropState>((set) => ({
   spec: null,
@@ -47,6 +62,7 @@ export const useCropStore = create<CropState>((set) => ({
   faceError: null,
   warnings: [],
   showGuidelines: true,
+  headSizeBias: DEFAULT_HEAD_SIZE_BIAS,
 
   setSpec(spec) {
     set({ spec })
@@ -69,6 +85,10 @@ export const useCropStore = create<CropState>((set) => ({
   setShowGuidelines(showGuidelines) {
     set({ showGuidelines })
   },
+  setHeadSizeBias(headSizeBias) {
+    const clamped = headSizeBias < 0 ? 0 : headSizeBias > 1 ? 1 : headSizeBias
+    set({ headSizeBias: clamped })
+  },
   reset() {
     set({
       spec: null,
@@ -77,6 +97,7 @@ export const useCropStore = create<CropState>((set) => ({
       detecting: false,
       faceError: null,
       warnings: [],
+      headSizeBias: DEFAULT_HEAD_SIZE_BIAS,
     })
   },
 }))
@@ -90,5 +111,6 @@ export function __resetCropStoreForTesting(): void {
     faceError: null,
     warnings: [],
     showGuidelines: true,
+    headSizeBias: DEFAULT_HEAD_SIZE_BIAS,
   })
 }
