@@ -18,9 +18,23 @@ import type { CropFrame, FaceDetection, PhotoSpec } from '@/types/spec'
 
 import type { ComplianceWarning } from './compliance'
 
+/**
+ * Provenance of the current crop frame.
+ *
+ *   - `'auto'` — produced by `useCropFlow`'s `autoCenter` pass. Free
+ *     to be replaced whenever a better signal (face, mask head-top,
+ *     spec / bias change) arrives.
+ *   - `'user'` — the user dragged / nudged the frame manually. The
+ *     auto-pass leaves it alone unless an explicit override fires
+ *     (currently: spec change or bias slider).
+ */
+export type FrameSource = 'auto' | 'user'
+
 export interface CropState {
   spec: PhotoSpec | null
   frame: CropFrame | null
+  /** Who last wrote `frame`. See `FrameSource`. */
+  frameSource: FrameSource
   face: FaceDetection | null
   /** True while MediaPipe is fetching / running. */
   detecting: boolean
@@ -42,7 +56,13 @@ export interface CropState {
   headSizeBias: number
 
   setSpec: (spec: PhotoSpec | null) => void
-  setFrame: (frame: CropFrame | null) => void
+  /**
+   * Update `frame`. The second argument is the provenance; defaults
+   * to `'user'` because most call sites are pointer / keyboard
+   * handlers — the auto-pass in `useCropFlow` passes `'auto'`
+   * explicitly.
+   */
+  setFrame: (frame: CropFrame | null, source?: FrameSource) => void
   setFace: (face: FaceDetection | null) => void
   setDetecting: (detecting: boolean) => void
   setFaceError: (err: string | null) => void
@@ -57,6 +77,7 @@ const DEFAULT_HEAD_SIZE_BIAS = 1
 export const useCropStore = create<CropState>((set) => ({
   spec: null,
   frame: null,
+  frameSource: 'auto',
   face: null,
   detecting: false,
   faceError: null,
@@ -65,10 +86,13 @@ export const useCropStore = create<CropState>((set) => ({
   headSizeBias: DEFAULT_HEAD_SIZE_BIAS,
 
   setSpec(spec) {
-    set({ spec })
+    // A new spec invalidates any user-locked frame: the auto-center
+    // pass needs to redraw against the new aspect ratio. Flipping
+    // `frameSource` back to `'auto'` is what un-gates the effect.
+    set({ spec, frameSource: 'auto' })
   },
-  setFrame(frame) {
-    set({ frame })
+  setFrame(frame, source = 'user') {
+    set({ frame, frameSource: source })
   },
   setFace(face) {
     set({ face })
@@ -93,6 +117,7 @@ export const useCropStore = create<CropState>((set) => ({
     set({
       spec: null,
       frame: null,
+      frameSource: 'auto',
       face: null,
       detecting: false,
       faceError: null,
@@ -106,6 +131,7 @@ export function __resetCropStoreForTesting(): void {
   useCropStore.setState({
     spec: null,
     frame: null,
+    frameSource: 'auto',
     face: null,
     detecting: false,
     faceError: null,

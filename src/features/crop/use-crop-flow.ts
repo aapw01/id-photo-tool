@@ -50,6 +50,7 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
 
   const spec = useCropStore((s) => s.spec)
   const frame = useCropStore((s) => s.frame)
+  const frameSource = useCropStore((s) => s.frameSource)
   const face = useCropStore((s) => s.face)
   const detecting = useCropStore((s) => s.detecting)
   const headSizeBias = useCropStore((s) => s.headSizeBias)
@@ -107,64 +108,58 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
   }, [bitmap, sizeTabActive, detecting, setDetecting, setFace, setFaceError])
 
   /* -------------------------------------------------------------- */
-  /* 2. autoCenter on spec change                                   */
+  /* 2. autoCenter — driven by an explicit state machine            */
   /* -------------------------------------------------------------- */
-
-  // We track four things across renders:
-  //   - `lastSpecId`     — which spec the current `frame` was computed for
-  //   - `lastUsedFace`   — the face passed into the last autoCenter call
-  //                        (so we can detect "face just arrived")
-  //   - `lastHeadTop`    — the mask-derived head-top last used; lets us
-  //                        recompute when the user runs matting and
-  //                        the better signal arrives
-  //   - `lastAutoFrame`  — the exact frame autoCenter produced; if the
-  //                        user has dragged, `frame` !== this value and
-  //                        we won't clobber their work on face arrival.
-  //   - `lastBias`       — the head-size bias used last time; bias
-  //                        changes always re-run autoCenter so the
-  //                        slider feels responsive.
-  const lastSpecId = useRef<string | null>(null)
-  const lastUsedFace = useRef<typeof face>(null)
-  const lastHeadTop = useRef<number | undefined>(undefined)
-  const lastBias = useRef<number>(headSizeBias)
-  const lastAutoFrame = useRef<typeof frame>(null)
+  //
+  // The frame's provenance now lives on the store as `frameSource`:
+  //
+  //   - `'auto'` → safe to recompute on any better signal (face,
+  //                headTop, spec, bias). The auto-pass owns the frame.
+  //   - `'user'` → manual drag / keyboard nudge. Only a *fresh user
+  //                intent* — spec change or bias slider — gets to
+  //                overwrite. Face / headTop "free upgrades" leave
+  //                the locked frame alone.
+  //
+  // We compute a `key` per the relevant auto-pass inputs and only
+  // act when it changes. That keeps the effect from re-firing when
+  // it writes back its own result (the write changes `frame` /
+  // `frameSource` but not the key).
+  const autoKey = useMemo(
+    () =>
+      `${spec?.id ?? '∅'}|${face?.bbox.x.toFixed(1) ?? '∅'},${face?.bbox.y.toFixed(1) ?? '∅'}|${
+        headTopY?.toFixed(1) ?? '∅'
+      }|${headSizeBias}`,
+    [spec, face, headTopY, headSizeBias],
+  )
+  const lastAutoKey = useRef<string | null>(null)
+  const lastAutoSpecId = useRef<string | null>(null)
+  const lastAutoBias = useRef<number>(headSizeBias)
 
   useEffect(() => {
-    if (!bitmap || !spec) {
-      lastSpecId.current = null
-      lastUsedFace.current = null
-      lastHeadTop.current = undefined
-      lastAutoFrame.current = null
-      return
-    }
-    const specChanged = lastSpecId.current !== spec.id
-    const userDragged = frame !== null && frame !== lastAutoFrame.current
-    const faceArrived = !!face && !lastUsedFace.current
-    const headTopRefined = lastHeadTop.current === undefined && headTopY !== undefined
-    const biasChanged = lastBias.current !== headSizeBias
+    if (!bitmap || !spec) return
+    if (autoKey === lastAutoKey.current) return
 
-    // Re-run on:
-    //   - spec change (always)
-    //   - first paint when no frame exists yet
-    //   - face arriving for the first time, *if* the user hasn't
-    //     dragged the auto-frame manually
-    //   - mask producing a head-top hint for the first time (upgrade
-    //     from heuristic to pixel-accurate)
-    //   - slider bias changing — user is actively requesting a resize
-    if (
-      !specChanged &&
-      frame &&
-      !(faceArrived && !userDragged) &&
-      !(headTopRefined && !userDragged) &&
-      !biasChanged
-    ) {
+    const specChanged = lastAutoSpecId.current !== spec.id
+    const biasChanged = lastAutoBias.current !== headSizeBias
+    const userOwnsFrame = frameSource === 'user'
+
+    // User-owned frames stay put unless the user changed spec or bias
+    // (both register as "fresh intent"). Face / headTop refinements
+    // arrive after the user might have already nudged — clobbering
+    // their work would be infuriating.
+    if (userOwnsFrame && !specChanged && !biasChanged) {
+      // Record what we saw so the next signal change is judged
+      // against current inputs — otherwise a later face-only refine
+      // would still register as "spec changed".
+      lastAutoKey.current = autoKey
+      lastAutoSpecId.current = spec.id
+      lastAutoBias.current = headSizeBias
       return
     }
 
-    lastSpecId.current = spec.id
-    lastUsedFace.current = face
-    lastHeadTop.current = headTopY
-    lastBias.current = headSizeBias
+    lastAutoKey.current = autoKey
+    lastAutoSpecId.current = spec.id
+    lastAutoBias.current = headSizeBias
     // Don't gate on `detecting`: an initial centred-crop is more
     // useful than a perpetual spinner when the MediaPipe CDN is
     // unreachable. The effect re-fires once `face` resolves and
@@ -173,9 +168,8 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
       headTopY,
       headSizeBias,
     })
-    lastAutoFrame.current = next
-    setFrame(next)
-  }, [bitmap, spec, face, frame, setFrame, headTopY, headSizeBias])
+    setFrame(next, 'auto')
+  }, [autoKey, bitmap, spec, face, frameSource, setFrame, headTopY, headSizeBias])
 
   /* -------------------------------------------------------------- */
   /* 3. Recompute compliance whenever frame or face changes         */
