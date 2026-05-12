@@ -6,10 +6,11 @@
  * can eyeball the proportion before committing.
  */
 
+import { useMemo } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Check } from 'lucide-react'
 
-import { BUILTIN_PAPER_SPECS } from '@/data/paper-specs'
+import { useEffectivePaperSpecs } from '@/features/spec-manager/store'
 import { localizeText } from '@/lib/i18n-text'
 import { cn } from '@/lib/utils'
 import type { PaperSpec } from '@/types/spec'
@@ -20,9 +21,12 @@ import { useLayoutStore } from './store'
 // 64-pixel-wide box; smaller papers shrink proportionally.
 const MAX_PREVIEW_PX = 64
 
-function previewSize(paper: PaperSpec): { width: number; height: number } {
-  const maxDim = Math.max(...BUILTIN_PAPER_SPECS.map((p) => Math.max(p.width_mm, p.height_mm)))
-  const ratio = MAX_PREVIEW_PX / maxDim
+function previewSize(
+  paper: PaperSpec,
+  papers: readonly PaperSpec[],
+): { width: number; height: number } {
+  const maxDim = Math.max(...papers.map((p) => Math.max(p.width_mm, p.height_mm)))
+  const ratio = MAX_PREVIEW_PX / Math.max(1, maxDim)
   return {
     width: Math.max(8, Math.round(paper.width_mm * ratio)),
     height: Math.max(8, Math.round(paper.height_mm * ratio)),
@@ -34,6 +38,8 @@ export function PaperPicker() {
   const locale = useLocale()
   const paper = useLayoutStore((s) => s.paper)
   const setPaper = useLayoutStore((s) => s.setPaper)
+  const papers = useEffectivePaperSpecs()
+  const previewBasis = useMemo(() => papers, [papers])
 
   return (
     <section className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -43,9 +49,9 @@ export function PaperPicker() {
       </header>
 
       <ul className="grid grid-cols-2 gap-2">
-        {BUILTIN_PAPER_SPECS.map((p) => {
+        {papers.map((p) => {
           const isActive = paper.id === p.id
-          const preview = previewSize(p)
+          const preview = previewSize(p, previewBasis)
           return (
             <li key={p.id}>
               <button

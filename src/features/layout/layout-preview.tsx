@@ -27,6 +27,7 @@ import { useLocale, useTranslations } from 'next-intl'
 
 import { centerCrop } from '@/features/crop/auto-center'
 import { extractForeground, parseHex, type BgColor } from '@/features/background/composite'
+import { useEffectivePhotoSpecs } from '@/features/spec-manager/store'
 import { localizeText } from '@/lib/i18n-text'
 import { derivePixels, aspectRatio } from '@/lib/spec-units'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
@@ -141,6 +142,7 @@ export function LayoutPreview({
   const paper = useLayoutStore((s) => s.paper)
   const template = useLayoutStore((s) => s.template)
   const settings = useLayoutStore((s) => s.settings)
+  const effectiveSpecs = useEffectivePhotoSpecs()
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [overflow, setOverflow] = useState<RenderLayoutResult['overflow']>([])
@@ -177,7 +179,7 @@ export function LayoutPreview({
 
       const uniqueSpecIds = new Set<string>(template.items.map((it) => it.photoSpecId))
       const map = new Map<string, HTMLCanvasElement>()
-      const resolveSpec = makeSpecResolver(activeCropSpec ?? null)
+      const resolveSpec = makeSpecResolver(effectiveSpecs, activeCropSpec ?? null)
 
       for (const id of uniqueSpecIds) {
         const spec = resolveSpec(id)
@@ -206,7 +208,7 @@ export function LayoutPreview({
     return () => {
       cancelled = true
     }
-  }, [bitmap, mask, bg, activeCropSpec, activeCropFrame, template])
+  }, [bitmap, mask, bg, activeCropSpec, activeCropFrame, template, effectiveSpecs])
 
   // 2. Render the layout whenever cell images, settings, paper or
   // template change. We pay for the off-screen render only when the
@@ -220,7 +222,7 @@ export function LayoutPreview({
       const result = renderLayout({
         paper,
         template,
-        getSpec: makeSpecResolver(activeCropSpec ?? null),
+        getSpec: makeSpecResolver(effectiveSpecs, activeCropSpec ?? null),
         getCellImage: (spec) => cellImages.get(spec.id) ?? null,
         settingsOverride: settings,
         dpi: PREVIEW_DPI,
@@ -241,7 +243,7 @@ export function LayoutPreview({
     return () => {
       cancelled = true
     }
-  }, [paper, template, settings, cellImages, activeCropSpec, onRendered])
+  }, [paper, template, settings, cellImages, activeCropSpec, effectiveSpecs, onRendered])
 
   const aspect = useMemo(() => `${paper.width_mm} / ${paper.height_mm}`, [paper])
   const maxWidth =

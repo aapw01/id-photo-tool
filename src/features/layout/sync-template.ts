@@ -17,8 +17,6 @@
 import { BUILTIN_LAYOUT_TEMPLATES } from '@/data/layout-templates'
 import type { LayoutTemplate, PaperSpec, PhotoSpec } from '@/types/spec'
 
-import type { CustomSpecMap } from './spec-resolver'
-
 const SYNC_TEMPLATE_PREFIX = 'synced-'
 const DEFAULT_MARGIN_MM = 5
 const DEFAULT_GAP_MM = 2
@@ -113,23 +111,4 @@ export function templateAlreadyCoversSpec(
 ): boolean {
   if (template.paperId !== paper.id) return false
   return template.items.some((it) => it.photoSpecId === spec.id)
-}
-
-/**
- * Tiny convenience for the layout actions / preview: keep a frozen
- * snapshot of the spec used to synthesise the active template so cell
- * rendering can resolve the spec id without round-tripping back into
- * the crop store.
- */
-export function snapshotCustomSpecsForTemplate(
-  template: LayoutTemplate,
-  active: PhotoSpec | null,
-): CustomSpecMap {
-  const map: CustomSpecMap = new Map()
-  if (active) map.set(active.id, active)
-  return map
-  // (Multiple custom specs would land here once the manual mix editor
-  // can hold non-built-in entries; for now `active` is the only path.)
-  // The unused `template` arg is reserved for that future expansion.
-  void template
 }

@@ -19,7 +19,7 @@
  * staged without a mask; subsequent runs are explicit (Retry).
  */
 
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
 import { UploadDropzone } from '@/components/upload-dropzone'
@@ -37,6 +37,7 @@ import { LayoutPanel, LayoutPreview } from '@/features/layout'
 import { useLayoutStore } from '@/features/layout'
 import { SegmentationFeedback } from '@/features/segmentation/segmentation-feedback'
 import { useSegmentation } from '@/features/segmentation/use-segmentation'
+import { useSpecManagerStore } from '@/features/spec-manager/store'
 
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
@@ -57,6 +58,7 @@ export function StudioWorkspace() {
   const bitmap = useStudioStore((s) => s.bitmap)
   const previewBitmap = useStudioStore((s) => s.previewBitmap)
   const mask = useStudioStore((s) => s.mask)
+  const foreground = useStudioStore((s) => s.foreground)
   const lastInference = useStudioStore((s) => s.lastInference)
   const setMask = useStudioStore((s) => s.setMask)
   const setFile = useStudioStore((s) => s.setFile)
@@ -76,6 +78,26 @@ export function StudioWorkspace() {
   useCropFlow(bitmap, tab === 'size')
   useTabDeeplink()
 
+  // Rehydrate the user's saved custom specs once on mount. The studio
+  // reads merged (builtin + user) lists through `useEffective*Specs`,
+  // and SSR starts with no customs — the microtask defer matches the
+  // pattern in `spec-manager-shell.tsx` so React 19 doesn't flag the
+  // setState as happening inside the synchronous effect body.
+  const rehydrateSpecs = useSpecManagerStore((s) => s.rehydrate)
+  const specsHydrated = useSpecManagerStore((s) => s.hydrated)
+  useEffect(() => {
+    if (specsHydrated) return
+    let cancelled = false
+    void (async () => {
+      await null
+      if (cancelled) return
+      rehydrateSpecs()
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [specsHydrated, rehydrateSpecs])
+
   const { segment, state, error } = useSegmentation()
 
   const [showCompare, setShowCompare] = useState(false)
@@ -94,7 +116,10 @@ export function StudioWorkspace() {
       // so always hand the worker a freshly decoded copy. The studio
       // store's bitmap stays alive for preview.
       const fresh = await createImageBitmap(currentFile, { imageOrientation: 'from-image' })
-      const result = await segment(fresh)
+      // Ask the worker to also produce the decontaminated foreground so
+      // the export pipeline can skip ~200-400 ms of alpha-matte + spill
+      // suppression on the main thread (M5 P2-2).
+      const result = await segment(fresh, { withForeground: true })
       setMask(result.mask, result)
     } catch {
       // SegmentationFeedback handles surfacing the error via toast.
@@ -190,6 +215,7 @@ export function StudioWorkspace() {
         <ExportPanel
           bitmap={bitmap}
           mask={mask}
+          foreground={foreground}
           bg={bg}
           disabled={!!error}
           spec={cropSpec}
@@ -272,6 +298,7 @@ export function StudioWorkspace() {
             // still get the full-res bitmap for final quality output.
             bitmap={previewBitmap ?? bitmap}
             mask={mask}
+            foreground={foreground}
             bg={bg}
             showCompare={showCompare}
             overlay={cropOverlay}

@@ -21,8 +21,9 @@ import {
   scaleFrameForForeground,
   type BgColor,
 } from '@/features/background/composite'
-import { buildFilename } from '@/features/export'
+import { buildFilename, triggerDownload } from '@/features/export'
 import { canvasToBlob } from '@/features/export/export-single'
+import { useEffectivePhotoSpecs } from '@/features/spec-manager/store'
 import { aspectRatio, derivePixels } from '@/lib/spec-units'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
@@ -64,6 +65,7 @@ export function LayoutActions({
   const paper = useLayoutStore((s) => s.paper)
   const template = useLayoutStore((s) => s.template)
   const settings = useLayoutStore((s) => s.settings)
+  const effectiveSpecs = useEffectivePhotoSpecs()
 
   const [busy, setBusy] = useState<'png' | 'pdf' | null>(null)
   const [pngFilename, setPngFilename] = useState<string>('')
@@ -147,7 +149,7 @@ export function LayoutActions({
     // closed at the end of the callback.
     let maxCellLong = 0
     const uniqueSpecIds = new Set<string>(template.items.map((it) => it.photoSpecId))
-    const resolveSpec = makeSpecResolver(activeCropSpec ?? null)
+    const resolveSpec = makeSpecResolver(effectiveSpecs, activeCropSpec ?? null)
     for (const id of uniqueSpecIds) {
       const spec = resolveSpec(id)
       if (!spec) continue
@@ -224,7 +226,7 @@ export function LayoutActions({
       oneShotForeground?.close?.()
     }
     return map
-  }, [bitmap, mask, bg, activeCropSpec, activeCropFrame, template, getForeground])
+  }, [bitmap, mask, bg, activeCropSpec, activeCropFrame, template, effectiveSpecs, getForeground])
 
   const onDownloadPng = useCallback(async () => {
     if (busy) return
@@ -234,7 +236,7 @@ export function LayoutActions({
       const result = renderLayout({
         paper,
         template,
-        getSpec: makeSpecResolver(activeCropSpec ?? null),
+        getSpec: makeSpecResolver(effectiveSpecs, activeCropSpec ?? null),
         getCellImage: (spec) => images.get(spec.id) ?? null,
         settingsOverride: settings,
       })
@@ -245,7 +247,17 @@ export function LayoutActions({
     } finally {
       setBusy(null)
     }
-  }, [busy, paper, template, settings, pngFilename, prepareCellImages, t, activeCropSpec])
+  }, [
+    busy,
+    paper,
+    template,
+    settings,
+    pngFilename,
+    prepareCellImages,
+    t,
+    activeCropSpec,
+    effectiveSpecs,
+  ])
 
   const onDownloadPdf = useCallback(async () => {
     if (busy) return
@@ -255,7 +267,7 @@ export function LayoutActions({
       const { blob } = await exportLayoutPdf({
         paper,
         template,
-        getSpec: makeSpecResolver(activeCropSpec ?? null),
+        getSpec: makeSpecResolver(effectiveSpecs, activeCropSpec ?? null),
         getCellImageDataUrl: async (spec) => {
           const canvas = images.get(spec.id)
           return canvas ? canvas.toDataURL('image/png') : null
@@ -268,7 +280,17 @@ export function LayoutActions({
     } finally {
       setBusy(null)
     }
-  }, [busy, paper, template, settings, pdfFilename, prepareCellImages, t, activeCropSpec])
+  }, [
+    busy,
+    paper,
+    template,
+    settings,
+    pdfFilename,
+    prepareCellImages,
+    t,
+    activeCropSpec,
+    effectiveSpecs,
+  ])
 
   return (
     <section className="space-y-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
@@ -316,17 +338,4 @@ export function LayoutActions({
       </div>
     </section>
   )
-}
-
-function triggerDownload(blob: Blob, filename: string): void {
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  a.remove()
-  // Safari can race the revoke against the download stream when we
-  // revoke synchronously; wait 30s before cleanup.
-  setTimeout(() => URL.revokeObjectURL(url), 30_000)
 }

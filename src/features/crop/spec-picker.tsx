@@ -32,9 +32,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RegionFlag } from '@/components/region-flag'
-import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { NextStepCTA } from '@/features/studio/next-step-cta'
 import { useStudioTabStore } from '@/features/studio/studio-tab-store'
+import { useEffectivePhotoSpecs } from '@/features/spec-manager/store'
 import { localizeText } from '@/lib/i18n-text'
 import { derivePixels, MM_PER_INCH } from '@/lib/spec-units'
 import { cn } from '@/lib/utils'
@@ -93,9 +93,14 @@ export function SpecPicker() {
   const [customH, setCustomH] = useState<number>(CUSTOM_DEFAULTS.mm.h)
   const [customDpi, setCustomDpi] = useState<number>(CUSTOM_DPI_DEFAULT)
 
-  const visibleBuiltin = useMemo(() => {
+  // Merged builtin + user-saved specs. Matches `/specs` admin so the
+  // user-defined sizes the user created over there finally show up in
+  // the studio main flow.
+  const effectiveSpecs = useEffectivePhotoSpecs()
+
+  const visibleSpecs = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return BUILTIN_PHOTO_SPECS.filter((s) => {
+    return effectiveSpecs.filter((s) => {
       if (filter !== 'all' && s.category !== filter) return false
       if (!q) return true
       const hay = [s.name.zh, s.name['zh-Hant'], s.name.en, s.id, s.region ?? '']
@@ -103,7 +108,7 @@ export function SpecPicker() {
         .toLowerCase()
       return hay.includes(q)
     })
-  }, [filter, query])
+  }, [filter, query, effectiveSpecs])
 
   const bounds = CUSTOM_BOUNDS[customUnit]
   const inputStep = CUSTOM_DEFAULTS[customUnit].step
@@ -326,12 +331,12 @@ export function SpecPicker() {
       </div>
 
       <ul className="max-h-[420px] space-y-1 overflow-y-auto">
-        {visibleBuiltin.length === 0 ? (
+        {visibleSpecs.length === 0 ? (
           <li className="p-3 text-center text-sm text-[var(--color-text-weak)]">
             {t('noMatches')}
           </li>
         ) : (
-          visibleBuiltin.map((spec) => (
+          visibleSpecs.map((spec) => (
             <SpecRow
               key={spec.id}
               spec={spec}

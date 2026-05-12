@@ -17,7 +17,7 @@ import { useEffect, useMemo } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Check, Layers } from 'lucide-react'
 
-import { getLayoutTemplatesForPaper } from '@/data/layout-templates'
+import { useEffectiveLayoutTemplates } from '@/features/spec-manager/store'
 import { localizeText } from '@/lib/i18n-text'
 import { cn } from '@/lib/utils'
 import type { LayoutTemplate, PhotoSpec } from '@/types/spec'
@@ -37,7 +37,14 @@ export function LayoutTemplatePicker({ activeCropSpec }: LayoutTemplatePickerPro
   const template = useLayoutStore((s) => s.template)
   const setTemplate = useLayoutStore((s) => s.setTemplate)
 
-  const builtins = getLayoutTemplatesForPaper(paper.id)
+  // Merged builtin + user-saved templates — picks up everything the
+  // user added through `/specs`. Filter to this paper here so the
+  // memoised slice below doesn't change identity on unrelated edits.
+  const effectiveTemplates = useEffectiveLayoutTemplates()
+  const builtins = useMemo(
+    () => effectiveTemplates.filter((tpl) => tpl.paperId === paper.id),
+    [effectiveTemplates, paper.id],
+  )
 
   // Synthesise an extra "{paper} · N × {active spec}" entry whenever
   // the active crop spec has no built-in template on this paper.

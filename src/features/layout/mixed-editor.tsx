@@ -14,7 +14,7 @@ import { useMemo } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { Minus, Plus, Trash2 } from 'lucide-react'
 
-import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
+import { useEffectivePhotoSpecs } from '@/features/spec-manager/store'
 import { localizeText } from '@/lib/i18n-text'
 import { cn } from '@/lib/utils'
 import type { LayoutTemplate, PhotoSpec } from '@/types/spec'
@@ -38,18 +38,19 @@ export function MixedEditor({ activeCropSpec }: MixedEditorProps) {
   const paper = useLayoutStore((s) => s.paper)
   const template = useLayoutStore((s) => s.template)
   const setTemplate = useLayoutStore((s) => s.setTemplate)
+  const effectiveSpecs = useEffectivePhotoSpecs()
 
   const items = template.items
 
   // The select drop-downs need to include the active inline-custom
-  // spec when it isn't in `BUILTIN_PHOTO_SPECS` — otherwise the user
-  // can't add their own size to a mix, or sees a blank label when the
-  // synced template already references it.
+  // spec when it isn't already in the effective list — otherwise the
+  // user can't add their own size to a mix, or sees a blank label
+  // when the synced template already references it.
   const availableSpecs = useMemo<PhotoSpec[]>(() => {
-    if (!activeCropSpec) return BUILTIN_PHOTO_SPECS
-    if (BUILTIN_PHOTO_SPECS.some((s) => s.id === activeCropSpec.id)) return BUILTIN_PHOTO_SPECS
-    return [activeCropSpec, ...BUILTIN_PHOTO_SPECS]
-  }, [activeCropSpec])
+    if (!activeCropSpec) return effectiveSpecs
+    if (effectiveSpecs.some((s) => s.id === activeCropSpec.id)) return effectiveSpecs
+    return [activeCropSpec, ...effectiveSpecs]
+  }, [activeCropSpec, effectiveSpecs])
 
   function commit(nextItems: LayoutTemplate['items']) {
     if (nextItems.length === 0) {
