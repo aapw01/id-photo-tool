@@ -83,6 +83,10 @@
   - [x] T09 后处理：mask → 原图分辨率 RGBA + inverse crop — 2026-05-12
   - [x] T10 OrtSession + WebGPU 探测 + WASM 降级 — 2026-05-12
   - [x] T11 错误分类 + 三语文案（16 个 key）— 2026-05-12
+- [x] 组 C · React 集成（T12–T14）— 2026-05-12
+  - [x] T12 SegmentationClient + useSegmentation hook + 引用计数 — 2026-05-12
+  - [x] T13 桌面 idleCallback prewarm + CTA hover trigger — 2026-05-12
+  - [x] T14 Toaster + SegmentationFeedback 浮动条 — 2026-05-12
 - [ ] 组 C · React 集成（T12–T14）
 - [ ] 组 D · Studio 路由（T15–T17）
 - [ ] 组 E · 验证（T18–T20）

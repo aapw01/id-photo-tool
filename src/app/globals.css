@@ -182,3 +182,16 @@
     border-radius: var(--radius-sm);
   }
 }
+
+/* Indeterminate progress strip used by SegmentationFeedback. */
+@keyframes pixfit-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translateX(-25%);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(25%);
+  }
+}

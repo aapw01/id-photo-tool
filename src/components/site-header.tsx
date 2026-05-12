@@ -56,6 +56,7 @@ export function SiteHeader() {
           <LanguageSwitcher />
           <Link
             href="/studio"
+            data-warmup-segmentation
             className="ml-2 inline-flex h-9 items-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 text-sm font-medium text-white shadow-[var(--shadow-sm)] hover:bg-[var(--color-primary-dk)]"
           >
             {tCommon('openStudio')}
