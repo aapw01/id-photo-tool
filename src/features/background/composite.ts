@@ -137,6 +137,8 @@ export function applyAlphaMatteToImageData(
     radius?: number
     alphaMin?: number
     alphaMax?: number
+    spillRadius?: number
+    spillStrength?: number
   } = {},
 ): Uint8ClampedArray {
   const total = width * height
@@ -151,7 +153,7 @@ export function applyAlphaMatteToImageData(
     throw new Error('applyAlphaMatteToImageData: out buffer is too small')
   }
 
-  const bg = opts.bg ?? estimateMaskOuterRingBg(orig, mask, width, height, opts)
+  const bg = opts.bg ?? estimateBackgroundColor(orig, mask, width, height, opts)
   const alphaMin = opts.alphaMin ?? 8
   const alphaMax = opts.alphaMax ?? 248
 
@@ -185,11 +187,40 @@ export function applyAlphaMatteToImageData(
     dst[srcIdx + 3] = outA
   }
 
+  if (bg) {
+    suppressEdgeColorSpill(dst, mask, width, height, bg, {
+      radius: opts.spillRadius,
+      strength: opts.spillStrength,
+    })
+  }
+
   return dst
 }
 
 function clampByte(value: number): number {
   return value <= 0 ? 0 : value >= 255 ? 255 : Math.round(value)
+}
+
+/**
+ * Best-effort background colour for matte decontamination. We first ask
+ * the mask itself (the ring of near-transparent pixels just outside the
+ * subject) — that's the most accurate sample of "the colour that
+ * actually leaked into the hair". When the soft mask transition has no
+ * near-zero alpha samples (common with FP16 MODNet on letterboxed
+ * inputs), fall back to the image corners which on ID photos are
+ * reliably plain background.
+ */
+function estimateBackgroundColor(
+  orig: Uint8ClampedArray,
+  mask: Uint8ClampedArray,
+  width: number,
+  height: number,
+  opts: { radius?: number; alphaLow?: number; alphaHigh?: number } = {},
+): { r: number; g: number; b: number } | null {
+  return (
+    estimateMaskOuterRingBg(orig, mask, width, height, opts) ??
+    estimateImageCornerBg(orig, mask, width, height)
+  )
 }
 
 function estimateMaskOuterRingBg(
@@ -200,7 +231,10 @@ function estimateMaskOuterRingBg(
   opts: { radius?: number; alphaLow?: number; alphaHigh?: number } = {},
 ): { r: number; g: number; b: number } | null {
   const radius = Math.max(1, Math.floor(opts.radius ?? 6))
-  const alphaLow = opts.alphaLow ?? 12
+  // Slightly permissive cutoff: alpha <= 16 still reads as background.
+  // Letterboxed FP16 MODNet leaves few alpha-0 samples around hair, so
+  // 12 was too strict to ever fire in practice.
+  const alphaLow = opts.alphaLow ?? 16
   const alphaHigh = opts.alphaHigh ?? 240
   const total = width * height
 
@@ -255,6 +289,196 @@ function estimateMaskOuterRingBg(
   }
 
   return n === 0 ? null : { r: r / n, g: g / n, b: b / n }
+}
+
+/**
+ * Last-resort background sampler: read the four image corners. ID
+ * photos are framed so the corners are always plain background, which
+ * makes them an excellent fallback when the soft mask never dropped
+ * below `alphaLow` near the subject.
+ */
+function estimateImageCornerBg(
+  orig: Uint8ClampedArray,
+  mask: Uint8ClampedArray,
+  width: number,
+  height: number,
+  opts: { window?: number; maskAlphaMax?: number } = {},
+): { r: number; g: number; b: number } | null {
+  const window = Math.max(1, Math.floor(opts.window ?? 16))
+  // Allow some softness — the corner doesn't need to be hard transparent
+  // for us to trust it as background, but a still-confident-foreground
+  // pixel disqualifies it.
+  const maskMax = opts.maskAlphaMax ?? 64
+  // Require at least half of one corner window to be valid samples
+  // before we trust the average. Stops a single misidentified corner
+  // from dragging the estimate away from the real background.
+  const minSamples = Math.floor(window * window * 0.5)
+
+  const corners: { x0: number; y0: number }[] = [
+    { x0: 0, y0: 0 },
+    { x0: width - window, y0: 0 },
+    { x0: 0, y0: height - window },
+    { x0: width - window, y0: height - window },
+  ]
+
+  let r = 0
+  let g = 0
+  let b = 0
+  let n = 0
+  for (const { x0, y0 } of corners) {
+    const xStart = Math.max(0, x0)
+    const yStart = Math.max(0, y0)
+    const xEnd = Math.min(width, x0 + window)
+    const yEnd = Math.min(height, y0 + window)
+    for (let y = yStart; y < yEnd; y++) {
+      const rowOff = y * width
+      for (let x = xStart; x < xEnd; x++) {
+        const idx = (rowOff + x) * 4
+        if ((mask[idx + 3] ?? 0) > maskMax) continue
+        r += orig[idx + 0]!
+        g += orig[idx + 1]!
+        b += orig[idx + 2]!
+        n++
+      }
+    }
+  }
+
+  if (n < minSamples) return null
+  return { r: r / n, g: g / n, b: b / n }
+}
+
+/**
+ * Subtract the old background's chroma axis from pixels that sit just
+ * inside the foreground/background boundary. This handles the case the
+ * alpha-unmix loop above can't reach: high-alpha (>~248) boundary
+ * pixels where the model is over-confident about opacity but the RGB
+ * still carries the old background's tint — the classic "red halo on
+ * dark hair" failure mode.
+ */
+function suppressEdgeColorSpill(
+  rgba: Uint8ClampedArray,
+  mask: Uint8ClampedArray,
+  width: number,
+  height: number,
+  bg: { r: number; g: number; b: number },
+  opts: { radius?: number; strength?: number } = {},
+): void {
+  // 18px sweep matches the ~5–8px halo seen on real-device captures
+  // plus headroom for blur / resampling around the matte.
+  const radius = Math.max(1, Math.floor(opts.radius ?? 18))
+  // > 1 lets the pass go all the way to neutral on heavily-tinted
+  // pixels; the `amount` clamp below stops it overshooting past that.
+  const strength = opts.strength ?? 1.15
+  const total = width * height
+  const nearBg = buildNearBackgroundMask(mask, width, height, radius)
+  const bgLum = luma(bg.r, bg.g, bg.b)
+  const bgCr = bg.r - bgLum
+  const bgCg = bg.g - bgLum
+  const bgCb = bg.b - bgLum
+  const bgChroma2 = bgCr * bgCr + bgCg * bgCg + bgCb * bgCb
+  // Near-neutral backgrounds (grey/white wall) have no chroma axis to
+  // subtract along — running the pass would just be sampling noise.
+  if (bgChroma2 < 120) return
+
+  for (let i = 0; i < total; i++) {
+    if (!nearBg[i]) continue
+    const idx = i * 4
+    const alpha = mask[idx + 3] ?? 0
+    if (alpha <= 32) continue
+    const r = rgba[idx + 0]!
+    const g = rgba[idx + 1]!
+    const b = rgba[idx + 2]!
+    const lum = luma(r, g, b)
+    // Keep skin, lips and bright highlights stable. The user-visible
+    // failure is the coloured outline on dark hair / dark clothing where
+    // MODNet keeps an over-confident boundary pixel.
+    if (lum > 165) continue
+
+    // Saturation guard: protect near-neutral pixels (deep hair body,
+    // dark fabric, glasses frames) from being shifted off-grey even
+    // when they sit within the spill radius.
+    const maxCh = r >= g ? (r >= b ? r : b) : g >= b ? g : b
+    const minCh = r <= g ? (r <= b ? r : b) : g <= b ? g : b
+    const sat = maxCh === 0 ? 0 : (maxCh - minCh) / maxCh
+    if (sat < 0.16) continue
+
+    const cr = r - lum
+    const cg = g - lum
+    const cb = b - lum
+    const projection = (cr * bgCr + cg * bgCg + cb * bgCb) / bgChroma2
+    if (projection <= 0) continue
+
+    // High-alpha boundary pixels are exactly the case regular matte
+    // decontamination misses: alpha says "opaque", RGB still says "old
+    // background". Scale the pass by both alpha confidence and boundary
+    // darkness so interior hair stays natural.
+    const alphaFactor = alpha >= 248 ? 1 : Math.min(1, Math.max(0, (alpha - 32) / 216))
+    const darkFactor = Math.min(1, Math.max(0, (165 - lum) / 130))
+    const target = projection * strength * alphaFactor * darkFactor
+    // Never subtract more chroma than the pixel actually has along the
+    // bg axis — overshooting would invent a green/cyan complementary
+    // tint at the boundary.
+    const amount = target < projection ? target : projection
+    if (amount <= 0) continue
+
+    rgba[idx + 0] = clampByte(r - bgCr * amount)
+    rgba[idx + 1] = clampByte(g - bgCg * amount)
+    rgba[idx + 2] = clampByte(b - bgCb * amount)
+  }
+}
+
+/**
+ * 1 wherever a pixel sits within `radius` of any `mask alpha <= 24`
+ * pixel — i.e. near transparent background. Implemented as a two-pass
+ * separable dilation so cost is O(W·H), independent of `radius`.
+ */
+function buildNearBackgroundMask(
+  mask: Uint8ClampedArray,
+  width: number,
+  height: number,
+  radius: number,
+): Uint8Array {
+  const total = width * height
+  const background = new Uint8Array(total)
+  for (let i = 0; i < total; i++) {
+    if ((mask[i * 4 + 3] ?? 0) <= 24) background[i] = 1
+  }
+
+  const horiz = new Uint8Array(total)
+  for (let y = 0; y < height; y++) {
+    const rowOff = y * width
+    let count = 0
+    for (let x = 0; x < Math.min(radius + 1, width); x++) {
+      count += background[rowOff + x]!
+    }
+    for (let x = 0; x < width; x++) {
+      horiz[rowOff + x] = count > 0 ? 1 : 0
+      const addIdx = x + radius + 1
+      if (addIdx < width) count += background[rowOff + addIdx]!
+      const dropIdx = x - radius
+      if (dropIdx >= 0) count -= background[rowOff + dropIdx]!
+    }
+  }
+
+  const near = new Uint8Array(total)
+  for (let x = 0; x < width; x++) {
+    let count = 0
+    for (let y = 0; y < Math.min(radius + 1, height); y++) {
+      count += horiz[y * width + x]!
+    }
+    for (let y = 0; y < height; y++) {
+      near[y * width + x] = count > 0 ? 1 : 0
+      const addY = y + radius + 1
+      if (addY < height) count += horiz[addY * width + x]!
+      const dropY = y - radius
+      if (dropY >= 0) count -= horiz[dropY * width + x]!
+    }
+  }
+  return near
+}
+
+function luma(r: number, g: number, b: number): number {
+  return r * 0.299 + g * 0.587 + b * 0.114
 }
 
 /* -------------------------------------------------------------------------- */
