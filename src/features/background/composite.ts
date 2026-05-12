@@ -537,6 +537,105 @@ export async function extractForeground(
   return createImageBitmap(canvas as HTMLCanvasElement)
 }
 
+/** Default working-canvas long-side cap used by `extractForegroundCapped`. */
+const DEFAULT_FOREGROUND_LONGSIDE_CAP = 1600
+
+/**
+ * `extractForeground` wrapper that bounds the working canvas to
+ * `maxLongSide` pixels on the longer axis before running the matte
+ * decontamination + spill-suppression passes inside.
+ *
+ * Why: `applyAlphaMatteToImageData` walks every pixel with float math,
+ * and `suppressEdgeColorSpill` runs two separable radius-18 dilations
+ * over the same buffer. On a 20MP phone capture that's many seconds of
+ * synchronous JS on the main thread — the export button looks dead.
+ *
+ * ID-photo exports universally target ≤ 1200 px on the long side
+ * (see `derivePixels` over `BUILTIN_PHOTO_SPECS`), so a 1600 px working
+ * canvas sits comfortably above the largest output. The small
+ * downscale we apply here is invisible after the final spec-sized
+ * resample.
+ *
+ * NOTE: the returned ImageBitmap may be smaller than `bitmap`. Callers
+ * that index into the foreground with crop-frame coordinates (which
+ * live in *original-bitmap pixel space*) MUST rescale those frame
+ * coordinates by `(fg.width / bitmap.width)` before drawing. The
+ * `scaleFrameForForeground` helper below does this consistently.
+ */
+export async function extractForegroundCapped(
+  bitmap: ImageBitmap,
+  maskImage: ImageData,
+  opts: { maxLongSide?: number } = {},
+): Promise<ImageBitmap> {
+  const maxLongSide = opts.maxLongSide ?? DEFAULT_FOREGROUND_LONGSIDE_CAP
+  const longest = Math.max(bitmap.width, bitmap.height)
+  if (longest <= maxLongSide) {
+    return extractForeground(bitmap, maskImage)
+  }
+  const scale = maxLongSide / longest
+  const scaledW = Math.max(1, Math.round(bitmap.width * scale))
+  const scaledH = Math.max(1, Math.round(bitmap.height * scale))
+
+  const workCanvas = document.createElement('canvas')
+  workCanvas.width = scaledW
+  workCanvas.height = scaledH
+  const workCtx = workCanvas.getContext('2d')
+  if (!workCtx) {
+    return extractForeground(bitmap, maskImage)
+  }
+  workCtx.imageSmoothingEnabled = true
+  workCtx.imageSmoothingQuality = 'high'
+  workCtx.drawImage(bitmap, 0, 0, scaledW, scaledH)
+
+  const maskSrcCanvas = document.createElement('canvas')
+  maskSrcCanvas.width = maskImage.width
+  maskSrcCanvas.height = maskImage.height
+  const maskSrcCtx = maskSrcCanvas.getContext('2d')
+  if (!maskSrcCtx) {
+    return extractForeground(bitmap, maskImage)
+  }
+  maskSrcCtx.putImageData(maskImage, 0, 0)
+
+  const maskDstCanvas = document.createElement('canvas')
+  maskDstCanvas.width = scaledW
+  maskDstCanvas.height = scaledH
+  const maskDstCtx = maskDstCanvas.getContext('2d')
+  if (!maskDstCtx) {
+    return extractForeground(bitmap, maskImage)
+  }
+  maskDstCtx.imageSmoothingEnabled = true
+  maskDstCtx.imageSmoothingQuality = 'high'
+  maskDstCtx.drawImage(maskSrcCanvas, 0, 0, scaledW, scaledH)
+  const workMask = maskDstCtx.getImageData(0, 0, scaledW, scaledH)
+
+  const workBitmap = await createImageBitmap(workCanvas)
+  return extractForeground(workBitmap, workMask)
+}
+
+/**
+ * Rescale a crop frame from *original bitmap pixel space* into the
+ * coordinate system of a (possibly downscaled) foreground bitmap.
+ * `extractForegroundCapped` may shrink the foreground; this keeps the
+ * spec crop indexing into the right region after the cap.
+ */
+export function scaleFrameForForeground(
+  frame: { x: number; y: number; w: number; h: number },
+  bitmapWidth: number,
+  bitmapHeight: number,
+  foregroundWidth: number,
+  foregroundHeight: number,
+): { x: number; y: number; w: number; h: number } {
+  if (foregroundWidth === bitmapWidth && foregroundHeight === bitmapHeight) return frame
+  const sx = foregroundWidth / bitmapWidth
+  const sy = foregroundHeight / bitmapHeight
+  return {
+    x: frame.x * sx,
+    y: frame.y * sy,
+    w: frame.w * sx,
+    h: frame.h * sy,
+  }
+}
+
 /**
  * Paint `foreground` over `bg` into the supplied 2D context. The
  * context must already be sized to `(w, h)`. The transparent path

@@ -1,60 +1,17 @@
 /**
- * Resample sanity checks. Pica itself needs a real DOM canvas to
- * deliver Lanczos pixels, which happy-dom doesn't ship, so we mock
- * the `pica` module to record what the wrapper sends in. The asserts
- * focus on:
+ * Resample sanity checks. happy-dom's canvas doesn't actually run a
+ * bilinear filter (it stubs `drawImage` as a noop) so these tests only
+ * verify the contract callers depend on:
  *
- *   1. Pica is asked for the right quality level (Lanczos = 3).
- *   2. The wrapper falls back to native resampling when Pica throws.
- *   3. Target dimensions are honoured and clamped.
+ *   1. Output dimensions match the requested target.
+ *   2. Zero / negative inputs clamp to a 1×1 canvas.
+ *   3. Aggressive downscales (≥ 2×) don't throw — the two-step ladder
+ *      should kick in and still produce a target-sized canvas.
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { __resetPicaForTesting, resample } from './resample'
-
-interface PicaCall {
-  fromWidth: number
-  fromHeight: number
-  toWidth: number
-  toHeight: number
-  quality: number | undefined
-}
-
-const calls: PicaCall[] = []
-let nextResizeBehavior: 'ok' | 'throw' = 'ok'
-
-vi.mock('pica', () => {
-  return {
-    default: () => ({
-      resize: async (
-        from: HTMLCanvasElement,
-        to: HTMLCanvasElement,
-        opts: { quality?: number },
-      ) => {
-        calls.push({
-          fromWidth: from.width,
-          fromHeight: from.height,
-          toWidth: to.width,
-          toHeight: to.height,
-          quality: opts?.quality,
-        })
-        if (nextResizeBehavior === 'throw') throw new Error('synthetic pica failure')
-        return to
-      },
-    }),
-  }
-})
-
-beforeEach(() => {
-  __resetPicaForTesting()
-  calls.length = 0
-  nextResizeBehavior = 'ok'
-})
-
-afterEach(() => {
-  vi.restoreAllMocks()
-})
+import { resample } from './resample'
 
 function makeCanvas(w: number, h: number): HTMLCanvasElement {
   const c = document.createElement('canvas')
@@ -69,9 +26,6 @@ describe('resample', () => {
     const out = await resample({ source: src, targetWidth: 25, targetHeight: 25 })
     expect(out.width).toBe(25)
     expect(out.height).toBe(25)
-    expect(calls).toHaveLength(1)
-    expect(calls[0]!.toWidth).toBe(25)
-    expect(calls[0]!.toHeight).toBe(25)
   })
 
   it('clamps target dimensions to a minimum of 1×1', async () => {
@@ -81,19 +35,20 @@ describe('resample', () => {
     expect(out.height).toBe(1)
   })
 
-  it('passes Lanczos quality=3 by default and respects overrides', async () => {
-    const src = makeCanvas(64, 64)
-    await resample({ source: src, targetWidth: 16, targetHeight: 16 })
-    expect(calls[0]!.quality).toBe(3)
-    await resample({ source: src, targetWidth: 16, targetHeight: 16, quality: 0 })
-    expect(calls[1]!.quality).toBe(0)
+  it('handles a 4000×4000 → 800×800 downscale without throwing', async () => {
+    // Real-world worst case after the foreground cap: a 4000² source
+    // being shrunk to a spec-sized cell. The two-step ladder should
+    // run through an intermediate canvas and finish without error.
+    const src = makeCanvas(4000, 4000)
+    const out = await resample({ source: src, targetWidth: 800, targetHeight: 800 })
+    expect(out.width).toBe(800)
+    expect(out.height).toBe(800)
   })
 
-  it('falls back to native canvas drawImage when Pica throws', async () => {
-    nextResizeBehavior = 'throw'
-    const src = makeCanvas(40, 40)
-    const out = await resample({ source: src, targetWidth: 10, targetHeight: 10 })
-    expect(out.width).toBe(10)
-    expect(out.height).toBe(10)
+  it('returns a canvas with the same target dims when no downscale is needed', async () => {
+    const src = makeCanvas(120, 80)
+    const out = await resample({ source: src, targetWidth: 120, targetHeight: 80 })
+    expect(out.width).toBe(120)
+    expect(out.height).toBe(80)
   })
 })

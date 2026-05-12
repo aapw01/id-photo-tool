@@ -35,7 +35,7 @@ import { useIsWeChat } from '@/lib/ua'
 import { cn } from '@/lib/utils'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
-import { extractForeground, type BgColor } from './composite'
+import { extractForegroundCapped, scaleFrameForForeground, type BgColor } from './composite'
 
 interface ExportPanelProps {
   bitmap: ImageBitmap
@@ -52,6 +52,51 @@ const FORMATS: ExportFormat[] = ['png-alpha', 'png-flat', 'jpg', 'webp']
 const ESTIMATE_LONGSIDE_PX = 1280
 /** Tail-debounce window for the file-size estimate effect. */
 const ESTIMATE_DEBOUNCE_MS = 400
+
+/**
+ * Render `src` into a `previewW × previewH` canvas, applying `frame`
+ * (in original-bitmap pixel space) up front. When `src` has been
+ * capped to a working resolution by `extractForegroundCapped`, we
+ * rescale `frame` to the source's coord system before drawing. The
+ * resulting canvas is already the size the estimate pipeline wants
+ * out the other end, so `exportSingle`'s fast path can skip
+ * resampling entirely.
+ */
+function buildEstimateSource(
+  src: ImageBitmap | HTMLCanvasElement,
+  frame: CropFrame | null | undefined,
+  previewW: number,
+  previewH: number,
+  bitmapW: number,
+  bitmapH: number,
+): HTMLCanvasElement {
+  const c = document.createElement('canvas')
+  c.width = Math.max(1, Math.round(previewW))
+  c.height = Math.max(1, Math.round(previewH))
+  const ctx = c.getContext('2d')
+  if (!ctx) return c
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  const srcW = (src as { width: number }).width
+  const srcH = (src as { height: number }).height
+  if (frame) {
+    const scaled = scaleFrameForForeground(frame, bitmapW, bitmapH, srcW, srcH)
+    ctx.drawImage(
+      src as CanvasImageSource,
+      scaled.x,
+      scaled.y,
+      scaled.w,
+      scaled.h,
+      0,
+      0,
+      c.width,
+      c.height,
+    )
+  } else {
+    ctx.drawImage(src as CanvasImageSource, 0, 0, srcW, srcH, 0, 0, c.width, c.height)
+  }
+  return c
+}
 
 export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportPanelProps) {
   const t = useTranslations('Export')
@@ -95,7 +140,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         })
         return
       }
-      const fg = await extractForeground(bitmap, mask)
+      const fg = await extractForegroundCapped(bitmap, mask)
       if (cancelled) {
         fg.close?.()
         return
@@ -166,14 +211,15 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
 
   // Estimate file sizes for the *currently selected* format only (plus
   // its alpha cousin when a cut-out is available). Estimating all four
-  // formats simultaneously — as we used to — runs four full Lanczos
+  // formats simultaneously — as we used to — runs four full encode
   // passes on every quality-slider tick / mask change, which on a 20MP
   // photo starves the click handler that triggers the actual download.
   //
-  // The estimate is a hint, not an exact byte count, so we also run it
-  // on a downscaled preview canvas (long side ≤ 1280px). The reported
-  // size is scaled back up by the pixel-area ratio. Off-by-30% is fine
-  // for "is this going to be 50KB or 5MB".
+  // The estimate is a hint, not an exact byte count, so we run it
+  // against a single downscaled preview canvas (long side ≤ 1280px) that
+  // we draw ONCE per debounce tick. `exportSingle` then takes its fast
+  // path (no frame, target === source dims) and the encode never has to
+  // traverse a 20MP intermediate just to read back the blob size.
   //
   // Tail-debounced by 400ms so dragging the quality slider doesn't
   // hammer the encoder on every tick.
@@ -202,20 +248,24 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
           else if (format === 'png-alpha') wanted.push('png-flat')
         }
 
-        // Build a downscaled preview source so encoding is bounded by
-        // ~1280² pixels regardless of the user's input bitmap.
         const longest = Math.max(targetPixels.width, targetPixels.height)
         const scale = longest > ESTIMATE_LONGSIDE_PX ? ESTIMATE_LONGSIDE_PX / longest : 1
         const previewW = Math.max(1, Math.round(targetPixels.width * scale))
         const previewH = Math.max(1, Math.round(targetPixels.height * scale))
-        const previewFrame = frame
-          ? {
-              x: frame.x,
-              y: frame.y,
-              w: frame.w,
-              h: frame.h,
-            }
-          : null
+
+        // Build the downscaled estimate source once and reuse across
+        // every format we sample this tick. The frame is baked into
+        // this canvas in image-pixel space — so `exportSingle` gets a
+        // canvas that already matches `targetPixels` and the fast path
+        // (no resample) fires for every format below.
+        const estimateSource = buildEstimateSource(
+          exportSource,
+          frame,
+          previewW,
+          previewH,
+          bitmap.width,
+          bitmap.height,
+        )
         // Reported bytes ≈ measured bytes × (target_area / preview_area).
         const sizeMultiplier = scale === 1 ? 1 : 1 / (scale * scale)
 
@@ -232,11 +282,11 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
           }
           try {
             const result = await exportSingle({
-              foreground: exportSource,
+              foreground: estimateSource,
               bg,
               format: f,
               targetPixels: { width: previewW, height: previewH },
-              frame: previewFrame,
+              frame: null,
               quality: f === 'jpg' || f === 'webp' ? quality : undefined,
             })
             if (cancelled) return
@@ -254,7 +304,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       cancelled = true
       clearTimeout(handle)
     }
-  }, [exportSource, foreground, bg, targetPixels, frame, quality, format])
+  }, [exportSource, foreground, bitmap, bg, targetPixels, frame, quality, format])
 
   // Filename preview: layout/single/compressed swap based on toggle.
   const filename = useMemo(() => {
@@ -299,12 +349,25 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
           toast.warning(t('compressMiss', { kb: Math.round(result.finalKB) }))
         }
       } else {
+        // `frame` is authored in original-bitmap pixel space. When the
+        // foreground was capped to a smaller working resolution we have
+        // to rescale the frame into the source's coord system before
+        // handing it to the export pipeline.
+        const sourceFrame = frame
+          ? scaleFrameForForeground(
+              frame,
+              bitmap.width,
+              bitmap.height,
+              (exportSource as { width: number }).width,
+              (exportSource as { height: number }).height,
+            )
+          : null
         const result = await exportSingle({
           foreground: exportSource,
           bg,
           format,
           targetPixels,
-          frame: frame ?? null,
+          frame: sourceFrame,
           quality: supportsCompress ? quality : undefined,
         })
         blob = result.blob
@@ -332,6 +395,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     }
   }, [
     exportSource,
+    bitmap,
     compress,
     supportsCompress,
     targetKB,
@@ -348,6 +412,15 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     if (!exportSource) return
     setCopying(true)
     try {
+      const sourceFrame = frame
+        ? scaleFrameForForeground(
+            frame,
+            bitmap.width,
+            bitmap.height,
+            (exportSource as { width: number }).width,
+            (exportSource as { height: number }).height,
+          )
+        : null
       const result = await exportSingle({
         foreground: exportSource,
         bg,
@@ -356,7 +429,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         // what's on screen.
         format: foreground ? 'png-alpha' : 'png-flat',
         targetPixels,
-        frame: frame ?? null,
+        frame: sourceFrame,
       })
       const item = new ClipboardItem({ 'image/png': result.blob })
       await navigator.clipboard.write([item])
@@ -366,7 +439,7 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
     } finally {
       setCopying(false)
     }
-  }, [exportSource, foreground, bg, targetPixels, frame, t])
+  }, [exportSource, bitmap, foreground, bg, targetPixels, frame, t])
 
   // Tidy any object URLs that are still hanging around at unmount —
   // the 30s deferred-revoke timer might still be pending.
@@ -390,6 +463,10 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
         <h3 className="text-sm font-medium text-[var(--color-text)]">{t('title')}</h3>
         <p className="mt-1 text-xs text-[var(--color-text-mute)]">{t('subtitle')}</p>
       </header>
+
+      {spec && frame ? (
+        <p className="text-xs text-[var(--color-text-mute)]">{t('cropAppliedHint')}</p>
+      ) : null}
 
       <div className="space-y-2">
         <Label className="text-xs font-medium text-[var(--color-text)]">{t('format.label')}</Label>

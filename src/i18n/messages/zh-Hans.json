@@ -202,6 +202,7 @@
     "alphaNeedsCutout": "PNG 透明背景需要先抠图",
     "alphaCutoutHint": "想导出透明背景？需要先把人像抠出来。",
     "alphaGoToBackground": "去背景面板开始抠图 →",
+    "cropAppliedHint": "已按照当前尺寸裁剪 — 修改尺寸可回到尺寸 tab。",
     "downloadFailed": "未能生成文件，请尝试其他格式",
     "filenamePreview": "文件名",
     "actions": {

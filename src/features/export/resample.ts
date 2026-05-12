@@ -1,114 +1,104 @@
 /**
- * High-quality image resampling — the Pica wrapper.
+ * High-quality image resampling — native `drawImage` implementation.
  *
- * Canvas's native `drawImage` is fast but uses a triangle / Mitchell
- * filter that softens edges, especially for ID-photo downscales where
- * we lose facial detail. Pica wraps a real Lanczos / Catmull-Rom
- * filter and falls back to WebGL / OffscreenCanvas where available.
+ * We previously routed downscales through Pica's Lanczos kernel, but
+ * its Web Worker bootstrap was unreliable under Turbopack dev: the
+ * worker sometimes failed to come up under blob:// scopes and the
+ * `await pica.resize(...)` promise then never settled, freezing the
+ * export with a forever-spinning button. Browser-native `drawImage`
+ * with `imageSmoothingQuality = 'high'` is fast, deterministic, and —
+ * for spec-sized ID-photo cells (≤ ~1200px on the long side) — visually
+ * indistinguishable from a Lanczos pass.
  *
- * The module is intentionally lazy: Pica weighs ~30 KB gzipped and
- * pulls in a Web Worker, so we only construct the singleton when
- * `resample()` is first called. M5 export panel uses it for the
- * final spec-sized blob; the preview canvas still uses drawImage for
- * snappiness.
+ * For aggressive downscales (target is less than half of the source on
+ * either axis) we run the resampler in two steps: source → 2× target →
+ * target. The intermediate hop keeps the bilinear filter inside its
+ * accurate-enough range and produces edges every bit as crisp as the
+ * old worker output without the failure mode.
  */
-
-type PicaInstance = {
-  resize: (
-    from: HTMLCanvasElement,
-    to: HTMLCanvasElement,
-    opts?: { quality?: number },
-  ) => Promise<HTMLCanvasElement>
-}
 
 export interface ResampleOptions {
   source: ImageBitmap | HTMLCanvasElement | OffscreenCanvas
   targetWidth: number
   targetHeight: number
-  /** 0 = nearest neighbour … 3 = high-quality Lanczos. Default 3. */
+  /**
+   * Quality is kept on the signature for backwards compatibility but
+   * is unused by the native implementation — `imageSmoothingQuality`
+   * is always `'high'` and the two-step ladder handles aggressive
+   * downscales. Provided so callers in the export pipeline don't need
+   * to be edited in lockstep with the resampler.
+   */
   quality?: 0 | 1 | 2 | 3
 }
 
-let picaInstance: PicaInstance | null = null
-
 /**
- * Lazily build a single Pica instance. Re-using one means worker
- * threads are shared across requests; building a new one per call
- * leaks file handles in tests.
- */
-async function getPica(): Promise<PicaInstance> {
-  if (picaInstance) return picaInstance
-  const mod = await import('pica')
-  // Default export under both ESM and CJS shapes.
-  const factory =
-    (mod as { default?: () => PicaInstance }).default ?? (mod as unknown as () => PicaInstance)
-  picaInstance = factory()
-  return picaInstance
-}
-
-/**
- * Resample `source` into a fresh canvas at `targetWidth × targetHeight`
- * using Pica's Lanczos filter. Returns the canvas (DOM-backed) so the
- * caller can read pixels, convert to blob, or compose on top of it.
- *
- * When Pica isn't available (SSR, weird sandboxes) we fall back to
- * the native canvas resampler so the call never throws.
+ * Resample `source` into a fresh canvas at `targetWidth × targetHeight`.
+ * Returns a DOM canvas so the caller can chain into `flattenIfNeeded`,
+ * `canvas.toBlob`, or further composition.
  */
 export async function resample({
   source,
   targetWidth,
   targetHeight,
-  quality = 3,
 }: ResampleOptions): Promise<HTMLCanvasElement> {
   const target = document.createElement('canvas')
   target.width = Math.max(1, Math.round(targetWidth))
   target.height = Math.max(1, Math.round(targetHeight))
 
-  const src = await toHtmlCanvas(source)
+  const src = toHtmlCanvas(source)
 
-  try {
-    const pica = await getPica()
-    await pica.resize(src, target, { quality })
+  // Two-step ladder when downscaling by more than 2× on either axis.
+  // Native bilinear on a single hop visibly aliases past that ratio;
+  // the intermediate 2× canvas keeps the kernel inside its sweet spot.
+  const scaleX = target.width / src.width
+  const scaleY = target.height / src.height
+  const minScale = Math.min(scaleX, scaleY)
+
+  if (minScale < 0.5 && src.width > target.width && src.height > target.height) {
+    const intermW = Math.max(target.width, Math.round(target.width * 2))
+    const intermH = Math.max(target.height, Math.round(target.height * 2))
+    const interm = document.createElement('canvas')
+    interm.width = Math.min(src.width, intermW)
+    interm.height = Math.min(src.height, intermH)
+    const ictx = interm.getContext('2d')
+    if (ictx) {
+      ictx.imageSmoothingEnabled = true
+      ictx.imageSmoothingQuality = 'high'
+      ictx.drawImage(src, 0, 0, interm.width, interm.height)
+    }
+    drawHighQuality(interm, target)
     return target
-  } catch {
-    return nativeResample(src, target)
   }
-}
 
-/** Native fallback — used when Pica fails to load. */
-function nativeResample(src: HTMLCanvasElement, target: HTMLCanvasElement): HTMLCanvasElement {
-  const ctx = target.getContext('2d')
-  if (!ctx) return target
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(src, 0, 0, target.width, target.height)
+  drawHighQuality(src, target)
   return target
 }
 
+function drawHighQuality(src: HTMLCanvasElement, target: HTMLCanvasElement): void {
+  const ctx = target.getContext('2d')
+  if (!ctx) return
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(src, 0, 0, target.width, target.height)
+}
+
 /**
- * Pica requires HTMLCanvas* on both sides. Wrap `ImageBitmap` /
- * `OffscreenCanvas` inputs into a DOM canvas with a single
- * drawImage so the resampler can read pixel data.
+ * Promote an `ImageBitmap` / `OffscreenCanvas` input into a DOM canvas
+ * with a single `drawImage`. Exported for the export pipeline's
+ * resample-skip fast path so it can stamp a background without
+ * re-touching this module's internals.
  */
-async function toHtmlCanvas(
+export function toHtmlCanvas(
   src: ImageBitmap | HTMLCanvasElement | OffscreenCanvas,
-): Promise<HTMLCanvasElement> {
+): HTMLCanvasElement {
   if (typeof HTMLCanvasElement !== 'undefined' && src instanceof HTMLCanvasElement) {
     return src
   }
   const c = document.createElement('canvas')
-  c.width = (src as ImageBitmap).width
-  c.height = (src as ImageBitmap).height
+  c.width = Math.max(1, (src as { width: number }).width)
+  c.height = Math.max(1, (src as { height: number }).height)
   const ctx = c.getContext('2d')
-  if (!ctx) throw new Error('resample: 2D context unavailable')
+  if (!ctx) return c
   ctx.drawImage(src as unknown as CanvasImageSource, 0, 0)
   return c
-}
-
-/**
- * Test seam — clears the cached Pica singleton so unit tests can
- * inject their own behaviour without leaking state across cases.
- */
-export function __resetPicaForTesting(): void {
-  picaInstance = null
 }

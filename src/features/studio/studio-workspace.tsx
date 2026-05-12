@@ -135,11 +135,14 @@ export function StudioWorkspace() {
     )
   }
 
-  // Only show the crop overlay when the size tab is open and we have
-  // a spec + frame. Comparing modes hide the overlay so the slider UI
+  // Show the crop overlay on Size (interactive) and Export (read-only).
+  // The read-only variant gives users a visual reminder that their
+  // chosen crop is still applied — without it, landing on Export shows
+  // the whole original bitmap and users mistake that for "the crop got
+  // reset". Comparing modes still hide the overlay so the slider UI
   // remains readable.
   const cropOverlay =
-    tab === 'size' && cropSpec && cropFrame ? (
+    (tab === 'size' || tab === 'export') && cropSpec && cropFrame ? (
       <>
         <CropFrameOverlay
           imageW={bitmap.width}
@@ -147,8 +150,9 @@ export function StudioWorkspace() {
           spec={cropSpec}
           frame={cropFrame}
           onChange={setCropFrame}
+          readOnly={tab === 'export'}
         />
-        {showGuidelines ? (
+        {showGuidelines && tab === 'size' ? (
           <Guidelines
             imageW={bitmap.width}
             imageH={bitmap.height}

@@ -30,6 +30,15 @@ interface CropFrameProps {
   spec: PhotoSpec
   frame: CropFrame
   onChange: (next: CropFrame) => void
+  /**
+   * When true the overlay renders as a static visual outline:
+   * - pointer interactions are disabled (no drag / resize)
+   * - corner handles are hidden
+   * - keyboard nudges are skipped
+   * Used on the Export tab to remind the user their crop is still
+   * applied without letting them edit it from there.
+   */
+  readOnly?: boolean
 }
 
 type DragKind = 'move' | 'nw' | 'ne' | 'sw' | 'se'
@@ -47,7 +56,14 @@ interface DragState {
 
 const MIN_FRAME_PX = 40
 
-export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: CropFrameProps) {
+export function CropFrameOverlay({
+  imageW,
+  imageH,
+  spec,
+  frame,
+  onChange,
+  readOnly = false,
+}: CropFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const dragRef = useRef<DragState | null>(null)
   const onChangeRef = useRef(onChange)
@@ -169,6 +185,7 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
 
   const keyHandler = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (readOnly) return
       const step = e.shiftKey ? 10 : 1
       const moves: Record<string, [number, number]> = {
         ArrowLeft: [-step, 0],
@@ -181,7 +198,7 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
       e.preventDefault()
       onChangeRef.current(clampToImage({ ...frame, x: frame.x + m[0]!, y: frame.y + m[1]! }))
     },
-    [frame, clampToImage],
+    [frame, clampToImage, readOnly],
   )
 
   const xPct = (frame.x / imageW) * 100
@@ -189,10 +206,18 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
   const wPct = (frame.w / imageW) * 100
   const hPct = (frame.h / imageH) * 100
 
+  // Read-only renders a softer dim mask so the underlying image stays
+  // legible; the interactive variant uses the original heavier dim so
+  // the crop window pops while the user is editing it.
+  const dimColor = readOnly ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.35)'
+
   return (
     <div ref={containerRef} className="pointer-events-none absolute inset-0">
       {/* dim mask */}
-      <div className="absolute inset-0 bg-black/35" aria-hidden />
+      <div
+        className={cn('absolute inset-0', readOnly ? 'bg-black/20' : 'bg-black/35')}
+        aria-hidden
+      />
 
       {/* clear cutout for the frame using two overlapping divs: the
           shadow div sits underneath at the frame position with a
@@ -204,7 +229,7 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
           top: `${yPct}%`,
           width: `${wPct}%`,
           height: `${hPct}%`,
-          boxShadow: '0 0 0 99999px rgba(0,0,0,0.35)',
+          boxShadow: `0 0 0 99999px ${dimColor}`,
           mixBlendMode: 'normal',
         }}
         aria-hidden
@@ -212,24 +237,26 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
 
       {/* The actual interactive frame */}
       <div
-        role="application"
-        tabIndex={0}
+        role={readOnly ? 'presentation' : 'application'}
+        tabIndex={readOnly ? -1 : 0}
         onKeyDown={keyHandler}
         className={cn(
-          'pointer-events-auto absolute cursor-move outline-none',
-          'border-2 border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)]',
+          'absolute border-2 border-[var(--color-primary)] outline-none',
+          readOnly
+            ? 'pointer-events-none'
+            : 'pointer-events-auto cursor-move focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface)]',
         )}
         style={{
           left: `${xPct}%`,
           top: `${yPct}%`,
           width: `${wPct}%`,
           height: `${hPct}%`,
-          touchAction: 'none',
+          touchAction: readOnly ? 'auto' : 'none',
         }}
-        onPointerDown={(e) => beginDrag('move', e)}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
+        onPointerDown={readOnly ? undefined : (e) => beginDrag('move', e)}
+        onPointerMove={readOnly ? undefined : onPointerMove}
+        onPointerUp={readOnly ? undefined : endDrag}
+        onPointerCancel={readOnly ? undefined : endDrag}
       >
         {/* Rule-of-thirds grid for visual guidance */}
         <div className="pointer-events-none absolute inset-0">
@@ -248,32 +275,55 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
           />
         </div>
 
-        {(['nw', 'ne', 'sw', 'se'] as const).map((corner) => (
-          <button
-            key={corner}
-            type="button"
-            aria-label={`resize-${corner}`}
-            data-corner={corner}
-            onPointerDown={(e) => beginDrag(corner, e)}
-            onPointerMove={onPointerMove}
-            onPointerUp={endDrag}
-            onPointerCancel={endDrag}
-            style={{ touchAction: 'none' }}
-            className={cn(
-              // 44×44 invisible hit area, centred on the corner — meets
-              // WCAG / iOS touch-target minima. The visual handle is a
-              // smaller pseudo-element drawn via the `before` utility.
-              'absolute flex size-11 items-center justify-center bg-transparent p-0',
-              'before:block before:size-3 before:rounded-full before:border-2 before:border-[var(--color-primary)] before:bg-white before:shadow-sm before:content-[""]',
-              '[@media(pointer:coarse)]:before:size-4',
-              corner === 'nw' && '-top-[22px] -left-[22px] cursor-nwse-resize',
-              corner === 'ne' && '-top-[22px] -right-[22px] cursor-nesw-resize',
-              corner === 'sw' && '-bottom-[22px] -left-[22px] cursor-nesw-resize',
-              corner === 'se' && '-right-[22px] -bottom-[22px] cursor-nwse-resize',
-            )}
-          />
-        ))}
+        {readOnly ? null : (
+          <CornerHandles beginDrag={beginDrag} onPointerMove={onPointerMove} endDrag={endDrag} />
+        )}
       </div>
     </div>
+  )
+}
+
+interface CornerHandlesProps {
+  beginDrag: (kind: DragKind, e: React.PointerEvent<HTMLElement>) => void
+  onPointerMove: (e: React.PointerEvent<HTMLElement>) => void
+  endDrag: (e: React.PointerEvent<HTMLElement>) => void
+}
+
+/**
+ * The four corner resize handles. Lifted out of `CropFrameOverlay` so
+ * the inline `beginDrag(corner, …)` arrow is no longer nested inside a
+ * conditional ternary; the React refs lint rule was flagging that
+ * shape as "ref read during render" when in fact it's only invoked on
+ * pointer events.
+ */
+function CornerHandles({ beginDrag, onPointerMove, endDrag }: CornerHandlesProps) {
+  return (
+    <>
+      {(['nw', 'ne', 'sw', 'se'] as const).map((corner) => (
+        <button
+          key={corner}
+          type="button"
+          aria-label={`resize-${corner}`}
+          data-corner={corner}
+          onPointerDown={(e) => beginDrag(corner, e)}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          style={{ touchAction: 'none' }}
+          className={cn(
+            // 44×44 invisible hit area, centred on the corner — meets
+            // WCAG / iOS touch-target minima. The visual handle is a
+            // smaller pseudo-element drawn via the `before` utility.
+            'absolute flex size-11 items-center justify-center bg-transparent p-0',
+            'before:block before:size-3 before:rounded-full before:border-2 before:border-[var(--color-primary)] before:bg-white before:shadow-sm before:content-[""]',
+            '[@media(pointer:coarse)]:before:size-4',
+            corner === 'nw' && '-top-[22px] -left-[22px] cursor-nwse-resize',
+            corner === 'ne' && '-top-[22px] -right-[22px] cursor-nesw-resize',
+            corner === 'sw' && '-bottom-[22px] -left-[22px] cursor-nesw-resize',
+            corner === 'se' && '-right-[22px] -bottom-[22px] cursor-nwse-resize',
+          )}
+        />
+      ))}
+    </>
   )
 }

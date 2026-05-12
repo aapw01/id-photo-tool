@@ -13,20 +13,9 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-// Stub Pica so the export pipeline returns immediately. Tests only
-// care about the wrapper plumbing (mime types, sizes, quality), not
-// real Lanczos pixels.
-vi.mock('pica', () => ({
-  default: () => ({
-    resize: async (_from: HTMLCanvasElement, to: HTMLCanvasElement) => to,
-  }),
-}))
-
 import { exportSingle, mimeFor, preservesAlpha, type ExportFormat } from './export-single'
-import { __resetPicaForTesting } from './resample'
 
 afterEach(() => {
-  __resetPicaForTesting()
   vi.restoreAllMocks()
 })
 

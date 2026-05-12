@@ -202,6 +202,7 @@
     "alphaNeedsCutout": "PNG with transparency needs the subject cut out first.",
     "alphaCutoutHint": "Want a transparent background? Cut out the subject first.",
     "alphaGoToBackground": "Open the Background tab to cut out →",
+    "cropAppliedHint": "Cropped to your selected spec — adjust on the Size tab if needed.",
     "downloadFailed": "Couldn't produce the file — try a different format.",
     "filenamePreview": "Filename",
     "actions": {

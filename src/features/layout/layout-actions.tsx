@@ -16,7 +16,12 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { centerCrop } from '@/features/crop/auto-center'
-import { extractForeground, parseHex, type BgColor } from '@/features/background/composite'
+import {
+  extractForegroundCapped,
+  parseHex,
+  scaleFrameForForeground,
+  type BgColor,
+} from '@/features/background/composite'
 import { buildFilename } from '@/features/export'
 import { aspectRatio, derivePixels } from '@/lib/spec-units'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
@@ -115,7 +120,7 @@ export function LayoutActions({
     const cached = foregroundCache.current
     if (cached && cached.key === key && cached.fg) return cached.fg
     if (cached) cached.fg?.close?.()
-    const fg = await extractForeground(bitmap, mask)
+    const fg = await extractForegroundCapped(bitmap, mask)
     foregroundCache.current = { key, fg }
     return fg
   }, [bitmap, mask])
@@ -156,12 +161,23 @@ export function LayoutActions({
       }
       ctx.imageSmoothingEnabled = true
       ctx.imageSmoothingQuality = 'high'
+      // The crop frame is authored in original-bitmap pixel space. When
+      // segmentation gave us a downscaled foreground via
+      // `extractForegroundCapped`, rescale the frame into the source's
+      // coord system so we sample the right region.
+      const sourceFrame = scaleFrameForForeground(
+        frame,
+        bitmap.width,
+        bitmap.height,
+        source.width,
+        source.height,
+      )
       ctx.drawImage(
         source as unknown as CanvasImageSource,
-        Math.max(0, Math.round(frame.x)),
-        Math.max(0, Math.round(frame.y)),
-        Math.max(1, Math.round(frame.w)),
-        Math.max(1, Math.round(frame.h)),
+        Math.max(0, Math.round(sourceFrame.x)),
+        Math.max(0, Math.round(sourceFrame.y)),
+        Math.max(1, Math.round(sourceFrame.w)),
+        Math.max(1, Math.round(sourceFrame.h)),
         0,
         0,
         canvas.width,

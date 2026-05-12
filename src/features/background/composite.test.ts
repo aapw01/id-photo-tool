@@ -2,10 +2,44 @@ import { describe, expect, it } from 'vitest'
 import {
   applyAlphaMatteToImageData,
   compositeIntoImageData,
+  extractForegroundCapped,
   parseHex,
+  scaleFrameForForeground,
   toHex,
   type BgColor,
 } from '@/features/background/composite'
+
+// happy-dom does not ship `OffscreenCanvas`, but `extractForeground`
+// gates one of its return branches with a bare `canvas instanceof
+// OffscreenCanvas`. `typeof` is safe with undeclared identifiers,
+// `instanceof` is not — without the identifier the call throws a
+// ReferenceError before we ever return. Install a small class that
+// wraps an HTMLCanvasElement so the branch executes and the inner
+// stubbed context still runs the matte / spill loops to completion.
+if (typeof (globalThis as { OffscreenCanvas?: unknown }).OffscreenCanvas === 'undefined') {
+  class OffscreenCanvasStub {
+    width: number
+    height: number
+    private inner: HTMLCanvasElement
+    constructor(w: number, h: number) {
+      this.width = w
+      this.height = h
+      this.inner = document.createElement('canvas')
+      this.inner.width = w
+      this.inner.height = h
+    }
+    getContext(kind: string): unknown {
+      return this.inner.getContext(kind as '2d') as unknown
+    }
+    transferToImageBitmap(): ImageBitmap {
+      return this.inner as unknown as ImageBitmap
+    }
+  }
+  Object.defineProperty(globalThis, 'OffscreenCanvas', {
+    value: OffscreenCanvasStub,
+    configurable: true,
+  })
+}
 
 function rgba(values: number[]): Uint8ClampedArray {
   return new Uint8ClampedArray(values)
@@ -386,5 +420,79 @@ describe('applyAlphaMatteToImageData — red-halo regression', () => {
     expect(out[target + 0]).toBeGreaterThanOrEqual(0)
     expect(out[target + 1]! - out[target + 0]!).toBeLessThanOrEqual(25)
     expect(out[target + 2]! - out[target + 0]!).toBeLessThanOrEqual(25)
+  })
+})
+
+describe('scaleFrameForForeground', () => {
+  it('returns the original frame when foreground size matches bitmap', () => {
+    const frame = { x: 100, y: 200, w: 300, h: 400 }
+    expect(scaleFrameForForeground(frame, 1000, 1500, 1000, 1500)).toEqual(frame)
+  })
+
+  it('scales proportionally when foreground is downscaled', () => {
+    const frame = { x: 100, y: 200, w: 400, h: 600 }
+    // bitmap 4000×6000 → foreground 1000×1500 = scale 0.25 each axis
+    const scaled = scaleFrameForForeground(frame, 4000, 6000, 1000, 1500)
+    expect(scaled.x).toBeCloseTo(25)
+    expect(scaled.y).toBeCloseTo(50)
+    expect(scaled.w).toBeCloseTo(100)
+    expect(scaled.h).toBeCloseTo(150)
+  })
+})
+
+describe('extractForegroundCapped', () => {
+  it('caps a 4000×4000 working canvas to ≤ 1600 on the long side', async () => {
+    // happy-dom doesn't ship a real ImageBitmap, but
+    // `extractForegroundCapped` only reads width/height and hands the
+    // object straight to `drawImage` (stubbed) and `createImageBitmap`
+    // (identity-stubbed in vitest.setup.ts). A plain canvas of the
+    // right shape is sufficient to exercise the cap path.
+    const bitmap = document.createElement('canvas')
+    bitmap.width = 4000
+    bitmap.height = 4000
+
+    const mask: ImageData = {
+      data: new Uint8ClampedArray(4000 * 4000 * 4),
+      width: 4000,
+      height: 4000,
+      colorSpace: 'srgb',
+    }
+
+    const fg = await extractForegroundCapped(bitmap as unknown as ImageBitmap, mask)
+    const longest = Math.max((fg as { width: number }).width, (fg as { height: number }).height)
+    expect(longest).toBeLessThanOrEqual(1600)
+  })
+
+  it('caps non-square sources to the long side while preserving aspect', async () => {
+    const bitmap = document.createElement('canvas')
+    bitmap.width = 5472
+    bitmap.height = 3648
+    const mask: ImageData = {
+      data: new Uint8ClampedArray(5472 * 3648 * 4),
+      width: 5472,
+      height: 3648,
+      colorSpace: 'srgb',
+    }
+    const fg = await extractForegroundCapped(bitmap as unknown as ImageBitmap, mask)
+    const w = (fg as { width: number }).width
+    const h = (fg as { height: number }).height
+    expect(Math.max(w, h)).toBe(1600)
+    // Aspect ratio preserved within sub-pixel rounding.
+    expect(w / h).toBeCloseTo(5472 / 3648, 1)
+  })
+
+  it('passes the bitmap through untouched when it already fits the cap', async () => {
+    const bitmap = document.createElement('canvas')
+    bitmap.width = 800
+    bitmap.height = 600
+    const mask: ImageData = {
+      data: new Uint8ClampedArray(800 * 600 * 4),
+      width: 800,
+      height: 600,
+      colorSpace: 'srgb',
+    }
+    const fg = await extractForegroundCapped(bitmap as unknown as ImageBitmap, mask)
+    expect((fg as { width: number }).width).toBe(800)
+    expect((fg as { height: number }).height).toBe(600)
   })
 })

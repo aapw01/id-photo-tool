@@ -202,6 +202,7 @@
     "alphaNeedsCutout": "PNG 透明背景需要先去背",
     "alphaCutoutHint": "想匯出透明背景？需要先把人像去背。",
     "alphaGoToBackground": "前往背景面板開始去背 →",
+    "cropAppliedHint": "已按目前尺寸裁剪 — 如需修改請回尺寸分頁。",
     "downloadFailed": "無法產生檔案，請嘗試其他格式",
     "filenamePreview": "檔名",
     "actions": {
