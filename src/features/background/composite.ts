@@ -19,8 +19,6 @@
  * it well under that.
  */
 
-import { decontaminateEdges } from '@/features/segmentation/postprocess'
-
 /** A background choice: either transparent or a CSS hex colour. */
 export type BgColor = { kind: 'transparent' } | { kind: 'color'; hex: string }
 
@@ -122,6 +120,143 @@ export function compositeIntoImageData(
   return dst
 }
 
+/**
+ * Apply the segmentation matte while the original photo's RGB is still
+ * available. This is the only point where edge pixels can be reliably
+ * decontaminated: after canvas `destination-in`, fully transparent pixels
+ * have already lost the old background colour we need to unmix.
+ */
+export function applyAlphaMatteToImageData(
+  orig: Uint8ClampedArray,
+  mask: Uint8ClampedArray,
+  width: number,
+  height: number,
+  out?: Uint8ClampedArray,
+  opts: {
+    bg?: { r: number; g: number; b: number }
+    radius?: number
+    alphaMin?: number
+    alphaMax?: number
+  } = {},
+): Uint8ClampedArray {
+  const total = width * height
+  if (width <= 0 || height <= 0) {
+    throw new RangeError('applyAlphaMatteToImageData: dimensions must be positive')
+  }
+  if (orig.length < total * 4 || mask.length < total * 4) {
+    throw new Error('applyAlphaMatteToImageData: source buffers are too small')
+  }
+  const dst = out ?? new Uint8ClampedArray(total * 4)
+  if (dst.length < total * 4) {
+    throw new Error('applyAlphaMatteToImageData: out buffer is too small')
+  }
+
+  const bg = opts.bg ?? estimateMaskOuterRingBg(orig, mask, width, height, opts)
+  const alphaMin = opts.alphaMin ?? 8
+  const alphaMax = opts.alphaMax ?? 248
+
+  for (let i = 0; i < total; i++) {
+    const srcIdx = i * 4
+    const maskA = mask[srcIdx + 3] ?? 0
+    const origA = orig[srcIdx + 3] ?? 0
+    const outA = Math.round((origA * maskA) / 255)
+    if (outA <= 0) {
+      dst[srcIdx + 0] = 0
+      dst[srcIdx + 1] = 0
+      dst[srcIdx + 2] = 0
+      dst[srcIdx + 3] = 0
+      continue
+    }
+
+    let r = orig[srcIdx + 0]!
+    let g = orig[srcIdx + 1]!
+    let b = orig[srcIdx + 2]!
+    if (bg && maskA > alphaMin && maskA < alphaMax) {
+      const alpha = maskA / 255
+      const inv = 1 - alpha
+      r = (r - inv * bg.r) / alpha
+      g = (g - inv * bg.g) / alpha
+      b = (b - inv * bg.b) / alpha
+    }
+
+    dst[srcIdx + 0] = clampByte(r)
+    dst[srcIdx + 1] = clampByte(g)
+    dst[srcIdx + 2] = clampByte(b)
+    dst[srcIdx + 3] = outA
+  }
+
+  return dst
+}
+
+function clampByte(value: number): number {
+  return value <= 0 ? 0 : value >= 255 ? 255 : Math.round(value)
+}
+
+function estimateMaskOuterRingBg(
+  orig: Uint8ClampedArray,
+  mask: Uint8ClampedArray,
+  width: number,
+  height: number,
+  opts: { radius?: number; alphaLow?: number; alphaHigh?: number } = {},
+): { r: number; g: number; b: number } | null {
+  const radius = Math.max(1, Math.floor(opts.radius ?? 6))
+  const alphaLow = opts.alphaLow ?? 12
+  const alphaHigh = opts.alphaHigh ?? 240
+  const total = width * height
+
+  const subject = new Uint8Array(total)
+  for (let i = 0; i < total; i++) {
+    if ((mask[i * 4 + 3] ?? 0) >= alphaHigh) subject[i] = 1
+  }
+
+  const horiz = new Uint8Array(total)
+  for (let y = 0; y < height; y++) {
+    const rowOff = y * width
+    let count = 0
+    for (let x = 0; x < Math.min(radius + 1, width); x++) {
+      count += subject[rowOff + x]!
+    }
+    for (let x = 0; x < width; x++) {
+      horiz[rowOff + x] = count > 0 ? 1 : 0
+      const addIdx = x + radius + 1
+      if (addIdx < width) count += subject[rowOff + addIdx]!
+      const dropIdx = x - radius
+      if (dropIdx >= 0) count -= subject[rowOff + dropIdx]!
+    }
+  }
+
+  const dilated = new Uint8Array(total)
+  for (let x = 0; x < width; x++) {
+    let count = 0
+    for (let y = 0; y < Math.min(radius + 1, height); y++) {
+      count += horiz[y * width + x]!
+    }
+    for (let y = 0; y < height; y++) {
+      dilated[y * width + x] = count > 0 ? 1 : 0
+      const addY = y + radius + 1
+      if (addY < height) count += horiz[addY * width + x]!
+      const dropY = y - radius
+      if (dropY >= 0) count -= horiz[dropY * width + x]!
+    }
+  }
+
+  let r = 0
+  let g = 0
+  let b = 0
+  let n = 0
+  for (let i = 0; i < total; i++) {
+    if (!dilated[i] || subject[i]) continue
+    const a = mask[i * 4 + 3] ?? 0
+    if (a > alphaLow) continue
+    r += orig[i * 4 + 0]!
+    g += orig[i * 4 + 1]!
+    b += orig[i * 4 + 2]!
+    n++
+  }
+
+  return n === 0 ? null : { r: r / n, g: g / n, b: b / n }
+}
+
 /* -------------------------------------------------------------------------- */
 /* Canvas helpers                                                             */
 /* -------------------------------------------------------------------------- */
@@ -150,37 +285,26 @@ export async function extractForeground(
 
   ctx.drawImage(bitmap, 0, 0)
 
-  // Stamp the mask via destination-in. The mask may differ in size if
-  // the model emitted a different resolution, but the studio's
-  // postprocess pipeline guarantees orig == mask dimensions.
-  const maskCanvas = makeCanvas(maskImage.width, maskImage.height)
-  const maskCtx = maskCanvas.getContext('2d') as
-    | CanvasRenderingContext2D
-    | OffscreenCanvasRenderingContext2D
-    | null
-  if (!maskCtx) throw new Error('extractForeground: mask 2D context unavailable')
-  maskCtx.putImageData(maskImage, 0, 0)
-
-  ctx.globalCompositeOperation = 'destination-in'
-  ctx.drawImage(maskCanvas as unknown as CanvasImageSource, 0, 0, w, h)
-  ctx.globalCompositeOperation = 'source-over'
-
-  // Decontaminate the soft alpha ring: `destination-in` keeps the
-  // original photo's RGB for semi-transparent edge pixels, which on
-  // busy / coloured backgrounds means the old bg colour bleeds through
-  // as a visible halo around the hair. `decontaminateEdges` samples
-  // the outer ring of low-alpha-but-near-subject pixels for the bg
-  // estimate, then unmixes that colour from every semi-alpha pixel.
-  // No-op when the buffer doesn't have a clean outer ring (e.g.
-  // photos shot against a gradient or already on transparent).
+  // Pixel path: read the original photo before alpha application so the
+  // old background colour is still available for edge decontamination.
   try {
     const imgData = ctx.getImageData(0, 0, w, h)
-    decontaminateEdges(imgData.data, w, h)
+    applyAlphaMatteToImageData(imgData.data, maskImage.data, w, h, imgData.data)
     ctx.putImageData(imgData, 0, 0)
   } catch {
-    // Some canvases (tainted, restricted offscreen) refuse getImageData;
-    // in that case we keep the raw destination-in output. The visible
-    // halo is the same as before this pass landed — not a regression.
+    // Some canvases (tainted, restricted offscreen) refuse getImageData.
+    // Fall back to the old GPU-friendly path so users still get a cutout.
+    const maskCanvas = makeCanvas(maskImage.width, maskImage.height)
+    const maskCtx = maskCanvas.getContext('2d') as
+      | CanvasRenderingContext2D
+      | OffscreenCanvasRenderingContext2D
+      | null
+    if (!maskCtx) throw new Error('extractForeground: mask 2D context unavailable')
+    maskCtx.putImageData(maskImage, 0, 0)
+
+    ctx.globalCompositeOperation = 'destination-in'
+    ctx.drawImage(maskCanvas as unknown as CanvasImageSource, 0, 0, w, h)
+    ctx.globalCompositeOperation = 'source-over'
   }
 
   if (canvas instanceof OffscreenCanvas) {

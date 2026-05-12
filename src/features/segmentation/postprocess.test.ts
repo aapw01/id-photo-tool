@@ -92,9 +92,9 @@ describe('refineAlpha', () => {
     expect(past[0]).toBeGreaterThan(0)
   })
 
-  it('saturates near-opaque alpha to 255', () => {
+  it('does not saturate near-opaque alpha to 255', () => {
     const out = refineAlpha(new Uint8Array([210, 230, 245, 255]))
-    expect(Array.from(out)).toEqual([255, 255, 255, 255])
+    expect(Array.from(out)).toEqual([210, 230, 245, 255])
   })
 
   it('keeps the midpoint unchanged with default contrast', () => {
@@ -108,6 +108,18 @@ describe('refineAlpha', () => {
     const input = new Uint8Array([0, 30, 60, 100, 200, 255])
     const out = refineAlpha(input, { cutoff: 0, contrast: 1 })
     expect(Array.from(out)).toEqual(Array.from(input))
+  })
+
+  it('preserves high-alpha hair transitions instead of flattening them to a hard edge', () => {
+    const input = new Uint8Array([188, 202, 216, 230, 244, 255])
+    const out = refineAlpha(input)
+
+    expect(out[0]).toBeLessThan(out[1]!)
+    expect(out[1]).toBeLessThan(out[2]!)
+    expect(out[2]).toBeLessThan(out[3]!)
+    expect(out[3]).toBeLessThan(out[4]!)
+    expect(out[4]).toBeLessThan(255)
+    expect(out[5]).toBe(255)
   })
 })
 

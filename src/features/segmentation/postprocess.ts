@@ -131,26 +131,20 @@ export function composeMaskIntoOriginal(
 }
 
 /**
- * Apply a contrast curve + low-end cutoff to a uint8 alpha plane.
+ * Apply a low-end cutoff and optional contrast curve to a uint8 alpha plane.
  *
  * Why: MODNet's matte output is genuinely soft on portrait edges, which
- * is great for hair detail but bleeds through as a *halo* — a wide ring
- * of partially-transparent pixels — whenever the photo has a busy or
- * coloured background. Re-mapping the curve with a small low-end clip
- * and a steeper slope around the boundary removes most of that halo
- * while keeping the genuine edge transition.
+ * is great for hair detail but low-confidence wisps can bleed through as
+ * a *halo* whenever the photo has a busy or coloured background. We only
+ * kill the very low alpha floor here; higher alpha hair transitions are
+ * preserved for the colour-decontamination pass in `extractForeground`.
  *
  *   normalised = (alpha / 255 - 0.5) * contrast + 0.5
  *   alpha_in  < cutoff * 255          → 0
- *   alpha_in  > (1 - cutoff) * 255    → 255
- *
- * Defaults were picked by eye against a set of failure photos
- * (dark hair + busy backgrounds, dark clothing on white seamless,
- * sunglasses + neutral wall): `cutoff = 0.22`, `contrast = 1.8` zaps
- * the visible halo without eating into real hair strands. The 0.18/1.6
- * preset from the first polish round left a faint red ring on red
- * backgrounds; bumping both knobs trades a sliver of micro-edge
- * softness for a clean cut-out.
+ * Defaults intentionally avoid a high-end hard clip. The previous
+ * `cutoff = 0.22`, `contrast = 1.8` curve made every alpha >= ~202 fully
+ * opaque, which removed soft top-hair gradients and could create the
+ * "flat head" artefact on ID-photo crops.
  *
  * Caller can pass `{ contrast: 1, cutoff: 0 }` to disable.
  */
@@ -159,9 +153,8 @@ export function refineAlpha(
   opts: { cutoff?: number; contrast?: number } = {},
 ): Uint8Array {
   const cutoff = opts.cutoff ?? 0.22
-  const contrast = opts.contrast ?? 1.8
+  const contrast = opts.contrast ?? 1
   const loByte = cutoff * 255
-  const hiByte = (1 - cutoff) * 255
   const out = new Uint8Array(alpha.length)
   for (let i = 0; i < alpha.length; i++) {
     const a = alpha[i]!
@@ -169,7 +162,7 @@ export function refineAlpha(
       out[i] = 0
       continue
     }
-    if (a >= hiByte) {
+    if (a === 255) {
       out[i] = 255
       continue
     }

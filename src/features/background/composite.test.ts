@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  applyAlphaMatteToImageData,
   compositeIntoImageData,
   parseHex,
   toHex,
@@ -142,5 +143,48 @@ describe('compositeIntoImageData — buffer contracts', () => {
         new Uint8ClampedArray(8),
       ),
     ).toThrow(/length mismatch/i)
+  })
+})
+
+describe('applyAlphaMatteToImageData', () => {
+  it('removes red background contamination before transparent pixels lose their original colour', () => {
+    const width = 5
+    const height = 3
+    const redBg: [number, number, number] = [220, 30, 30]
+    const darkHair: [number, number, number] = [34, 32, 30]
+    const orig = new Uint8ClampedArray(width * height * 4)
+    const mask = new Uint8ClampedArray(width * height * 4)
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const idx = (y * width + x) * 4
+        const alpha = x === 1 ? 96 : x === 2 ? 196 : x >= 3 ? 255 : 0
+        const t = alpha / 255
+        orig[idx + 0] = Math.round(darkHair[0] * t + redBg[0] * (1 - t))
+        orig[idx + 1] = Math.round(darkHair[1] * t + redBg[1] * (1 - t))
+        orig[idx + 2] = Math.round(darkHair[2] * t + redBg[2] * (1 - t))
+        orig[idx + 3] = 255
+        mask[idx + 3] = alpha
+      }
+    }
+
+    const out = applyAlphaMatteToImageData(orig, mask, width, height)
+    const softEdge = (1 * width + 1) * 4
+
+    expect(out[softEdge + 0]).toBeLessThan(80)
+    expect(out[softEdge + 1]).toBeLessThan(70)
+    expect(out[softEdge + 2]).toBeLessThan(70)
+    expect(out[softEdge + 3]).toBe(96)
+  })
+
+  it('leaves fully transparent and fully opaque pixels stable while applying the mask', () => {
+    const orig = rgba([200, 30, 40, 255, 20, 30, 40, 255])
+    const mask = rgba([0, 0, 0, 0, 0, 0, 0, 255])
+
+    const out = applyAlphaMatteToImageData(orig, mask, 2, 1, undefined, {
+      bg: { r: 200, g: 30, b: 40 },
+    })
+
+    expect(Array.from(out)).toEqual([0, 0, 0, 0, 20, 30, 40, 255])
   })
 })
