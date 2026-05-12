@@ -2,9 +2,13 @@
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
+import { renderHook } from '@testing-library/react'
+
 import {
   __resetSpecManagerStoreForTesting,
   BUILTIN_PHOTO_SPECS,
+  useEffectiveLayoutTemplates,
+  useEffectivePhotoSpecs,
   useSpecManagerStore,
 } from './store'
 import { SPECS_STORAGE_KEY } from './schema'
@@ -82,5 +86,24 @@ describe('useSpecManagerStore', () => {
 
   it('BUILTIN_PHOTO_SPECS is non-empty', () => {
     expect(BUILTIN_PHOTO_SPECS.length).toBeGreaterThan(0)
+  })
+
+  it('useEffectiveLayoutTemplates exposes the built-in template library', () => {
+    // Regression: an empty-array shadow used to mask the real BUILTIN_LAYOUT_TEMPLATES
+    // and silently hid every default layout from the studio.
+    const { result } = renderHook(() => useEffectiveLayoutTemplates())
+    expect(result.current.length).toBeGreaterThanOrEqual(12)
+  })
+
+  it('useEffectivePhotoSpecs surfaces user-saved specs alongside builtins', () => {
+    // Regression: before C1 the studio's SpecPicker imported
+    // BUILTIN_PHOTO_SPECS directly so customs created via `/specs`
+    // never appeared in the main flow.
+    const out = useSpecManagerStore.getState().createPhoto(candidate)
+    expect(out.ok).toBe(true)
+
+    const { result } = renderHook(() => useEffectivePhotoSpecs())
+    expect(result.current.some((s) => s.id === candidate.id)).toBe(true)
+    expect(result.current.length).toBeGreaterThan(BUILTIN_PHOTO_SPECS.length)
   })
 })

@@ -18,6 +18,7 @@
 
 import { create } from 'zustand'
 
+import { BUILTIN_LAYOUT_TEMPLATES } from '@/data/layout-templates'
 import { BUILTIN_PAPER_SPECS } from '@/data/paper-specs'
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import type { LayoutTemplate, PaperSpec, PhotoSpec } from '@/types/spec'
@@ -37,8 +38,6 @@ import {
 import { mergeLayoutTemplates, mergePaperSpecs, mergePhotoSpecs } from './merge'
 import { clearSpecs, loadSpecs, saveSpecs } from './storage'
 import { type SpecsV1 } from './schema'
-
-const BUILTIN_LAYOUT_TEMPLATES: readonly LayoutTemplate[] = []
 
 interface SpecManagerState {
   hydrated: boolean
