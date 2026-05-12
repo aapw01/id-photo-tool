@@ -98,7 +98,9 @@
       "size": "Size",
       "layout": "Layout",
       "export": "Export",
-      "comingSoon": "Coming soon"
+      "comingSoon": "Coming soon",
+      "flowLabel": "Workflow: Background → Size → Layout → Export",
+      "flowHint": "Step through in order — or jump to any tab any time."
     },
     "mobile": {
       "tabLabel": "Switch panel",

@@ -98,7 +98,9 @@
       "size": "尺寸",
       "layout": "排版",
       "export": "导出",
-      "comingSoon": "即将上线"
+      "comingSoon": "即将上线",
+      "flowLabel": "工作流：背景 → 尺寸 → 排版 → 导出",
+      "flowHint": "按顺序操作更顺手，也可以随时跳到任意步骤。"
     },
     "mobile": {
       "tabLabel": "切换面板",

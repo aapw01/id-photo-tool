@@ -36,6 +36,7 @@ export function StudioBottomTabs({ onSelect }: StudioBottomTabsProps = {}) {
   const tMobile = useTranslations('Studio.mobile')
   const tab = useStudioTabStore((s) => s.tab)
   const setTab = useStudioTabStore((s) => s.setTab)
+  const visited = useStudioTabStore((s) => s.visited)
 
   const handleSelect = useCallback(
     (id: StudioTab) => {
@@ -85,6 +86,7 @@ export function StudioBottomTabs({ onSelect }: StudioBottomTabsProps = {}) {
       >
         {BOTTOM_TABS.map(({ id, labelKey, Icon }) => {
           const isActive = id === tab
+          const isVisited = visited.has(id)
           return (
             <button
               key={id}
@@ -99,14 +101,24 @@ export function StudioBottomTabs({ onSelect }: StudioBottomTabsProps = {}) {
               onClick={() => handleSelect(id)}
               style={{ touchAction: 'manipulation' }}
               className={cn(
-                'flex flex-1 flex-col items-center justify-center gap-1 text-[11px] transition-colors',
+                'relative flex flex-1 flex-col items-center justify-center gap-1 text-[11px] transition-colors',
                 'focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
                 isActive
                   ? 'text-[var(--color-primary-dk)]'
-                  : 'text-[var(--color-text-mute)] hover:text-[var(--color-text)]',
+                  : isVisited
+                    ? 'text-[var(--color-text)] hover:text-[var(--color-text)]'
+                    : 'text-[var(--color-text-mute)] hover:text-[var(--color-text)]',
               )}
             >
-              <Icon className="size-5" aria-hidden="true" />
+              <span className="relative">
+                <Icon className="size-5" aria-hidden="true" />
+                {isVisited && !isActive ? (
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-0.5 -right-1 size-1.5 rounded-full bg-[var(--color-primary)]"
+                  />
+                ) : null}
+              </span>
               <span>{t(labelKey)}</span>
             </button>
           )

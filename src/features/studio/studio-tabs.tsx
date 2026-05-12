@@ -3,9 +3,16 @@
 /**
  * Studio top-bar tab switcher.
  *
- * Four tabs map to M3 (`background`, `export`) and future milestones
- * (`size` → M4, `layout` → M6). Future tabs are visible but disabled
- * with a "Coming soon" tooltip so users see the roadmap.
+ * The four pills (`背景 → 尺寸 → 排版 → 导出`) double as a workflow
+ * stepper:
+ *
+ *   - Inline `›` chevrons between pills hint at the linear flow
+ *     without forcing wizard navigation — users can still jump to
+ *     any tab.
+ *   - A subtle check mark on already-visited tabs (`useStudioTab
+ *     Store.visited`) reinforces "I've already done this step".
+ *   - The active pill keeps its emerald fill so the current step is
+ *     obvious.
  *
  * Keyboard: ArrowLeft / ArrowRight cycle through enabled tabs;
  * Home / End jump to the first / last enabled tab.
@@ -13,6 +20,7 @@
 
 import { useCallback, useRef } from 'react'
 import { useTranslations } from 'next-intl'
+import { Check, ChevronRight } from 'lucide-react'
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
@@ -36,6 +44,7 @@ export function StudioTabs() {
   const t = useTranslations('Studio.tabs')
   const tab = useStudioTabStore((s) => s.tab)
   const setTab = useStudioTabStore((s) => s.setTab)
+  const visited = useStudioTabStore((s) => s.visited)
 
   const refs = useRef<Record<StudioTab, HTMLButtonElement | null>>({
     background: null,
@@ -71,47 +80,78 @@ export function StudioTabs() {
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div
-        role="tablist"
-        aria-label="Studio sections"
-        onKeyDown={handleKey}
-        className="inline-flex h-10 items-center gap-1 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] p-1"
-      >
-        {TABS.map((def) => {
-          const isActive = def.id === tab
-          const button = (
-            <button
-              type="button"
-              ref={(el) => {
-                refs.current[def.id] = el
-              }}
-              role="tab"
-              aria-selected={isActive}
-              tabIndex={isActive ? 0 : -1}
-              disabled={!def.available}
-              onClick={() => def.available && setTab(def.id)}
-              className={cn(
-                'inline-flex h-8 items-center justify-center rounded-full px-4 text-sm transition-colors',
-                'focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
-                isActive
-                  ? 'bg-[var(--color-primary)] text-white shadow-sm'
-                  : 'text-[var(--color-text-mute)] hover:bg-[var(--color-divider)]',
-                !def.available && 'opacity-50 hover:bg-transparent',
-              )}
-            >
-              {t(def.labelKey)}
-            </button>
-          )
-          if (def.available) return <span key={def.id}>{button}</span>
-          return (
-            <Tooltip key={def.id}>
-              <TooltipTrigger asChild>
-                <span tabIndex={-1}>{button}</span>
-              </TooltipTrigger>
-              <TooltipContent>{t('comingSoon')}</TooltipContent>
-            </Tooltip>
-          )
-        })}
+      <div className="space-y-1.5">
+        <div
+          role="tablist"
+          aria-label={t('flowLabel')}
+          onKeyDown={handleKey}
+          className="inline-flex h-10 items-center gap-0.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] p-1"
+        >
+          {TABS.map((def, idx) => {
+            const isActive = def.id === tab
+            const isVisited = visited.has(def.id)
+            const showCheck = isVisited && !isActive
+            const button = (
+              <button
+                type="button"
+                ref={(el) => {
+                  refs.current[def.id] = el
+                }}
+                role="tab"
+                aria-selected={isActive}
+                tabIndex={isActive ? 0 : -1}
+                disabled={!def.available}
+                onClick={() => def.available && setTab(def.id)}
+                className={cn(
+                  'inline-flex h-8 items-center justify-center gap-1.5 rounded-full px-4 text-sm transition-colors',
+                  'focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
+                  isActive
+                    ? 'bg-[var(--color-primary)] text-white shadow-sm'
+                    : isVisited
+                      ? 'text-[var(--color-text)] hover:bg-[var(--color-divider)]'
+                      : 'text-[var(--color-text-mute)] hover:bg-[var(--color-divider)]',
+                  !def.available && 'opacity-50 hover:bg-transparent',
+                )}
+              >
+                {showCheck ? (
+                  <Check
+                    className="size-3.5 text-[var(--color-primary)]"
+                    aria-hidden
+                    strokeWidth={3}
+                  />
+                ) : null}
+                <span>{t(def.labelKey)}</span>
+              </button>
+            )
+            const trailingChevron =
+              idx < TABS.length - 1 ? (
+                <ChevronRight
+                  className="size-3.5 shrink-0 text-[var(--color-text-mute)] opacity-50"
+                  aria-hidden
+                />
+              ) : null
+            if (def.available) {
+              return (
+                <span key={def.id} className="inline-flex items-center">
+                  {button}
+                  {trailingChevron}
+                </span>
+              )
+            }
+            return (
+              <span key={def.id} className="inline-flex items-center">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={-1}>{button}</span>
+                  </TooltipTrigger>
+                  <TooltipContent>{t('comingSoon')}</TooltipContent>
+                </Tooltip>
+                {trailingChevron}
+              </span>
+            )
+          })}
+        </div>
+        <p className="px-1 text-xs text-[var(--color-text-mute)]">{t('flowHint')}</p>
       </div>
     </TooltipProvider>
   )

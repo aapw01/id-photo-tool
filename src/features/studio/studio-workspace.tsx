@@ -63,6 +63,7 @@ export function StudioWorkspace() {
 
   const bg = useBackgroundStore((s) => s.current)
   const tab = useStudioTabStore((s) => s.tab)
+  const resetVisited = useStudioTabStore((s) => s.resetVisited)
   const resetLayout = useLayoutStore((s) => s.reset)
 
   // Crop tab state — driven by useCropFlow below.
@@ -119,10 +120,11 @@ export function StudioWorkspace() {
         await setFile(nextFile)
         resetCrop()
         resetLayout()
+        resetVisited()
         setShowCompare(false)
       })()
     },
-    [resetCrop, resetLayout, setFile],
+    [resetCrop, resetLayout, resetVisited, setFile],
   )
 
   if (!bitmap) {
