@@ -312,6 +312,46 @@ describe('autoCenter — shrink instead of jamming', () => {
     expect(frame.y + frame.h * 0.03).toBeLessThanOrEqual(hairTop)
   })
 
+  it('fills the head to the spec upper bound so the head looks visually dominant', () => {
+    // Regression for the "头很小" feedback: the previous mid-point
+    // bias left an obvious empty band of padding above + below the
+    // head. We now lock the head-to-frame ratio at the spec upper
+    // bound so the head occupies as much of the frame as the
+    // regulation permits.
+    const image = { width: 3648, height: 5472 }
+    // A typical short-haired subject: keypoint forehead estimate
+    // dominates over the bbox-derived hair allowance.
+    const face: FaceDetection = {
+      bbox: { x: 1300, y: 1500, w: 1100, h: 1450 },
+      keypoints: [
+        { x: 1560, y: 2000 }, // left-eye
+        { x: 2080, y: 2000 }, // right-eye
+        { x: 1820, y: 2200 }, // nose
+        { x: 1820, y: 2400 }, // mouth
+        { x: 1250, y: 2020 }, // left-ear
+        { x: 2380, y: 2020 }, // right-ear
+      ],
+      confidence: 0.97,
+    }
+
+    const frame = autoCenter(image, usVisa, face)
+    const span = estimateHeadVerticalSpan(face)
+    const headRatio = (span.chinY - span.foreheadY) / frame.h
+    const upperBound = usVisa.composition!.headHeightRatio![1]
+
+    // Head/Frame ratio should land at the upper bound (±1 % for
+    // floating-point slop), proving the change took effect.
+    expect(headRatio).toBeCloseTo(upperBound, 2)
+    // Still inside [lower, upper] band — i.e. compliance passes.
+    expect(headRatio).toBeLessThanOrEqual(upperBound + 0.005)
+    expect(headRatio).toBeGreaterThanOrEqual(usVisa.composition!.headHeightRatio![0])
+    // Frame inside image bounds.
+    expect(frame.x).toBeGreaterThanOrEqual(0)
+    expect(frame.y).toBeGreaterThanOrEqual(0)
+    expect(frame.x + frame.w).toBeLessThanOrEqual(image.width + 0.01)
+    expect(frame.y + frame.h).toBeLessThanOrEqual(image.height + 0.01)
+  })
+
   it('keeps the resulting frame inside the image bounds across edge-case face placements', () => {
     const image = { width: 3648, height: 5472 }
     const cases = [

@@ -11,7 +11,13 @@
  *      eyebrows — neither covers hair. We therefore also extrapolate from
  *      the bbox (`bbox.y − bbox.h × 0.18`) and pick whichever sits higher
  *      so the resulting span actually contains the hair on top.
- *   2. Frame height = head_height / targetHeadRatio.
+ *   2. Frame height = head_height / targetHeadRatio, where
+ *      `targetHeadRatio` is the spec's upper bound on head share. The
+ *      mid-point used to feel generous — users perceived the head as
+ *      "too small" inside lots of padding even though it was inside the
+ *      legal range. Pinning to the upper bound keeps us exactly on the
+ *      regulatory edge: the head fills as much of the frame as the
+ *      spec allows.
  *   3. Frame width  = frame_height × spec.aspect.
  *   4. Frame top    = eyeY − frame_height × eyeFromTopRatio. If this
  *      would slice into the hair (head-top sits within 4 % of the frame
@@ -32,7 +38,7 @@ interface ImageSize {
   height: number
 }
 
-const DEFAULT_HEAD_RATIO = 0.65
+const DEFAULT_HEAD_RATIO = 0.7
 const DEFAULT_EYE_FROM_TOP = 0.38
 
 // Conservative hair allowance expressed as a fraction of the face
@@ -49,6 +55,22 @@ const TOP_PADDING_RATIO = 0.04
 const MIDPOINT = <T>(a: [T, T] | undefined): number | undefined => {
   if (!a) return undefined
   return (Number(a[0]) + Number(a[1])) / 2
+}
+
+/**
+ * Pick the upper bound of a spec composition ratio band.
+ *
+ * Mid-point gave visibly small heads inside large frames — most
+ * subjects "look right" when the head fills as much of the frame as
+ * the spec allows. Using the upper bound directly gives the head the
+ * biggest legal share of the frame. Compliance still passes since
+ * we're hitting the limit exactly, not exceeding it; and for specs
+ * that pin the band to a single value (lower == upper) the result is
+ * unchanged.
+ */
+const UPPER = (a: [number, number] | undefined): number | undefined => {
+  if (!a) return undefined
+  return Number(a[1])
 }
 
 /**
@@ -146,7 +168,13 @@ export function autoCenter(
   // NB: forehead is *above* chin in image-pixel space, so foreheadY < chinY.
   // The Math.max above keeps us robust to unusual key-point orderings.
 
-  const targetHeadRatio = MIDPOINT(spec.composition?.headHeightRatio) ?? DEFAULT_HEAD_RATIO
+  // Head-to-frame ratio sits at the spec's upper bound so the head
+  // fills the frame as much as the regulation allows. Eye line stays
+  // at the mid-point because that's the visually balanced position —
+  // pushing it to the upper bound would slide the head down inside
+  // the frame and produce more headroom, the opposite of what we
+  // want here.
+  const targetHeadRatio = UPPER(spec.composition?.headHeightRatio) ?? DEFAULT_HEAD_RATIO
   const eyeFromTopRatio = MIDPOINT(spec.composition?.eyeLineFromTop) ?? DEFAULT_EYE_FROM_TOP
 
   let frameH = headHeight / targetHeadRatio
