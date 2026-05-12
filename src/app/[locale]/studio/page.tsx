@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { hasLocale } from 'next-intl'
@@ -53,7 +54,9 @@ export default async function StudioPage({ params }: StudioPageProps) {
             </p>
           </header>
 
-          <StudioWorkspace />
+          <Suspense fallback={null}>
+            <StudioWorkspace />
+          </Suspense>
         </section>
       </main>
       <SiteFooter />

@@ -8,35 +8,35 @@
 
 ## 1. 当前状态摘要
 
-| 项         | 值                                                                                                                       |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| 产品名     | **Pixfit · 像配**                                                                                                        |
-| 域名       | `pix-fit.com`（已确认可注册）                                                                                            |
-| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M5 ✅ + M6 ✅ + M7 ✅ + M8a ✅（M8b 移动 + 打磨进行中）**                              |
-| 最近更新   | 2026-05-12                                                                                                               |
-| 进度       | M1–M7 完成；M8a SEO + 路由完成（sitemap + robots + 三张着陆页 + privacy/terms + JSON-LD）；合并后总测 314；24 路由全 200 |
-| 一句话进度 | 三语 8 路由全 SEO 就绪；/sitemap.xml 含 24 条 hreflang URL；详情页 / 移动适配 / 错误页延后到 M8b                         |
+| 项         | 值                                                                                                      |
+| ---------- | ------------------------------------------------------------------------------------------------------- |
+| 产品名     | **Pixfit · 像配**                                                                                       |
+| 域名       | `pix-fit.com`（已确认可注册）                                                                           |
+| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M5 ✅ + M6 ✅ + M7 ✅ + M8 ✅（M8a + M8b 全部代码完成）**             |
+| 最近更新   | 2026-05-12                                                                                              |
+| 进度       | M1–M8 全部代码完成；M8b 添加 deeplink + 移动 Studio + 触摸把手 + 404/error + 微信提示；合并后总测 325   |
+| 一句话进度 | 三语 8 路由 SEO 就绪 + 24 sitemap URL；Studio 移动端底 nav + Sheet；详情页 / 历史会话 / 撤销重做 → V1.1 |
 
 ---
 
 ## 2. 文档索引
 
-| 文档               | 路径                               | 状态                                              |
-| ------------------ | ---------------------------------- | ------------------------------------------------- |
-| 产品需求文档       | [PRD.md](./PRD.md)                 | v0.2 Draft                                        |
-| 技术架构设计       | [TECH_DESIGN.md](./TECH_DESIGN.md) | v0.2 Draft                                        |
-| 项目计划（本文档） | [PLAN.md](./PLAN.md)               | v0.3 Draft                                        |
-| UI 设计规范        | [DESIGN.md](./DESIGN.md)           | v0.1 Draft（M1 前置）                             |
-| 部署指南           | [DEPLOYMENT.md](./DEPLOYMENT.md)   | v0.1 Draft（M1 新增）                             |
-| M1 任务清单        | [tasks/M1.md](./tasks/M1.md)       | v0.1 Draft（24 个原子任务，全部完成）             |
-| M2 任务清单        | [tasks/M2.md](./tasks/M2.md)       | v0.1（20 个原子任务，19 完成 + 1 待真机回填）     |
-| M3 任务清单        | [tasks/M3.md](./tasks/M3.md)       | v0.1（10 个原子任务，全部完成）                   |
-| M4 任务清单        | [tasks/M4.md](./tasks/M4.md)       | v0.1（15 个原子任务，全部完成）                   |
-| M5 任务清单        | [tasks/M5.md](./tasks/M5.md)       | v0.1（7 个原子任务，全部完成）                    |
-| M6 任务清单        | [tasks/M6.md](./tasks/M6.md)       | v0.1（12 个原子任务，全部完成）                   |
-| M7 任务清单        | [tasks/M7.md](./tasks/M7.md)       | v0.1（11 个原子任务，全部完成）                   |
-| M8 任务清单        | [tasks/M8.md](./tasks/M8.md)       | v0.1（20 个原子任务，M8a 13/13 完成，M8b 进行中） |
-| 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成 / M8a 加 Pages 段）                 |
+| 文档               | 路径                               | 状态                                          |
+| ------------------ | ---------------------------------- | --------------------------------------------- |
+| 产品需求文档       | [PRD.md](./PRD.md)                 | v0.2 Draft                                    |
+| 技术架构设计       | [TECH_DESIGN.md](./TECH_DESIGN.md) | v0.2 Draft                                    |
+| 项目计划（本文档） | [PLAN.md](./PLAN.md)               | v0.3 Draft                                    |
+| UI 设计规范        | [DESIGN.md](./DESIGN.md)           | v0.1 Draft（M1 前置）                         |
+| 部署指南           | [DEPLOYMENT.md](./DEPLOYMENT.md)   | v0.1 Draft（M1 新增）                         |
+| M1 任务清单        | [tasks/M1.md](./tasks/M1.md)       | v0.1 Draft（24 个原子任务，全部完成）         |
+| M2 任务清单        | [tasks/M2.md](./tasks/M2.md)       | v0.1（20 个原子任务，19 完成 + 1 待真机回填） |
+| M3 任务清单        | [tasks/M3.md](./tasks/M3.md)       | v0.1（10 个原子任务，全部完成）               |
+| M4 任务清单        | [tasks/M4.md](./tasks/M4.md)       | v0.1（15 个原子任务，全部完成）               |
+| M5 任务清单        | [tasks/M5.md](./tasks/M5.md)       | v0.1（7 个原子任务，全部完成）                |
+| M6 任务清单        | [tasks/M6.md](./tasks/M6.md)       | v0.1（12 个原子任务，全部完成）               |
+| M7 任务清单        | [tasks/M7.md](./tasks/M7.md)       | v0.1（11 个原子任务，全部完成）               |
+| M8 任务清单        | [tasks/M8.md](./tasks/M8.md)       | v0.1（20 个原子任务，M8a + M8b 全部完成）     |
+| 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成 / M8a 加 Pages 段）             |
 
 ---
 
@@ -44,16 +44,16 @@
 
 ### 3.1 总览
 
-| 里程碑 | 主题                | 状态                                                                  | 预估工时   |
-| ------ | ------------------- | --------------------------------------------------------------------- | ---------- |
-| M1     | 项目骨架            | ✅ 代码完成 / 待真机部署                                              | 1 周       |
-| M2     | 抠图核心            | ✅ 代码完成 / 真机兼容性待回填 ([M2.md](./tasks/M2.md))               | 1.5–2.5 周 |
-| M3     | 换底色              | ✅ 代码完成 / 真机兼容性待回填 ([M3.md](./tasks/M3.md))               | 0.5 周     |
-| M4     | 照片规格 + 智能裁剪 | ✅ 代码完成 / 真机兼容性待回填 ([M4.md](./tasks/M4.md))               | 1.5 周     |
-| M5     | 导出 + 压缩         | ✅ 代码完成 / 真机兼容性待回填 ([M5.md](./tasks/M5.md))               | 1 周       |
-| M6     | 相纸 + 排版         | ✅ 代码完成 / 真机兼容性待回填 ([M6.md](./tasks/M6.md))               | 1.5 周     |
-| M7     | 规格管理            | ✅ 代码完成 / 真机端到端待回填 ([M7.md](./tasks/M7.md))               | 0.5 周     |
-| M8     | SEO + 移动端 + 打磨 | 🟡 M8a SEO + 路由完成；M8b 移动 + 打磨进行中 ([M8.md](./tasks/M8.md)) | 1.5 周     |
+| 里程碑 | 主题                | 状态                                                          | 预估工时   |
+| ------ | ------------------- | ------------------------------------------------------------- | ---------- |
+| M1     | 项目骨架            | ✅ 代码完成 / 待真机部署                                      | 1 周       |
+| M2     | 抠图核心            | ✅ 代码完成 / 真机兼容性待回填 ([M2.md](./tasks/M2.md))       | 1.5–2.5 周 |
+| M3     | 换底色              | ✅ 代码完成 / 真机兼容性待回填 ([M3.md](./tasks/M3.md))       | 0.5 周     |
+| M4     | 照片规格 + 智能裁剪 | ✅ 代码完成 / 真机兼容性待回填 ([M4.md](./tasks/M4.md))       | 1.5 周     |
+| M5     | 导出 + 压缩         | ✅ 代码完成 / 真机兼容性待回填 ([M5.md](./tasks/M5.md))       | 1 周       |
+| M6     | 相纸 + 排版         | ✅ 代码完成 / 真机兼容性待回填 ([M6.md](./tasks/M6.md))       | 1.5 周     |
+| M7     | 规格管理            | ✅ 代码完成 / 真机端到端待回填 ([M7.md](./tasks/M7.md))       | 0.5 周     |
+| M8     | SEO + 移动端 + 打磨 | ✅ 代码完成 / 真机 Lighthouse 待回填 ([M8.md](./tasks/M8.md)) | 1.5 周     |
 
 **预计总工期**：8–10 周（单人 / 兼职节奏）
 
@@ -253,17 +253,25 @@
 - [x] README 新增 "页面" 段（路由地图 + dev 路由说明）
 - [x] PLAN §6 决策日志新增 9 条 M8 决策
 
-**M8b · 移动 + 打磨（进行中）**：
+**M8b · 移动 + 打磨（已完成）**：
 
-- [ ] `studio?tab=...` deeplink（`searchParams.tab` ↔ store，`router.replace` 不推历史栈）
-- [ ] StudioTabs / StudioWorkspace 移动端：底部 nav + 右侧面板改 bottom Sheet
-- [ ] CropFrame 触摸把手 ≥ 44×44，`touch-action: none`，`pointer: coarse` 视觉 +4px
-- [ ] ExportPanel 微信浏览器长按保存提示（UA 检测）
-- [ ] `[locale]/not-found.tsx` + `[locale]/error.tsx` + 顶级 `app/not-found.tsx`
-- [ ] a11y / `:focus-visible` / `touch-action: manipulation` 打磨
-- [ ] §6.8 Lighthouse 基线回填（headless 能跑就跑，真机 [user-pending]）
+- [x] `studio?tab=...` deeplink — `parseTabParam` + `useTabDeeplink` hook（4 单测）；`router.replace` 不推历史栈；`/studio?tab=size` 直接落到尺寸 tab
+- [x] StudioWorkspace 移动端 — `StudioBottomTabs` fixed 底部 4 lucide icon nav（safe-area-inset-bottom）+ `Sheet` bottom drawer 承载 BackgroundPanel / SpecPicker / LayoutPanel / ExportPanel
+- [x] CropFrame 触摸把手 ≥ 44×44 — `size-11` hit area + visible ::before dot；`touch-action: none`；`@media(pointer:coarse)` 视觉 +4px
+- [x] ExportPanel 微信浏览器长按保存提示 — `isWeChatBrowser` UA 检测 + `useIsWeChat` 走 `useSyncExternalStore`（4 单测）+ ExportPanel 底部 hint
+- [x] `[locale]/not-found.tsx` + `[locale]/error.tsx` + 顶级 `app/not-found.tsx` — 三语友好 404 + 客户端 error boundary + 顶级 emerald 兜底
+- [x] a11y / 触摸打磨 — 关键按钮加 `touch-action: manipulation`；CropFrame `touch-action: none`
+- [x] §6.8 Lighthouse / 构建包基线回填（headless Chrome 不可用，真机 PageSpeed Insights [user-pending]）
 
-**验收**（M8a 已通过 / M8b 待跑）：lint / typecheck / 314 单测 / `i18n:check`（345 keys）/ build（38 静态页 + sitemap + robots）/ `/sitemap.xml` 24 条 URL / 三 locale × 8 路由全 200。
+**验收**：
+
+- `pnpm lint` / `pnpm typecheck` 无错
+- `pnpm test` 325 全过（M8a 11 + M8b 11 新单测）
+- `pnpm i18n:check` 三语 345 keys 完全一致
+- `NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm build` 38 静态页 + sitemap + robots 成功
+- `pnpm dev` 后 `curl` 三 locale × 8 路由（/、/studio、/specs、/sizes、/paper、/templates、/privacy、/terms）全 200；`/en/foo-bar` 返回 404
+- `/sitemap.xml` 含 24 条 `<loc>`；`/robots.txt` 含 `Sitemap` + `Disallow: /dev/` `Disallow: /api/`
+- `?tab=size` / `?tab=export` 等 deeplink hydrate 时同步到 store
 
 ---
 
@@ -404,6 +412,32 @@ NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
 
 ---
 
+## 6.8 Lighthouse / 构建包基线（M8-T18）
+
+### 静态构建产物（`NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm build`，2026-05-12）
+
+| 指标                | 值                                                                                                       |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| 路由数（含 dev）    | 13 个 base × 3 locale + 顶层 `/robots.txt` + `/sitemap.xml` + `/_not-found` = **38 个 prerendered HTML** |
+| sitemap 实际收录    | 24 条 `<loc>`（8 业务路由 × 3 locale；hreflang alternates 4 条 / URL）                                   |
+| 静态 JS 总量        | `.next/static` 34 个 chunk，合计 **2.3 MB**（未 gzip / 未启用 Brotli）                                   |
+| 最大 chunk          | 413 KB（ORT runtime + 抠图 worker，lazy-loaded，只在 /studio 触发）                                      |
+| Middleware（proxy） | 1 个（next-intl locale 重写）                                                                            |
+
+### 真机 Lighthouse 跑分
+
+[user-pending] — headless Chrome 在本机不可用，且 OpenNext / CF 生产环境对 caching headers / Brotli 的影响必须 PageSpeed Insights 跑生产域名才有可比性。用户在 M8 上线后到 [https://pagespeed.web.dev](https://pagespeed.web.dev) 跑 `pix-fit.com/en` 与 `pix-fit.com/zh-Hans`，把 Performance / Accessibility / Best Practices / SEO 四档分数回填到本节即可。
+
+### 已落地的优化项
+
+- 字体走 `next/font/local`，`font-display: swap`（Inter + JetBrains Mono 自托管，不阻塞 FCP）
+- 抠图 worker / ORT runtime / MediaPipe / jsPDF / Pica 全部 `dynamic import`，首屏 JS 仅含框架 + 国际化 + 首页交互
+- 三张 SEO 列表页全部 SSG；JSON-LD 内联，不需要客户端再次请求
+- robots.txt `Disallow: /dev/` `Disallow: /api/`，避免 dev 路由进索引
+- `<input>` `<button>` 关键交互加 `touch-action: manipulation`，移动端消除双击放大延迟
+
+---
+
 ## 6.7 背景切换性能（M3-T09）
 
 **目标**（PRD §5.3 / TECH_DESIGN §5.3.3）：
@@ -515,7 +549,8 @@ docs(prd): clarify HEIC handling boundary
 | 2026-05-12 | 0.5  | M4 智能裁剪 15/15 任务代码完成；28 条规格 + 7 张相纸数据落地；MediaPipe + auto-center + compliance 单测 28 个                                                                                                                                                                                                    |
 | 2026-05-12 | 0.6  | M5 导出 + 压缩（4 格式 + Pica + compress-to-KB）+ M6 相纸 + 排版（auto-grid + pack-mixed + render-layout + jsPDF + 12 builtin templates）一次性完成；新增 ~77 单测达 242；layout tab 解锁；ExportPanel 重写；右侧 PaperPicker / LayoutTemplatePicker / MixedEditor / LayoutSettings / LayoutActions 五块面板上线 |
 | 2026-05-12 | 0.7  | M7 规格管理 11/11 任务代码完成；`features/spec-manager/` 七模块 + `/specs` 三语 SSG + Footer 入口 + 50 新单测；合并后总测 ≈ 292                                                                                                                                                                                  |
-| 2026-05-12 | 0.8  | M8a SEO + 路由完成（13/13）：`lib/seo/{site-config,metadata,jsonld,sitemap-entries}.ts` + `<JsonLd />` + sitemap (24 条 hreflang URL) + robots + `/sizes` `/paper` `/templates` `/privacy` `/terms` 三语 SSG + Footer 4 栏 Pages 分组 + Header 移动汉堡 Sheet + 9 条决策日志；M8b 移动 + 打磨进行中              |
+| 2026-05-12 | 0.8  | M8a SEO + 路由完成（13/13）：`lib/seo/{site-config,metadata,jsonld,sitemap-entries}.ts` + `<JsonLd />` + sitemap (24 条 hreflang URL) + robots + `/sizes` `/paper` `/templates` `/privacy` `/terms` 三语 SSG + Footer 4 栏 Pages 分组 + Header 移动汉堡 Sheet + 9 条决策日志                                     |
+| 2026-05-12 | 0.9  | M8b 移动 + 打磨完成（7/7）：`?tab=` deeplink hook + `StudioBottomTabs` + `Sheet` 移动 drawer + CropFrame 44×44 触摸把手 + `useIsWeChat` UA hint + `[locale]/not-found.tsx` + `[locale]/error.tsx` + `app/not-found.tsx` + §6.8 Lighthouse / 构建包基线（headless 不可用，真机 [user-pending]）；合并后总测 325   |
 
 ---
 

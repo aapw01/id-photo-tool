@@ -37,14 +37,20 @@ import { LayoutPanel, LayoutPreview } from '@/features/layout'
 import { SegmentationFeedback } from '@/features/segmentation/segmentation-feedback'
 import { useSegmentation } from '@/features/segmentation/use-segmentation'
 
+import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+
 import { useStudioStore } from './store'
+import { StudioBottomTabs } from './studio-bottom-tabs'
 import { StudioPreview } from './studio-preview'
 import { StudioTabs } from './studio-tabs'
 import { useStudioTabStore } from './studio-tab-store'
+import { useTabDeeplink } from './tab-deeplink'
 
 export function StudioWorkspace() {
   const t = useTranslations('Studio')
   const tActions = useTranslations('Studio.actions')
+  const tTabs = useTranslations('Studio.tabs')
+  const tMobile = useTranslations('Studio.mobile')
 
   const file = useStudioStore((s) => s.file)
   const bitmap = useStudioStore((s) => s.bitmap)
@@ -63,10 +69,16 @@ export function StudioWorkspace() {
   const setCropFrame = useCropStore((s) => s.setFrame)
 
   useCropFlow(bitmap, tab === 'size')
+  useTabDeeplink()
 
   const { segment, state, error } = useSegmentation()
 
   const [showCompare, setShowCompare] = useState(false)
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
+
+  const openMobileSheet = useCallback(() => {
+    setMobileSheetOpen(true)
+  }, [])
 
   const runSegmentation = useCallback(async () => {
     const currentFile = useStudioStore.getState().file
@@ -129,9 +141,77 @@ export function StudioWorkspace() {
       </>
     ) : null
 
+  const sidePanel = (
+    <>
+      {tab === 'background' ? (
+        <BackgroundPanel showCompare={showCompare} onToggleCompare={setShowCompare} />
+      ) : null}
+      {tab === 'size' ? <SpecPicker /> : null}
+      {tab === 'layout' ? (
+        <LayoutPanel
+          bitmap={bitmap}
+          mask={mask}
+          bg={bg}
+          activeCropSpec={cropSpec ?? null}
+          activeCropFrame={cropFrame ?? null}
+        />
+      ) : null}
+      {tab === 'export' ? (
+        <ExportPanel
+          bitmap={bitmap}
+          mask={mask}
+          bg={bg}
+          disabled={!!error}
+          spec={cropSpec}
+          frame={cropFrame}
+        />
+      ) : null}
+    </>
+  )
+
+  const fileInfo = (
+    <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-[var(--color-text)]">{file?.name ?? 'image'}</p>
+        <p className="font-mono text-xs text-[var(--color-text-mute)]">
+          {t('stats.size', { w: bitmap.width, h: bitmap.height })}
+        </p>
+        {lastInference ? (
+          <p className="font-mono text-xs text-[var(--color-text-mute)]">
+            {t('stats.inference', {
+              backend: lastInference.backend,
+              ms: lastInference.durationMs,
+            })}
+          </p>
+        ) : null}
+      </div>
+      <div className="mt-3 flex flex-col gap-2">
+        <Button
+          onClick={onReset}
+          variant="outline"
+          size="sm"
+          style={{ touchAction: 'manipulation' }}
+        >
+          {tActions('replace')}
+        </Button>
+        <Button
+          onClick={() => void runSegmentation()}
+          disabled={state === 'loading-model' || state === 'inferring'}
+          variant="ghost"
+          size="sm"
+          style={{ touchAction: 'manipulation' }}
+        >
+          {tActions('retry')}
+        </Button>
+      </div>
+    </div>
+  )
+
   return (
-    <div className="space-y-4">
-      <StudioTabs />
+    <div className="space-y-4 pb-20 md:pb-0">
+      <div className="hidden md:block">
+        <StudioTabs />
+      </div>
 
       {tab === 'size' ? <ComplianceBanner /> : null}
 
@@ -154,66 +234,29 @@ export function StudioWorkspace() {
           />
         )}
 
-        <aside className="space-y-4">
-          <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-[var(--color-text)]">
-                {file?.name ?? 'image'}
-              </p>
-              <p className="font-mono text-xs text-[var(--color-text-mute)]">
-                {t('stats.size', { w: bitmap.width, h: bitmap.height })}
-              </p>
-              {lastInference ? (
-                <p className="font-mono text-xs text-[var(--color-text-mute)]">
-                  {t('stats.inference', {
-                    backend: lastInference.backend,
-                    ms: lastInference.durationMs,
-                  })}
-                </p>
-              ) : null}
-            </div>
-            <div className="mt-3 flex flex-col gap-2">
-              <Button onClick={onReset} variant="outline" size="sm">
-                {tActions('replace')}
-              </Button>
-              <Button
-                onClick={() => void runSegmentation()}
-                disabled={state === 'loading-model' || state === 'inferring'}
-                variant="ghost"
-                size="sm"
-              >
-                {tActions('retry')}
-              </Button>
-            </div>
-          </div>
-
-          {tab === 'background' ? (
-            <BackgroundPanel showCompare={showCompare} onToggleCompare={setShowCompare} />
-          ) : null}
-          {tab === 'size' ? <SpecPicker /> : null}
-          {tab === 'layout' ? (
-            <LayoutPanel
-              bitmap={bitmap}
-              mask={mask}
-              bg={bg}
-              activeCropSpec={cropSpec ?? null}
-              activeCropFrame={cropFrame ?? null}
-            />
-          ) : null}
-          {tab === 'export' ? (
-            <ExportPanel
-              bitmap={bitmap}
-              mask={mask}
-              bg={bg}
-              disabled={!!error}
-              spec={cropSpec}
-              frame={cropFrame}
-            />
-          ) : null}
+        <aside className="hidden space-y-4 md:block">
+          {fileInfo}
+          {sidePanel}
         </aside>
+
+        <div className="space-y-4 md:hidden">{fileInfo}</div>
       </div>
 
       <SegmentationFeedback />
+
+      <StudioBottomTabs onSelect={openMobileSheet} />
+
+      <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
+        <SheetContent side="bottom" className="md:hidden">
+          <SheetHeader>
+            <SheetTitle>{tTabs(tab)}</SheetTitle>
+            <p className="text-sm text-[var(--color-text-mute)]">{tMobile('panelSummary')}</p>
+          </SheetHeader>
+          <SheetBody>
+            <div className="space-y-4">{sidePanel}</div>
+          </SheetBody>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

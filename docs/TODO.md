@@ -265,21 +265,23 @@ NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm start
 
 收到反馈、读 PRD/TECH_DESIGN 时发现但尚未排期的小事，丢到这里，到对应里程碑再消化。
 
-### M8 进行中（M8b 移动 + 打磨）
+### M8 已完成（M8a SEO + 路由 / M8b 移动 + 打磨）
 
-- [ ] **`/studio?tab=export` 等 deeplink**（M8b）— `searchParams.tab` ↔ store；`router.replace` 不推历史栈
-- [ ] **Studio 移动端布局**（M8b）— ≤ 768px 底部 nav + 右侧面板 bottom Sheet
-- [ ] **CropFrame 触摸把手 ≥ 44×44**（M8b）— `touch-action: none`，coarse pointer 视觉 +4px
-- [ ] **ExportPanel 微信浏览器长按提示**（M8b）— UA 检测 + 三语 hint
-- [ ] **404 / error 页**（M8b）— `[locale]/not-found.tsx` + `[locale]/error.tsx` + 顶级兜底
-- [ ] **Lighthouse headless 基线**（M8b）— `pnpm dlx lighthouse`；真机分数 [user-pending]
-
-### M8a 已完成（M8a SEO + 路由）
+#### M8a · SEO + 路由
 
 - [x] **隐私政策与服务条款页面** — `/privacy` `/terms` 三语 SSG，Footer/Header 联动
 - [x] **`/sizes` `/paper` `/templates` 列表页** — 三 SEO 着陆页 + JSON-LD ItemList
 - [x] **sitemap.xml + robots.txt** — 24 条 hreflang URL，`/dev/` 屏蔽
 - [x] **三语 namespace 同步** — Sizes / Paper.list / Templates / Legal / Errors / Studio.mobile / Nav.menu / Footer groups / Export.wechatHint
+
+#### M8b · 移动 + 打磨
+
+- [x] **`/studio?tab=export` 等 deeplink** — `parseTabParam` 4 单测 + `useTabDeeplink` hook；`router.replace` 不推历史栈
+- [x] **Studio 移动端布局** — `StudioBottomTabs` fixed 底部 nav + `<Sheet side="bottom">` 承载 BackgroundPanel / SpecPicker / LayoutPanel / ExportPanel
+- [x] **CropFrame 触摸把手 ≥ 44×44** — `size-11` 隐形 hit area + `::before` 视觉小点；`touch-action: none`；`@media(pointer:coarse)` 视觉 +4px
+- [x] **ExportPanel 微信浏览器长按提示** — `isWeChatBrowser` UA 检测（4 单测）+ `useIsWeChat` hook + 三语 hint
+- [x] **404 / error 页** — `[locale]/not-found.tsx` + `[locale]/error.tsx` 客户端 boundary + 顶级 `app/not-found.tsx` emerald 兜底
+- [x] **Lighthouse 构建包基线** — `.next` 32 KB Brotli 前 2.3 MB / 34 chunks / 38 prerendered HTML；§6.8 已回填；真机 PageSpeed Insights [user-pending]
 
 ### V1.1（M8 主动延后）
 

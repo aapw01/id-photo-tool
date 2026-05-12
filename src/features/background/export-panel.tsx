@@ -22,7 +22,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Copy, Download } from 'lucide-react'
+import { Copy, Download, Smartphone } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
@@ -30,6 +30,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { buildFilename, compressToKB, exportSingle, type ExportFormat } from '@/features/export'
 import { derivePixels } from '@/lib/spec-units'
+import { useIsWeChat } from '@/lib/ua'
 import { cn } from '@/lib/utils'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
@@ -375,15 +376,41 @@ export function ExportPanel({ bitmap, mask, bg, disabled, spec, frame }: ExportP
       </div>
 
       <div className="flex flex-col gap-2">
-        <Button onClick={() => void onDownload()} disabled={blocked}>
+        <Button
+          onClick={() => void onDownload()}
+          disabled={blocked}
+          style={{ touchAction: 'manipulation' }}
+        >
           <Download className="size-4" aria-hidden />
           {t('actions.download')}
         </Button>
-        <Button variant="ghost" onClick={() => void onCopy()} disabled={blocked}>
+        <Button
+          variant="ghost"
+          onClick={() => void onCopy()}
+          disabled={blocked}
+          style={{ touchAction: 'manipulation' }}
+        >
           <Copy className="size-4" aria-hidden />
           {t('actions.copy')}
         </Button>
       </div>
+
+      <WeChatSaveHint />
     </section>
+  )
+}
+
+function WeChatSaveHint() {
+  const tExport = useTranslations('Export')
+  const isWx = useIsWeChat()
+  if (!isWx) return null
+  return (
+    <div
+      role="note"
+      className="flex items-start gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-primary-soft)] p-3 text-xs leading-relaxed text-[var(--color-text)]"
+    >
+      <Smartphone className="mt-0.5 size-4 shrink-0 text-[var(--color-primary-dk)]" aria-hidden />
+      <span>{tExport('wechatHint')}</span>
+    </div>
   )
 }

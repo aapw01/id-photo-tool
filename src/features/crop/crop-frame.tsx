@@ -224,6 +224,7 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
           top: `${yPct}%`,
           width: `${wPct}%`,
           height: `${hPct}%`,
+          touchAction: 'none',
         }}
         onPointerDown={(e) => beginDrag('move', e)}
         onPointerMove={onPointerMove}
@@ -243,16 +244,23 @@ export function CropFrameOverlay({ imageW, imageH, spec, frame, onChange }: Crop
             key={corner}
             type="button"
             aria-label={`resize-${corner}`}
+            data-corner={corner}
             onPointerDown={(e) => beginDrag(corner, e)}
             onPointerMove={onPointerMove}
             onPointerUp={endDrag}
             onPointerCancel={endDrag}
+            style={{ touchAction: 'none' }}
             className={cn(
-              'absolute size-3 rounded-full border-2 border-[var(--color-primary)] bg-white',
-              corner === 'nw' && '-top-1.5 -left-1.5 cursor-nwse-resize',
-              corner === 'ne' && '-top-1.5 -right-1.5 cursor-nesw-resize',
-              corner === 'sw' && '-bottom-1.5 -left-1.5 cursor-nesw-resize',
-              corner === 'se' && '-right-1.5 -bottom-1.5 cursor-nwse-resize',
+              // 44×44 invisible hit area, centred on the corner — meets
+              // WCAG / iOS touch-target minima. The visual handle is a
+              // smaller pseudo-element drawn via the `before` utility.
+              'absolute flex size-11 items-center justify-center bg-transparent p-0',
+              'before:block before:size-3 before:rounded-full before:border-2 before:border-[var(--color-primary)] before:bg-white before:shadow-sm before:content-[""]',
+              '[@media(pointer:coarse)]:before:size-4',
+              corner === 'nw' && '-top-[22px] -left-[22px] cursor-nwse-resize',
+              corner === 'ne' && '-top-[22px] -right-[22px] cursor-nesw-resize',
+              corner === 'sw' && '-bottom-[22px] -left-[22px] cursor-nesw-resize',
+              corner === 'se' && '-right-[22px] -bottom-[22px] cursor-nwse-resize',
             )}
           />
         ))}
