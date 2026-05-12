@@ -57,5 +57,33 @@
   "LanguageSwitcher": {
     "label": "Change language",
     "current": "Current language"
+  },
+  "Segmentation": {
+    "states": {
+      "idle": "Ready",
+      "loadingModel": "Loading the matting model…",
+      "ready": "Model ready",
+      "inferring": "Extracting subject…",
+      "error": "Matting failed"
+    },
+    "progress": {
+      "download": "Downloading model {loaded}/{total}",
+      "init": "Initializing inference engine…",
+      "infer": "Processing image…"
+    },
+    "backend": {
+      "webgpu": "WebGPU accelerated",
+      "wasm": "CPU (WASM)"
+    },
+    "errors": {
+      "title": "Couldn't extract the subject",
+      "network": "Network error while downloading the model. Check your connection and retry.",
+      "integrity": "The model file failed its integrity check. The connection may have been tampered with — please reload and try again.",
+      "init": "The inference engine failed to start. Your browser may not support a required feature.",
+      "inference": "Image processing failed. Try a different photo.",
+      "unknown": "An unknown error occurred. Please reload the page.",
+      "retry": "Retry",
+      "details": "Details"
+    }
   }
 }

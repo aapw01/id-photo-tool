@@ -57,5 +57,33 @@
   "LanguageSwitcher": {
     "label": "切换语言",
     "current": "当前语言"
+  },
+  "Segmentation": {
+    "states": {
+      "idle": "准备就绪",
+      "loadingModel": "正在加载抠图模型…",
+      "ready": "模型已就绪",
+      "inferring": "正在抠图…",
+      "error": "抠图失败"
+    },
+    "progress": {
+      "download": "下载模型 {loaded}/{total}",
+      "init": "初始化推理引擎…",
+      "infer": "处理图像…"
+    },
+    "backend": {
+      "webgpu": "WebGPU 加速",
+      "wasm": "CPU (WASM)"
+    },
+    "errors": {
+      "title": "抠图遇到问题",
+      "network": "网络异常，模型下载失败。请检查网络后重试。",
+      "integrity": "模型文件校验失败，可能被网络劫持。请刷新页面重试。",
+      "init": "推理引擎初始化失败。你的浏览器可能不支持必要的特性。",
+      "inference": "图像处理失败，请尝试更换一张照片。",
+      "unknown": "未知错误，请刷新页面后重试。",
+      "retry": "重试",
+      "details": "详细信息"
+    }
   }
 }

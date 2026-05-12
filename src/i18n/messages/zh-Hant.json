@@ -57,5 +57,33 @@
   "LanguageSwitcher": {
     "label": "切換語言",
     "current": "當前語言"
+  },
+  "Segmentation": {
+    "states": {
+      "idle": "準備就緒",
+      "loadingModel": "正在載入去背模型…",
+      "ready": "模型已就緒",
+      "inferring": "正在去背…",
+      "error": "去背失敗"
+    },
+    "progress": {
+      "download": "下載模型 {loaded}/{total}",
+      "init": "初始化推論引擎…",
+      "infer": "處理影像…"
+    },
+    "backend": {
+      "webgpu": "WebGPU 加速",
+      "wasm": "CPU (WASM)"
+    },
+    "errors": {
+      "title": "去背遇到問題",
+      "network": "網路異常，模型下載失敗。請檢查網路後重試。",
+      "integrity": "模型檔案校驗失敗，可能被網路劫持。請重新整理頁面後重試。",
+      "init": "推論引擎初始化失敗。你的瀏覽器可能不支援必要的特性。",
+      "inference": "影像處理失敗，請嘗試更換一張照片。",
+      "unknown": "未知錯誤，請重新整理頁面後重試。",
+      "retry": "重試",
+      "details": "詳細資訊"
+    }
   }
 }
