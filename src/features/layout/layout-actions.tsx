@@ -242,6 +242,7 @@ export function LayoutActions({
       })
       const blob = await canvasToBlob(result.canvas, 'image/png')
       triggerDownload(blob, pngFilename)
+      toast.success(t('downloadSuccess', { filename: pngFilename }))
     } catch {
       toast.error(t('downloadFailed'))
     } finally {
@@ -275,6 +276,7 @@ export function LayoutActions({
         settingsOverride: settings,
       })
       triggerDownload(blob, pdfFilename)
+      toast.success(t('downloadSuccess', { filename: pdfFilename }))
     } catch {
       toast.error(t('downloadFailed'))
     } finally {

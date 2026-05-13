@@ -92,6 +92,11 @@ export function SpecPicker() {
   const [customW, setCustomW] = useState<number>(CUSTOM_DEFAULTS.mm.w)
   const [customH, setCustomH] = useState<number>(CUSTOM_DEFAULTS.mm.h)
   const [customDpi, setCustomDpi] = useState<number>(CUSTOM_DPI_DEFAULT)
+  // The DPI picker is power-user territory — 300 is the printer-grade
+  // default everyone wants, 600 is "I want a huge file", 200 is "I
+  // want the smallest file that's still usable". Hide it behind a
+  // disclosure so the common case stays a width / height form.
+  const [showDpiAdvanced, setShowDpiAdvanced] = useState<boolean>(false)
 
   // Merged builtin + user-saved specs. Matches `/specs` admin so the
   // user-defined sizes the user created over there finally show up in
@@ -289,27 +294,46 @@ export function SpecPicker() {
             />
           </div>
         </div>
-        <div className="space-y-1">
-          <Label htmlFor="custom-dpi" className="text-xs text-[var(--color-text-mute)]">
-            {t('customDpi')}
-          </Label>
-          <select
-            id="custom-dpi"
-            value={customDpi}
-            disabled={customUnit === 'px'}
-            onChange={(e) => setCustomDpi(Number(e.target.value))}
-            className="h-8 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 font-mono text-xs text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {CUSTOM_DPIS.map((d) => (
-              <option key={d} value={d}>
-                {d}
-              </option>
-            ))}
-          </select>
-          {customUnit === 'px' ? (
-            <p className="text-xs text-[var(--color-text-mute)]">{t('customDpiPxHint')}</p>
-          ) : null}
-        </div>
+        {customUnit !== 'px' ? (
+          showDpiAdvanced ? (
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="custom-dpi" className="text-xs text-[var(--color-text-mute)]">
+                  {t('customDpi')}
+                </Label>
+                <button
+                  type="button"
+                  onClick={() => setShowDpiAdvanced(false)}
+                  className="text-xs text-[var(--color-text-weak)] underline-offset-2 hover:underline"
+                >
+                  {t('customDpiHide')}
+                </button>
+              </div>
+              <select
+                id="custom-dpi"
+                value={customDpi}
+                onChange={(e) => setCustomDpi(Number(e.target.value))}
+                className="h-8 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-2 text-xs text-[var(--color-text)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none"
+              >
+                {CUSTOM_DPIS.map((d) => (
+                  <option key={d} value={d}>
+                    {t(`customDpiOption.${dpiVariant(d)}` as 'customDpiOption.standard')}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowDpiAdvanced(true)}
+              className="text-xs text-[var(--color-text-weak)] underline-offset-2 hover:underline"
+            >
+              {t('customDpiShow')}
+            </button>
+          )
+        ) : (
+          <p className="text-xs text-[var(--color-text-mute)]">{t('customDpiPxHint')}</p>
+        )}
         {!customValid ? (
           <p className="text-xs text-[var(--color-warning)]">
             {t('customRangeHint', {
@@ -402,6 +426,17 @@ function SpecRow({ spec, isActive, onSelect, locale }: SpecRowProps): React.Reac
       </button>
     </li>
   )
+}
+
+/**
+ * Map the numeric DPI value to the i18n variant key. Keeps the JSX
+ * lookup expression readable and limits the lint-friendly key list to
+ * a fixed set.
+ */
+function dpiVariant(dpi: number): 'low' | 'standard' | 'high' {
+  if (dpi <= 200) return 'low'
+  if (dpi >= 600) return 'high'
+  return 'standard'
 }
 
 /**

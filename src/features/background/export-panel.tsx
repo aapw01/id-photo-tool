@@ -227,6 +227,7 @@ export function ExportPanel({
       }
 
       triggerDownload(blob, filename)
+      toast.success(t('downloadSuccess', { filename }))
     } catch {
       toast.error(t('downloadFailed'))
     } finally {
@@ -323,6 +324,28 @@ export function ExportPanel({
         <h3 className="text-sm font-medium text-[var(--color-text)]">{t('title')}</h3>
         <p className="mt-1 text-xs text-[var(--color-text-mute)]">{t('subtitle')}</p>
       </header>
+
+      {!exportFollowsSpec ? (
+        // Default fallback path — exporting the raw bitmap with no spec
+        // applied. Most users land here unintentionally (they skipped
+        // the size tab). Make the fallback explicit and give them a
+        // one-tap way to fix it before they download a non-compliant
+        // file.
+        <div className="space-y-2 rounded-md border border-[var(--color-warning,#f59e0b)] bg-[var(--color-warning-soft,#fef3c7)] p-3">
+          <p className="text-sm font-medium text-[var(--color-warning-text,#92400e)]">
+            {t('noSpec.title')}
+          </p>
+          <p className="text-xs text-[var(--color-warning-text,#92400e)]">{t('noSpec.body')}</p>
+          <button
+            type="button"
+            onClick={() => useStudioTabStore.getState().setTab('size')}
+            className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-primary)] underline-offset-2 hover:underline focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none"
+            style={{ touchAction: 'manipulation' }}
+          >
+            {t('noSpec.cta')}
+          </button>
+        </div>
+      ) : null}
 
       <div className="space-y-1 rounded-md border border-[var(--color-border)] bg-[var(--color-divider)] px-3 py-2">
         <p className="font-mono text-xs text-[var(--color-text)]">
