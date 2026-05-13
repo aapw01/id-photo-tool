@@ -268,13 +268,26 @@ export function ExportPanel({
             (source as { height: number }).height,
           )
         : null
+      // The clipboard channel is always PNG (most paste targets handle
+      // image/png reliably; image/jpeg / image/webp support is patchy).
+      // The user's panel-level format choice is preserved in *intent*:
+      //
+      //   - png-alpha selected         → copy a transparent PNG
+      //   - everything else (png-flat,  → copy a baked PNG so the
+      //     jpg, webp; all "I want a     background colour the user
+      //     finished photo")            actually picked is in the
+      //                                 clipboard image
+      //
+      // The previous code forced `png-alpha` whenever a mask existed,
+      // which silently dropped the chosen background — pasting into
+      // Word / chat apps then showed the cut-out on a default white
+      // canvas, not the configured background.
+      const copyFormat: ExportFormat =
+        format === 'png-alpha' && foreground ? 'png-alpha' : 'png-flat'
       const result = await exportSingle({
         foreground: source,
         bg,
-        // Without a mask we can't deliver a real transparent PNG.
-        // Fall back to png-flat so the clipboard image still matches
-        // what's on screen.
-        format: foreground ? 'png-alpha' : 'png-flat',
+        format: copyFormat,
         targetPixels,
         frame: sourceFrame,
       })
@@ -287,7 +300,7 @@ export function ExportPanel({
       oneShot?.close?.()
       setCopying(false)
     }
-  }, [exportSource, acquireFullRes, bitmap, foreground, bg, targetPixels, frame, t])
+  }, [exportSource, acquireFullRes, bitmap, foreground, bg, format, targetPixels, frame, t])
 
   // png-alpha only makes sense with a real cut-out; everything else
   // works with either the cut-out or the raw bitmap.
