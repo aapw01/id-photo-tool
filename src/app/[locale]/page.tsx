@@ -9,9 +9,20 @@ import { UploadDropzone } from '@/components/upload-dropzone'
 import { hasLocale } from 'next-intl'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
-import { webApplicationSchema } from '@/lib/seo/jsonld'
+import { faqSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
 import { notFound } from 'next/navigation'
+
+const HOME_FAQ_KEYS = [
+  'free',
+  'upload',
+  'background',
+  'sizes',
+  'compress',
+  'print',
+  'mobile',
+] as const
+const SEO_INTRO_PARAGRAPH_INDICES = [0, 1, 2] as const
 
 interface HomePageProps {
   params: Promise<{ locale: string }>
@@ -44,6 +55,12 @@ export default async function HomePage({ params }: HomePageProps) {
   const t = await getTranslations('Home')
   const tCommon = await getTranslations('Common')
   const featureKeys = ['privacy', 'smart', 'layout', 'compress'] as const
+
+  const faqEntries = HOME_FAQ_KEYS.map((key) => ({
+    question: t(`faq.items.${key}.q`),
+    answer: t(`faq.items.${key}.a`),
+  }))
+  const faq = faqSchema(faqEntries)
 
   return (
     <>
@@ -97,9 +114,58 @@ export default async function HomePage({ params }: HomePageProps) {
             })}
           </div>
         </section>
+
+        <section className="mx-auto max-w-5xl px-6 py-16" aria-labelledby="home-seo-intro">
+          <h2
+            id="home-seo-intro"
+            className="mb-6 text-[var(--color-text)]"
+            style={{
+              fontSize: 'var(--text-h2)',
+              lineHeight: 'var(--text-h2--line-height)',
+            }}
+          >
+            {t('seoIntro.heading')}
+          </h2>
+          <div className="space-y-5 leading-relaxed text-[var(--color-text-mute)]">
+            {SEO_INTRO_PARAGRAPH_INDICES.map((idx) => (
+              <p key={idx}>{t(`seoIntro.paragraphs.${idx}`)}</p>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-4xl px-6 pb-20" aria-labelledby="home-faq">
+          <header className="mb-8 text-center">
+            <h2
+              id="home-faq"
+              className="text-[var(--color-text)]"
+              style={{
+                fontSize: 'var(--text-h2)',
+                lineHeight: 'var(--text-h2--line-height)',
+              }}
+            >
+              {t('faq.heading')}
+            </h2>
+            <p className="mt-2 text-sm text-[var(--color-text-mute)]">{t('faq.subtitle')}</p>
+          </header>
+          <div className="space-y-3">
+            {faqEntries.map((entry, idx) => (
+              <details
+                key={HOME_FAQ_KEYS[idx]}
+                className="group rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 open:shadow-[var(--shadow-sm)]"
+              >
+                <summary className="cursor-pointer list-none text-sm font-medium text-[var(--color-text)] marker:hidden">
+                  {entry.question}
+                </summary>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-mute)]">
+                  {entry.answer}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
       </main>
       <SiteFooter />
-      <JsonLd data={webApplicationSchema(locale as Locale)} />
+      <JsonLd data={[webApplicationSchema(locale as Locale), faq]} />
     </>
   )
 }

@@ -56,6 +56,48 @@
       "subtitle": "JPG / PNG / HEIC · up to 50 MB",
       "browse": "Choose a file",
       "privacy": "All processing runs in your browser · nothing is uploaded"
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "subtitle": "About making ID photos online, swapping backgrounds, and hitting file-size limits.",
+      "items": {
+        "free": {
+          "q": "Is Pixfit free?",
+          "a": "Yes — completely free, with no watermark and no paywall. Pixfit runs in your browser and there are no export limits."
+        },
+        "upload": {
+          "q": "Will my photo be uploaded to a server?",
+          "a": "No. Cut-out, background replacement, cropping, and compression all happen locally in your browser. The original file never leaves your device."
+        },
+        "background": {
+          "q": "How do I change the background to white / blue / red?",
+          "a": "After uploading a photo, open the Background panel. Pixfit uses the MODNet AI model to remove the background locally, then one-tap presets switch between standard white, visa blue, ID red, or any custom hex colour."
+        },
+        "sizes": {
+          "q": "Which countries and document types are supported?",
+          "a": "Pixfit ships with 28 specs out of the box: Chinese national ID / 1- and 2-inch / passport, Hong Kong / Macao / Taiwan travel permits, 14 popular visa formats (US, Schengen, UK, Canada, AU/NZ, JP/KR, Southeast Asia, Russia, India), and three Chinese national exam registration formats."
+        },
+        "compress": {
+          "q": "Can I compress a photo to 30 KB / 50 KB?",
+          "a": "Yes. In Export, the \"Compress to target KB\" option binary-searches JPG/WebP quality and downscales pixels if needed, landing within ±5% of your target — useful for civil-service exam portals and visa filings with strict file-size caps."
+        },
+        "print": {
+          "q": "How do I lay out multiple photos onto A4 or 5R / 6R paper?",
+          "a": "The Layout panel lets you pick paper size (A4 / 5R / 6R) and a template (eight 1-inch / sixteen 1-inch / mixed 1+2-inch, etc.). Pixfit auto-tiles the photos with crop marks and exports as PNG or vector PDF, ready for the print shop."
+        },
+        "mobile": {
+          "q": "Can I use this on a phone browser?",
+          "a": "Yes. Pixfit works on mobile Safari and Android Chrome. The first cut-out downloads ~6 MB of AI model weights — connect to Wi-Fi the first time, then the entire pipeline runs in-browser."
+        }
+      }
+    },
+    "seoIntro": {
+      "heading": "An ID photo studio that runs inside your browser",
+      "paragraphs": [
+        "Pixfit is a completely free online ID photo maker built for people who need to produce a passport photo, visa photo, national ID photo, or exam registration photo in a hurry. No downloads, no signup — open the page, upload a portrait, and you get a compliant electronic ID photo in seconds.",
+        "We use MODNet, an industry-leading portrait-segmentation AI model, running entirely in your browser to cut out the subject and replace the background. The full pipeline — cut-out, recolour, crop, compress, print layout — happens locally on your device. No photo is ever uploaded to a server.",
+        "Pixfit ships with 28 of the most common ID photo specifications: US visa (51×51mm), Schengen visa (35×45mm), UK visa (light grey background), Japan visa (45×45mm), Chinese national ID, passports for most countries, Hong Kong / Macao / Taiwan travel permits, and Chinese national exam registration formats. Every preset captures the official pixel, DPI, and file-size limits, so you can export a compliant JPG / PNG / WebP in one click."
+      ]
     }
   },
   "Footer": {
@@ -67,6 +109,7 @@
     "groups": {
       "product": "Product",
       "browse": "Browse",
+      "popular": "Popular sizes",
       "legal": "Legal",
       "about": "About"
     },
@@ -87,6 +130,13 @@
   "Studio": {
     "title": "Studio",
     "subtitle": "Upload a portrait to cut out, recolor the background, crop, and lay out.",
+    "seoIntro": {
+      "heading": "An ID photo studio inside your browser",
+      "paragraphs": [
+        "The Pixfit Studio is the core editor. Upload a portrait, then step through cut-out, background replacement, cropping to spec, print layout, compression, and export — every step runs locally in your browser, with no photo ever uploaded to a server.",
+        "Supports Chinese national ID, 1- and 2-inch IDs, passports, Hong Kong / Macao / Taiwan travel permits, 14 visa formats (US, Schengen, UK, Canada, AU, NZ, JP, KR, Singapore, Malaysia, Vietnam, Thailand, Russia, India), and three Chinese national exam registration formats. Auto-tile onto 5R / 6R / A4 paper and export as PNG or vector PDF."
+      ]
+    },
     "empty": {
       "title": "No photo yet",
       "subtitle": "Upload a portrait to get started"
@@ -390,8 +440,90 @@
     },
     "cta": "Use in Studio",
     "categoryEmpty": "No specs in this category yet",
+    "viewDetail": "View details",
     "metaTitle": "ID photo sizes for visa, ID, and exam registration · Pixfit",
-    "metaDescription": "Browse 28 built-in ID photo specifications — US / Schengen / UK / CA / AU / NZ / JP / KR visas, Chinese 1- and 2-inch IDs, travel permits, and exam formats. Free, in-browser, no upload."
+    "metaDescription": "Browse 28 built-in ID photo specifications — US / Schengen / UK / CA / AU / NZ / JP / KR visas, Chinese 1- and 2-inch IDs, travel permits, and exam formats. Free, in-browser, no upload.",
+    "detail": {
+      "metaTitle": "{name} photo size {w}×{h}mm · Make one free online · Pixfit",
+      "metaDescription": "{name} ID photo specification: {w}×{h} mm ({wpx}×{hpx} px @ {dpi} DPI), recommended background {bgLabel}. Make one in Pixfit — cut out, swap background, crop, compress, all in your browser. No upload.",
+      "heading": "{name} photo size",
+      "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
+      "intro": "The standard {name} ID photo measures {w} × {h} mm ({wpx} × {hpx} px at {dpi} DPI) with a recommended background of {bgLabel}. This page covers the full specification, photography requirements, and a free in-browser tool for making one.",
+      "specSection": {
+        "title": "Specification",
+        "dimensions": "Physical size",
+        "pixels": "Pixel size",
+        "dpi": "Resolution",
+        "background": "Recommended background",
+        "fileSize": "File size",
+        "region": "Region"
+      },
+      "purpose": {
+        "title": "Where it's used",
+        "visa": "The {name} format is required for {regionName} visa applications, including consular visas, visa-on-arrival, and eVisa portals. Embassy and consular requirements change occasionally — re-check the official guidance before you submit.",
+        "cn-id": "{name} is one of the most common ID photo formats in mainland China. It's accepted for the national ID card, passport renewal, driving licence, social-security card, professional qualifications, and most workplace onboarding.",
+        "exam": "{name} is the registration photo format for major Chinese national exams (civil service, postgraduate entrance, NCRE, teacher qualification). These platforms enforce strict pixel and file-size limits.",
+        "cn-paper": "{name} is a common photo-lab paper size for batch-printing multiple ID photos onto a single sheet — economical when you need several wallet-sized copies.",
+        "travel-permit": "{name} is required for mainland-resident travel permits to Hong Kong, Macao, and Taiwan, with specifications set by the Exit-Entry Administration of the Ministry of Public Security."
+      },
+      "requirements": {
+        "title": "Photography & composition",
+        "body": "Shoot in even lighting, facing the camera, with a neutral expression and no headwear. The head should fill about 60–75% of the frame, and shoulders shouldn't reach the bottom edge. Background should be plain ({bgLabel}) with no visible shadows. For phone selfies, use the rear-facing camera and keep the lens level with your face.",
+        "fileRules": "File size constraint: {range}."
+      },
+      "howto": {
+        "title": "How to make a {name} photo in Pixfit",
+        "subtitle": "Three steps, entirely in your browser. Your photo never leaves your device.",
+        "steps": {
+          "upload": {
+            "name": "Upload a portrait",
+            "text": "Drop or pick a clear front-facing portrait. JPG / PNG / HEIC up to 50 MB per file."
+          },
+          "cutout": {
+            "name": "AI background removal",
+            "text": "MODNet runs locally in your browser to cut the subject out and swap the background to {bgLabel}. Switch backgrounds any time in the Background panel."
+          },
+          "crop": {
+            "name": "Smart crop to {name}",
+            "text": "Pick the {name} preset. Pixfit finds the face and crops to {w}×{h} mm with the head centred — drag to fine-tune."
+          },
+          "export": {
+            "name": "Export a file that meets the spec",
+            "text": "Pick a format and quality. Use the size-target option if the portal requires a specific KB range, then save the file locally."
+          }
+        }
+      },
+      "faq": {
+        "title": "{name} — frequently asked questions",
+        "items": {
+          "free": {
+            "q": "Is making a {name} photo in Pixfit free?",
+            "a": "Yes — entirely free. Pixfit runs in your browser with no watermark, no paywall, and no export caps."
+          },
+          "upload": {
+            "q": "Will my photo be uploaded to a server?",
+            "a": "No. Background removal, cropping, recolouring, and compression all happen locally in your browser. The original photo never leaves your device."
+          },
+          "background": {
+            "q": "What background colour does {name} require?",
+            "a": "The recommended background is {bgLabel}. The Background panel offers one-click presets (standard white, visa blue, ID red) or any custom hex colour."
+          },
+          "accuracy": {
+            "q": "Are these specifications accurate?",
+            "a": "Specs are compiled from public official sources. Embassies, ministries, and exam boards do update their rules — re-check the latest official guidance before submission."
+          },
+          "phone": {
+            "q": "Can I make this on a phone?",
+            "a": "Yes. Pixfit works on mobile Safari and Chrome. The first cut-out downloads ~6 MB of AI model weights — connect to Wi-Fi the first time, then the whole pipeline runs in-browser."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Open Studio with {name}",
+        "secondary": "Browse all sizes"
+      },
+      "backLink": "Back to sizes"
+    }
   },
   "Templates": {
     "heading": "Layout templates",

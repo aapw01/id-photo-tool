@@ -1,14 +1,30 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildSitemapEntries, SITEMAP_ROUTES } from './sitemap-entries'
+import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
+import { buildSitemapEntries, SITEMAP_ROUTES, specDetailRoutes } from './sitemap-entries'
 import { SITE_URL } from './site-config'
 
 describe('buildSitemapEntries', () => {
   const fixed = new Date('2026-05-12T12:00:00Z')
 
-  it('emits one entry per route × locale', () => {
+  it('emits one entry per route × locale, including spec detail pages', () => {
     const entries = buildSitemapEntries(fixed)
-    expect(entries).toHaveLength(SITEMAP_ROUTES.length * 3)
+    const expected = (SITEMAP_ROUTES.length + BUILTIN_PHOTO_SPECS.length) * 3
+    expect(entries).toHaveLength(expected)
+  })
+
+  it('produces a detail route for every built-in photo spec', () => {
+    const detail = specDetailRoutes()
+    expect(detail).toHaveLength(BUILTIN_PHOTO_SPECS.length)
+    expect(detail[0]?.path).toMatch(/^\/sizes\//)
+  })
+
+  it('emits the per-spec detail URL into the sitemap', () => {
+    const entries = buildSitemapEntries(fixed)
+    const urls = entries.map((e) => e.url)
+    expect(urls).toContain(`${SITE_URL}/en/sizes/us-visa`)
+    expect(urls).toContain(`${SITE_URL}/zh-Hans/sizes/cn-id-card`)
+    expect(urls).toContain(`${SITE_URL}/zh-Hant/sizes/schengen`)
   })
 
   it('populates hreflang alternates on every entry', () => {

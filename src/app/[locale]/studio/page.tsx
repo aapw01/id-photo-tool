@@ -68,6 +68,27 @@ export default async function StudioPage({ params }: StudioPageProps) {
             <StudioWorkspace />
           </Suspense>
         </section>
+
+        {/* SSR-rendered intro paragraphs that crawlers can read without
+            executing the editor. Visually scoped to the bottom of the
+            page so it doesn't compete with the live workspace, but
+            still inside the same indexed URL. */}
+        <section className="mx-auto max-w-4xl px-6 pb-20" aria-labelledby="studio-seo-intro">
+          <h2
+            id="studio-seo-intro"
+            className="mb-4 text-[var(--color-text)]"
+            style={{
+              fontSize: 'var(--text-h3)',
+              lineHeight: 'var(--text-h3--line-height)',
+            }}
+          >
+            {t('seoIntro.heading')}
+          </h2>
+          <div className="space-y-4 text-sm leading-relaxed text-[var(--color-text-mute)]">
+            <p>{t('seoIntro.paragraphs.0')}</p>
+            <p>{t('seoIntro.paragraphs.1')}</p>
+          </div>
+        </section>
       </main>
       <SiteFooter />
     </>

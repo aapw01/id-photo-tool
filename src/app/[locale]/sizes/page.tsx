@@ -55,7 +55,7 @@ export default async function SizesPage({ params }: SizesPageProps) {
     name: t('heading'),
     description: t('subtitle'),
     items: BUILTIN_PHOTO_SPECS.map((spec) => ({
-      url: `${canonicalUrl}#${spec.id}`,
+      url: buildCanonical(`/sizes/${spec.id}`, locale as Locale),
       name: localizeText(spec.name, locale),
       description: spec.description ? localizeText(spec.description, locale) : undefined,
     })),
@@ -126,7 +126,12 @@ export default async function SizesPage({ params }: SizesPageProps) {
                           ) : null}
                           <div className="flex-1">
                             <h3 className="text-base font-semibold text-[var(--color-text)]">
-                              {name}
+                              <Link
+                                href={{ pathname: `/sizes/${spec.id}` }}
+                                className="hover:text-[var(--color-primary-dk)]"
+                              >
+                                {name}
+                              </Link>
                             </h3>
                             <p className="mt-0.5 font-mono text-xs text-[var(--color-text-weak)]">
                               {spec.id}
@@ -192,7 +197,13 @@ export default async function SizesPage({ params }: SizesPageProps) {
                           </p>
                         ) : null}
 
-                        <div className="mt-auto pt-4">
+                        <div className="mt-auto flex items-center justify-between gap-3 pt-4">
+                          <Link
+                            href={{ pathname: `/sizes/${spec.id}` }}
+                            className="text-sm text-[var(--color-text-mute)] hover:text-[var(--color-text)]"
+                          >
+                            {t('viewDetail')}
+                          </Link>
                           <Link
                             href={{
                               pathname: '/studio',

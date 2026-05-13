@@ -87,6 +87,71 @@ export function breadcrumbSchema(crumbs: Array<{ url: string; name: string }>): 
   }
 }
 
+interface FaqEntry {
+  /** Question text — used verbatim in the rich snippet. */
+  question: string
+  /** Plain-text answer; we deliberately don't render HTML here. */
+  answer: string
+}
+
+/**
+ * schema.org `FAQPage`. Eligible for Google's FAQ rich result when the
+ * questions are user-meaningful (not marketing fluff) and the answers
+ * are visible on the same page.
+ */
+export function faqSchema(entries: FaqEntry[]): JsonLdObject {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: entries.map((e) => ({
+      '@type': 'Question',
+      name: e.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: e.answer,
+      },
+    })),
+  }
+}
+
+interface HowToStep {
+  /** Imperative step title, e.g. "Upload a portrait". */
+  name: string
+  /** One- or two-sentence description of what happens in this step. */
+  text: string
+}
+
+interface HowToOpts {
+  /** Localised goal — e.g. "Make a US visa photo online". */
+  name: string
+  /** Short single-sentence description of the goal. */
+  description: string
+  steps: HowToStep[]
+  /** Estimated total duration in ISO 8601 (e.g. "PT2M"). */
+  totalTimeISO?: string
+}
+
+/**
+ * schema.org `HowTo` for spec detail pages — Google still surfaces
+ * this in some "how to" voice/search contexts even after the rich
+ * result deprecation, and it doesn't hurt as semantic markup.
+ */
+export function howToSchema(opts: HowToOpts): JsonLdObject {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: opts.name,
+    description: opts.description,
+    ...(opts.totalTimeISO ? { totalTime: opts.totalTimeISO } : {}),
+    step: opts.steps.map((step, idx) => ({
+      '@type': 'HowToStep',
+      position: idx + 1,
+      name: step.name,
+      text: step.text,
+    })),
+  }
+}
+
 /**
  * Serialise a JSON-LD payload while escaping `</` and `<!--` so the
  * resulting `<script>` tag can never be terminated early by user data.
