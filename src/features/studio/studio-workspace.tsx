@@ -116,6 +116,21 @@ export function StudioWorkspace() {
   }, [mask])
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
   const replaceInputRef = useRef<HTMLInputElement>(null)
+  // Anchor for the main preview pane. On mobile we scroll back to it
+  // whenever the side sheet closes — without this the page sticks
+  // somewhere mid-document and users assume "nothing happened".
+  const previewAnchorRef = useRef<HTMLDivElement>(null)
+
+  const handleSheetOpenChange = useCallback((open: boolean) => {
+    setMobileSheetOpen(open)
+    if (open) return
+    // Defer to the next frame so the sheet exit animation can finish
+    // unblocking the layout before we scroll. Behaviour: smooth so the
+    // user perceives the preview "rising" rather than a hard jump.
+    requestAnimationFrame(() => {
+      previewAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [])
 
   // The compare slider only makes sense on the background tab. Tabs are
   // navigable in any order, so users routinely toggle compare on, jump
@@ -290,7 +305,7 @@ export function StudioWorkspace() {
 
       {tab === 'size' || tab === 'export' ? <ComplianceBanner /> : null}
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+      <div ref={previewAnchorRef} className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         {tab === 'layout' ? (
           <LayoutPreview
             bitmap={bitmap}
@@ -325,7 +340,7 @@ export function StudioWorkspace() {
 
       <StudioBottomTabs onSelect={openMobileSheet} />
 
-      <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
+      <Sheet open={mobileSheetOpen} onOpenChange={handleSheetOpenChange}>
         <SheetContent side="bottom" className="md:hidden">
           <SheetHeader>
             <SheetTitle>{tTabs(tab)}</SheetTitle>

@@ -48,7 +48,8 @@
     "uploadDropzone": {
       "title": "Drop a photo here, or click to choose",
       "subtitle": "JPG / PNG / HEIC · up to 50 MB",
-      "browse": "Choose a file"
+      "browse": "Choose a file",
+      "privacy": "All processing runs in your browser · nothing is uploaded"
     }
   },
   "Footer": {
@@ -219,6 +220,7 @@
       "body": "We'll export the current photo as-is. Pick an ID size if you need to match a visa / passport spec.",
       "cta": "Pick a size →"
     },
+    "privacyNote": "Export runs in your browser · nothing is uploaded",
     "format": {
       "label": "Format",
       "png-alpha": "PNG · transparent",

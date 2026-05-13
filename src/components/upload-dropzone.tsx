@@ -106,6 +106,7 @@ export function UploadDropzone({
       <span className="mt-1 inline-flex items-center rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2 text-sm font-medium text-white shadow-[var(--shadow-sm)] group-hover:bg-[var(--color-primary-dk)]">
         {t('browse')}
       </span>
+      <p className="mt-2 text-xs text-[var(--color-text-weak)]">{t('privacy')}</p>
       <input
         ref={inputRef}
         type="file"

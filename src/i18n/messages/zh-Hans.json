@@ -48,7 +48,8 @@
     "uploadDropzone": {
       "title": "把照片拖到这里，或点击选择",
       "subtitle": "支持 JPG / PNG / HEIC · 单张 ≤ 50 MB",
-      "browse": "选择文件"
+      "browse": "选择文件",
+      "privacy": "全程本地处理 · 不上传服务器"
     }
   },
   "Footer": {
@@ -219,6 +220,7 @@
       "body": "将按当前图片直接导出。如需符合签证 / 证件规格，请先选择尺寸。",
       "cta": "去选择尺寸 →"
     },
+    "privacyNote": "导出在浏览器中完成 · 照片不会上传",
     "format": {
       "label": "格式",
       "png-alpha": "PNG · 透明背景",

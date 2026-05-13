@@ -323,6 +323,7 @@ export function ExportPanel({
       <header>
         <h3 className="text-sm font-medium text-[var(--color-text)]">{t('title')}</h3>
         <p className="mt-1 text-xs text-[var(--color-text-mute)]">{t('subtitle')}</p>
+        <p className="mt-1 text-[11px] text-[var(--color-text-weak)]">{t('privacyNote')}</p>
       </header>
 
       {!exportFollowsSpec ? (
