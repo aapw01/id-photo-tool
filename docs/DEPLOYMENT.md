@@ -28,16 +28,25 @@ pnpm cf:preview     # 本地用 workerd 跑 Cloudflare 模拟器
    （或你 Fork 的仓库）。
 4. 构建设置：
 
-   | 字段              | 值                              |
-   | ----------------- | ------------------------------- |
-   | Production branch | `main`                          |
-   | Build command     | `pnpm install && pnpm cf:build` |
-   | Deploy command    | `pnpm exec wrangler deploy`     |
-   | Root directory    | `/`                             |
-   | Node.js version   | `22.13` (来自 `.nvmrc`)         |
+   | 字段              | 值                                                   |
+   | ----------------- | ---------------------------------------------------- |
+   | Production branch | `main`                                               |
+   | Build command     | `pnpm install && pnpm models:fetch && pnpm cf:build` |
+   | Deploy command    | `pnpm exec wrangler deploy`                          |
+   | Root directory    | `/`                                                  |
+   | Node.js version   | `22.13` (来自 `.nvmrc`)                              |
 
-5. 环境变量：当前阶段无需任何 secret。后续如接入 Umami 等可观测组件，会以
-   **公开变量** 形式存在（`NEXT_PUBLIC_*`）。
+   > `pnpm models:fetch` 在构建期把 MODNet FP16 ONNX（约 13 MB）下载到
+   > `public/_models/`。仓库 `.gitignore` 排除了 `*.onnx`，跳过这一步会让
+   > 生产环境 `/_models/modnet.fp16.onnx` 返回 404、抠图链路彻底不可用。
+   > 默认走 ModelScope 镜像（中国大陆友好），失败自动回落 Hugging Face；
+   > 构建容器需具备访问其中至少一个的外网能力（Cloudflare 默认满足）。
+
+5. 环境变量：当前阶段无需任何 secret。可选项：
+   - `NEXT_PUBLIC_SEG_MODEL` = `modnet-int8`，可临时切到 INT8（~6.6 MB）以
+     节省带宽，代价是发丝边缘略差。
+   - `NEXT_PUBLIC_MODEL_URL` = `https://cdn.pix-fit.com/models/modnet.fp16.onnx`，
+     模型迁到 R2 + 自定义 CDN 后用，此时 build command 可去掉 `models:fetch`。
 6. 保存后 Cloudflare 会立刻触发首次构建。完成后即得到 `*.workers.dev`
    预览域名；后续 `git push origin main` 都会自动重新构建并部署。
 
