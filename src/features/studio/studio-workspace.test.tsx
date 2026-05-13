@@ -161,7 +161,13 @@ describe('StudioWorkspace photo replacement', () => {
     inputClick.mockRestore()
   })
 
-  it('replaces the current file and resets photo-derived state after a new file is selected', async () => {
+  it('replaces the photo, drops photo-bound state, but keeps the user task choices', async () => {
+    // Photo-bound state (mask, crop frame, face) must drop because it's
+    // tied to *this* image's pixels. Task-bound state (the chosen size
+    // spec, paper / layout / margin settings, background colour) must
+    // survive because retaking the same shot doesn't change what the
+    // user wants to produce — re-asking for every preference is the
+    // single biggest UX regression we want to avoid here.
     const { bitmap } = stagePhoto()
     const newFile = new File(['new'], 'new.png', { type: 'image/png' })
     const mask = makeImageData()
@@ -171,6 +177,14 @@ describe('StudioWorkspace photo replacement', () => {
       mask,
     })
     useCropStore.getState().setFrame({ x: 1, y: 2, w: 3, h: 4 })
+    useCropStore.getState().setSpec({
+      id: 'test-spec',
+      name: 'test',
+      category: 'custom',
+      width_mm: 25,
+      height_mm: 35,
+      dpi: 300,
+    })
     useLayoutStore.getState().setSettings({ margin_mm: 99 })
 
     render(<StudioWorkspace />)
@@ -185,7 +199,9 @@ describe('StudioWorkspace photo replacement', () => {
     expect(useStudioStore.getState().mask).toBeNull()
     expect(useStudioStore.getState().lastInference).toBeNull()
     expect(useCropStore.getState().frame).toBeNull()
-    expect(useLayoutStore.getState().settings.margin_mm).not.toBe(99)
+    // Spec + layout settings *survive* the photo swap.
+    expect(useCropStore.getState().spec?.id).toBe('test-spec')
+    expect(useLayoutStore.getState().settings.margin_mm).toBe(99)
     expect(mocks.segment).not.toHaveBeenCalled()
     expect(mocks.routerPush).not.toHaveBeenCalled()
   })

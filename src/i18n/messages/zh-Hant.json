@@ -197,7 +197,7 @@
     "compareHint": "拖曳滑桿比較換背景前後",
     "retry": {
       "hint": "效果不理想？",
-      "action": "重新摳圖"
+      "action": "重新去背"
     },
     "hexInputLabel": "十六進位顏色",
     "hexInputPlaceholder": "#FFFFFF",

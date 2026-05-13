@@ -34,7 +34,6 @@ import { SpecPicker } from '@/features/crop/spec-picker'
 import { useCropStore } from '@/features/crop/spec-store'
 import { useCropFlow } from '@/features/crop/use-crop-flow'
 import { LayoutPanel, LayoutPreview } from '@/features/layout'
-import { useLayoutStore } from '@/features/layout'
 import { SegmentationFeedback } from '@/features/segmentation/segmentation-feedback'
 import { useSegmentation } from '@/features/segmentation/use-segmentation'
 import { useSpecManagerStore } from '@/features/spec-manager/store'
@@ -64,15 +63,13 @@ export function StudioWorkspace() {
 
   const bg = useBackgroundStore((s) => s.current)
   const tab = useStudioTabStore((s) => s.tab)
-  const resetVisited = useStudioTabStore((s) => s.resetVisited)
-  const resetLayout = useLayoutStore((s) => s.reset)
 
   // Crop tab state — driven by useCropFlow below.
   const cropSpec = useCropStore((s) => s.spec)
   const cropFrame = useCropStore((s) => s.frame)
   const showGuidelines = useCropStore((s) => s.showGuidelines)
   const setCropFrame = useCropStore((s) => s.setFrame)
-  const resetCrop = useCropStore((s) => s.reset)
+  const resetCropForNewPhoto = useCropStore((s) => s.resetForNewPhoto)
 
   useCropFlow(bitmap, tab === 'size')
   useTabDeeplink()
@@ -100,6 +97,23 @@ export function StudioWorkspace() {
   const { segment, state, error } = useSegmentation()
 
   const [showCompare, setShowCompare] = useState(false)
+
+  // Flash the before / after slider for a moment once segmentation
+  // finishes so the user can immediately see what changed without
+  // having to discover the compare toggle. We key off `mask` identity:
+  // a brand-new ImageData reference means "fresh cut-out, show off the
+  // result". The setTimeout dance is deliberate — the show happens on
+  // the next tick (not during render commit) and the hide happens 3s
+  // later; both are properly cleaned up on subsequent mask changes.
+  useEffect(() => {
+    if (!mask) return
+    const showTimer = setTimeout(() => setShowCompare(true), 0)
+    const hideTimer = setTimeout(() => setShowCompare(false), 3000)
+    return () => {
+      clearTimeout(showTimer)
+      clearTimeout(hideTimer)
+    }
+  }, [mask])
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
   const replaceInputRef = useRef<HTMLInputElement>(null)
 
@@ -151,13 +165,15 @@ export function StudioWorkspace() {
 
       void (async () => {
         await setFile(nextFile)
-        resetCrop()
-        resetLayout()
-        resetVisited()
+        // Reset only what's bound to the underlying photo. The user's
+        // size choice (e.g. "US visa"), paper / layout / background
+        // colour are part of their *task* and survive a photo swap so
+        // they don't have to re-pick everything for every retake.
+        resetCropForNewPhoto()
         setShowCompare(false)
       })()
     },
-    [resetCrop, resetLayout, resetVisited, setFile],
+    [resetCropForNewPhoto, setFile],
   )
 
   if (!bitmap) {

@@ -57,6 +57,14 @@ export interface CropState {
   setWarnings: (w: ComplianceWarning[]) => void
   setShowGuidelines: (v: boolean) => void
   reset: () => void
+  /**
+   * Reset only the photo-bound bits — frame, face detection, compliance
+   * warnings. Used when the user replaces the underlying photo: the
+   * face / frame are about the *image*, but the spec they picked
+   * ("美国签证 / 申根…") is about the *task* and is worth carrying over
+   * so they don't have to re-select it for every shot.
+   */
+  resetForNewPhoto: () => void
 }
 
 export const useCropStore = create<CropState>((set) => ({
@@ -96,6 +104,16 @@ export const useCropStore = create<CropState>((set) => ({
   reset() {
     set({
       spec: null,
+      frame: null,
+      frameSource: 'auto',
+      face: null,
+      detecting: false,
+      faceError: null,
+      warnings: [],
+    })
+  },
+  resetForNewPhoto() {
+    set({
       frame: null,
       frameSource: 'auto',
       face: null,

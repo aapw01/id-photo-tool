@@ -580,10 +580,10 @@
   "Segmentation": {
     "states": {
       "idle": "Ready",
-      "loadingModel": "Loading the matting model…",
+      "loadingModel": "Loading the cut-out model…",
       "ready": "Model ready",
       "inferring": "Extracting subject…",
-      "error": "Matting failed"
+      "error": "Cut-out failed"
     },
     "progress": {
       "download": "Downloading model {loaded}/{total}",
