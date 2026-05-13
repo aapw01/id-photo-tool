@@ -17,6 +17,11 @@ vi.mock('next-intl', () => ({
       'Crop.customW': 'Width ({unit})',
       'Crop.customH': 'Height ({unit})',
       'Crop.customDpi': 'DPI',
+      'Crop.customDpiShow': 'Adjust resolution',
+      'Crop.customDpiHide': 'Hide',
+      'Crop.customDpiOption.low': 'Save space (200 DPI)',
+      'Crop.customDpiOption.standard': 'Standard (300 DPI · recommended)',
+      'Crop.customDpiOption.high': 'High quality (600 DPI · larger file)',
       'Crop.customDpiPxHint': 'DPI is fixed.',
       'Crop.customRangeHint': 'Range: {min}–{max} {unit}',
       'Crop.customApply': 'Use this size',
@@ -124,13 +129,27 @@ describe('SpecPicker inline custom form — units', () => {
     expect(stored?.dpi).toBe(300)
   })
 
-  it('disables the DPI select when the unit is px', () => {
+  it('hides the DPI control when the unit is px and explains why', () => {
+    // The DPI picker is collapsed behind a disclosure for mm / cm /
+    // inch so the common case stays a width × height form. In px mode
+    // DPI is implicit — we replace the disclosure with a one-line
+    // explanation instead of showing a disabled, confusing dropdown.
     render(<SpecPicker />)
     const unitSelect = screen.getByLabelText('Unit') as HTMLSelectElement
     fireEvent.change(unitSelect, { target: { value: 'px' } })
 
-    const dpiSelect = screen.getByLabelText('DPI') as HTMLSelectElement
-    expect(dpiSelect.disabled).toBe(true)
+    expect(screen.queryByLabelText('DPI')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Adjust resolution' })).toBeNull()
+    expect(screen.getByText('DPI is fixed.')).toBeTruthy()
+  })
+
+  it('reveals the DPI picker behind a disclosure for non-px units', () => {
+    render(<SpecPicker />)
+    // Mm mode → "Adjust resolution" link visible, DPI select hidden.
+    expect(screen.queryByLabelText('DPI')).toBeNull()
+    const disclosure = screen.getByRole('button', { name: 'Adjust resolution' })
+    fireEvent.click(disclosure)
+    expect(screen.getByLabelText('DPI')).toBeTruthy()
   })
 
   it('converts 3.5×4.9 cm into width_mm = 35 mm', () => {
