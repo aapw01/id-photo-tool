@@ -179,6 +179,11 @@
       "exam": "考试报名",
       "custom": "自定义"
     },
+    "filters": {
+      "all": "全部",
+      "hot": "热门",
+      "recent": "最近"
+    },
     "stats": {
       "dimensions": "{w} × {h} mm · {wpx} × {hpx} px",
       "dpi": "{dpi} DPI",

@@ -24,7 +24,7 @@
  * lives up in StudioWorkspace.
  */
 
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
 import { Check, Search } from 'lucide-react'
 
@@ -41,9 +41,34 @@ import type { PhotoCategory, PhotoSpec } from '@/types/spec'
 
 import { useCropStore } from './spec-store'
 
-type Filter = 'all' | PhotoCategory
+type Filter = 'all' | 'hot' | 'recent' | PhotoCategory
 
-const FILTERS: readonly Filter[] = ['all', 'cn-id', 'cn-paper', 'travel-permit', 'visa', 'exam']
+const FILTERS: readonly Exclude<Filter, 'recent'>[] = [
+  'all',
+  'hot',
+  'cn-id',
+  'cn-paper',
+  'travel-permit',
+  'visa',
+  'exam',
+]
+
+/**
+ * Spec ids that show up in the "Hot" filter. We don't compute these
+ * from usage telemetry (we don't have telemetry — privacy promise);
+ * the set is a hand-picked top-5 covering ≥ 80 % of the spec-picks
+ * we'd expect from the cn / us / schengen mix.
+ */
+const HOT_SPEC_IDS: readonly string[] = [
+  'cn-1inch',
+  'cn-2inch',
+  'us-visa',
+  'schengen-visa',
+  'china-passport',
+]
+
+const RECENT_STORAGE_KEY = 'pixfit:crop:recent-spec-ids'
+const MAX_RECENT_SPECS = 6
 
 /**
  * Unit options for the inline custom-size form. Order is the picker
@@ -75,7 +100,6 @@ const CUSTOM_PX_DPI = 300
 
 export function SpecPicker() {
   const t = useTranslations('Crop')
-  const tCat = useTranslations('Crop.categories')
   const locale = useLocale()
 
   const activeSpec = useCropStore((s) => s.spec)
@@ -83,6 +107,43 @@ export function SpecPicker() {
 
   const [filter, setFilter] = useState<Filter>('all')
   const [query, setQuery] = useState('')
+
+  // Most-recently picked spec ids, persisted across visits so the
+  // "Recent" filter chip can surface them. Updated whenever the user
+  // picks any spec from this list (or applies a custom one).
+  const [recentSpecIds, setRecentSpecIds] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return []
+    try {
+      const raw = window.localStorage.getItem(RECENT_STORAGE_KEY)
+      if (!raw) return []
+      const parsed: unknown = JSON.parse(raw)
+      if (!Array.isArray(parsed)) return []
+      return parsed.filter((v): v is string => typeof v === 'string').slice(0, MAX_RECENT_SPECS)
+    } catch {
+      return []
+    }
+  })
+
+  const markRecent = useCallback((specId: string) => {
+    setRecentSpecIds((prev) => {
+      const next = [specId, ...prev.filter((x) => x !== specId)].slice(0, MAX_RECENT_SPECS)
+      try {
+        window.localStorage.setItem(RECENT_STORAGE_KEY, JSON.stringify(next))
+      } catch {
+        // Storage failures (private mode / quota) are not fatal — the
+        // filter just won't repopulate next visit.
+      }
+      return next
+    })
+  }, [])
+
+  const pickSpec = useCallback(
+    (spec: PhotoSpec) => {
+      setSpec(spec)
+      markRecent(spec.id)
+    },
+    [setSpec, markRecent],
+  )
 
   const [customUnit, setCustomUnit] = useState<CustomUnit>('mm')
   const [customW, setCustomW] = useState<number>(CUSTOM_DEFAULTS.mm.w)
@@ -101,15 +162,41 @@ export function SpecPicker() {
 
   const visibleSpecs = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return effectiveSpecs.filter((s) => {
-      if (filter !== 'all' && s.category !== filter) return false
+    const recentSet = new Set(recentSpecIds)
+    const hotSet = new Set(HOT_SPEC_IDS)
+    const filtered = effectiveSpecs.filter((s) => {
+      if (filter === 'all') {
+        // fall through
+      } else if (filter === 'hot') {
+        if (!hotSet.has(s.id)) return false
+      } else if (filter === 'recent') {
+        if (!recentSet.has(s.id)) return false
+      } else if (s.category !== filter) {
+        return false
+      }
       if (!q) return true
       const hay = [s.name.zh, s.name['zh-Hant'], s.name.en, s.id, s.region ?? '']
         .join(' ')
         .toLowerCase()
       return hay.includes(q)
     })
-  }, [filter, query, effectiveSpecs])
+    // The "Recent" filter wants the user's chronological order, not
+    // the default declaration order, so reorder when that filter is
+    // active. Same goes for Hot — list it in the curated order.
+    if (filter === 'recent') {
+      const order = new Map(recentSpecIds.map((id, i) => [id, i] as const))
+      return [...filtered].sort(
+        (a, b) => (order.get(a.id) ?? Infinity) - (order.get(b.id) ?? Infinity),
+      )
+    }
+    if (filter === 'hot') {
+      const order = new Map(HOT_SPEC_IDS.map((id, i) => [id, i] as const))
+      return [...filtered].sort(
+        (a, b) => (order.get(a.id) ?? Infinity) - (order.get(b.id) ?? Infinity),
+      )
+    }
+    return filtered
+  }, [filter, query, effectiveSpecs, recentSpecIds])
 
   const bounds = CUSTOM_BOUNDS[customUnit]
   const inputStep = CUSTOM_DEFAULTS[customUnit].step
@@ -197,7 +284,7 @@ export function SpecPicker() {
       height_mm: heightMm,
       dpi,
     }
-    setSpec(customSpec)
+    pickSpec(customSpec)
   }
 
   return (
@@ -222,20 +309,11 @@ export function SpecPicker() {
 
       <div className="flex gap-2 overflow-x-auto">
         {FILTERS.map((f) => (
-          <button
-            key={f}
-            type="button"
-            onClick={() => setFilter(f)}
-            className={cn(
-              'inline-flex h-7 shrink-0 items-center rounded-full px-3 text-xs transition-colors',
-              filter === f
-                ? 'bg-[var(--color-primary)] text-white'
-                : 'bg-[var(--color-divider)] text-[var(--color-text-mute)] hover:bg-[var(--color-border)]',
-            )}
-          >
-            {f === 'all' ? '∗' : tCat(f as PhotoCategory)}
-          </button>
+          <FilterChip key={f} value={f} active={filter === f} onSelect={setFilter} />
         ))}
+        {recentSpecIds.length > 0 ? (
+          <FilterChip value="recent" active={filter === 'recent'} onSelect={setFilter} />
+        ) : null}
       </div>
 
       {/* Inline custom-size form — replaces the previous /specs detour. */}
@@ -361,7 +439,7 @@ export function SpecPicker() {
               key={spec.id}
               spec={spec}
               isActive={activeSpec?.id === spec.id}
-              onSelect={setSpec}
+              onSelect={pickSpec}
               locale={locale}
             />
           ))
@@ -384,13 +462,14 @@ interface SpecRowProps {
 
 function SpecRow({ spec, isActive, onSelect, locale }: SpecRowProps): React.ReactElement {
   const resolved = derivePixels(spec)
+  const description = spec.description ? localizeText(spec.description, locale) : null
   return (
     <li>
       <button
         type="button"
         onClick={() => onSelect(spec)}
         className={cn(
-          'flex w-full items-center gap-3 rounded-md border border-transparent px-2 py-2 text-left transition-colors',
+          'flex w-full items-start gap-3 rounded-md border border-transparent px-2 py-2 text-left transition-colors',
           'hover:bg-[var(--color-divider)]',
           isActive
             ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)]'
@@ -399,9 +478,14 @@ function SpecRow({ spec, isActive, onSelect, locale }: SpecRowProps): React.Reac
         aria-pressed={isActive}
       >
         {spec.region ? (
-          <RegionFlag countryCode={spec.region} label={spec.region} squared className="size-5" />
+          <RegionFlag
+            countryCode={spec.region}
+            label={spec.region}
+            squared
+            className="mt-0.5 size-5"
+          />
         ) : (
-          <span className="inline-block size-5 rounded-sm bg-[var(--color-divider)]" />
+          <span className="mt-0.5 inline-block size-5 rounded-sm bg-[var(--color-divider)]" />
         )}
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm text-[var(--color-text)]">
@@ -410,12 +494,50 @@ function SpecRow({ spec, isActive, onSelect, locale }: SpecRowProps): React.Reac
           <p className="font-mono text-xs text-[var(--color-text-mute)]">
             {spec.width_mm}×{spec.height_mm} mm · {resolved.width_px}×{resolved.height_px} px
           </p>
+          {description ? (
+            <p className="mt-0.5 line-clamp-1 text-xs text-[var(--color-text-weak)]">
+              {description}
+            </p>
+          ) : null}
         </div>
         {isActive ? (
-          <Check className="size-4 shrink-0 text-[var(--color-primary)]" aria-hidden />
+          <Check className="mt-0.5 size-4 shrink-0 text-[var(--color-primary)]" aria-hidden />
         ) : null}
       </button>
     </li>
+  )
+}
+
+interface FilterChipProps {
+  value: Filter
+  active: boolean
+  onSelect: (f: Filter) => void
+}
+
+function FilterChip({ value, active, onSelect }: FilterChipProps): React.ReactElement {
+  const tFilters = useTranslations('Crop.filters')
+  const tCat = useTranslations('Crop.categories')
+  const label =
+    value === 'all'
+      ? tFilters('all')
+      : value === 'hot'
+        ? tFilters('hot')
+        : value === 'recent'
+          ? tFilters('recent')
+          : tCat(value)
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(value)}
+      className={cn(
+        'inline-flex h-7 shrink-0 items-center rounded-full px-3 text-xs transition-colors',
+        active
+          ? 'bg-[var(--color-primary)] text-white'
+          : 'bg-[var(--color-divider)] text-[var(--color-text-mute)] hover:bg-[var(--color-border)]',
+      )}
+    >
+      {label}
+    </button>
   )
 }
 

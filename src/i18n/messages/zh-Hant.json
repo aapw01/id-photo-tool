@@ -179,6 +179,11 @@
       "exam": "考試報名",
       "custom": "自訂"
     },
+    "filters": {
+      "all": "全部",
+      "hot": "熱門",
+      "recent": "最近"
+    },
     "stats": {
       "dimensions": "{w} × {h} mm · {wpx} × {hpx} px",
       "dpi": "{dpi} DPI",

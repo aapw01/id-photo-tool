@@ -179,6 +179,11 @@
       "exam": "Exams",
       "custom": "Custom"
     },
+    "filters": {
+      "all": "All",
+      "hot": "Popular",
+      "recent": "Recent"
+    },
     "stats": {
       "dimensions": "{w} × {h} mm · {wpx} × {hpx} px",
       "dpi": "{dpi} DPI",
