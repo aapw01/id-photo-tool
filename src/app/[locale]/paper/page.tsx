@@ -56,7 +56,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
   })
 
   const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('studio') },
+    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
     { url: canonicalUrl, name: t('heading') },
   ])
 

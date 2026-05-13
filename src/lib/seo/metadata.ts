@@ -12,12 +12,12 @@ import type { Metadata } from 'next'
 import type { Locale } from '@/i18n/routing'
 
 import {
-  DEFAULT_LOCALE,
   HREFLANG_BY_LOCALE,
   SITE_NAME,
   SITE_NAME_FULL,
   SITE_URL,
   SUPPORTED_LOCALES,
+  X_DEFAULT_LOCALE,
 } from './site-config'
 
 /** Normalise a path so it always starts with `/` and never ends with one. */
@@ -41,7 +41,7 @@ export function buildAlternateLanguages(path: string): Record<string, string> {
   for (const locale of SUPPORTED_LOCALES) {
     out[HREFLANG_BY_LOCALE[locale]] = buildCanonical(path, locale)
   }
-  out['x-default'] = buildCanonical(path, DEFAULT_LOCALE)
+  out['x-default'] = buildCanonical(path, X_DEFAULT_LOCALE)
   return out
 }
 
@@ -60,8 +60,37 @@ interface BuildMetadataOptions {
 /** Build a complete `Metadata` block with canonical + alternates + OG. */
 export function buildMetadata(opts: BuildMetadataOptions): Metadata {
   const canonical = buildCanonical(opts.path, opts.locale)
-  const ogImage = opts.image ?? '/og/default.png'
-  const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SITE_URL}${ogImage}`
+  // When the caller doesn't pass an explicit image we leave OG/Twitter
+  // images undefined so Next.js can fall back to the route-level
+  // `opengraph-image.tsx` (App Router convention) — which we generate
+  // at build time from `src/app/opengraph-image.tsx`.
+  const customImageUrl = opts.image
+    ? opts.image.startsWith('http')
+      ? opts.image
+      : `${SITE_URL}${opts.image}`
+    : null
+
+  const openGraph: NonNullable<Metadata['openGraph']> = {
+    type: 'website',
+    siteName: SITE_NAME_FULL,
+    locale: ogLocaleFor(opts.locale),
+    alternateLocale: SUPPORTED_LOCALES.filter((l) => l !== opts.locale).map(ogLocaleFor),
+    url: canonical,
+    title: opts.title,
+    description: opts.description,
+  }
+  if (customImageUrl) {
+    openGraph.images = [{ url: customImageUrl, width: 1200, height: 630, alt: opts.title }]
+  }
+
+  const twitter: NonNullable<Metadata['twitter']> = {
+    card: 'summary_large_image',
+    title: opts.title,
+    description: opts.description,
+  }
+  if (customImageUrl) {
+    twitter.images = [customImageUrl]
+  }
 
   return {
     title: opts.title,
@@ -70,22 +99,8 @@ export function buildMetadata(opts: BuildMetadataOptions): Metadata {
       canonical,
       languages: buildAlternateLanguages(opts.path),
     },
-    openGraph: {
-      type: 'website',
-      siteName: SITE_NAME_FULL,
-      locale: ogLocaleFor(opts.locale),
-      alternateLocale: SUPPORTED_LOCALES.filter((l) => l !== opts.locale).map(ogLocaleFor),
-      url: canonical,
-      title: opts.title,
-      description: opts.description,
-      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: opts.title }],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: opts.title,
-      description: opts.description,
-      images: [ogImageUrl],
-    },
+    openGraph,
+    twitter,
     applicationName: SITE_NAME,
     robots: opts.noIndex
       ? { index: false, follow: false }

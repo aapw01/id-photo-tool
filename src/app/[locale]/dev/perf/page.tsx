@@ -1,6 +1,11 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { PerfRunner } from '@/features/perf/perf-runner'
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+}
 
 // Available in dev and in production builds when the operator explicitly
 // opts in via NEXT_PUBLIC_ENABLE_DEV_PAGES=1 (e.g. `NEXT_PUBLIC_ENABLE_DEV_PAGES=1 pnpm build && pnpm start`

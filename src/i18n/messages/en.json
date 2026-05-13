@@ -12,6 +12,7 @@
     }
   },
   "Nav": {
+    "home": "Home",
     "studio": "Studio",
     "sizes": "Sizes",
     "paper": "Paper",

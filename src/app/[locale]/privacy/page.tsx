@@ -60,7 +60,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
   }))
 
   const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('studio') },
+    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
     { url: buildCanonical('/privacy', locale as Locale), name: t('heading') },
   ])
 

@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { BgPerfRunner } from '@/features/perf/bg-perf-runner'
@@ -6,6 +7,10 @@ const allow =
   process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ENABLE_DEV_PAGES === '1'
 
 export const dynamic = 'force-static'
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+}
 
 /**
  * Dev-only background-swap benchmark page.

@@ -58,7 +58,7 @@ export default async function TemplatesPage({ params }: TemplatesPageProps) {
   })
 
   const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('studio') },
+    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
     { url: canonicalUrl, name: t('heading') },
   ])
 

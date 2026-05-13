@@ -62,7 +62,7 @@ export default async function SizesPage({ params }: SizesPageProps) {
   })
 
   const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('studio') },
+    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
     { url: canonicalUrl, name: t('heading') },
   ])
 

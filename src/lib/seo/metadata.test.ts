@@ -40,7 +40,7 @@ describe('buildAlternateLanguages', () => {
     expect(map['zh-Hans']).toBe(`${SITE_URL}/zh-Hans/studio`)
     expect(map['zh-Hant']).toBe(`${SITE_URL}/zh-Hant/studio`)
     expect(map['en']).toBe(`${SITE_URL}/en/studio`)
-    expect(map['x-default']).toBe(`${SITE_URL}/zh-Hans/studio`)
+    expect(map['x-default']).toBe(`${SITE_URL}/en/studio`)
   })
 
   it('keys count matches 3 locales + x-default', () => {

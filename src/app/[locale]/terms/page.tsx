@@ -61,7 +61,7 @@ export default async function TermsPage({ params }: TermsPageProps) {
   }))
 
   const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('studio') },
+    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
     { url: buildCanonical('/terms', locale as Locale), name: t('heading') },
   ])
 

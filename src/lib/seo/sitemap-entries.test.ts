@@ -17,7 +17,7 @@ describe('buildSitemapEntries', () => {
       const langs = entry.alternates?.languages as Record<string, string> | undefined
       expect(langs).toBeDefined()
       expect(langs?.['zh-Hans']).toMatch(`${SITE_URL}/zh-Hans`)
-      expect(langs?.['x-default']).toMatch(`${SITE_URL}/zh-Hans`)
+      expect(langs?.['x-default']).toMatch(`${SITE_URL}/en`)
     }
   })
 
