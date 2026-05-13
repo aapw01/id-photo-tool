@@ -39,7 +39,12 @@ function defaultSettings(template: LayoutTemplate): LayoutSettings {
     margin_mm: template.settings?.margin_mm ?? 5,
     gap_mm: template.settings?.gap_mm ?? 2,
     showSeparator: template.settings?.showSeparator ?? true,
-    showCutGuides: template.settings?.showCutGuides ?? false,
+    // Cut guides used to default off — but the whole point of the
+    // layout tab is producing something a print shop will cut by hand.
+    // Hairline crop marks at each photo corner make the layout look
+    // unambiguously print-ready and cost nothing visually, so flip the
+    // default to on unless the template explicitly opts out.
+    showCutGuides: template.settings?.showCutGuides ?? true,
     backgroundColor: template.settings?.backgroundColor ?? '#FFFFFF',
   }
 }

@@ -253,6 +253,13 @@ export function LayoutPreview({
 
   return (
     <div className="space-y-2">
+      <p className="text-xs text-[var(--color-text-mute)]">
+        {t('actualSize', {
+          name: localizeText(paper.name, locale),
+          w: paper.width_mm,
+          h: paper.height_mm,
+        })}
+      </p>
       <div
         className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)]"
         aria-busy={busy}

@@ -288,7 +288,7 @@ export function StudioWorkspace() {
         <StudioTabs />
       </div>
 
-      {tab === 'size' ? <ComplianceBanner /> : null}
+      {tab === 'size' || tab === 'export' ? <ComplianceBanner /> : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
         {tab === 'layout' ? (

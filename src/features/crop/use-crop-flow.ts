@@ -187,24 +187,35 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
   }, [spec, frame, face, setWarnings, headTopY])
 
   /* -------------------------------------------------------------- */
-  /* 4. Apply spec.background.recommended when nothing's set        */
+  /* 4. Suggest spec.background.recommended when nothing's set      */
   /* -------------------------------------------------------------- */
+  //
+  // We used to silently flip the background colour to whatever the
+  // spec recommended (e.g. white for US visa) the first time the user
+  // picked that spec. Users found this confusing — the colour swatch
+  // just changed without their consent. Switch to a non-blocking
+  // suggestion toast with a one-tap "Apply" action so the change is
+  // always opt-in.
 
-  const bgAppliedFor = useRef<string | null>(null)
+  const bgSuggestedFor = useRef<string | null>(null)
   useEffect(() => {
-    if (!spec?.background?.recommended) return
-    if (bgAppliedFor.current === spec.id) return
-    bgAppliedFor.current = spec.id
+    const recommended = spec?.background?.recommended
+    if (!recommended) return
+    if (bgSuggestedFor.current === spec.id) return
+    bgSuggestedFor.current = spec.id
 
-    // Only auto-apply if the user hasn't explicitly picked a colour
-    // yet (i.e. they're still on the default transparent).
+    // Only suggest if the user hasn't picked a non-default colour yet.
     if (bgKind !== 'transparent') return
 
-    setBgColor({ kind: 'color', hex: spec.background.recommended })
-    toast.success(
-      tCrop('bgSuggested', {
-        name: localizeText(spec.name, locale),
-      }),
-    )
+    const specName = localizeText(spec.name, locale)
+    toast.message(tCrop('bgSuggested', { name: specName }), {
+      action: {
+        label: tCrop('bgSuggestedAction'),
+        onClick: () => {
+          setBgColor({ kind: 'color', hex: recommended })
+        },
+      },
+      duration: 8000,
+    })
   }, [spec, bgKind, setBgColor, tCrop, locale])
 }

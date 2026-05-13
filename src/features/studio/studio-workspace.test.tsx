@@ -179,7 +179,8 @@ describe('StudioWorkspace photo replacement', () => {
     useCropStore.getState().setFrame({ x: 1, y: 2, w: 3, h: 4 })
     useCropStore.getState().setSpec({
       id: 'test-spec',
-      name: 'test',
+      builtin: false,
+      name: { zh: 'test', 'zh-Hant': 'test', en: 'test' },
       category: 'custom',
       width_mm: 25,
       height_mm: 35,

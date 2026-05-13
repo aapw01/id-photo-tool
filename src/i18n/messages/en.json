@@ -179,7 +179,8 @@
       "eye-too-low": "Eyes too low: currently {ratio}% from top — spec asks for ~{lo}%–{hi}%",
       "face-not-found": "No face detected — can't check composition."
     },
-    "bgSuggested": "Applied the spec's recommended background: {name}"
+    "bgSuggested": "{name} recommends a specific background colour",
+    "bgSuggestedAction": "Apply"
   },
   "Background": {
     "title": "Background color",
@@ -313,6 +314,7 @@
     },
     "preview": {
       "canvasLabel": "Layout preview",
+      "actualSize": "Actual size: {name} · {w}×{h} mm",
       "overflow": "Some photos didn't fit: {list}. Try a larger paper or thinner gaps."
     },
     "actions": {

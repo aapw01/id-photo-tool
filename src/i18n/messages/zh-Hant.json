@@ -179,7 +179,8 @@
       "eye-too-low": "眼線偏低：目前距頂端 {ratio}%，規格要求約 {lo}%–{hi}%",
       "face-not-found": "未偵測到人臉，無法進行構圖檢查"
     },
-    "bgSuggested": "已為你套用規格建議背景：{name}"
+    "bgSuggested": "{name} 建議使用規格建議的背景色",
+    "bgSuggestedAction": "套用"
   },
   "Background": {
     "title": "背景顏色",
@@ -313,6 +314,7 @@
     },
     "preview": {
       "canvasLabel": "拼版預覽",
+      "actualSize": "實際尺寸：{name} · {w}×{h} mm",
       "overflow": "下列照片未能放下：{list}。請換更大的相紙或縮小間距。"
     },
     "actions": {
