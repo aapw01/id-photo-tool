@@ -29,6 +29,24 @@
   - 部署链路改为由 Cloudflare 自身的 Git 集成处理，仓库里不再需要保管
     Cloudflare 凭证；`deploy.yml` 已删除。详见 [`DEPLOYMENT.md §3`](./DEPLOYMENT.md)。
 
+- [ ] **重新升级 Next.js 到 16.x**（当前固定在 15.5.18）
+  - 背景：OpenNext 1.19.8/1.19.9 + Next 16.2.x 组合存在已知 bug
+    ([opennextjs/opennextjs-cloudflare#1258](https://github.com/opennextjs/opennextjs-cloudflare/issues/1258))：
+    Next 16.2 默认走 Turbopack，输出的 `page.js` 末尾把 `handler` named export
+    放在 child module，OpenNext 的请求管线读 `components.ComponentMod.handler`
+    时拿到 `undefined`，所有 app-router 路由在 Workers 上报
+    `TypeError: components.ComponentMod.handler is not a function`。
+  - PR [#1262](https://github.com/opennextjs/opennextjs-cloudflare/pull/1262)
+    给出了一个 `patchPageExports` 的修复方案，但作者最终把 PR closed 没合并，
+    上游仍未官方修复。
+  - 当前策略：降到 `next@15.5.18` + `eslint-config-next@15.5.18`
+    （仍是 OpenNext 1.19.9 官方支持的版本之一），换回 webpack 输出，
+    `module.exports = c` 直接暴露 `handler`，CF Workers 正常工作。
+  - 升回条件：(1) OpenNext 合并 Turbopack handler delegation 修复；
+    或 (2) Next 16 引入对 OpenNext 友好的 app-page chunk shape。
+  - 触发器：定期检查 OpenNext changelog 是否提到 "turbopack handler"
+    / "app-page exports" / issue #1258 / PR #1262。
+
 ### 1.2 真实部署后的验证
 
 - [ ] **Lighthouse 跑分（生产环境）**
