@@ -138,12 +138,6 @@
       "inch": "inch",
       "px": "px"
     },
-    "headSize": {
-      "label": "Head size",
-      "smaller": "Smaller",
-      "larger": "Larger",
-      "hint": "Slide within the spec's legal head-share band — export stays compliant."
-    },
     "manageCustom": "Manage custom sizes",
     "createCustom": "Create a custom size",
     "categories": {

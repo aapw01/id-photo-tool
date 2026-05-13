@@ -350,8 +350,6 @@ export function SpecPicker() {
 
       {activeSpec ? <ActiveSpecCard spec={activeSpec} /> : null}
 
-      {activeSpec?.composition?.headHeightRatio ? <HeadSizeSlider /> : null}
-
       <Button variant="default" className="w-full" onClick={() => setTab('export')}>
         <Download className="size-4" aria-hidden />
         {tStudio('export')}
@@ -359,44 +357,6 @@ export function SpecPicker() {
 
       <NextStepCTA current="size" />
     </section>
-  )
-}
-
-function HeadSizeSlider(): React.ReactElement {
-  const t = useTranslations('Crop.headSize')
-  const bias = useCropStore((s) => s.headSizeBias)
-  const setBias = useCropStore((s) => s.setHeadSizeBias)
-  // Percentage 0–100 is friendlier for the slider element than the
-  // 0–1 stored value; we round-trip through Number / 100.
-  const percent = Math.round(bias * 100)
-  return (
-    <div className="space-y-2 rounded-md border border-[var(--color-border)] bg-[var(--color-divider)] p-3">
-      <div className="flex items-center justify-between">
-        <Label htmlFor="head-size-slider" className="text-xs font-medium text-[var(--color-text)]">
-          {t('label')}
-        </Label>
-        <span className="font-mono text-xs text-[var(--color-text-mute)]">{percent}%</span>
-      </div>
-      <input
-        id="head-size-slider"
-        type="range"
-        min={0}
-        max={100}
-        step={1}
-        value={percent}
-        onChange={(e) => setBias(Number(e.target.value) / 100)}
-        className="w-full accent-[var(--color-primary)]"
-        aria-describedby="head-size-help"
-      />
-      <div
-        id="head-size-help"
-        className="flex justify-between font-mono text-[10px] text-[var(--color-text-weak)]"
-      >
-        <span>{t('smaller')}</span>
-        <span>{t('larger')}</span>
-      </div>
-      <p className="text-xs text-[var(--color-text-mute)]">{t('hint')}</p>
-    </div>
   )
 }
 

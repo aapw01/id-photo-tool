@@ -23,10 +23,10 @@ import type { ComplianceWarning } from './compliance'
  *
  *   - `'auto'` — produced by `useCropFlow`'s `autoCenter` pass. Free
  *     to be replaced whenever a better signal (face, mask head-top,
- *     spec / bias change) arrives.
+ *     spec change) arrives.
  *   - `'user'` — the user dragged / nudged the frame manually. The
  *     auto-pass leaves it alone unless an explicit override fires
- *     (currently: spec change or bias slider).
+ *     (currently: a spec change is the only such trigger).
  */
 export type FrameSource = 'auto' | 'user'
 
@@ -42,18 +42,6 @@ export interface CropState {
   warnings: ComplianceWarning[]
   /** Whether the guideline overlay is shown above the frame. */
   showGuidelines: boolean
-  /**
-   * Position within the active spec's `headHeightRatio` band:
-   *   0   → lower bound (head occupies the minimum legal share)
-   *   0.5 → midpoint
-   *   1   → upper bound (head fills the maximum legal share)
-   *
-   * Defaults to `1` so first-time users see a tight, head-dominant
-   * crop — matching common user expectations for ID photos. The
-   * slider in the UI lets them slide back towards a smaller head if
-   * they want more headroom.
-   */
-  headSizeBias: number
 
   setSpec: (spec: PhotoSpec | null) => void
   /**
@@ -68,11 +56,8 @@ export interface CropState {
   setFaceError: (err: string | null) => void
   setWarnings: (w: ComplianceWarning[]) => void
   setShowGuidelines: (v: boolean) => void
-  setHeadSizeBias: (v: number) => void
   reset: () => void
 }
-
-const DEFAULT_HEAD_SIZE_BIAS = 1
 
 export const useCropStore = create<CropState>((set) => ({
   spec: null,
@@ -83,7 +68,6 @@ export const useCropStore = create<CropState>((set) => ({
   faceError: null,
   warnings: [],
   showGuidelines: true,
-  headSizeBias: DEFAULT_HEAD_SIZE_BIAS,
 
   setSpec(spec) {
     // A new spec invalidates any user-locked frame: the auto-center
@@ -109,10 +93,6 @@ export const useCropStore = create<CropState>((set) => ({
   setShowGuidelines(showGuidelines) {
     set({ showGuidelines })
   },
-  setHeadSizeBias(headSizeBias) {
-    const clamped = headSizeBias < 0 ? 0 : headSizeBias > 1 ? 1 : headSizeBias
-    set({ headSizeBias: clamped })
-  },
   reset() {
     set({
       spec: null,
@@ -122,7 +102,6 @@ export const useCropStore = create<CropState>((set) => ({
       detecting: false,
       faceError: null,
       warnings: [],
-      headSizeBias: DEFAULT_HEAD_SIZE_BIAS,
     })
   },
 }))
@@ -137,6 +116,5 @@ export function __resetCropStoreForTesting(): void {
     faceError: null,
     warnings: [],
     showGuidelines: true,
-    headSizeBias: DEFAULT_HEAD_SIZE_BIAS,
   })
 }

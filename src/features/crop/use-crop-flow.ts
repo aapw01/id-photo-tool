@@ -53,7 +53,14 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
   const frameSource = useCropStore((s) => s.frameSource)
   const face = useCropStore((s) => s.face)
   const detecting = useCropStore((s) => s.detecting)
-  const headSizeBias = useCropStore((s) => s.headSizeBias)
+
+  // Production studio pegs the head-size bias to the upper bound of
+  // the spec's allowed band so the head fills the frame — that's the
+  // result users overwhelmingly expect for ID photos. The UI used to
+  // surface a slider, but it felt fiddly without changing the picture
+  // much; we now keep the value fixed and let the existing crop frame
+  // handles cover the rare "I want more headroom" case.
+  const HEAD_SIZE_BIAS = 1
 
   // Don't react to these in deps — we only need their setters.
   const { setFace, setFrame, setWarnings, setDetecting, setFaceError } = useCropStore.getState()
@@ -114,11 +121,10 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
   // The frame's provenance now lives on the store as `frameSource`:
   //
   //   - `'auto'` → safe to recompute on any better signal (face,
-  //                headTop, spec, bias). The auto-pass owns the frame.
+  //                headTop, spec). The auto-pass owns the frame.
   //   - `'user'` → manual drag / keyboard nudge. Only a *fresh user
-  //                intent* — spec change or bias slider — gets to
-  //                overwrite. Face / headTop "free upgrades" leave
-  //                the locked frame alone.
+  //                intent* — spec change — gets to overwrite. Face /
+  //                headTop "free upgrades" leave the locked frame alone.
   //
   // We compute a `key` per the relevant auto-pass inputs and only
   // act when it changes. That keeps the effect from re-firing when
@@ -128,48 +134,44 @@ export function useCropFlow(bitmap: ImageBitmap | null, sizeTabActive: boolean):
     () =>
       `${spec?.id ?? '∅'}|${face?.bbox.x.toFixed(1) ?? '∅'},${face?.bbox.y.toFixed(1) ?? '∅'}|${
         headTopY?.toFixed(1) ?? '∅'
-      }|${headSizeBias}`,
-    [spec, face, headTopY, headSizeBias],
+      }`,
+    [spec, face, headTopY],
   )
   const lastAutoKey = useRef<string | null>(null)
   const lastAutoSpecId = useRef<string | null>(null)
-  const lastAutoBias = useRef<number>(headSizeBias)
 
   useEffect(() => {
     if (!bitmap || !spec) return
     if (autoKey === lastAutoKey.current) return
 
     const specChanged = lastAutoSpecId.current !== spec.id
-    const biasChanged = lastAutoBias.current !== headSizeBias
     const userOwnsFrame = frameSource === 'user'
 
-    // User-owned frames stay put unless the user changed spec or bias
-    // (both register as "fresh intent"). Face / headTop refinements
-    // arrive after the user might have already nudged — clobbering
-    // their work would be infuriating.
-    if (userOwnsFrame && !specChanged && !biasChanged) {
+    // User-owned frames stay put unless the user changed spec
+    // (the only "fresh intent" trigger remaining). Face / headTop
+    // refinements arrive after the user might have already nudged —
+    // clobbering their work would be infuriating.
+    if (userOwnsFrame && !specChanged) {
       // Record what we saw so the next signal change is judged
       // against current inputs — otherwise a later face-only refine
       // would still register as "spec changed".
       lastAutoKey.current = autoKey
       lastAutoSpecId.current = spec.id
-      lastAutoBias.current = headSizeBias
       return
     }
 
     lastAutoKey.current = autoKey
     lastAutoSpecId.current = spec.id
-    lastAutoBias.current = headSizeBias
     // Don't gate on `detecting`: an initial centred-crop is more
     // useful than a perpetual spinner when the MediaPipe CDN is
     // unreachable. The effect re-fires once `face` resolves and
     // upgrades the frame in place.
     const next = autoCenter({ width: bitmap.width, height: bitmap.height }, spec, face, {
       headTopY,
-      headSizeBias,
+      headSizeBias: HEAD_SIZE_BIAS,
     })
     setFrame(next, 'auto')
-  }, [autoKey, bitmap, spec, face, frameSource, setFrame, headTopY, headSizeBias])
+  }, [autoKey, bitmap, spec, face, frameSource, setFrame, headTopY])
 
   /* -------------------------------------------------------------- */
   /* 3. Recompute compliance whenever frame or face changes         */
