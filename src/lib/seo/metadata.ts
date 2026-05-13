@@ -51,24 +51,29 @@ interface BuildMetadataOptions {
   path: string
   title: string
   description: string
-  /** OG image path relative to SITE_URL (defaults to /og/default.png). */
+  /** OG image path relative to SITE_URL. Defaults to `/og/default.png`. */
   image?: string
   /** When true, instructs robots to skip indexing (404 / error / dev). */
   noIndex?: boolean
 }
 
+/**
+ * Static OG fallback. We deliberately ship the default card as a real
+ * PNG asset rather than generating it with `@vercel/og` / `ImageResponse`
+ * at runtime: the satori bundle is ~700 KB and was the single biggest
+ * contributor to Cloudflare Worker cold-start CPU on the free tier
+ * (which caps every request at 10 ms). Pulling it out of the worker
+ * graph by deleting `src/app/opengraph-image.tsx` and pointing the
+ * default OG image at a static asset under `/og/default.png` cuts the
+ * server function bundle by ~700 KB without losing the social card.
+ */
+const DEFAULT_OG_IMAGE_PATH = '/og/default.png'
+
 /** Build a complete `Metadata` block with canonical + alternates + OG. */
 export function buildMetadata(opts: BuildMetadataOptions): Metadata {
   const canonical = buildCanonical(opts.path, opts.locale)
-  // When the caller doesn't pass an explicit image we leave OG/Twitter
-  // images undefined so Next.js can fall back to the route-level
-  // `opengraph-image.tsx` (App Router convention) — which we generate
-  // at build time from `src/app/opengraph-image.tsx`.
-  const customImageUrl = opts.image
-    ? opts.image.startsWith('http')
-      ? opts.image
-      : `${SITE_URL}${opts.image}`
-    : null
+  const imagePath = opts.image ?? DEFAULT_OG_IMAGE_PATH
+  const customImageUrl = imagePath.startsWith('http') ? imagePath : `${SITE_URL}${imagePath}`
 
   const openGraph: NonNullable<Metadata['openGraph']> = {
     type: 'website',
@@ -78,18 +83,14 @@ export function buildMetadata(opts: BuildMetadataOptions): Metadata {
     url: canonical,
     title: opts.title,
     description: opts.description,
-  }
-  if (customImageUrl) {
-    openGraph.images = [{ url: customImageUrl, width: 1200, height: 630, alt: opts.title }]
+    images: [{ url: customImageUrl, width: 1200, height: 630, alt: opts.title }],
   }
 
   const twitter: NonNullable<Metadata['twitter']> = {
     card: 'summary_large_image',
     title: opts.title,
     description: opts.description,
-  }
-  if (customImageUrl) {
-    twitter.images = [customImageUrl]
+    images: [customImageUrl],
   }
 
   return {
