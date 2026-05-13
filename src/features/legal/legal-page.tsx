@@ -9,8 +9,12 @@ interface LegalSection {
 interface LegalPageProps {
   heading: string
   subtitle: string
+  /**
+   * Already-localised "Last updated · 2026-05-12" line. The caller
+   * is responsible for resolving the ICU template, so this component
+   * never has to know about message formatting.
+   */
   lastUpdated: string
-  lastUpdatedLabel: string
   sections: LegalSection[]
   /** Optional CTAs rendered above the sections. */
   actions?: ReactNode
@@ -21,14 +25,7 @@ interface LegalPageProps {
  * `page.tsx` files own the i18n lookup and pass already-localised
  * strings here.
  */
-export function LegalPage({
-  heading,
-  subtitle,
-  lastUpdated,
-  lastUpdatedLabel,
-  sections,
-  actions,
-}: LegalPageProps) {
+export function LegalPage({ heading, subtitle, lastUpdated, sections, actions }: LegalPageProps) {
   return (
     <article className="mx-auto w-full max-w-3xl px-6 pt-10 pb-16">
       <header className="mb-10">
@@ -42,9 +39,7 @@ export function LegalPage({
           {heading}
         </h1>
         <p className="mt-3 text-[var(--color-text-mute)] text-[var(--text-body-lg)]">{subtitle}</p>
-        <p className="mt-4 font-mono text-xs text-[var(--color-text-weak)]">
-          {lastUpdatedLabel.replace('{date}', lastUpdated)}
-        </p>
+        <p className="mt-4 font-mono text-xs text-[var(--color-text-weak)]">{lastUpdated}</p>
         {actions ? <div className="mt-6">{actions}</div> : null}
       </header>
 

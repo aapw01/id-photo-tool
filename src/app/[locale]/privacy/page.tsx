@@ -71,8 +71,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
         <LegalPage
           heading={t('heading')}
           subtitle={t('subtitle')}
-          lastUpdated={t('lastUpdated')}
-          lastUpdatedLabel={tCommon('lastUpdated')}
+          lastUpdated={tCommon('lastUpdated', { date: t('lastUpdated') })}
           sections={sections}
         />
       </main>

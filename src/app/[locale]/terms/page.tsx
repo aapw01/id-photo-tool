@@ -72,8 +72,7 @@ export default async function TermsPage({ params }: TermsPageProps) {
         <LegalPage
           heading={t('heading')}
           subtitle={t('subtitle')}
-          lastUpdated={t('lastUpdated')}
-          lastUpdatedLabel={tCommon('lastUpdated')}
+          lastUpdated={tCommon('lastUpdated', { date: t('lastUpdated') })}
           sections={sections}
         />
       </main>
