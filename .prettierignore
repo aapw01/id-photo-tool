@@ -7,3 +7,9 @@ public
 out
 build
 coverage
+
+# Local-only artifacts, not source code
+lighthouse-*.html
+.open-next
+.wrangler
+.playwright-cli

@@ -55,6 +55,9 @@ next-env.d.ts
 /.playwright-cli/
 /.pw-out/
 
+# Local Lighthouse reports
+lighthouse-*.html
+
 # IDE
 .idea/
 .vscode/settings.json
