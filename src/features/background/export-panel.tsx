@@ -318,6 +318,26 @@ export function ExportPanel({
   // resolution shouldn't say "缩放 1×".
   const showShrinkRatio = exportFollowsSpec && shrinkRatio >= 1.5
 
+  // Compliance badge derivation. We say a file is spec-compliant when
+  // (a) a spec is in play, (b) the format produces a finite estimate,
+  // and (c) the estimated size falls within the spec's KB band (when
+  // declared). Non-compliant cases are still permitted to export —
+  // users sometimes need an out-of-spec file for non-government
+  // photos — but they'll see a warning chip so they know.
+  type ComplianceStatus = 'ok' | 'over' | 'under' | 'unknown'
+  const compliance: ComplianceStatus = (() => {
+    if (!exportFollowsSpec || !spec?.fileRules || estimateBytes === null) return 'unknown'
+    const estimateKB = estimateBytes / 1024
+    const { minKB, maxKB } = spec.fileRules
+    if (typeof maxKB === 'number' && estimateKB > maxKB) return 'over'
+    if (typeof minKB === 'number' && estimateKB < minKB) return 'under'
+    return 'ok'
+  })()
+  const complianceKB = estimateBytes !== null ? Math.round(estimateBytes / 1024) : null
+  const complianceRange = spec?.fileRules
+    ? formatFileRuleRange(spec.fileRules.minKB, spec.fileRules.maxKB)
+    : null
+
   return (
     <section className="space-y-4 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <header>
@@ -498,6 +518,29 @@ export function ExportPanel({
         </div>
       ) : null}
 
+      {compliance !== 'unknown' && complianceKB !== null && complianceRange ? (
+        // Compliance badge. Lives between quality slider and the
+        // compress-to-KB block so the user sees a clear pass/fail
+        // signal *before* deciding whether the brute-force compressor
+        // is worth turning on.
+        <div
+          className={cn(
+            'flex items-start gap-2 rounded-md border px-3 py-2 text-xs',
+            compliance === 'ok'
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
+              : 'border-amber-200 bg-amber-50 text-amber-900',
+          )}
+          role={compliance === 'ok' ? 'status' : 'alert'}
+        >
+          <span className="font-medium">
+            {compliance === 'ok' ? t('compliance.okTitle') : t('compliance.warnTitle')}
+          </span>
+          <span className="text-[var(--color-text-mute)]">
+            {t('compliance.detail', { kb: complianceKB, range: complianceRange })}
+          </span>
+        </div>
+      ) : null}
+
       <div className="space-y-2 rounded-md border border-[var(--color-border)] bg-[var(--color-divider)] p-3">
         <div className="flex items-center justify-between gap-2">
           <Label htmlFor="compress-toggle" className="text-xs font-medium text-[var(--color-text)]">
@@ -577,6 +620,23 @@ export function ExportPanel({
       <WeChatSaveHint />
     </section>
   )
+}
+
+/**
+ * Format a `{minKB?, maxKB?}` band for display in the compliance
+ * badge. Both bounds may be absent in the data, in which case we
+ * surface only what we have:
+ *
+ *   - both     → "21–30 KB"
+ *   - max only → "≤ 30 KB"
+ *   - min only → "≥ 21 KB"
+ *   - neither  → null (caller decides what to show)
+ */
+function formatFileRuleRange(minKB?: number, maxKB?: number): string | null {
+  if (minKB != null && maxKB != null) return `${minKB}–${maxKB} KB`
+  if (maxKB != null) return `≤ ${maxKB} KB`
+  if (minKB != null) return `≥ ${minKB} KB`
+  return null
 }
 
 function WeChatSaveHint() {

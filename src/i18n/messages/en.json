@@ -249,6 +249,11 @@
       "cta": "Pick a size →"
     },
     "privacyNote": "Export runs in your browser · nothing is uploaded",
+    "compliance": {
+      "okTitle": "Meets the spec",
+      "warnTitle": "Out of spec",
+      "detail": "{kb} KB · spec asks {range}"
+    },
     "format": {
       "label": "Format",
       "png-alpha": "PNG · transparent",

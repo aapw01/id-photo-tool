@@ -249,6 +249,11 @@
       "cta": "去选择尺寸 →"
     },
     "privacyNote": "导出在浏览器中完成 · 照片不会上传",
+    "compliance": {
+      "okTitle": "符合规格",
+      "warnTitle": "不符合规格",
+      "detail": "{kb} KB · 规格 {range}"
+    },
     "format": {
       "label": "格式",
       "png-alpha": "PNG · 透明背景",
