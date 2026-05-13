@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
-import { SpecManagerShell } from '@/features/spec-manager/spec-manager-shell'
+import { SpecManagerShellLazy } from '@/features/spec-manager/spec-manager-shell-lazy'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { buildMetadata } from '@/lib/seo/metadata'
@@ -53,7 +53,9 @@ export default async function SpecsPage({ params }: SpecsPageProps) {
             </p>
           </header>
 
-          <SpecManagerShell />
+          {/* Lazy + ssr:false to keep cold-start CPU under Cloudflare
+              Workers' 10 ms free-tier budget. See spec-manager-shell-lazy. */}
+          <SpecManagerShellLazy />
         </section>
       </main>
       <SiteFooter />
