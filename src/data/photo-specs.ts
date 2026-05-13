@@ -28,6 +28,10 @@ import type { PhotoSpec } from '@/types/spec'
 
 const WHITE = '#FFFFFF'
 const LIGHT_GRAY = '#DCDCDC'
+const LIGHT_BLUE = '#D8E2EC'
+const VISA_BLUE = '#438EDB'
+const ID_RED = '#D9342B'
+const CREAM = '#F5F5DC'
 
 const i18n = (zh: string, zhHant: string, en: string) => ({ zh, 'zh-Hant': zhHant, en })
 
@@ -111,13 +115,18 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     category: 'cn-id',
     region: 'CN',
     name: i18n('二代身份证', '二代身分證', 'Chinese ID card'),
-    description: i18n('GA 461-2004 国家公安部标准', 'GA 461-2004 公安部標準', 'GA 461-2004'),
+    description: i18n(
+      'GA/T 461-2019 公安部数字相片标准',
+      'GA/T 461-2019 公安部數位相片標準',
+      'GA/T 461-2019',
+    ),
     width_mm: 26,
     height_mm: 32,
     dpi: 350,
     width_px: 358,
     height_px: 441,
     background: { recommended: WHITE },
+    fileRules: { minKB: 10, maxKB: 100, formats: ['jpg'] },
     composition: { headHeightRatio: [0.6, 0.7], eyeLineFromTop: [0.35, 0.45] },
     reference: 'https://www.mps.gov.cn/',
   },
@@ -127,13 +136,20 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     category: 'cn-id',
     region: 'CN',
     name: i18n('中国护照', '中國護照', 'Chinese passport'),
+    description: i18n(
+      '出入境证件数字相片技术标准 · 白 / 浅灰 / 淡蓝底均可',
+      '出入境證件數位相片技術標準 · 白 / 淺灰 / 淡藍底均可',
+      'Exit-entry digital photo standard · white / light grey / light blue OK',
+    ),
     width_mm: 33,
     height_mm: 48,
     dpi: 300,
     width_px: 390,
     height_px: 567,
-    background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.6, 0.7], eyeLineFromTop: [0.3, 0.4] },
+    background: { recommended: WHITE, allowed: [LIGHT_GRAY, LIGHT_BLUE] },
+    fileRules: { minKB: 20, maxKB: 80, formats: ['jpg'] },
+    composition: { headHeightRatio: [0.62, 0.71], eyeLineFromTop: [0.27, 0.43] },
+    reference: 'https://www.bzztc.cn/xxtd/Document/jsbz/page_11.html',
   },
 
   /* ----------------------------------------------------------------------- */
@@ -180,8 +196,9 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     dpi: 300,
     width_px: 390,
     height_px: 567,
-    background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.6, 0.7], eyeLineFromTop: [0.3, 0.4] },
+    background: { recommended: WHITE, allowed: [LIGHT_GRAY, LIGHT_BLUE] },
+    fileRules: { minKB: 20, maxKB: 80, formats: ['jpg'] },
+    composition: { headHeightRatio: [0.62, 0.71], eyeLineFromTop: [0.27, 0.43] },
   },
   {
     id: 'permit-taiwan',
@@ -194,8 +211,9 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     dpi: 300,
     width_px: 390,
     height_px: 567,
-    background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.6, 0.7], eyeLineFromTop: [0.3, 0.4] },
+    background: { recommended: WHITE, allowed: [LIGHT_GRAY, LIGHT_BLUE] },
+    fileRules: { minKB: 20, maxKB: 80, formats: ['jpg'] },
+    composition: { headHeightRatio: [0.62, 0.71], eyeLineFromTop: [0.27, 0.43] },
   },
 
   /* ----------------------------------------------------------------------- */
@@ -214,7 +232,17 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 600,
     height_px: 600,
     background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.5, 0.69], eyeLineFromTop: [0.395, 0.527] },
+    // travel.state.gov digital image: 600×600 to 1200×1200, JPEG ≤240 KB
+    fileRules: {
+      maxKB: 240,
+      formats: ['jpg'],
+      pixelRange: { wMin: 600, wMax: 1200, hMin: 600, hMax: 1200 },
+    },
+    // Eye line is 1 1/8"–1 3/8" (28–35 mm) from the *bottom*, so the
+    // *top*-anchored ratio is (51 − 35)/51 to (51 − 28)/51 = 0.314–0.441.
+    // Previous [0.395, 0.527] had the direction reversed and pushed the
+    // eyes into the lower half of the frame, rejecting compliant photos.
+    composition: { headHeightRatio: [0.5, 0.69], eyeLineFromTop: [0.314, 0.441] },
     reference: 'https://travel.state.gov/content/travel/en/passports/how-apply/photos.html',
   },
   {
@@ -248,8 +276,10 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     dpi: 300,
     width_px: 413,
     height_px: 531,
-    background: { recommended: LIGHT_GRAY, allowed: [WHITE] },
+    // gov.uk: "plain cream or light grey background"
+    background: { recommended: LIGHT_GRAY, allowed: [WHITE, CREAM] },
     composition: { headHeightRatio: [0.65, 0.8], eyeLineFromTop: [0.3, 0.4] },
+    reference: 'https://www.gov.uk/photos-for-passports/photo-requirements',
   },
   {
     id: 'ca-visa',
@@ -277,7 +307,8 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 413,
     height_px: 531,
     background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.65, 0.8], eyeLineFromTop: [0.3, 0.4] },
+    // Australian Passport Office: face 32–36 mm chin-to-crown → 71–80%
+    composition: { headHeightRatio: [0.7, 0.8], eyeLineFromTop: [0.3, 0.4] },
   },
   {
     id: 'nz-visa',
@@ -341,13 +372,22 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     category: 'visa',
     region: 'MY',
     name: i18n('马来西亚签证', '馬來西亞簽證', 'Malaysia visa'),
+    description: i18n(
+      '马签需蓝底（与马护照白底不同）',
+      '馬簽需藍底（與馬護照白底不同）',
+      'Visa requires blue background (different from passport)',
+    ),
     width_mm: 35,
     height_mm: 50,
     dpi: 300,
     width_px: 413,
     height_px: 590,
-    background: { recommended: WHITE },
+    // kln.gov.my: visa applications require "blue background"; this is a
+    // common rejection reason because applicants assume the passport's
+    // white background applies. Passport / IC photos are still white.
+    background: { recommended: VISA_BLUE, allowed: [WHITE] },
     composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.4] },
+    reference: 'https://www.kln.gov.my/',
   },
   {
     id: 'vn-visa-arrival',
@@ -361,7 +401,9 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 472,
     height_px: 708,
     background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.4] },
+    // visa.mofa.gov.vn: head 32–36 mm of 60 mm frame → 53–60% (legacy
+    // floor 0.60 left in to stay tolerant of older guidelines).
+    composition: { headHeightRatio: [0.65, 0.75], eyeLineFromTop: [0.3, 0.4] },
   },
   {
     id: 'th-visa-arrival',
@@ -373,9 +415,13 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     height_mm: 60,
     dpi: 300,
     width_px: 472,
-    height_px: 708,
+    // Thailand e-VOA portal specifies 472×709 (the +1 px comes from
+    // rounding 60mm × 300 / 25.4 = 708.66 up rather than down).
+    height_px: 709,
     background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.4] },
+    fileRules: { maxKB: 120, formats: ['jpg'] },
+    // Thai immigration: head 70–75% of photo
+    composition: { headHeightRatio: [0.7, 0.75], eyeLineFromTop: [0.3, 0.4] },
   },
   {
     id: 'ru-visa',
@@ -389,7 +435,8 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 413,
     height_px: 531,
     background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.4] },
+    // Russian MFA consular: head ~33 mm, occupying 70–80% of the photo
+    composition: { headHeightRatio: [0.7, 0.8], eyeLineFromTop: [0.3, 0.4] },
   },
   {
     id: 'in-visa',
@@ -397,13 +444,22 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     category: 'visa',
     region: 'IN',
     name: i18n('印度签证', '印度簽證', 'India visa'),
+    description: i18n(
+      'indianvisaonline.gov.in 标准',
+      'indianvisaonline.gov.in 標準',
+      'indianvisaonline.gov.in',
+    ),
     width_mm: 51,
     height_mm: 51,
     dpi: 300,
     width_px: 600,
     height_px: 600,
     background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.55, 0.7], eyeLineFromTop: [0.35, 0.45] },
+    fileRules: { minKB: 10, maxKB: 300, formats: ['jpg'] },
+    // Same chin-to-crown / eye-from-bottom rules as US visa (25–35 mm
+    // head, eyes 28–35 mm above the bottom): head 49–69%, eye 31–44%.
+    composition: { headHeightRatio: [0.49, 0.69], eyeLineFromTop: [0.31, 0.44] },
+    reference: 'https://indianvisaonline.gov.in/visa/instruction.html',
   },
 
   /* ----------------------------------------------------------------------- */
@@ -415,18 +471,25 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     category: 'exam',
     region: 'CN',
     name: i18n('国家公务员考试', '國家公務員考試', 'National civil service exam'),
-    description: i18n('21–30 KB · 295×413', '21–30 KB · 295×413', '21–30 KB · 295×413'),
+    description: i18n(
+      '20–100 KB · ≥295×413 · 白 / 蓝底',
+      '20–100 KB · ≥295×413 · 白 / 藍底',
+      '20–100 KB · ≥295×413 · white or blue background',
+    ),
     width_mm: 25,
     height_mm: 35,
     dpi: 300,
     width_px: 295,
     height_px: 413,
-    background: { recommended: WHITE },
+    // 2025/2026 国考报名公告允许白底或蓝底
+    background: { recommended: WHITE, allowed: [VISA_BLUE] },
+    // 历史宽容范围 20–100KB（早期）/ 现行工具多为 ≤20KB；以 20–100 兼容
+    // 多数考点，pixelRange 上限放开避免合规照片被误判
     fileRules: {
-      minKB: 21,
-      maxKB: 30,
+      minKB: 20,
+      maxKB: 100,
       formats: ['jpg'],
-      pixelRange: { wMin: 295, wMax: 295, hMin: 413, hMax: 413 },
+      pixelRange: { wMin: 295, wMax: 1024, hMin: 413, hMax: 1280 },
     },
     composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.42] },
   },
@@ -436,18 +499,30 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     category: 'exam',
     region: 'CN',
     name: i18n('计算机等级考试 (NCRE)', '電腦等級考試 (NCRE)', 'NCRE'),
-    description: i18n('≤ 20 KB · 144×192', '≤ 20 KB · 144×192', '≤ 20 KB · 144×192'),
-    width_mm: 12.2,
-    height_mm: 16.3,
+    description: i18n(
+      '20–200 KB · ≥144×192 · 白 / 浅蓝底',
+      '20–200 KB · ≥144×192 · 白 / 淺藍底',
+      '20–200 KB · ≥144×192 · white or light blue background',
+    ),
+    // 上海市教育考试院 2024 NCRE 报名公告明文："成像区大小为 48mm×33mm
+    // (高×宽)"，即印片实际尺寸 33×48mm；旧值 12.2×16.3mm 是从最小像素
+    // 144×192 反推得到的派生值，并非真实成像尺寸。
+    width_mm: 33,
+    height_mm: 48,
     dpi: 300,
-    width_px: 144,
-    height_px: 192,
-    background: { recommended: WHITE },
+    width_px: 390,
+    height_px: 567,
+    background: { recommended: WHITE, allowed: [LIGHT_BLUE] },
+    // 官方："照片大小 20KB–200KB"，"最小 192×144 (高×宽)"。旧 spec 把
+    // 下限 20 当成 maxKB，且把最小像素当固定值锁死。
     fileRules: {
-      maxKB: 20,
+      minKB: 20,
+      maxKB: 200,
       formats: ['jpg'],
-      pixelRange: { wMin: 144, wMax: 144, hMin: 192, hMax: 192 },
+      pixelRange: { wMin: 144, wMax: 1024, hMin: 192, hMax: 1280 },
     },
+    composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.42] },
+    reference: 'https://www.shmeea.edu.cn/page/05700/20240201/18183.html',
   },
   {
     id: 'exam-cn-postgrad',
@@ -455,18 +530,28 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     category: 'exam',
     region: 'CN',
     name: i18n('全国硕士研究生考试', '全國碩士研究生考試', 'Postgraduate entrance exam'),
-    description: i18n('≤ 30 KB · 150×210', '≤ 30 KB · 150×210', '≤ 30 KB · 150×210'),
+    description: i18n(
+      '20–100 KB · 3:4 · 白 / 蓝 / 红底',
+      '20–100 KB · 3:4 · 白 / 藍 / 紅底',
+      '20–100 KB · 3:4 · white / blue / red background',
+    ),
     width_mm: 12.7,
     height_mm: 17.8,
     dpi: 300,
     width_px: 150,
     height_px: 210,
-    background: { recommended: WHITE },
+    // 研招网："白色 / 蓝色 / 红色"均可，具体以报考点为准
+    background: { recommended: WHITE, allowed: [VISA_BLUE, ID_RED] },
+    // 研招网官方：JPG，宽 90–480 px，高 100–640 px，3:4，文件大小
+    // 20–100 KB 最佳（建议不超过 10M）。旧 maxKB=30 远窄于现行要求。
     fileRules: {
-      maxKB: 30,
+      minKB: 20,
+      maxKB: 100,
       formats: ['jpg'],
-      pixelRange: { wMin: 150, wMax: 150, hMin: 210, hMax: 210 },
+      pixelRange: { wMin: 90, wMax: 480, hMin: 100, hMax: 640 },
     },
+    composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.42] },
+    reference: 'https://yz.chsi.com.cn/',
   },
 ]
 
