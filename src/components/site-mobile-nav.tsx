@@ -41,7 +41,7 @@ export function SiteMobileNav() {
           <SheetTitle>{t('menu.title')}</SheetTitle>
         </SheetHeader>
         <SheetBody>
-          <nav aria-label="mobile primary">
+          <nav aria-label={t('a11y.mobilePrimary')}>
             <ul className="flex flex-col gap-1">
               {NAV_KEYS.map((key) => {
                 const href = NAV_HREFS[key]

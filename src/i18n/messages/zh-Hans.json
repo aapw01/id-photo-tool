@@ -1,6 +1,7 @@
 {
   "Common": {
     "appName": "Pixfit",
+    "brand": "Pixfit · 像配",
     "tagline": "证件照，一次搞定",
     "openStudio": "打开工作台",
     "learnMore": "了解更多",
@@ -20,6 +21,10 @@
       "open": "打开导航",
       "close": "关闭导航",
       "title": "导航"
+    },
+    "a11y": {
+      "primary": "主导航",
+      "mobilePrimary": "移动端主导航"
     }
   },
   "Home": {
@@ -101,7 +106,8 @@
       "export": "导出",
       "comingSoon": "即将上线",
       "flowLabel": "工作流：背景 → 尺寸 → 排版 → 导出",
-      "flowHint": "按顺序操作更顺手，也可以随时跳到任意步骤。"
+      "flowHint": "按顺序操作更顺手，也可以随时跳到任意步骤。",
+      "sectionsA11y": "编辑步骤"
     },
     "mobile": {
       "tabLabel": "切换面板",
@@ -206,7 +212,8 @@
       "head-too-large": "头部偏大：当前 {ratio}%，规格要求约 {lo}%–{hi}%",
       "eye-too-high": "眼线偏高：当前距顶部 {ratio}%，规格要求约 {lo}%–{hi}%",
       "eye-too-low": "眼线偏低：当前距顶部 {ratio}%，规格要求约 {lo}%–{hi}%",
-      "face-not-found": "未检测到人脸，无法做构图检查"
+      "face-not-found": "未检测到人脸，无法做构图检查",
+      "moreCount": "还有 {count} 项"
     },
     "bgSuggested": "{name} 推荐使用规格建议的背景色",
     "bgSuggestedAction": "采用"

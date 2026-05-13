@@ -42,6 +42,7 @@ export default async function HomePage({ params }: HomePageProps) {
   setRequestLocale(locale)
 
   const t = await getTranslations('Home')
+  const tCommon = await getTranslations('Common')
   const featureKeys = ['privacy', 'smart', 'layout', 'compress'] as const
 
   return (
@@ -51,7 +52,7 @@ export default async function HomePage({ params }: HomePageProps) {
         <section className="mx-auto max-w-5xl px-6 pt-16 pb-12 sm:pt-24">
           <div className="mx-auto max-w-3xl text-center">
             <p className="font-mono text-xs tracking-[0.25em] text-[var(--color-primary-dk)] uppercase">
-              Pixfit · 像配
+              {tCommon('brand')}
             </p>
             <h1
               className="mt-4 font-semibold tracking-tight text-balance text-[var(--color-text)]"

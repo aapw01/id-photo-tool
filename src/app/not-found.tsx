@@ -5,13 +5,18 @@ import { DEFAULT_LOCALE } from '@/lib/seo/site-config'
 /**
  * Top-level fallback for paths that don't match any locale segment
  * (next-intl middleware redirects unknown locales, but this still
- * catches direct hits like `/foo`). The detailed locale-aware 404
- * lives at `[locale]/not-found.tsx`.
+ * catches direct hits like `/foo` or `/`). The detailed, fully
+ * localised 404 lives at `[locale]/not-found.tsx`.
+ *
+ * This page renders outside of `NextIntlClientProvider` and therefore
+ * has no message catalogue — we deliberately ship a short English
+ * fallback and point the user at the locale-prefixed routes where the
+ * real localisation kicks in.
  */
 export default function RootNotFound() {
   const fallbackHref = `/${DEFAULT_LOCALE}`
   return (
-    <html lang={DEFAULT_LOCALE}>
+    <html lang="en">
       <body
         style={{
           margin: 0,
@@ -44,15 +49,26 @@ export default function RootNotFound() {
           >
             404
           </p>
-          <h1 style={{ fontSize: '28px', marginTop: '12px', marginBottom: '12px' }}>页面不存在</h1>
+          <h1 style={{ fontSize: '28px', marginTop: '12px', marginBottom: '12px' }}>
+            Page not found
+          </h1>
           <p
             style={{
               color: '#57534e',
-              marginBottom: '24px',
+              marginBottom: '12px',
               fontSize: '15px',
             }}
           >
-            The page you are looking for has been moved or never existed.
+            The page you are looking for could not be found.
+          </p>
+          <p
+            style={{
+              color: '#78716c',
+              marginBottom: '24px',
+              fontSize: '13px',
+            }}
+          >
+            Try adding a locale prefix — for example <code>/zh-Hans</code> or <code>/en</code>.
           </p>
           <Link
             href={fallbackHref}

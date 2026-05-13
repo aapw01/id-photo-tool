@@ -107,7 +107,7 @@ export function ComplianceBanner() {
           {visible.map((w) => (
             <li key={w.code}>{buildMessage(w.code)}</li>
           ))}
-          {moreCount > 0 ? <li>+ {moreCount} more</li> : null}
+          {moreCount > 0 ? <li>{tw('moreCount', { count: moreCount })}</li> : null}
         </ul>
       </div>
     </Banner>

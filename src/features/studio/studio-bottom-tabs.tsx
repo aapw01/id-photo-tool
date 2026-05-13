@@ -80,7 +80,7 @@ export function StudioBottomTabs({ onSelect }: StudioBottomTabsProps = {}) {
     >
       <div
         role="tablist"
-        aria-label="Studio sections"
+        aria-label={t('sectionsA11y')}
         onKeyDown={handleKey}
         className="mx-auto flex h-14 max-w-2xl items-stretch"
       >

@@ -1,6 +1,7 @@
 {
   "Common": {
     "appName": "Pixfit",
+    "brand": "Pixfit",
     "tagline": "ID photos, done right in your browser",
     "openStudio": "Open Studio",
     "learnMore": "Learn more",
@@ -20,6 +21,10 @@
       "open": "Open menu",
       "close": "Close menu",
       "title": "Navigate"
+    },
+    "a11y": {
+      "primary": "Primary navigation",
+      "mobilePrimary": "Primary mobile navigation"
     }
   },
   "Home": {
@@ -101,7 +106,8 @@
       "export": "Export",
       "comingSoon": "Coming soon",
       "flowLabel": "Workflow: Background → Size → Layout → Export",
-      "flowHint": "Step through in order — or jump to any tab any time."
+      "flowHint": "Step through in order — or jump to any tab any time.",
+      "sectionsA11y": "Studio sections"
     },
     "mobile": {
       "tabLabel": "Switch panel",
@@ -206,7 +212,8 @@
       "head-too-large": "Head is large: currently {ratio}% — spec asks for ~{lo}%–{hi}%",
       "eye-too-high": "Eyes too high: currently {ratio}% from top — spec asks for ~{lo}%–{hi}%",
       "eye-too-low": "Eyes too low: currently {ratio}% from top — spec asks for ~{lo}%–{hi}%",
-      "face-not-found": "No face detected — can't check composition."
+      "face-not-found": "No face detected — can't check composition.",
+      "moreCount": "+{count} more"
     },
     "bgSuggested": "{name} recommends a specific background colour",
     "bgSuggestedAction": "Apply"

@@ -18,6 +18,7 @@ const LEGAL_LINKS = [
 
 export function SiteFooter() {
   const t = useTranslations('Footer')
+  const tCommon = useTranslations('Common')
   const year = new Date().getFullYear()
 
   return (
@@ -27,7 +28,7 @@ export function SiteFooter() {
           <div className="flex flex-col gap-3">
             <Logo iconOnly className="shrink-0" />
             <div>
-              <div className="font-medium text-[var(--color-text)]">Pixfit · 像配</div>
+              <div className="font-medium text-[var(--color-text)]">{tCommon('brand')}</div>
               <div className="mt-1 text-sm text-[var(--color-text-mute)]">{t('tagline')}</div>
             </div>
           </div>

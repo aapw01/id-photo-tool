@@ -27,7 +27,7 @@ export function SiteHeader() {
           <Logo />
         </Link>
 
-        <nav aria-label="primary" className="hidden md:flex">
+        <nav aria-label={t('a11y.primary')} className="hidden md:flex">
           <ul className="flex items-center gap-1 text-sm">
             {navItems.map((item) => (
               <li key={item.href}>
