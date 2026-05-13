@@ -113,6 +113,29 @@
     "cta": {
       "export": "匯出當前作品"
     },
+    "intent": {
+      "title": "想做什麼？",
+      "subtitle": "選一個動作開始，也可以從上方 tab 自由切換。",
+      "dismiss": "關閉",
+      "choices": {
+        "background": {
+          "label": "換背景",
+          "hint": "去底色 / 換證件藍白"
+        },
+        "size": {
+          "label": "裁尺寸",
+          "hint": "證件 / 簽證 / 自訂"
+        },
+        "layout": {
+          "label": "排版列印",
+          "hint": "拼到 5 吋 / 6 吋 / A4"
+        },
+        "export": {
+          "label": "壓縮匯出",
+          "hint": "調整大小 · 控制檔案體積"
+        }
+      }
+    },
     "nextStep": {
       "toSize": "下一步：尺寸",
       "toLayout": "下一步：排版",

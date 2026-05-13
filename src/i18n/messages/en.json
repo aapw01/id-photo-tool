@@ -113,6 +113,29 @@
     "cta": {
       "export": "Export now"
     },
+    "intent": {
+      "title": "What would you like to do?",
+      "subtitle": "Pick a starting point — you can always switch tabs later.",
+      "dismiss": "Dismiss",
+      "choices": {
+        "background": {
+          "label": "Change background",
+          "hint": "Cut out and re-color the backdrop"
+        },
+        "size": {
+          "label": "Crop to ID size",
+          "hint": "Visas, passports, custom"
+        },
+        "layout": {
+          "label": "Print layout",
+          "hint": "Tile onto 4×6 / 5×7 / A4"
+        },
+        "export": {
+          "label": "Compress / export",
+          "hint": "Hit an exact KB target"
+        }
+      }
+    },
     "nextStep": {
       "toSize": "Next: Size",
       "toLayout": "Next: Layout",

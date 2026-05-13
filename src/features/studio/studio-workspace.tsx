@@ -40,6 +40,7 @@ import { useSpecManagerStore } from '@/features/spec-manager/store'
 
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
+import { IntentBanner } from './intent-banner'
 import { useStudioStore } from './store'
 import { StudioBottomTabs } from './studio-bottom-tabs'
 import { StudioPreview } from './studio-preview'
@@ -302,6 +303,8 @@ export function StudioWorkspace() {
       <div className="hidden md:block">
         <StudioTabs />
       </div>
+
+      <IntentBanner />
 
       {tab === 'size' || tab === 'export' ? <ComplianceBanner /> : null}
 

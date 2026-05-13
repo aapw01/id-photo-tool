@@ -113,6 +113,29 @@
     "cta": {
       "export": "导出当前作品"
     },
+    "intent": {
+      "title": "想做什么？",
+      "subtitle": "选一个动作开始，也可以从顶部 tab 自由切换。",
+      "dismiss": "关闭",
+      "choices": {
+        "background": {
+          "label": "换背景",
+          "hint": "去底色 / 换证件蓝白"
+        },
+        "size": {
+          "label": "裁尺寸",
+          "hint": "证件 / 签证 / 自定义"
+        },
+        "layout": {
+          "label": "排版打印",
+          "hint": "拼到 5 寸 / 6 寸 / A4"
+        },
+        "export": {
+          "label": "压缩导出",
+          "hint": "调整大小 · 控制文件体积"
+        }
+      }
+    },
     "nextStep": {
       "toSize": "下一步：尺寸",
       "toLayout": "下一步：排版",
