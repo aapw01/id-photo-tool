@@ -15,6 +15,22 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-05-11",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  /**
+   * Smart placement keeps the worker isolate pinned to a datacenter
+   * close to the originating request and reuses warm isolates across
+   * requests more aggressively than the default. On Workers Free this
+   * doesn't change the 10 ms per-request CPU ceiling, but it
+   * materially reduces how often a request hits a *cold* isolate —
+   * which is the only time Next.js cold-start CPU (parse + evaluate
+   * the OpenNext handler.mjs) lands on the user's request and risks
+   * the `Exceeded CPU Limit` 1102 error.
+   *
+   * Free plan does support smart placement (documented under
+   * "Available on Free / Paid" in the Workers docs).
+   */
+  "placement": {
+    "mode": "smart",
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",

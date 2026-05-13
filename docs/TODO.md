@@ -29,6 +29,33 @@
   - 部署链路改为由 Cloudflare 自身的 Git 集成处理，仓库里不再需要保管
     Cloudflare 凭证；`deploy.yml` 已删除。详见 [`DEPLOYMENT.md §3`](./DEPLOYMENT.md)。
 
+- [ ] **缓解 Workers Free 套餐冷启动 CPU 超限**（治标，不治本）
+  - 背景：OpenNext 适配 Next.js 后产出的 `handler.mjs` 约 3.7 MB，其中
+    ~1.65 MB 是 Next/React 框架 runtime（不可砍）。Cloudflare Workers
+    **Free** 套餐每请求 CPU 上限 10 ms，**包含 isolate 冷启动 evaluate
+    JS 的时间**——3.7 MB minified JS 在 V8 上 evaluate 至少 30–80 ms，
+    必然触发 `Exceeded CPU Limit` (Error 1102)。这是套餐物理约束，无法
+    在代码层完全消除。
+  - 已做的代码缓解（合计 -1.6 MB / -30%）：删除 `@vercel/og`、
+    `StudioWorkspace` / `SpecManagerShell` 改 `dynamic({ ssr: false })`、
+    `[locale]/layout` 的 `<NextIntlClientProvider>` 走 static-imported
+    messages、降级到 Next 15.5.18 摆脱 Turbopack handler bug。
+  - 已加 `wrangler.jsonc` 的 `placement: { mode: "smart" }` —— 让
+    Cloudflare 把 isolate 路由到稳定 datacenter，**减少**冷启动率（但不
+    消除）。
+  - **建议接入第三方 uptime monitoring 保活**：用 UptimeRobot / Better
+    Uptime / Cron-job.org 等免费服务，每 3–5 分钟从多个地区 ping
+    `https://pix-fit.com/`，把热门 isolate 保持在 active 状态。覆盖
+    至少：US-East、US-West、EU、Asia-East（CF 主要 PoP）。
+  - **彻底解决路径**：
+    1. **升 Workers Paid Plan**（$5/月）— CPU 限制 50 ms，问题完全消失，
+       零代码改动。性价比最高。
+    2. **迁 Vercel Hobby**（免费）— Next.js 原生运行时，无 isolate
+       evaluate 模型，无此 CPU 限制。代价：国内访问体感比 CF Anycast 慢
+       30–60%。
+  - 触发器：日 PV 上千或单日 `Exceeded CPU Limit` 计数 ≥ 100 次时立即
+    切换到上述路径之一。
+
 - [ ] **重新升级 Next.js 到 16.x**（当前固定在 15.5.18）
   - 背景：OpenNext 1.19.8/1.19.9 + Next 16.2.x 组合存在已知 bug
     ([opennextjs/opennextjs-cloudflare#1258](https://github.com/opennextjs/opennextjs-cloudflare/issues/1258))：
