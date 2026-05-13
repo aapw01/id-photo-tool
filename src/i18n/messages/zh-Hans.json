@@ -316,6 +316,11 @@
     }
   },
   "Layout": {
+    "combos": {
+      "title": "常用组合",
+      "subtitle": "一键选定相纸 + 排版方案",
+      "count": "{count} 张"
+    },
     "templates": {
       "title": "拼版方案",
       "subtitle": "选择与当前相纸匹配的内置拼版。",

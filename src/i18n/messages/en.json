@@ -316,6 +316,11 @@
     }
   },
   "Layout": {
+    "combos": {
+      "title": "Common combos",
+      "subtitle": "Pick a paper + template pairing in one tap",
+      "count": "{count} photos"
+    },
     "templates": {
       "title": "Layout",
       "subtitle": "Pick a builtin arrangement compatible with the chosen paper.",

@@ -27,6 +27,7 @@ import { LayoutSettings } from './layout-settings'
 import { LayoutTemplatePicker } from './layout-template-picker'
 import { MixedEditor } from './mixed-editor'
 import { PaperPicker } from './paper-picker'
+import { QuickCombos } from './quick-combos'
 import { useLayoutStore } from './store'
 import { pickTemplateForSpec, templateAlreadyCoversSpec } from './sync-template'
 
@@ -49,6 +50,7 @@ export function LayoutPanel({
 
   return (
     <div className="space-y-4">
+      <QuickCombos />
       <PaperPicker />
       <LayoutTemplatePicker activeCropSpec={activeCropSpec} />
       <MixedEditor activeCropSpec={activeCropSpec} />
