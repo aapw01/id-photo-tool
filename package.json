@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "description": "Pixfit · 像配 — Browser-based ID photo studio",
+  "license": "MIT",
+  "homepage": "https://pix-fit.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aapw01/id-photo-tool.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aapw01/id-photo-tool/issues"
+  },
   "packageManager": "pnpm@11.0.9",
   "engines": {
     "node": ">=22.13"

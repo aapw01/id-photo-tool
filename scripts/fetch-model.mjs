@@ -68,9 +68,7 @@ const variantIdx = rawArgs.indexOf('--variant')
 const VARIANT_ID = variantIdx >= 0 ? rawArgs[variantIdx + 1] : 'fp16'
 const VARIANT = VARIANTS[VARIANT_ID]
 if (!VARIANT) {
-  console.error(
-    `Unknown --variant "${VARIANT_ID}". Valid: ${Object.keys(VARIANTS).join(', ')}.`,
-  )
+  console.error(`Unknown --variant "${VARIANT_ID}". Valid: ${Object.keys(VARIANTS).join(', ')}.`)
   process.exit(2)
 }
 

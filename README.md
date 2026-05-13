@@ -3,6 +3,20 @@
 > 浏览器内一站式证件照工作台 — 换底色、裁剪、排版、压缩、导出，照片不离开你的设备。
 
 [![CI](https://github.com/aapw01/id-photo-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/aapw01/id-photo-tool/actions)
+[![License: MIT](https://img.shields.io/badge/license-MIT-10b981.svg)](LICENSE)
+[![Live](https://img.shields.io/badge/live-pix--fit.com-10b981.svg)](https://pix-fit.com)
+
+在线体验：<https://pix-fit.com>
+
+## 特性
+
+- **零后端、零登录** — 抠图、合成、压缩、导出全部在浏览器内完成，照片不上传任何服务器。
+- **AI 抠图 + 换底** — MODNet 浏览器内推理，发丝级 alpha matte + spill 抑制；预设白 / 蓝 / 红 / 浅灰底，也可自定义任意色。
+- **28 条内置规格** — 中国身份证 / 护照 / 一寸两寸、美 / 英 / 申根 / 日 / 韩 / 加 / 澳 / 新 / 俄 / 印 / 马 / 越 / 泰 / 港澳 / 台湾通行证，以及国考 / NCRE / 研究生考试报名照。
+- **构图智能对齐** — 基于 MediaPipe 关键点 + MODNet mask 的头部位置自动校准，眼线 / 头部占比落入规格区间。
+- **多格式导出** — PNG（透明 / 实底）、JPG、WebP；可压缩到指定 KB（二分搜索 + 像素降采样）；可一键复制到剪贴板。
+- **打印排版** — 7 种相纸 × 12 套排版模板，一次冲洗多张照片。
+- **完整三语 SEO** — `zh-Hans` / `zh-Hant` / `en`，hreflang × canonical × JSON-LD（WebApplication / HowTo / FAQPage / BreadcrumbList）齐全；28 条规格各有独立 SSR 落地页。
 
 ## 文档
 
@@ -10,7 +24,8 @@
 - 技术架构：[docs/TECH_DESIGN.md](docs/TECH_DESIGN.md)
 - 项目计划：[docs/PLAN.md](docs/PLAN.md)
 - 设计规范：[docs/DESIGN.md](docs/DESIGN.md)
-- 当前里程碑任务：[docs/tasks/M1.md](docs/tasks/M1.md)
+- 部署指南：[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
+- 任务记录：[docs/tasks/](docs/tasks/)
 
 ## 本地开发
 
@@ -37,8 +52,9 @@ pnpm typecheck      # tsc --noEmit
 pnpm format         # Prettier 写盘
 pnpm test           # vitest run
 pnpm i18n:check     # 三语言 key 一致性
-pnpm models:fetch   # 拉取 MODNet ONNX 模型到 public/_models/（M2 起）
+pnpm models:fetch   # 拉取 MODNet ONNX 模型到 public/_models/
 pnpm cf:build       # 用 OpenNext 打包为 Cloudflare Worker
+pnpm cf:deploy      # 构建并部署到 Cloudflare Workers
 ```
 
 ## 模型资产
@@ -91,29 +107,41 @@ pnpm models:fetch
 
 所有正式路由都按 `/[locale]/...` 三语 SSG 出（locale ∈ `zh-Hans` / `zh-Hant` / `en`，默认 `zh-Hans`）。
 
-| 路由           | 内容                                                         |
-| -------------- | ------------------------------------------------------------ |
-| `/`            | 首页 · 落地 + 上传                                           |
-| `/studio`      | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）    |
-| `/specs`       | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate     |
-| `/sizes`       | 28 条内置照片规格列表（SEO 着陆页）                          |
-| `/paper`       | 7 条内置相纸规格列表（SEO 着陆页）                           |
-| `/templates`   | 12 条内置排版模板列表（SEO 着陆页）                          |
-| `/privacy`     | 隐私政策                                                     |
-| `/terms`       | 服务条款                                                     |
-| `/sitemap.xml` | 自动收录全部上述路由 × 三 locale（hreflang alternates 齐全） |
-| `/robots.txt`  | 公开抓取规则                                                 |
+| 路由              | 内容                                                         |
+| ----------------- | ------------------------------------------------------------ |
+| `/`               | 首页 · 落地 + 上传                                           |
+| `/studio`         | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）    |
+| `/sizes`          | 28 条内置照片规格列表（SEO 着陆页）                          |
+| `/sizes/[specId]` | 单条规格详情（含 HowTo / FAQ JSON-LD）                       |
+| `/paper`          | 7 条内置相纸规格列表                                         |
+| `/templates`      | 12 条内置排版模板列表                                        |
+| `/specs`          | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate     |
+| `/privacy`        | 隐私政策                                                     |
+| `/terms`          | 服务条款                                                     |
+| `/sitemap.xml`    | 自动收录全部上述路由 × 三 locale（hreflang alternates 齐全） |
+| `/robots.txt`     | 公开抓取规则                                                 |
 
 dev-only 路由（`/dev/*`）默认隐藏；需 `NEXT_PUBLIC_ENABLE_DEV_PAGES=1` 才会编译。
 
 ## 技术栈
 
-- Next.js 16（App Router）+ React 19 + TypeScript
-- Tailwind CSS v4 + shadcn/ui + Lucide Icons
-- next-intl（国际化）
-- ONNX Runtime Web（浏览器内 AI 抠图，后续里程碑加入）
-- 部署：Cloudflare Pages（计划）
+- Next.js 16（App Router）+ React 19 + TypeScript 5.6
+- Tailwind CSS v4 + shadcn/ui (New York) + Lucide / flag-icons
+- next-intl v4（路由型国际化，`/[locale]/` 段）
+- 状态管理：Zustand
+- 图像处理：ONNX Runtime Web (MODNet) + MediaPipe Tasks Vision + 原生 Canvas / OffscreenCanvas + jsPDF
+- 部署：Cloudflare Workers via `@opennextjs/cloudflare`
+
+## 贡献
+
+欢迎 issue 与 PR。请遵循：
+
+- Conventional Commits（`feat:` / `fix:` / `chore:` …），`commitlint` 会在 `commit-msg` hook 校验。
+- 提交前自动跑 `eslint --fix` + `prettier --write`（`lint-staged`）。
+- 新增 i18n key 时务必同步三种 locale 文件，否则 `pnpm i18n:check` 会失败。
 
 ## License
 
-待定（见 [docs/PRD.md §14.1](docs/PRD.md)）。
+[MIT](LICENSE) © 2026 Pixfit Contributors
+
+抠图模型 [`Xenova/modnet`](https://huggingface.co/Xenova/modnet) 为 Apache-2.0，单独发布，未随仓库分发。
