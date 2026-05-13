@@ -106,4 +106,17 @@ describe('useSpecManagerStore', () => {
     expect(result.current.some((s) => s.id === candidate.id)).toBe(true)
     expect(result.current.length).toBeGreaterThan(BUILTIN_PHOTO_SPECS.length)
   })
+
+  it('useEffectivePhotoSpecs returns a stable reference across renders', () => {
+    // Regression: the layout tab hung the page because this hook used
+    // to call `mergePhotoSpecs(...)` on every render, handing out a new
+    // array identity each time. Effects with `effectiveSpecs` in their
+    // dep array then ran every commit, called setState, re-rendered,
+    // and looped forever. Memoising on the user-customs reference is
+    // the contract that keeps downstream effects honest.
+    const { result, rerender } = renderHook(() => useEffectivePhotoSpecs())
+    const first = result.current
+    rerender()
+    expect(result.current).toBe(first)
+  })
 })

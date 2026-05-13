@@ -16,6 +16,7 @@
  *     is called explicitly.
  */
 
+import { useMemo } from 'react'
 import { create } from 'zustand'
 
 import { BUILTIN_LAYOUT_TEMPLATES } from '@/data/layout-templates'
@@ -176,20 +177,28 @@ export const useSpecManagerStore = create<SpecManagerState>((set, get) => ({
 /* Selectors                                                            */
 /* ------------------------------------------------------------------ */
 
-/** Hook returning the merged (builtin overridden by user) photo specs. */
+/**
+ * Hook returning the merged (builtin overridden by user) photo specs.
+ *
+ * The merge helpers always allocate a fresh array, so we memoise the
+ * result on the `custom` reference. Without `useMemo` every consumer
+ * receives a new array identity per render, which turned any effect
+ * with this list in its dep array into a render→effect→setState loop
+ * — that's exactly what hung the layout tab on first paint.
+ */
 export function useEffectivePhotoSpecs(): PhotoSpec[] {
   const custom = useSpecManagerStore((s) => s.customPhotoSpecs)
-  return mergePhotoSpecs(BUILTIN_PHOTO_SPECS, custom)
+  return useMemo(() => mergePhotoSpecs(BUILTIN_PHOTO_SPECS, custom), [custom])
 }
 
 export function useEffectivePaperSpecs(): PaperSpec[] {
   const custom = useSpecManagerStore((s) => s.customPaperSpecs)
-  return mergePaperSpecs(BUILTIN_PAPER_SPECS, custom)
+  return useMemo(() => mergePaperSpecs(BUILTIN_PAPER_SPECS, custom), [custom])
 }
 
 export function useEffectiveLayoutTemplates(): LayoutTemplate[] {
   const custom = useSpecManagerStore((s) => s.customLayoutTemplates)
-  return mergeLayoutTemplates(BUILTIN_LAYOUT_TEMPLATES, custom)
+  return useMemo(() => mergeLayoutTemplates(BUILTIN_LAYOUT_TEMPLATES, custom), [custom])
 }
 
 /** Re-export builtins so the page can list them without importing both. */
