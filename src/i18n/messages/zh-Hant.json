@@ -127,7 +127,14 @@
     "customUnit": "單位",
     "customW": "寬度 ({unit})",
     "customH": "高度 ({unit})",
-    "customDpi": "DPI",
+    "customDpi": "列印解析度",
+    "customDpiShow": "調整列印解析度",
+    "customDpiHide": "收起",
+    "customDpiOption": {
+      "low": "節省空間（200 DPI）",
+      "standard": "標準（300 DPI · 建議）",
+      "high": "高解析（600 DPI · 檔案較大）"
+    },
     "customDpiPxHint": "直接輸入像素時 DPI 固定，毋須調整。",
     "customRangeHint": "取值範圍：{min}–{max} {unit}",
     "customApply": "套用為目前尺寸",
@@ -188,6 +195,10 @@
     "recentEmpty": "尚無最近使用紀錄",
     "compare": "對比預覽",
     "compareHint": "拖曳滑桿比較換背景前後",
+    "retry": {
+      "hint": "效果不理想？",
+      "action": "重新摳圖"
+    },
     "hexInputLabel": "十六進位顏色",
     "hexInputPlaceholder": "#FFFFFF",
     "apply": "套用",
@@ -202,6 +213,11 @@
   "Export": {
     "title": "匯出",
     "subtitle": "選擇格式、調整壓縮參數後下載",
+    "noSpec": {
+      "title": "尚未選擇證件照尺寸",
+      "body": "將依目前圖片直接匯出。若需符合簽證 / 證件規格，請先選擇尺寸。",
+      "cta": "去選擇尺寸 →"
+    },
     "format": {
       "label": "格式",
       "png-alpha": "PNG · 透明背景",
@@ -232,6 +248,7 @@
     "alphaGoToBackground": "前往背景面板開始去背 →",
     "cropAppliedHint": "已按目前尺寸裁剪 — 如需修改請回尺寸分頁。",
     "downloadFailed": "無法產生檔案，請嘗試其他格式",
+    "downloadSuccess": "已儲存 {filename}",
     "filenamePreview": "檔名",
     "fullResHint": "保持原始解析度 — 匯出可能需要幾秒鐘",
     "actions": {
@@ -305,6 +322,7 @@
       "pdf": "下載 PDF",
       "preparing": "準備中…",
       "downloadFailed": "無法產生排版，請嘗試更換相紙或減少照片數量。",
+      "downloadSuccess": "已儲存 {filename}",
       "filenamePreview": "檔案名稱"
     }
   },

@@ -59,7 +59,6 @@ export function StudioWorkspace() {
   const previewBitmap = useStudioStore((s) => s.previewBitmap)
   const mask = useStudioStore((s) => s.mask)
   const foreground = useStudioStore((s) => s.foreground)
-  const lastInference = useStudioStore((s) => s.lastInference)
   const setMask = useStudioStore((s) => s.setMask)
   const setFile = useStudioStore((s) => s.setFile)
 
@@ -241,32 +240,16 @@ export function StudioWorkspace() {
         <p className="font-mono text-xs text-[var(--color-text-mute)]">
           {t('stats.size', { w: bitmap.width, h: bitmap.height })}
         </p>
-        {lastInference ? (
-          <p className="font-mono text-xs text-[var(--color-text-mute)]">
-            {t('stats.inference', {
-              backend: lastInference.backend,
-              ms: lastInference.durationMs,
-            })}
-          </p>
-        ) : null}
       </div>
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="mt-3">
         <Button
           onClick={onReplaceClick}
           variant="outline"
           size="sm"
+          className="w-full"
           style={{ touchAction: 'manipulation' }}
         >
           {tActions('replace')}
-        </Button>
-        <Button
-          onClick={() => void runSegmentation()}
-          disabled={state === 'loading-model' || state === 'inferring'}
-          variant="ghost"
-          size="sm"
-          style={{ touchAction: 'manipulation' }}
-        >
-          {tActions('retry')}
         </Button>
       </div>
     </div>

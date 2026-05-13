@@ -220,6 +220,30 @@ export function BackgroundPanel({
         </button>
       </div>
 
+      {/* "Not satisfied → run again" affordance. Lives next to the
+       * compare slider so the user can verify edge quality and re-run
+       * in the same panel without hunting for the legacy "retry"
+       * button that used to sit in the file-info card. */}
+      {hasMask ? (
+        <div className="flex items-center justify-between gap-2 text-xs">
+          <span className="text-[var(--color-text-mute)]">{t('retry.hint')}</span>
+          <button
+            type="button"
+            onClick={onStartSegmentation}
+            disabled={busySeg}
+            className={cn(
+              'inline-flex items-center gap-1 rounded-md px-2 py-1 font-medium text-[var(--color-primary)] underline-offset-2 transition-colors',
+              'hover:underline focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:outline-none',
+              busySeg && 'cursor-not-allowed opacity-50',
+            )}
+            style={{ touchAction: 'manipulation' }}
+          >
+            {busySeg ? <Loader2 className="size-3 animate-spin" aria-hidden /> : null}
+            {t('retry.action')}
+          </button>
+        </div>
+      ) : null}
+
       <Button variant="default" className="w-full" onClick={() => setTab('export')}>
         <Download className="size-4" aria-hidden />
         {tStudio('export')}

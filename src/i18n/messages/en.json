@@ -127,7 +127,14 @@
     "customUnit": "Unit",
     "customW": "Width ({unit})",
     "customH": "Height ({unit})",
-    "customDpi": "DPI",
+    "customDpi": "Print resolution",
+    "customDpiShow": "Adjust print resolution",
+    "customDpiHide": "Hide",
+    "customDpiOption": {
+      "low": "Save space (200 DPI)",
+      "standard": "Standard (300 DPI · recommended)",
+      "high": "High quality (600 DPI · larger file)"
+    },
     "customDpiPxHint": "DPI is fixed when entering pixels directly.",
     "customRangeHint": "Allowed range: {min}–{max} {unit}",
     "customApply": "Use this size",
@@ -188,6 +195,10 @@
     "recentEmpty": "No recent colors yet",
     "compare": "Before / after",
     "compareHint": "Drag the divider to compare backgrounds",
+    "retry": {
+      "hint": "Edges not great?",
+      "action": "Re-run cut-out"
+    },
     "hexInputLabel": "Hex color",
     "hexInputPlaceholder": "#FFFFFF",
     "apply": "Apply",
@@ -202,6 +213,11 @@
   "Export": {
     "title": "Export",
     "subtitle": "Pick a format, dial in the quality, and download.",
+    "noSpec": {
+      "title": "No ID size selected",
+      "body": "We'll export the current photo as-is. Pick an ID size if you need to match a visa / passport spec.",
+      "cta": "Pick a size →"
+    },
     "format": {
       "label": "Format",
       "png-alpha": "PNG · transparent",
@@ -232,6 +248,7 @@
     "alphaGoToBackground": "Open the Background tab to cut out →",
     "cropAppliedHint": "Cropped to your selected spec — adjust on the Size tab if needed.",
     "downloadFailed": "Couldn't produce the file — try a different format.",
+    "downloadSuccess": "Saved {filename}",
     "filenamePreview": "Filename",
     "fullResHint": "Preserves original resolution — the export may take a couple of seconds.",
     "actions": {
@@ -305,6 +322,7 @@
       "pdf": "Download PDF",
       "preparing": "Preparing…",
       "downloadFailed": "Couldn't produce the layout — try a smaller paper or fewer photos.",
+      "downloadSuccess": "Saved {filename}",
       "filenamePreview": "Filename"
     }
   },

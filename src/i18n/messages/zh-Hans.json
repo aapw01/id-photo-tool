@@ -127,7 +127,14 @@
     "customUnit": "单位",
     "customW": "宽度 ({unit})",
     "customH": "高度 ({unit})",
-    "customDpi": "DPI",
+    "customDpi": "打印分辨率",
+    "customDpiShow": "调整打印分辨率",
+    "customDpiHide": "收起",
+    "customDpiOption": {
+      "low": "节省空间（200 DPI）",
+      "standard": "标准（300 DPI · 推荐）",
+      "high": "高清（600 DPI · 文件较大）"
+    },
     "customDpiPxHint": "直接输入像素时 DPI 固定，无需调整。",
     "customRangeHint": "取值范围：{min}–{max} {unit}",
     "customApply": "应用为当前尺寸",
@@ -188,6 +195,10 @@
     "recentEmpty": "暂无最近使用",
     "compare": "对比预览",
     "compareHint": "拖动滑块对比换背景前后",
+    "retry": {
+      "hint": "效果不理想？",
+      "action": "重新抠图"
+    },
     "hexInputLabel": "十六进制颜色",
     "hexInputPlaceholder": "#FFFFFF",
     "apply": "应用",
@@ -202,6 +213,11 @@
   "Export": {
     "title": "导出",
     "subtitle": "选择格式、调整压缩参数后下载",
+    "noSpec": {
+      "title": "尚未选择证件照尺寸",
+      "body": "将按当前图片直接导出。如需符合签证 / 证件规格，请先选择尺寸。",
+      "cta": "去选择尺寸 →"
+    },
     "format": {
       "label": "格式",
       "png-alpha": "PNG · 透明背景",
@@ -232,6 +248,7 @@
     "alphaGoToBackground": "去背景面板开始抠图 →",
     "cropAppliedHint": "已按照当前尺寸裁剪 — 修改尺寸可回到尺寸 tab。",
     "downloadFailed": "未能生成文件，请尝试其他格式",
+    "downloadSuccess": "已保存 {filename}",
     "filenamePreview": "文件名",
     "fullResHint": "保持原始分辨率 — 导出可能需要几秒钟",
     "actions": {
@@ -305,6 +322,7 @@
       "pdf": "下载 PDF",
       "preparing": "准备中…",
       "downloadFailed": "无法生成排版，请尝试更换相纸或减少照片数量。",
+      "downloadSuccess": "已保存 {filename}",
       "filenamePreview": "文件名"
     }
   },
