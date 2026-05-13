@@ -15,11 +15,17 @@ pnpm cf:preview     # 本地用 workerd 跑 Cloudflare 模拟器
 
 ## 2. 接入 Cloudflare（控制台操作）
 
-### 2.1 创建 Workers 项目
+### 2.1 创建 Workers 项目并连接 GitHub（推荐路径）
+
+> Pixfit 选择 **Cloudflare 一侧的 Git 集成** 来做持续部署：Cloudflare
+> 自己监听 `main` 分支、自己跑 build / deploy。这样仓库里不需要保管
+> 任何 Cloudflare 凭证，没有需要轮换的 `CLOUDFLARE_API_TOKEN`，每次
+> push 到 `main` 由 Cloudflare 自动构建发布。
 
 1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)。
 2. 进入 `Workers & Pages` → `Create` → `Workers` → `Connect to Git`。
-3. 选择 GitHub 仓库 `aapw01/id-photo-tool`（或你 Fork 的仓库）。
+3. 授权 Cloudflare 访问 GitHub 账号，选择仓库 `aapw01/id-photo-tool`
+   （或你 Fork 的仓库）。
 4. 构建设置：
 
    | 字段              | 值                              |
@@ -30,7 +36,10 @@ pnpm cf:preview     # 本地用 workerd 跑 Cloudflare 模拟器
    | Root directory    | `/`                             |
    | Node.js version   | `22.13` (来自 `.nvmrc`)         |
 
-5. 环境变量：当前 M1 阶段无需任何 secret。后续 M5 会加入 Umami site id 等公开变量。
+5. 环境变量：当前阶段无需任何 secret。后续如接入 Umami 等可观测组件，会以
+   **公开变量** 形式存在（`NEXT_PUBLIC_*`）。
+6. 保存后 Cloudflare 会立刻触发首次构建。完成后即得到 `*.workers.dev`
+   预览域名；后续 `git push origin main` 都会自动重新构建并部署。
 
 ### 2.2 绑定自定义域名 `pix-fit.com`
 
@@ -46,23 +55,26 @@ pnpm cf:preview     # 本地用 workerd 跑 Cloudflare 模拟器
 2. 复制 cookie-less 脚本片段，后续在 `src/app/[locale]/layout.tsx` 里以 `<script>` 注入。
 3. 由于走 Cloudflare 边缘注入，**不需要在源码里加 token**。
 
-## 3. 通过 GitHub Actions 部署（推荐）
+## 3. CI 与部署的分工
 
-仓库已经包含 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) 与
-[`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml)：
+仓库只保留一个 GitHub Actions workflow：
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml)，负责在每个 PR
+与每次 push 上跑 lint / typecheck / test / format / i18n:check / build。
+**部署本身不由 GitHub Actions 触发**，而是由 Cloudflare 监听 `main`
+分支自动完成（见 §2.1）。
 
-- CI 在每个 PR 上运行 lint / typecheck / test / build / i18n:check
-- Deploy 在 push 到 `main` 时运行 `wrangler deploy`
+这样划分的好处：
 
-需要在 GitHub 仓库 `Settings` → `Secrets and variables` → `Actions` 配置：
+- 仓库里不存放任何 Cloudflare 凭证，无 secret 泄露 / 轮换负担。
+- GitHub Actions 配额只花在 CI 上，不重复跑构建。
+- 构建产物的来源单一：Cloudflare 跑的就是 Cloudflare 部署的。
 
-| Secret 名称             | 来源                                                                                |
-| ----------------------- | ----------------------------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN`  | Cloudflare Dashboard → `My Profile` → `API Tokens` → 模板 `Edit Cloudflare Workers` |
-| `CLOUDFLARE_ACCOUNT_ID` | Workers 项目详情页右侧的 Account ID                                                 |
+> 如果未来确实需要 GitHub Actions 主导部署（例如多环境分支策略、需要在
+> 部署前后插自定义步骤），再以 [`cloudflare/wrangler-action@v3`][wa] 的
+> 方式补回 deploy workflow，并配 `CLOUDFLARE_API_TOKEN` /
+> `CLOUDFLARE_ACCOUNT_ID` 两个 secret。
 
-> 注意：Cloudflare 控制台的 Git 集成会自动构建，与 GitHub Actions 部署是二选一。
-> 建议短期用控制台 Git 集成（最快上线），等团队规模上来后再切到 Actions。
+[wa]: https://github.com/cloudflare/wrangler-action
 
 ## 4. 回滚
 

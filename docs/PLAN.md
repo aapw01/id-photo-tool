@@ -99,7 +99,10 @@
 
 1. Cloudflare Dashboard 接入 GitHub 仓库 → `pnpm install && pnpm cf:build` 作为 build command
 2. 绑定 `pix-fit.com` Custom Domain + Universal SSL
-3. （可选）配置 GitHub Actions secrets `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`
+
+> 部署链路走 Cloudflare 自身的 Git 集成，GitHub 仓库里不再保管任何 Cloudflare
+> 凭证；`.github/workflows/` 下只剩 `ci.yml`（lint / test / build），没有
+> `deploy.yml`。
 
 详细步骤见 [`DEPLOYMENT.md`](./DEPLOYMENT.md)。
 

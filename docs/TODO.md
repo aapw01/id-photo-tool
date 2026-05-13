@@ -25,9 +25,9 @@
   - 同时配置 `www.pix-fit.com`（CNAME 到主域）
   - 详细步骤：[`DEPLOYMENT.md §2.2`](./DEPLOYMENT.md)
 
-- [ ] **（可选）GitHub Actions secrets**
-  - 当前如果用 Cloudflare 控制台 Git 集成，这一步可以跳过
-  - 后续切换到 Actions 部署再加：`CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`
+- [x] ~~GitHub Actions 部署 secrets~~（已撤销）
+  - 部署链路改为由 Cloudflare 自身的 Git 集成处理，仓库里不再需要保管
+    Cloudflare 凭证；`deploy.yml` 已删除。详见 [`DEPLOYMENT.md §3`](./DEPLOYMENT.md)。
 
 ### 1.2 真实部署后的验证
 
