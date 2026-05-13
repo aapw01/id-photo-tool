@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { SegmentationPrewarm } from '@/features/segmentation/segmentation-prewarm'
-import { StudioWorkspace } from '@/features/studio/studio-workspace'
+import { StudioWorkspaceLazy } from '@/features/studio/studio-workspace-lazy'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { buildMetadata } from '@/lib/seo/metadata'
@@ -61,11 +61,16 @@ export default async function StudioPage({ params }: StudioPageProps) {
               [data-warmup-segmentation] or once the user visits the
               background tab — no idle download on a crop-only flow. */}
           <SegmentationPrewarm />
-          {/* StudioWorkspace's tab-deeplink hook calls `useSearchParams`,
-              which Next.js requires to sit inside a Suspense boundary
-              so static prerender can bail out and resume on the client. */}
+          {/* StudioWorkspace is heavy and pure-client (every interaction
+              hits canvas), so we render it via a `dynamic({ ssr: false })`
+              wrapper. This keeps the Worker's per-request CPU budget
+              well under Cloudflare's 10 ms free-tier limit — see
+              `studio-workspace-lazy.tsx` for the full rationale. The
+              wrapper itself is a tiny client component, so the outer
+              Suspense boundary is still needed for the deeplink hook
+              inside StudioWorkspace once it mounts on the client. */}
           <Suspense fallback={null}>
-            <StudioWorkspace />
+            <StudioWorkspaceLazy />
           </Suspense>
         </section>
 
