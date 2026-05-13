@@ -19,7 +19,7 @@
  * — well under the 50 ms target from PRD §5.3.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { BeforeAfterSlider } from '@/features/background/before-after-slider'
 import { compositeOnto, extractForeground, type BgColor } from '@/features/background/composite'
@@ -81,8 +81,6 @@ export function StudioPreview({
 }: StudioPreviewProps) {
   // The cached cutout; recomputed whenever bitmap or mask changes.
   const [foreground, setForeground] = useState<ImageBitmap | null>(null)
-  const compositeRef = useRef<HTMLCanvasElement>(null)
-  const beforeRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -159,37 +157,46 @@ export function StudioPreview({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Paint the composite layer whenever the cached foreground or bg changes.
-  useEffect(() => {
-    const canvas = compositeRef.current
-    if (!canvas) return
-    canvas.width = bitmap.width
-    canvas.height = bitmap.height
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    if (!foreground) {
-      // While the mask is being applied for the first time, paint the
-      // original bitmap so users see the photo, not a blank canvas.
+  // Canvas paint is driven by a ref callback rather than an effect so
+  // we re-paint whenever the DOM node mounts. This matters because
+  // toggling `showCompare` reshapes the React tree (the canvas moves
+  // in/out of `BeforeAfterSlider`), which causes React to unmount the
+  // old <canvas> and mount a fresh one with a blank backing buffer.
+  // An effect with `[bitmap, foreground, bg]` deps wouldn't re-fire in
+  // that case, so the new canvas stayed empty and the wrapper div's
+  // background colour bled through — that's what produced the all-blue
+  // right pane in the compare slider.
+  const compositeRefCallback = useCallback(
+    (canvas: HTMLCanvasElement | null) => {
+      if (!canvas) return
+      canvas.width = bitmap.width
+      canvas.height = bitmap.height
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+      if (!foreground) {
+        // While the mask is being applied for the first time, paint the
+        // original bitmap so users see the photo, not a blank canvas.
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(bitmap, 0, 0)
+        return
+      }
+      compositeOnto(ctx, foreground, bitmap.width, bitmap.height, bg)
+    },
+    [bitmap, foreground, bg],
+  )
+
+  const beforeRefCallback = useCallback(
+    (canvas: HTMLCanvasElement | null) => {
+      if (!canvas) return
+      canvas.width = bitmap.width
+      canvas.height = bitmap.height
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.drawImage(bitmap, 0, 0)
-      return
-    }
-    compositeOnto(ctx, foreground, bitmap.width, bitmap.height, bg)
-  }, [bitmap, foreground, bg])
-
-  // The "before" pane (original bitmap, no mask, no background change)
-  // only paints when comparison mode is on.
-  useEffect(() => {
-    if (!showCompare) return
-    const canvas = beforeRef.current
-    if (!canvas) return
-    canvas.width = bitmap.width
-    canvas.height = bitmap.height
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.drawImage(bitmap, 0, 0)
-  }, [showCompare, bitmap])
+    },
+    [bitmap],
+  )
 
   const aspect = useMemo(() => `${bitmap.width} / ${bitmap.height}`, [bitmap])
 
@@ -200,7 +207,7 @@ export function StudioPreview({
       }
     >
       <canvas
-        ref={compositeRef}
+        ref={compositeRefCallback}
         className="block h-auto w-full max-w-full"
         style={{
           aspectRatio: aspect,
@@ -214,7 +221,7 @@ export function StudioPreview({
   const beforeNode = (
     <div className="relative overflow-hidden">
       <canvas
-        ref={beforeRef}
+        ref={beforeRefCallback}
         className="block h-auto w-full max-w-full"
         style={{ aspectRatio: aspect }}
       />

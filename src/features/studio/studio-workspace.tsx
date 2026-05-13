@@ -104,6 +104,15 @@ export function StudioWorkspace() {
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false)
   const replaceInputRef = useRef<HTMLInputElement>(null)
 
+  // The compare slider only makes sense on the background tab. Tabs are
+  // navigable in any order, so users routinely toggle compare on, jump
+  // to "size", and never return — the before/after wipe lingering over
+  // the crop frame was visually confusing. Gate the preview on the
+  // active tab so leaving "background" instantly hides the slider; we
+  // keep the underlying state so flipping back picks up where the user
+  // left off.
+  const compareActive = tab === 'background' && showCompare
+
   const openMobileSheet = useCallback(() => {
     setMobileSheetOpen(true)
   }, [])
@@ -300,7 +309,7 @@ export function StudioWorkspace() {
             mask={mask}
             foreground={foreground}
             bg={bg}
-            showCompare={showCompare}
+            showCompare={compareActive}
             overlay={cropOverlay}
           />
         )}
