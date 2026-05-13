@@ -93,7 +93,7 @@ export function SiteFooter() {
 
           <FooterColumn heading={t('groups.about')}>
             <a
-              href="https://github.com/pixfit/pixfit"
+              href="https://github.com/aapw01/id-photo-tool"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[var(--color-text-mute)] transition-colors hover:text-[var(--color-text)]"

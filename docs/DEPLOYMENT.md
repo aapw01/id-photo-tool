@@ -19,7 +19,7 @@ pnpm cf:preview     # 本地用 workerd 跑 Cloudflare 模拟器
 
 1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)。
 2. 进入 `Workers & Pages` → `Create` → `Workers` → `Connect to Git`。
-3. 选择 GitHub 仓库 `pixfit/pixfit`（或你 Fork 的仓库）。
+3. 选择 GitHub 仓库 `aapw01/id-photo-tool`（或你 Fork 的仓库）。
 4. 构建设置：
 
    | 字段              | 值                              |
@@ -28,7 +28,7 @@ pnpm cf:preview     # 本地用 workerd 跑 Cloudflare 模拟器
    | Build command     | `pnpm install && pnpm cf:build` |
    | Deploy command    | `pnpm exec wrangler deploy`     |
    | Root directory    | `/`                             |
-   | Node.js version   | `20.18` (来自 `.nvmrc`)         |
+   | Node.js version   | `22.13` (来自 `.nvmrc`)         |
 
 5. 环境变量：当前 M1 阶段无需任何 secret。后续 M5 会加入 Umami site id 等公开变量。
 

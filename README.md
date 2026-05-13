@@ -2,7 +2,7 @@
 
 > 浏览器内一站式证件照工作台 — 换底色、裁剪、排版、压缩、导出，照片不离开你的设备。
 
-[![CI](https://github.com/your-org/pixfit/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/pixfit/actions)
+[![CI](https://github.com/aapw01/id-photo-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/aapw01/id-photo-tool/actions)
 
 ## 文档
 
@@ -16,7 +16,7 @@
 
 环境要求：
 
-- Node.js 20.18+（推荐使用 `nvm`，仓库根有 `.nvmrc`）
+- Node.js 22.13+（推荐使用 `nvm`，仓库根有 `.nvmrc`）
 - pnpm 11+
 
 ```bash

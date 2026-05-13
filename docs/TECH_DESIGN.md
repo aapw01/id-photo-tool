@@ -1385,8 +1385,8 @@ Playwright screenshot diff，关键页面 / 关键状态各拍一张基线图。
 ### 14.4 开发者本地环境
 
 ```bash
-node --version    # >= 20.18
-pnpm --version    # >= 9
+node --version    # >= 22.13 (pnpm 11 requires Node 22.13+)
+pnpm --version    # >= 11
 ```
 
 启动：

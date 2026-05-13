@@ -587,7 +587,7 @@
         },
         "contact": {
           "title": "联系我们",
-          "body": "可在 github.com/pixfit/pixfit 提 issue，或通过仓库 README 中的维护者邮箱联系。"
+          "body": "可在 github.com/aapw01/id-photo-tool 提 issue，或通过仓库 README 中的维护者邮箱联系。"
         }
       }
     },
@@ -636,7 +636,7 @@
         },
         "contact": {
           "title": "联系我们",
-          "body": "条款相关问题请在 github.com/pixfit/pixfit 提 issue。"
+          "body": "条款相关问题请在 github.com/aapw01/id-photo-tool 提 issue。"
         }
       }
     }

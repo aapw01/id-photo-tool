@@ -118,7 +118,10 @@ export default function DesignTokensPage() {
         </h1>
         <p className="max-w-prose text-[var(--color-text-mute)] text-[var(--text-body-lg)]">
           这是一张用于跨设备核对色彩、字体、圆角、阴影、字重的对照表，对应{' '}
-          <a className="underline" href="https://github.com/pixfit/pixfit/blob/main/docs/DESIGN.md">
+          <a
+            className="underline"
+            href="https://github.com/aapw01/id-photo-tool/blob/main/docs/DESIGN.md"
+          >
             docs/DESIGN.md §3
           </a>{' '}
           的设计语言。
