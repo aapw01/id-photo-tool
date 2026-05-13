@@ -26,14 +26,13 @@
 
 import { useMemo, useState } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
-import { Check, Download, Search } from 'lucide-react'
+import { Check, Search } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RegionFlag } from '@/components/region-flag'
 import { NextStepCTA } from '@/features/studio/next-step-cta'
-import { useStudioTabStore } from '@/features/studio/studio-tab-store'
 import { useEffectivePhotoSpecs } from '@/features/spec-manager/store'
 import { localizeText } from '@/lib/i18n-text'
 import { derivePixels, MM_PER_INCH } from '@/lib/spec-units'
@@ -77,13 +76,10 @@ const CUSTOM_PX_DPI = 300
 export function SpecPicker() {
   const t = useTranslations('Crop')
   const tCat = useTranslations('Crop.categories')
-  const tStudio = useTranslations('Studio.cta')
   const locale = useLocale()
 
   const activeSpec = useCropStore((s) => s.spec)
   const setSpec = useCropStore((s) => s.setSpec)
-
-  const setTab = useStudioTabStore((s) => s.setTab)
 
   const [filter, setFilter] = useState<Filter>('all')
   const [query, setQuery] = useState('')
@@ -373,11 +369,6 @@ export function SpecPicker() {
       </ul>
 
       {activeSpec ? <ActiveSpecCard spec={activeSpec} /> : null}
-
-      <Button variant="default" className="w-full" onClick={() => setTab('export')}>
-        <Download className="size-4" aria-hidden />
-        {tStudio('export')}
-      </Button>
 
       <NextStepCTA current="size" />
     </section>

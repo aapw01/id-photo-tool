@@ -20,14 +20,13 @@
 
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Download, Loader2, Sparkles } from 'lucide-react'
+import { Loader2, Sparkles } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import type { SegmentationState } from '@/features/segmentation/use-segmentation'
 import { NextStepCTA } from '@/features/studio/next-step-cta'
-import { useStudioTabStore } from '@/features/studio/studio-tab-store'
 import { cn } from '@/lib/utils'
 
 import { ColorSwatch } from './color-swatch'
@@ -53,9 +52,6 @@ export function BackgroundPanel({
 }: BackgroundPanelProps) {
   const t = useTranslations('Background')
   const tNames = useTranslations('Background.presetNames')
-  const tStudio = useTranslations('Studio.cta')
-
-  const setTab = useStudioTabStore((s) => s.setTab)
 
   const current = useBackgroundStore((s) => s.current)
   const recent = useBackgroundStore((s) => s.recent)
@@ -243,11 +239,6 @@ export function BackgroundPanel({
           </button>
         </div>
       ) : null}
-
-      <Button variant="default" className="w-full" onClick={() => setTab('export')}>
-        <Download className="size-4" aria-hidden />
-        {tStudio('export')}
-      </Button>
 
       <NextStepCTA current="background" />
     </section>
