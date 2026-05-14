@@ -985,7 +985,17 @@
       "loading": "正在產生預覽…",
       "empty": "至少上傳一面證件後即可預覽整頁",
       "error": "預覽產生失敗，請調整設定後再試。",
-      "imageAlt": "{paper} 整頁排版預覽"
+      "imageAlt": "{paper} 整頁排版預覽",
+      "frontLabel": "正面",
+      "backLabel": "背面",
+      "processing": "正在校正透視…",
+      "rectifyError": "處理失敗：{message}",
+      "retry": "重試",
+      "editCorners": "調整 4 角",
+      "rotate": "旋轉",
+      "downloadCurrent": "下載目前這面",
+      "downloadHint": "單面 PNG · 完整匯出（A4 / PDF / 影印件 / 浮水印）請用右側匯出區",
+      "adjustHint": "首次預覽按規格比例從原圖中心裁切，請點「調整 4 角」對齊證件實際邊緣"
     },
     "usage": {
       "heading": "掃描前 —— 使用須知",

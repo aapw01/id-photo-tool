@@ -985,7 +985,17 @@
       "loading": "正在生成预览…",
       "empty": "上传至少一面证件后即可预览整页",
       "error": "预览生成失败，请调整设置后重试。",
-      "imageAlt": "{paper} 整页排版预览"
+      "imageAlt": "{paper} 整页排版预览",
+      "frontLabel": "正面",
+      "backLabel": "背面",
+      "processing": "正在校正透视…",
+      "rectifyError": "处理失败：{message}",
+      "retry": "重试",
+      "editCorners": "调整 4 角",
+      "rotate": "旋转",
+      "downloadCurrent": "下载当前面",
+      "downloadHint": "单面 PNG · 完整导出（A4 / PDF / 复印件 / 水印）请用右侧导出区",
+      "adjustHint": "首次预览按规格比例从原图中心裁切，请点「调整 4 角」对齐证件实际边缘"
     },
     "usage": {
       "heading": "扫描前 —— 使用须知",

@@ -985,7 +985,17 @@
       "loading": "Generating preview…",
       "empty": "Upload at least one side to preview the sheet",
       "error": "Couldn't generate the preview. Adjust a setting and try again.",
-      "imageAlt": "{paper} packed sheet preview"
+      "imageAlt": "{paper} packed sheet preview",
+      "frontLabel": "Front",
+      "backLabel": "Back",
+      "processing": "Rectifying perspective…",
+      "rectifyError": "Failed: {message}",
+      "retry": "Retry",
+      "editCorners": "Adjust corners",
+      "rotate": "Rotate",
+      "downloadCurrent": "Download this side",
+      "downloadHint": "Single-side PNG · use the right-rail export for full A4 / PDF / photocopy / watermark",
+      "adjustHint": "First preview is a center crop matched to the spec — click 'Adjust corners' to align the handles with the actual document edges."
     },
     "usage": {
       "heading": "Before you scan — usage notice",
