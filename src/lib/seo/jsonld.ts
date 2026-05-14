@@ -17,9 +17,20 @@ export interface JsonLdObject {
   [key: string]: JsonLdValue | undefined
 }
 
+interface WebApplicationOpts {
+  /**
+   * Optional keyword cluster mirrored from the page's
+   * `<meta name="keywords">` so Google's rich-result crawler sees the
+   * same intent in both surfaces. Helps long-tail discovery for
+   * queries like "AI 证件照" / "intelligent ID photo" without having
+   * to repeat the words in the page body.
+   */
+  keywords?: readonly string[]
+}
+
 /** Default Pixfit WebApplication schema (injected into the home layout). */
-export function webApplicationSchema(locale: Locale): JsonLdObject {
-  return {
+export function webApplicationSchema(locale: Locale, opts: WebApplicationOpts = {}): JsonLdObject {
+  const out: JsonLdObject = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: SITE_NAME_FULL,
@@ -36,6 +47,46 @@ export function webApplicationSchema(locale: Locale): JsonLdObject {
       priceCurrency: 'USD',
     },
   }
+  if (opts.keywords && opts.keywords.length > 0) {
+    out.keywords = opts.keywords.join(', ')
+  }
+  return out
+}
+
+interface WebSiteOpts {
+  /**
+   * Canonical home URL for the active locale. Falls back to the
+   * locale-prefixed `/` so callers don't have to recompute it.
+   */
+  url?: string
+  /** Optional keyword cluster — same shape as `webApplicationSchema`. */
+  keywords?: readonly string[]
+}
+
+/**
+ * schema.org `WebSite` — pairs nicely with `WebApplication` on the
+ * home page. Google uses this to populate the sitelinks search box
+ * and to attribute brand searches ("Pixfit", "pix-fit.com") to the
+ * canonical URL.
+ *
+ * The optional `potentialAction` would normally wire a search URL,
+ * but Pixfit has no on-site search so we deliberately omit it — an
+ * empty SearchAction can suppress the rich result entirely.
+ */
+export function webSiteSchema(locale: Locale, opts: WebSiteOpts = {}): JsonLdObject {
+  const url = opts.url ?? buildCanonical('/', locale)
+  const out: JsonLdObject = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME_FULL,
+    alternateName: SITE_NAME,
+    url,
+    inLanguage: locale,
+  }
+  if (opts.keywords && opts.keywords.length > 0) {
+    out.keywords = opts.keywords.join(', ')
+  }
+  return out
 }
 
 interface ItemListEntry {

@@ -51,6 +51,27 @@ interface BuildMetadataOptions {
   path: string
   title: string
   description: string
+  /**
+   * When true, the resulting `title` field becomes an `absolute`
+   * object so Next does NOT apply the root layout's
+   * `template` ("%s · Pixfit · 像配"). Use this for the home page —
+   * the brand is already in the title, and double-stamping reads as
+   * spam. Default `false` so per-page titles keep getting the brand
+   * suffix automatically.
+   */
+  titleAbsolute?: boolean
+  /**
+   * Optional keyword cluster. May be a comma-joined string or an array
+   * — Next normalises both into the same `<meta name="keywords">` tag.
+   * When supplied, the same list is mirrored into the OG / Twitter
+   * card descriptions via JSON-LD on the calling page (the JSON-LD
+   * helpers carry their own keyword pass-through).
+   *
+   * Pixfit keeps this curated per page in the i18n bundles so the
+   * cluster reads benefit-first per locale (Simplified vs Traditional
+   * Chinese vs English long-tails differ markedly).
+   */
+  keywords?: readonly string[] | string
   /** OG image path relative to SITE_URL. Defaults to `/og/default.png`. */
   image?: string
   /** When true, instructs robots to skip indexing (404 / error / dev). */
@@ -93,9 +114,13 @@ export function buildMetadata(opts: BuildMetadataOptions): Metadata {
     images: [customImageUrl],
   }
 
+  const keywords = normalizeKeywords(opts.keywords)
+  const title: Metadata['title'] = opts.titleAbsolute ? { absolute: opts.title } : opts.title
+
   return {
-    title: opts.title,
+    title,
     description: opts.description,
+    ...(keywords ? { keywords } : {}),
     alternates: {
       canonical,
       languages: buildAlternateLanguages(opts.path),
@@ -107,6 +132,33 @@ export function buildMetadata(opts: BuildMetadataOptions): Metadata {
       ? { index: false, follow: false }
       : { index: true, follow: true, googleBot: { index: true, follow: true } },
   }
+}
+
+/**
+ * Coerce the caller's keyword input into the deduped string array
+ * Next expects. We normalise eagerly so downstream JSON-LD helpers
+ * can reuse the same canonical list.
+ */
+export function normalizeKeywords(
+  input: readonly string[] | string | undefined,
+): string[] | undefined {
+  if (input == null) return undefined
+  const raw = Array.isArray(input)
+    ? input
+    : String(input)
+        .split(',')
+        .map((s) => s.trim())
+  const out: string[] = []
+  const seen = new Set<string>()
+  for (const item of raw) {
+    const trimmed = item.trim()
+    if (!trimmed) continue
+    const key = trimmed.toLowerCase()
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(trimmed)
+  }
+  return out.length > 0 ? out : undefined
 }
 
 /** Convert a Pixfit locale into an OG-format locale (`zh_CN` etc.). */

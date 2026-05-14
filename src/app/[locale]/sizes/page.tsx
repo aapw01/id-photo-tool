@@ -35,6 +35,7 @@ export async function generateMetadata({ params }: SizesPageProps): Promise<Meta
     path: '/sizes',
     title: t('metaTitle'),
     description: t('metaDescription'),
+    keywords: t.raw('metaKeywords') as string[],
   })
 }
 

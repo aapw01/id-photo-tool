@@ -14,7 +14,7 @@ import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { faqSchema, itemListSchema, webApplicationSchema } from '@/lib/seo/jsonld'
-import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
+import { buildCanonical, buildMetadata, normalizeKeywords } from '@/lib/seo/metadata'
 
 interface ScannerPageProps {
   params: Promise<{ locale: string }>
@@ -30,8 +30,9 @@ export async function generateMetadata({ params }: ScannerPageProps): Promise<Me
   return buildMetadata({
     locale: locale as Locale,
     path: '/scanner',
-    title: t('title'),
+    title: t('metaTitle'),
     description: t('metaDescription'),
+    keywords: t.raw('metaKeywords') as string[],
   })
 }
 
@@ -55,6 +56,14 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
     answer: tFaq(`items.${key}.a` as Parameters<typeof tFaq>[0]),
   }))
   const faqJsonLd = faqSchema(faqEntries)
+
+  // Same intent-keyword cluster as `<meta name="keywords">`, mirrored
+  // into JSON-LD so the structured-data surface stays in sync with
+  // the page head.
+  const scannerKeywords = normalizeKeywords(t.raw('metaKeywords') as string[])
+  const scannerWebApp = webApplicationSchema(locale as Locale, {
+    keywords: scannerKeywords,
+  })
 
   const supportedListJsonLd = itemListSchema({
     url: buildCanonical('/scanner', locale as Locale),
@@ -260,7 +269,7 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[webApplicationSchema(locale as Locale), supportedListJsonLd, faqJsonLd]} />
+      <JsonLd data={[scannerWebApp, supportedListJsonLd, faqJsonLd]} />
     </>
   )
 }

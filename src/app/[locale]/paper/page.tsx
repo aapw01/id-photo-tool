@@ -32,6 +32,7 @@ export async function generateMetadata({ params }: PaperPageProps): Promise<Meta
     path: '/paper',
     title: t('metaTitle'),
     description: t('metaDescription'),
+    keywords: t.raw('metaKeywords') as string[],
   })
 }
 
