@@ -57,6 +57,19 @@ pnpm cf:build       # 用 OpenNext 打包为 Cloudflare Worker
 pnpm cf:deploy      # 构建并部署到 Cloudflare Workers
 ```
 
+## 部署
+
+仓库**同时**支持两套生产部署，互不冲突：
+
+| 平台                   | 配置文件         | 触发方式                  | 适用场景                                          |
+| ---------------------- | ---------------- | ------------------------- | ------------------------------------------------- |
+| **Cloudflare Workers** | `wrangler.jsonc` | CF Dashboard Git 集成     | 中国大陆访问优先；流量小（Free 套餐有 CPU 限制）  |
+| **Vercel**             | `vercel.json`    | Vercel Dashboard Git 集成 | 海外访问优先；无 CPU 限制；Hobby 免费容量绰绰有余 |
+
+两边的 build 都会先跑 `pnpm models:fetch` 把 MODNet 模型拉到 `public/_models/`，
+脚本是幂等的——已存在不会重复下载。详细切换 / 回滚步骤见
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)。
+
 ## 模型资产
 
 抠图能力使用上游开源模型 [`Xenova/modnet`](https://huggingface.co/Xenova/modnet)（Apache-2.0），
