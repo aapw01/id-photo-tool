@@ -4,10 +4,11 @@ import {
   buildAlternateLanguages,
   buildCanonical,
   buildMetadata,
+  normalizeKeywords,
   normalizePath,
   ogLocaleFor,
 } from './metadata'
-import { SITE_URL } from './site-config'
+import { SITE_URL, SUPPORTED_LOCALES } from './site-config'
 
 describe('normalizePath', () => {
   it('returns `/` for root inputs', () => {
@@ -45,6 +46,23 @@ describe('buildAlternateLanguages', () => {
 
   it('keys count matches 3 locales + x-default', () => {
     expect(Object.keys(buildAlternateLanguages('/'))).toHaveLength(4)
+  })
+
+  it('covers every locale defined by SUPPORTED_LOCALES + x-default exactly', () => {
+    // Defensive: if a contributor extends `SUPPORTED_LOCALES`,
+    // hreflang must follow. Compare set equality so the test does
+    // not have to hard-code each locale.
+    const map = buildAlternateLanguages('/scanner')
+    const expected = new Set<string>([...SUPPORTED_LOCALES, 'x-default'])
+    expect(new Set(Object.keys(map))).toEqual(expected)
+  })
+
+  it('x-default always points at the canonical English URL', () => {
+    // Pixfit's x-default routes anonymous traffic to /en — Simplified
+    // Chinese is the routing default but the SEO default is English so
+    // visitors hitting Pixfit without a language hint land in EN.
+    const map = buildAlternateLanguages('/scanner/passport-bio')
+    expect(map['x-default']).toBe(`${SITE_URL}/en/scanner/passport-bio`)
   })
 })
 
@@ -88,6 +106,65 @@ describe('buildMetadata', () => {
     })
     const images = meta.openGraph?.images as Array<{ url: string }>
     expect(images[0]?.url).toBe('https://cdn.example.com/og.png')
+  })
+
+  it('passes the keywords array straight through to the Metadata block', () => {
+    const meta = buildMetadata({
+      locale: 'zh-Hans',
+      path: '/',
+      title: 'Pixfit',
+      description: 'hi',
+      keywords: ['智能证件照处理', 'AI 一键抠图', 'AI 证件照'],
+    })
+    expect(meta.keywords).toEqual(['智能证件照处理', 'AI 一键抠图', 'AI 证件照'])
+  })
+
+  it('accepts a comma-joined keyword string and dedupes case-insensitively', () => {
+    const meta = buildMetadata({
+      locale: 'en',
+      path: '/scanner',
+      title: 'Scanner',
+      description: 'Scanner desc.',
+      keywords: 'AI document scanner, ai document scanner ,smart document scanner',
+    })
+    expect(meta.keywords).toEqual(['AI document scanner', 'smart document scanner'])
+  })
+
+  it('omits the keywords field entirely when no input is provided', () => {
+    const meta = buildMetadata({
+      locale: 'en',
+      path: '/',
+      title: 'Pixfit',
+      description: 'hi',
+    })
+    expect('keywords' in meta).toBe(false)
+  })
+
+  it('renders titleAbsolute as `{ absolute: title }` so the root template skips it', () => {
+    const meta = buildMetadata({
+      locale: 'en',
+      path: '/',
+      title: 'Pixfit · The brand',
+      description: 'hi',
+      titleAbsolute: true,
+    })
+    expect(meta.title).toEqual({ absolute: 'Pixfit · The brand' })
+  })
+})
+
+describe('normalizeKeywords', () => {
+  it('returns undefined for undefined / empty input', () => {
+    expect(normalizeKeywords(undefined)).toBeUndefined()
+    expect(normalizeKeywords([])).toBeUndefined()
+    expect(normalizeKeywords('')).toBeUndefined()
+  })
+
+  it('trims whitespace and drops empty entries', () => {
+    expect(normalizeKeywords(['  foo  ', '', 'bar'])).toEqual(['foo', 'bar'])
+  })
+
+  it('dedupes case-insensitively but preserves the first casing seen', () => {
+    expect(normalizeKeywords(['AI 证件照', 'ai 证件照', 'AI 证件照'])).toEqual(['AI 证件照'])
   })
 })
 

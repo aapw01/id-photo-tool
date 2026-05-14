@@ -9,8 +9,8 @@ import { UploadDropzone } from '@/components/upload-dropzone'
 import { hasLocale } from 'next-intl'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
-import { faqSchema, webApplicationSchema } from '@/lib/seo/jsonld'
-import { buildMetadata } from '@/lib/seo/metadata'
+import { faqSchema, webApplicationSchema, webSiteSchema } from '@/lib/seo/jsonld'
+import { buildMetadata, normalizeKeywords } from '@/lib/seo/metadata'
 import { notFound } from 'next/navigation'
 
 const HOME_FAQ_KEYS = [
@@ -32,11 +32,17 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) return {}
   const t = await getTranslations({ locale, namespace: 'Home' })
+  const keywords = t.raw('metaKeywords') as string[]
   return buildMetadata({
     locale: locale as Locale,
     path: '/',
-    title: t('heroTitle'),
-    description: t('heroSubtitle'),
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+    keywords,
+    // The home title already contains the Pixfit brand — let the root
+    // layout's `title.template` skip it so we don't ship
+    // "Pixfit ... · Pixfit · 像配" duplicated in the SERP entry.
+    titleAbsolute: true,
   })
 }
 
@@ -61,6 +67,13 @@ export default async function HomePage({ params }: HomePageProps) {
     answer: t(`faq.items.${key}.a`),
   }))
   const faq = faqSchema(faqEntries)
+  // Mirror the page's `<meta name="keywords">` cluster into the
+  // structured-data payload so Google's rich-result crawler sees the
+  // same intent across both surfaces. `normalizeKeywords` dedupes +
+  // trims defensively in case the locale bundle drifts.
+  const homeKeywords = normalizeKeywords(t.raw('metaKeywords') as string[])
+  const webApp = webApplicationSchema(locale as Locale, { keywords: homeKeywords })
+  const webSite = webSiteSchema(locale as Locale, { keywords: homeKeywords })
 
   return (
     <>
@@ -165,7 +178,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[webApplicationSchema(locale as Locale), faq]} />
+      <JsonLd data={[webApp, webSite, faq]} />
     </>
   )
 }

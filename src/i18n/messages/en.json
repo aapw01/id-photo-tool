@@ -30,8 +30,21 @@
     }
   },
   "Home": {
-    "heroTitle": "ID photos, done right in your browser",
-    "heroSubtitle": "Upload a portrait, then cut out, swap the background, crop to spec, lay out for printing, compress, and export — all without ever uploading your photo.",
+    "heroTitle": "Intelligent ID photos, done right in your browser",
+    "heroSubtitle": "Pixfit is an AI-powered ID photo and document scanner that auto-cuts the subject, swaps backgrounds, crops to spec, lays out for printing, and compresses to portal limits — all in your browser, no upload.",
+    "metaTitle": "Pixfit — intelligent ID photo & AI document scanner in your browser",
+    "metaDescription": "Free AI ID photo maker plus intelligent document scanner — smart crop to visa / passport / ID specs, A4 PDF scans, all in your browser. No upload.",
+    "metaKeywords": [
+      "intelligent ID photo",
+      "AI ID photo",
+      "AI passport photo",
+      "smart document scanner",
+      "one-click background removal",
+      "online ID photo maker",
+      "browser ID photo studio",
+      "visa photo generator",
+      "Pixfit"
+    ],
     "cta": "Get started",
     "ctaHint": "Free · No sign-up · 100% in your browser",
     "features": {
@@ -64,15 +77,15 @@
       "items": {
         "free": {
           "q": "Is Pixfit free?",
-          "a": "Yes — completely free, with no watermark and no paywall. Pixfit runs in your browser and there are no export limits."
+          "a": "Yes — completely free, with no watermark and no paywall. Pixfit's intelligent ID photo studio runs entirely in your browser and there are no export limits."
         },
         "upload": {
           "q": "Will my photo be uploaded to a server?",
-          "a": "No. Cut-out, background replacement, cropping, and compression all happen locally in your browser. The original file never leaves your device."
+          "a": "No. AI cut-out, background replacement, smart crop, and compression all happen locally in your browser. The original file never leaves your device — there is no server pipeline at all."
         },
         "background": {
           "q": "How do I change the background to white / blue / red?",
-          "a": "After uploading a photo, open the Background panel. Pixfit uses the MODNet AI model to remove the background locally, then one-tap presets switch between standard white, visa blue, ID red, or any custom hex colour."
+          "a": "After uploading a photo, open the Background panel. Pixfit's MODNet AI model performs smart cut-out locally, then one-tap presets switch the background between standard white, visa blue, ID red, or any custom hex colour."
         },
         "sizes": {
           "q": "Which countries and document types are supported?",
@@ -93,10 +106,10 @@
       }
     },
     "seoIntro": {
-      "heading": "An ID photo studio that runs inside your browser",
+      "heading": "An intelligent ID photo studio that runs inside your browser",
       "paragraphs": [
-        "Pixfit is a completely free online ID photo maker built for people who need to produce a passport photo, visa photo, national ID photo, or exam registration photo in a hurry. No downloads, no signup — open the page, upload a portrait, and you get a compliant electronic ID photo in seconds.",
-        "We use MODNet, an industry-leading portrait-segmentation AI model, running entirely in your browser to cut out the subject and replace the background. The full pipeline — cut-out, recolour, crop, compress, print layout — happens locally on your device. No photo is ever uploaded to a server.",
+        "Pixfit is a completely free, AI-powered online ID photo maker and intelligent document scanner built for people who need a passport photo, visa photo, national ID photo, or exam registration photo in a hurry. No downloads, no sign-up — open the page, upload a portrait, and you get a compliant electronic ID photo in seconds.",
+        "We use MODNet, an industry-leading portrait-segmentation AI model, running entirely in your browser for smart cut-out and one-click background replacement. The full pipeline — AI cut-out, recolour, smart crop, compression, print layout — happens locally on your device. No photo is ever uploaded to a server.",
         "Pixfit ships with 28 of the most common ID photo specifications: US visa (51×51mm), Schengen visa (35×45mm), UK visa (light grey background), Japan visa (45×45mm), Chinese national ID, passports for most countries, Hong Kong / Macao / Taiwan travel permits, and Chinese national exam registration formats. Every preset captures the official pixel, DPI, and file-size limits, so you can export a compliant JPG / PNG / WebP in one click."
       ]
     }
@@ -130,11 +143,23 @@
   },
   "Studio": {
     "title": "Studio",
-    "subtitle": "Upload a portrait to cut out, recolor the background, crop, and lay out.",
+    "subtitle": "Upload a portrait — AI cut-out, smart crop, one-click background swap, print layout, and exact-KB export, all in your browser.",
+    "metaTitle": "Pixfit Studio — AI ID photo editor with smart crop & background swap",
+    "metaDescription": "Pixfit Studio: AI ID photo editor with smart crop, one-click background swap, A4 / 5R / 6R layouts, exact-KB export. Free, in-browser, no upload.",
+    "metaKeywords": [
+      "AI ID photo editor",
+      "intelligent ID photo",
+      "smart crop ID photo",
+      "AI background removal",
+      "one-click background swap",
+      "online ID photo studio",
+      "visa photo editor",
+      "Pixfit Studio"
+    ],
     "seoIntro": {
-      "heading": "An ID photo studio inside your browser",
+      "heading": "An intelligent ID photo studio inside your browser",
       "paragraphs": [
-        "The Pixfit Studio is the core editor. Upload a portrait, then step through cut-out, background replacement, cropping to spec, print layout, compression, and export — every step runs locally in your browser, with no photo ever uploaded to a server.",
+        "The Pixfit Studio is the AI-powered core editor. Upload a portrait, then step through smart cut-out, one-click background replacement, smart crop to spec, print layout, compression, and export — every step runs locally in your browser, with no photo ever uploaded to a server.",
         "Supports Chinese national ID, 1- and 2-inch IDs, passports, Hong Kong / Macao / Taiwan travel permits, 14 visa formats (US, Schengen, UK, Canada, AU, NZ, JP, KR, Singapore, Malaysia, Vietnam, Thailand, Russia, India), and three Chinese national exam registration formats. Auto-tile onto 5R / 6R / A4 paper and export as PNG or vector PDF."
       ]
     },
@@ -375,8 +400,16 @@
         "dpi": "DPI"
       },
       "cta": "Use in Studio",
-      "metaTitle": "Print paper sizes for ID photo layouts · Pixfit",
-      "metaDescription": "Browse the seven built-in print papers (3R / 4R / 5R / 6R / 8R / A4 / A5) Pixfit uses to tile and export ID photo layouts."
+      "metaTitle": "Print paper sizes for AI ID photo layouts · Pixfit",
+      "metaDescription": "Seven print papers (3R / 4R / 5R / 6R / 8R / A4 / A5) Pixfit uses to auto-tile AI-cropped ID photos. Smart layout, free, in-browser, no upload.",
+      "metaKeywords": [
+        "ID photo print paper",
+        "smart photo layout",
+        "AI photo print sizes",
+        "3R 4R 5R 6R 8R paper",
+        "A4 ID photo layout",
+        "Pixfit paper"
+      ]
     }
   },
   "Layout": {
@@ -442,11 +475,20 @@
     "cta": "Use in Studio",
     "categoryEmpty": "No specs in this category yet",
     "viewDetail": "View details",
-    "metaTitle": "ID photo sizes for visa, ID, and exam registration · Pixfit",
-    "metaDescription": "Browse 28 built-in ID photo specifications — US / Schengen / UK / CA / AU / NZ / JP / KR visas, Chinese 1- and 2-inch IDs, travel permits, and exam formats. Free, in-browser, no upload.",
+    "metaTitle": "ID photo sizes — intelligent visa, ID & exam catalog",
+    "metaDescription": "28 AI ID photo specs — US / Schengen / UK / CA / AU / NZ / JP / KR visas, Chinese IDs, travel permits, exam formats. Smart crop, free, in-browser.",
+    "metaKeywords": [
+      "intelligent ID photo sizes",
+      "AI ID photo specifications",
+      "visa photo size catalog",
+      "passport photo dimensions",
+      "Schengen visa photo size",
+      "US visa photo 51x51",
+      "Pixfit sizes"
+    ],
     "detail": {
-      "metaTitle": "{name} photo size {w}×{h}mm · Make one free online · Pixfit",
-      "metaDescription": "{name} ID photo specification: {w}×{h} mm ({wpx}×{hpx} px @ {dpi} DPI), recommended background {bgLabel}. Make one in Pixfit — cut out, swap background, crop, compress, all in your browser. No upload.",
+      "metaTitle": "{name} photo size {w}×{h}mm · AI ID photo maker",
+      "metaDescription": "{name} ID photo: {w}×{h} mm ({wpx}×{hpx} px @ {dpi} DPI), background {bgLabel}. AI smart crop + one-click background swap in Pixfit — free, in-browser, no upload.",
       "heading": "{name} photo size",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "The standard {name} ID photo measures {w} × {h} mm ({wpx} × {hpx} px at {dpi} DPI) with a recommended background of {bgLabel}. This page covers the full specification, photography requirements, and a free in-browser tool for making one.",
@@ -539,8 +581,16 @@
       "byPaper": "Grouped by paper"
     },
     "cta": "Open in Studio",
-    "metaTitle": "ID photo print layout templates · Pixfit",
-    "metaDescription": "Browse twelve built-in print layouts — 8 × 1-inch, 16 × 1-inch, mixed 1+2-inch, ID card, passport, and wallet — across 5R / 6R / A4 papers. Export PNG or vector PDF."
+    "metaTitle": "AI ID photo print layout templates · Pixfit",
+    "metaDescription": "Twelve smart print layouts — 8 × 1-inch, 16 × 1-inch, mixed 1+2-inch, ID card, passport, wallet — across 5R / 6R / A4. AI-tiled, PNG or vector PDF.",
+    "metaKeywords": [
+      "ID photo layout templates",
+      "smart photo layout",
+      "AI print tiling",
+      "1-inch 16-up layout",
+      "passport photo wallet",
+      "Pixfit templates"
+    ]
   },
   "Legal": {
     "common": {
@@ -789,9 +839,21 @@
     }
   },
   "Scanner": {
-    "title": "ID Document Scanner",
-    "subtitle": "Upload phone-shot photos of your ID card, passport, or driver license and instantly generate an official-looking PDF scan or photocopy — fully in your browser, no upload, no signup.",
-    "metaDescription": "Free browser-based ID document scanner: upload an ID card, passport, or driver license photo (or single-page PDF) and get an A4 PDF with perspective correction and an optional anti-misuse watermark. Scan / photocopy / enhance modes. 100% offline processing.",
+    "title": "Intelligent ID Document Scanner",
+    "subtitle": "Upload a phone-shot photo of your ID card, passport, or driver license — the intelligent scanner rectifies perspective, white-balances, and exports an A4 / Letter / A5 PDF scan, all in your browser.",
+    "metaTitle": "Smart document scanner — AI ID card, passport & driver license to PDF",
+    "metaDescription": "Free AI ID document scanner: perspective correction + scan/copy/enhance modes turn a phone-shot ID, passport, or license into A4 PDF — all in your browser.",
+    "metaKeywords": [
+      "smart document scanner",
+      "intelligent ID scanner",
+      "AI document scanner",
+      "AI ID card scanner",
+      "AI passport scanner",
+      "phone to PDF scanner",
+      "ID card to A4 PDF",
+      "intelligent perspective correction",
+      "Pixfit Scanner"
+    ],
     "shell": {
       "previewTitle": "Scan preview",
       "previewEmpty": "Once you upload an image, the perspective-corrected scan will appear here",
@@ -916,6 +978,25 @@
       "successPng": "PNG downloaded",
       "errorGeneric": "Export failed: {message}"
     },
+    "preview": {
+      "trigger": "Preview sheet",
+      "title": "Sheet preview",
+      "description": "Exactly what your downloaded {paper} sheet will look like — same paper, watermark, and rounded corners.",
+      "loading": "Generating preview…",
+      "empty": "Upload at least one side to preview the sheet",
+      "error": "Couldn't generate the preview. Adjust a setting and try again.",
+      "imageAlt": "{paper} packed sheet preview",
+      "frontLabel": "Front",
+      "backLabel": "Back",
+      "processing": "Rectifying perspective…",
+      "rectifyError": "Failed: {message}",
+      "retry": "Retry",
+      "editCorners": "Adjust corners",
+      "rotate": "Rotate",
+      "downloadCurrent": "Download this side",
+      "downloadHint": "Single-side PNG · use the right-rail export for full A4 / PDF / photocopy / watermark",
+      "adjustHint": "First preview is a center crop matched to the spec — click 'Adjust corners' to align the handles with the actual document edges."
+    },
     "usage": {
       "heading": "Before you scan — usage notice",
       "summary": "Read this before you upload your ID. Your photos never leave the browser — this is what we do, what we don't, and what you agree to by using the scanner.",
@@ -940,10 +1021,10 @@
       "termsLink": "Full terms of service"
     },
     "seoIntro": {
-      "heading": "Why an ID document scanner",
+      "heading": "Why an intelligent ID document scanner",
       "paragraphs": {
-        "0": "Job applications, online filings, visa submissions, and contract signing often require a 'scanned' PDF — not a phone snapshot. But most people don't own a scanner. The ID Document Scanner rectifies, white-balances, and shadow-strips your phone-shot ID photo to mimic real scanner output, and exports it as A4 PDF with one click.",
-        "1": "Photocopy mode applies adaptive binarization for the black-and-white look that exam registrations and government offices expect. Need an extra layer of protection? Switch on the optional anti-misuse watermark — off by default, with custom text (e.g. 'For XYZ Company onboarding only') so a downstream copy is harder to redirect for ID-card fraud. The entire pipeline runs in your browser; nothing is ever uploaded."
+        "0": "Job applications, online filings, visa submissions, and contract signing often require a 'scanned' PDF — not a phone snapshot. But most people don't own a flatbed scanner. Pixfit's intelligent ID document scanner uses AI-style perspective correction, white balance, and shadow-stripping to turn a phone-shot ID photo into real-scanner-style output and exports it as A4 / Letter / A5 PDF with one click.",
+        "1": "Photocopy mode applies adaptive binarization for the black-and-white look that exam registrations and government offices expect. Need an extra layer of protection? Switch on the optional anti-misuse watermark — off by default, with custom text (e.g. 'For XYZ Company onboarding only') so a downstream copy is harder to redirect for ID-card fraud. The entire smart-scan pipeline runs in your browser; nothing is ever uploaded."
       }
     },
     "supported": {
@@ -979,8 +1060,8 @@
       }
     },
     "detail": {
-      "metaTitle": "{name} scan online · Pixfit",
-      "metaDescription": "Free in-browser scanner for {name}: upload a phone-shot photo (or single-page PDF), get an A4 / Letter / A5 PDF with perspective correction, an optional anti-misuse watermark, and scan / photocopy / enhance output modes. 100 % offline.",
+      "metaTitle": "{name} intelligent scan to A4 PDF · Pixfit",
+      "metaDescription": "Intelligent in-browser scanner for {name}: AI perspective correction, scan / photocopy / enhance modes, optional anti-misuse watermark, A4 / Letter / A5 PDF export. 100 % offline.",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · Optional watermark",
       "summarySection": {
         "title": "About {name}",

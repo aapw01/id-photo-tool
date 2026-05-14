@@ -58,12 +58,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!spec) return {}
   const t = await getTranslations({ locale, namespace: 'Scanner.detail' })
   const tName = await getTranslations({ locale, namespace: 'Scanner.docSpecs' })
+  const tScanner = await getTranslations({ locale, namespace: 'Scanner' })
   const name = tName(spec.id as Parameters<typeof tName>[0])
+  // Per-DocType pages inherit the parent /scanner intent cluster so
+  // long-tail queries like "中国身份证扫描" still attribute to the AI
+  // scanner brand keywords, then prepend the doc name to anchor the
+  // page-specific tail.
+  const baseKeywords = tScanner.raw('metaKeywords') as string[]
+  const keywords = [name, ...baseKeywords]
   return buildMetadata({
     locale: locale as Locale,
     path: `/scanner/${spec.id}`,
     title: t('metaTitle', { name }),
     description: t('metaDescription', { name }),
+    keywords,
   })
 }
 

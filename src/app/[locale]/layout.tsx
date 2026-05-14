@@ -7,7 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { fontMono, fontSans } from '@/lib/fonts'
 import { routing } from '@/i18n/routing'
 import { Toaster } from '@/components/ui/sonner'
-import { BRAND_PRIMARY_HEX, SITE_URL } from '@/lib/seo/site-config'
+import { BRAND_PRIMARY_HEX, SITE_NAME_FULL, SITE_URL } from '@/lib/seo/site-config'
 
 /**
  * `process.env.VERCEL` is statically inlined to `"1"` at build time on
@@ -27,10 +27,21 @@ export function generateStaticParams() {
  * `metadataBase` anchors every per-route `generateMetadata` result so
  * Next can resolve relative OG / Twitter image paths against the
  * canonical host. Per-route `generateMetadata` still owns title /
- * description / canonical / alternates.
+ * description / canonical / alternates, but the brand-suffix
+ * `title.template` lives here so every inner page automatically gets
+ * "<page> · Pixfit · 像配" without duplicating the suffix at every
+ * `generateMetadata` call site.
+ *
+ * `default` is the bare brand label used when a route omits its own
+ * title — keeps the SERP entry sensible if a future route ships
+ * before its `generateMetadata` does.
  */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME_FULL,
+    template: `%s · ${SITE_NAME_FULL}`,
+  },
 }
 
 /**

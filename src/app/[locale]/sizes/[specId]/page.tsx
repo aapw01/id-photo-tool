@@ -98,8 +98,15 @@ export async function generateMetadata({ params }: SpecDetailPageProps): Promise
   const spec = getPhotoSpec(specId)
   if (!spec) return {}
   const t = await getTranslations({ locale, namespace: 'Sizes.detail' })
+  const tSizes = await getTranslations({ locale, namespace: 'Sizes' })
   const name = localizeText(spec.name, locale)
   const bg = backgroundLabel(spec, locale as Locale)
+  // Front-load the spec name into the keyword cluster so the per-doc
+  // page ranks for its long-tail (e.g. "US visa photo size") while
+  // still carrying the AI / intelligent intent inherited from the
+  // parent /sizes hub.
+  const baseKeywords = tSizes.raw('metaKeywords') as string[]
+  const keywords = [name, ...baseKeywords]
   return buildMetadata({
     locale: locale as Locale,
     path: `/sizes/${spec.id}`,
@@ -117,6 +124,7 @@ export async function generateMetadata({ params }: SpecDetailPageProps): Promise
       dpi: spec.dpi,
       bgLabel: bg.label,
     }),
+    keywords,
   })
 }
 

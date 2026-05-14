@@ -27,6 +27,7 @@ import {
   type WatermarkDensity,
 } from '../lib/watermark'
 import { MAX_CORNER_RADIUS_PX, useScannerStore } from '../store'
+import { ScannerPreviewDialog } from './scanner-preview-dialog'
 
 const MODES: readonly OutputMode[] = ['scan', 'copy', 'enhance'] as const
 const DENSITIES: readonly WatermarkDensity[] = ['sparse', 'normal', 'dense'] as const
@@ -387,6 +388,7 @@ function ExportRow() {
           )}
           {busy === 'png' ? t('preparing') : t('png')}
         </button>
+        <ScannerPreviewDialog canPreview={canExport} />
       </div>
       {!canExport && <p className="text-[10px] text-[var(--color-text-mute)]">{t('noContent')}</p>}
     </div>

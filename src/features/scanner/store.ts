@@ -107,6 +107,34 @@ export type ScannerSide = 'front' | 'back'
  */
 export const MAX_CORNER_RADIUS_PX = 80
 
+/**
+ * Cached "what your sheet will look like" preview blob. Produced by
+ * `packCurrentSides` — the SAME function the export buttons drive —
+ * so the dialog renders byte-for-byte what `Download PNG` would
+ * write to disk (the PDF path just wraps this PNG in a vector page).
+ *
+ * `signature` fingerprints every setting that influences the packed
+ * sheet (paper size, watermark, corner radius, output mode, doc spec
+ * id, plus the front/back rectified blob identities). The store
+ * compares it to the *current* state on every `regeneratePreview`
+ * call so we can:
+ *   1. short-circuit a re-pack when nothing changed (the user
+ *      reopened the dialog without touching anything), and
+ *   2. drop a stale result if inputs changed mid-pack.
+ *
+ * `objectUrl` is created via `URL.createObjectURL(blob)`. The store
+ * owns its lifecycle — every replacement revokes the previous URL
+ * so we never leak.
+ */
+export interface ScannerPreview {
+  blob: Blob
+  objectUrl: string
+  signature: string
+  paperSize: PaperSize
+}
+
+export type PreviewState = 'idle' | 'packing' | 'ready' | 'error'
+
 export interface ScannerState {
   front: ScannerSlot | null
   back: ScannerSlot | null
@@ -124,6 +152,17 @@ export interface ScannerState {
    * corners on every surface match.
    */
   cornerRadiusPx: number
+
+  /**
+   * Cached packed-sheet preview. `null` until the user first opens
+   * the preview dialog (or any time the sheet can't be produced —
+   * e.g. no sides ready).
+   */
+  preview: ScannerPreview | null
+  /** State machine for the preview pack pipeline. */
+  previewState: PreviewState
+  /** Last preview error, present iff previewState === 'error'. */
+  previewError: string | null
 
   /**
    * Decode the file, install it as the front slot, and kick off
@@ -191,6 +230,22 @@ export interface ScannerState {
    */
   exportA4PngBlob: () => Promise<Blob | null>
 
+  /**
+   * Regenerate the cached preview blob from the current store
+   * snapshot. Resolves with the cached preview when nothing changed
+   * since the last pack (signature hit), with `null` when there's
+   * nothing to pack (no rectified sides), and with the freshly
+   * packed `ScannerPreview` otherwise. Always revokes the previous
+   * object URL when committing a replacement so we never leak.
+   */
+  regeneratePreview: () => Promise<ScannerPreview | null>
+  /**
+   * Drop the cached preview and revoke its object URL. Used by the
+   * scanner shell on unmount so a left-over preview doesn't keep
+   * a blob URL alive after the user navigates away.
+   */
+  clearPreview: () => void
+
   reset: () => void
 }
 
@@ -204,6 +259,9 @@ const INITIAL: Pick<
   | 'watermark'
   | 'paperSize'
   | 'cornerRadiusPx'
+  | 'preview'
+  | 'previewState'
+  | 'previewError'
 > = {
   front: null,
   back: null,
@@ -218,6 +276,63 @@ const INITIAL: Pick<
   },
   paperSize: 'a4' as PaperSize,
   cornerRadiusPx: 0,
+  preview: null,
+  previewState: 'idle',
+  previewError: null,
+}
+
+/**
+ * Per-`Blob` identity tokens used to fingerprint preview inputs.
+ *
+ * Two distinct `renderOutputMode` runs always produce different
+ * `Blob` references even when the bytes happen to be identical, so
+ * reference identity is the cheapest "did the upstream blob change"
+ * check. We assign each blob a sequential id the first time it's
+ * seen and stash it in a `WeakMap` so the table is GC-friendly —
+ * once the blob is unreachable the entry disappears with it.
+ *
+ * The id participates in the preview signature; if a rectify run
+ * produces a new blob, the signature changes and the cached preview
+ * is invalidated automatically.
+ */
+const blobIdentityTable = new WeakMap<Blob, number>()
+let blobIdentityCounter = 0
+function blobIdentity(blob: Blob | null | undefined): number {
+  if (!blob) return 0
+  let id = blobIdentityTable.get(blob)
+  if (id === undefined) {
+    id = ++blobIdentityCounter
+    blobIdentityTable.set(blob, id)
+  }
+  return id
+}
+
+/**
+ * Build the signature string used to dedupe preview re-packs.
+ *
+ * Includes every input that `packCurrentSides` reads. The order is
+ * fixed and the separator (`|`) cannot appear in the embedded values
+ * (we only emit numbers, booleans, paper-size enums, and small
+ * curated strings), so the resulting string is collision-free without
+ * needing a real hash.
+ *
+ * Watermark text is intentionally length-bounded by the UI (48 char
+ * max) so we just embed it verbatim.
+ */
+export function computePreviewSignature(state: ScannerState): string {
+  const wm = state.watermark
+  return [
+    state.paperSize,
+    state.outputMode,
+    state.docSpecId,
+    state.cornerRadiusPx,
+    wm.enabled ? 1 : 0,
+    wm.enabled ? wm.text : '',
+    wm.enabled ? wm.opacity.toFixed(3) : '',
+    wm.enabled ? wm.density : '',
+    blobIdentity(state.front?.rectified?.blob),
+    blobIdentity(state.back?.rectified?.blob),
+  ].join('|')
 }
 
 function clampCornerRadius(px: number): number {
@@ -523,10 +638,75 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     return packed?.blob ?? null
   },
 
+  async regeneratePreview() {
+    const startSig = computePreviewSignature(get())
+    const cached = get().preview
+    // Cache hit: the user reopened the dialog with the same inputs.
+    // We hand back the cached preview verbatim — same blob, same
+    // object URL — so the dialog stays interactive instantly.
+    if (cached && cached.signature === startSig && get().previewState === 'ready') {
+      return cached
+    }
+
+    set({ previewState: 'packing', previewError: null })
+
+    let packed: Awaited<ReturnType<typeof packCurrentSides>>
+    try {
+      packed = await packCurrentSides(get())
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      set({ previewState: 'error', previewError: message })
+      return null
+    }
+
+    // Race guard. If the user changed an input mid-pack (paper size
+    // slider, watermark toggle, …) the result we just produced is
+    // already stale. Drop it on the floor — another `regeneratePreview`
+    // call is either already in flight or about to be triggered by
+    // the dialog's input-watcher effect.
+    if (computePreviewSignature(get()) !== startSig) {
+      set({ previewState: 'idle' })
+      return null
+    }
+
+    if (!packed) {
+      // Nothing to pack (no rectified sides). Drop any cached preview
+      // so the dialog doesn't show a stale sheet for a now-empty
+      // workspace.
+      const prev = get().preview
+      if (prev) URL.revokeObjectURL(prev.objectUrl)
+      set({ preview: null, previewState: 'idle' })
+      return null
+    }
+
+    // Commit: revoke the previous URL FIRST so we never have two URLs
+    // pointing at orphaned blobs alive at once.
+    const prev = get().preview
+    if (prev) URL.revokeObjectURL(prev.objectUrl)
+
+    const next: ScannerPreview = {
+      blob: packed.blob,
+      objectUrl: URL.createObjectURL(packed.blob),
+      signature: startSig,
+      paperSize: get().paperSize,
+    }
+    set({ preview: next, previewState: 'ready' })
+    return next
+  },
+
+  clearPreview() {
+    const prev = get().preview
+    if (prev) URL.revokeObjectURL(prev.objectUrl)
+    set({ preview: null, previewState: 'idle', previewError: null })
+  },
+
   reset() {
     const prev = get()
     closeSlot(prev.front)
     closeSlot(prev.back)
+    // Revoke the cached preview URL before we tear the state back —
+    // `set(INITIAL)` would otherwise leak the URL.
+    if (prev.preview) URL.revokeObjectURL(prev.preview.objectUrl)
     set(INITIAL)
   },
 }))

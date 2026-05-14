@@ -23,8 +23,9 @@ export async function generateMetadata({ params }: StudioPageProps): Promise<Met
   return buildMetadata({
     locale: locale as Locale,
     path: '/studio',
-    title: t('title'),
-    description: t('subtitle'),
+    title: t('metaTitle'),
+    description: t('metaDescription'),
+    keywords: t.raw('metaKeywords') as string[],
   })
 }
 
