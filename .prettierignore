@@ -13,3 +13,9 @@ lighthouse-*.html
 .open-next
 .wrangler
 .playwright-cli
+
+# Next.js rewrites tsconfig.json on every build (jsx field, lib expansion);
+# fix-tsconfig.mjs handles the jsx flip but Prettier-checking the rest is
+# pointless and only causes CI churn. The file's syntax is enforced by
+# tsc/typecheck.
+tsconfig.json
