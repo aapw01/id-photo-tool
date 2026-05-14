@@ -7,14 +7,14 @@
 
 ## 1. 当前状态摘要
 
-| 项         | 值                                                  |
-| ---------- | --------------------------------------------------- |
-| 子产品名   | **Pixfit Scanner**                                  |
-| 路由前缀   | `/[locale]/scanner`                                 |
-| 当前阶段   | **S0 · 文档**（PRD / PLAN 撰写中）                  |
-| 项目阶段   | 计划阶段 · 未开工                                   |
-| 最近更新   | 2026-05-14                                          |
-| 一句话进度 | PRD 0.1 完成；执行计划完成；待评审 → 开 S1 路由骨架 |
+| 项         | 值                                                |
+| ---------- | ------------------------------------------------- |
+| 子产品名   | **Pixfit Scanner** · 中文「证件扫描」             |
+| 路由前缀   | `/[locale]/scanner`                               |
+| 当前阶段   | **S0 · 文档已评审 · 决策落地**                    |
+| 项目阶段   | 计划阶段 · 可启动 S1                              |
+| 最近更新   | 2026-05-14                                        |
+| 一句话进度 | PRD/PLAN v0.2；10 个待决问题全部敲定；待发令开 S1 |
 
 ---
 
@@ -54,25 +54,28 @@
 
 #### S1 · 路由 + 导航 + 骨架（3 天）
 
-**目标**：用户可以访问 `/[locale]/scanner` 看到一个**空骨架**页（不报错、有占位 UI、Header 工具下拉能跳转、三语切换正常）。
+**目标**：用户可以访问 `/[locale]/scanner` 看到一个**空骨架**页（不报错、有占位 UI、Header「工具 ▾」下拉能跳转、三语切换正常、主产品文档已同步引用 Scanner）。
 
-**交付物清单**（原子任务，预计 8 个）：
+**交付物清单**（原子任务，10 个）：
 
 - [ ] **S1-T01**：创建 `src/app/[locale]/scanner/page.tsx` 路由（Server Component，SSR）+ `loading.tsx` + `metadata`
 - [ ] **S1-T02**：创建 `src/features/scanner/` 模块目录，分层 `components/` `store/` `lib/` `model/`
 - [ ] **S1-T03**：写 `src/features/scanner/store/scanner-store.ts`（Zustand），独立于 `studio-store`
 - [ ] **S1-T04**：i18n namespace `Scanner.*`：在 `zh-Hans` / `zh-Hant` / `en` 各写 30+ 个 placeholder key，跑 `pnpm i18n:check` 验证一致性
-- [ ] **S1-T05**：改 `src/components/site-header.tsx` 把 Studio 单链改成「工具 ▾」下拉（NavigationMenu），含 Studio / Scanner / 规格库 / 排版打印 四项
-- [ ] **S1-T06**：改 `src/components/site-mobile-nav.tsx` 加 Scanner tab（移动端底部 4 tab 变 5 tab，或归并到"工具"二级）
+- [ ] **S1-T05**：改 `src/components/site-header.tsx` 把 Studio 单链改成「工具 ▾」下拉（NavigationMenu），含 Studio / 证件扫描 / 规格库 / 排版打印 四项
+- [ ] **S1-T06**：改 `src/components/site-mobile-nav.tsx` —— **按 Q7 决策**把扫描入口**归并到「工具」二级菜单**（点底部"工具"图标打开 sheet/popover 列出全部工具项），而非加第 5 个 tab
 - [ ] **S1-T07**：写 `src/features/scanner/components/scanner-shell.tsx` 骨架（左上传区 / 中预览占位 / 右配置面板）
 - [ ] **S1-T08**：把 `<ScannerShell />` 用 `dynamic({ ssr: false })` 懒加载到 `/scanner` 页面（同 Studio 模式），减少 SSR 负担
+- [ ] **S1-T09**：**同步主产品文档**——按 Q10 决策更新 `docs/PLAN.md`（加 Scanner 子产品入口）+ `README.md`（在路由表 / 文档索引里加证件扫描）+ `docs/PRD.md`（在 §13 V2+ 路线图标注 Scanner 已成独立子产品，不再算 V2 项）
+- [ ] **S1-T10**：在 `src/i18n/messages/*.json` 加 `Nav.tools.*` 键（"工具" 下拉的菜单项文案三语对齐）
 
 **验收**：
 
 - `pnpm dev` 访问 `/zh-Hans/scanner` / `/zh-Hant/scanner` / `/en/scanner` 三语骨架页正常
-- Header「工具 ▾」下拉所有目标可达
+- Header「工具 ▾」下拉所有目标可达；移动端「工具」二级 sheet 列出全部工具项
 - `pnpm typecheck` / `lint` / `test` / `i18n:check` 全绿
 - 现有 Studio / Specs / Paper / Templates 测试 0 回归
+- `docs/PLAN.md` 顶部表格出现 Scanner 子产品状态行；`README.md` 路由表含 `/scanner`
 
 ---
 
@@ -195,20 +198,22 @@
 
 ---
 
-## 4. 未决问题清单
+## 4. 决策记录（10 / 10 已敲定）
 
-| 编号 | 问题                                                | 提出日期   | 状态      | 决策 / 备注                                                           |
-| ---- | --------------------------------------------------- | ---------- | --------- | --------------------------------------------------------------------- |
-| Q1   | Scanner 模块的中文最终名称                          | 2026-05-14 | ⬜ 待决   | 候选："像扫" / "扫描件生成" / "Pixfit Docs" → 等品牌方拍板            |
-| Q2   | 是否需要独立 logo？                                 | 2026-05-14 | ⬜ 待决   | 倾向 No，共用主品牌 Logo + 子图标 `ScanLine`                          |
-| Q3   | OpenCV.js 选哪个版本                                | 2026-05-14 | ⬜ 待调研 | 候选 4.10.0 LTS vs 5.x dev；S3-T01 时定                               |
-| Q4   | OpenCV.js 是否做 IndexedDB 缓存 vs 仅 Cache Storage | 2026-05-14 | ⬜ 待决   | 简单方案 Cache Storage（HTTP 304 友好）；如缓存命中率低再加 IndexedDB |
-| Q5   | 默认水印文案是否需要法务审稿                        | 2026-05-14 | ⬜ 待决   | 中英简繁三套 + 通用模板，建议先用通用，跑通后请法务过                 |
-| Q6   | 是否在 S1 阶段先做"工具下拉"，还是 S8 一并替换      | 2026-05-14 | ✅ 决策   | S1 一次性改 Header / 移动端 nav，不留尾巴                             |
-| Q7   | 移动端 5 个 tab 太挤？                              | 2026-05-14 | ⬜ 待决   | 候选：归并到「工具」二级菜单 / 改成 bottom-sheet                      |
-| Q8   | 印章功能是否做                                      | 2026-05-14 | ✅ 决策   | V1 **不做完整印章库**，仅"上传你自己的印章 PNG"。法律风险压制         |
-| Q9   | OCR 字段提取放在哪一阶段                            | 2026-05-14 | ✅ 决策   | V1 不做，进 V2 路线图                                                 |
-| Q10  | 主 PLAN.md 是否需要同步更新（添加 Scanner 入口）    | 2026-05-14 | ⬜ 待决   | 倾向 S1 启动时一并改；这里**先保留**主 PLAN.md 不动，等用户拍板       |
+> 2026-05-14 评审完成，下述决策为 S1 的输入。如未来要推翻，必须先改本表 + 同步 PRD。
+
+| 编号 | 问题                                 | 决策                                                                                         |
+| ---- | ------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Q1   | Scanner 模块中文最终名称             | ✅ **「证件扫描」**                                                                          |
+| Q2   | 是否需要独立 Logo？                  | ✅ 不需要。共用主 Pixfit Logo + 子图标 Lucide `ScanLine`                                     |
+| Q3   | OpenCV.js 版本                       | ✅ **`opencv.js@4.10.x` LTS**（S3-T01 时锁定具体补丁号）                                     |
+| Q4   | OpenCV.js 缓存策略                   | ✅ **Cache Storage**（HTTP 304 友好）；命中率低再加 IndexedDB                                |
+| Q5   | 默认水印文案是否法务审稿             | ✅ V1 用通用模板，跑通后请法务过一遍                                                         |
+| Q6   | "工具下拉"在 S1 还是 S8 做           | ✅ S1 一次性改 Header + 移动端 nav，不留尾巴                                                 |
+| Q7   | 移动端 5 个 tab 太挤怎么处理         | ✅ **归并到「工具」二级菜单**（点 Header「工具」展开 popover/sheet，含 Studio + Scanner 等） |
+| Q8   | 印章功能是否做                       | ✅ V1 **不做完整印章库**，仅允许"上传自己的印章 PNG"。法律风险压制                           |
+| Q9   | OCR 字段提取                         | ✅ V1 不做，进 V2 路线图                                                                     |
+| Q10  | 主 `PLAN.md` 是否同步加 Scanner 入口 | ✅ **S1 启动时一并改**（任务清单已加 S1-T09）                                                |
 
 ---
 
@@ -225,15 +230,16 @@
 
 ---
 
-## 6. 立即下一步建议
+## 6. 立即下一步
 
-按优先级排：
+按顺序执行：
 
-1. **用户评审 PRD + PLAN**（本两份文档）→ 拍板未决问题 Q1 / Q7 / Q10
-2. **创建 `docs/scanner/tasks/S1.md`** 把 8 个原子任务展开细节
-3. **开 S1 分支**：`feat/scanner-s1-skeleton`，按 §3.2 S1 清单逐项做
-4. **S1 完成后**走一次 Vercel 部署，确认子产品的路由 / 导航 / i18n 在生产稳定
-5. **再进入 S2/S3**（核心算法链路，最大风险点）
+1. ✅ **PRD + PLAN 评审** —— 完成（v0.2）
+2. ✅ **10 个决策敲定** —— 完成（见 §4）
+3. ⬜ **创建 `docs/scanner/tasks/S1.md`** 把 10 个原子任务展开细节、记录 acceptance criteria
+4. ⬜ **开 S1**：在当前 `dev-001` 分支或新分支 `feat/scanner-s1-skeleton` 上，按 §3.2 S1 清单逐项做
+5. ⬜ **S1 验收**后走一次 Vercel 部署 dry-run，确认子产品路由 / 导航 / i18n 在生产稳定
+6. ⬜ 进 **S2/S3**（核心算法链路，最大风险点 = OpenCV.js 加载）
 
 ---
 
