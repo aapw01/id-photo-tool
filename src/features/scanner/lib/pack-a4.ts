@@ -24,9 +24,13 @@
  *     on A4 sit roughly at the page's quarter and three-quarter
  *     heights — visually balanced regardless of doc spec / paper size.
  *   - **Page-wide watermark**: drawn after the cards, covers the
- *     entire sheet (margins + cards). The per-side renderer no longer
- *     stamps the document body, so this is the single watermark layer
- *     visible in the export.
+ *     entire sheet (margins + cards). `packSheet` is the single
+ *     watermark stage on the export — callers MUST pass watermark-
+ *     free per-side blobs (e.g. by re-running `renderOutputMode`
+ *     without a `watermark` arg). The preview pane uses the
+ *     watermarked per-side blob so the user can see their settings;
+ *     mixing that blob into `packSheet` would produce overlapping
+ *     watermarks again.
  *   - **White background** — explicitly painted so PDF/JPEG re-
  *     encoders don't surprise us with transparency artifacts.
  *

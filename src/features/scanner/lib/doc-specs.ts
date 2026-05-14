@@ -11,6 +11,7 @@
  * common scan targets:
  *
  *   - `cn-id-card` — PRC Resident ID (CR80 / ISO 7810 ID-1, 85.6×54)
+ *   - `bank-card` — Generic bank / credit card (CR80 / ISO 7810 ID-1, 85.6×54)
  *   - `passport-bio` — Generic ID-3 passport bio page (125×88)
  *   - `cn-driver-license` — PRC driver license (88×60)
  *   - `cn-vehicle-license` — PRC vehicle license (88×60, single sided)
@@ -63,6 +64,7 @@ export const DOC_SPECS: readonly DocSpec[] = [
   { id: 'tw-id-card', widthMm: 85.6, heightMm: 54, hasBack: true, group: 'id-card' },
   { id: 'sg-nric', widthMm: 85.6, heightMm: 54, hasBack: true, group: 'id-card' },
   { id: 'in-aadhaar', widthMm: 85.6, heightMm: 54, hasBack: true, group: 'id-card' },
+  { id: 'bank-card', widthMm: 85.6, heightMm: 54, hasBack: true, group: 'id-card' },
   { id: 'us-driver-license', widthMm: 85.6, heightMm: 54, hasBack: true, group: 'driver-license' },
 
   // Passport bio pages — ISO/IEC 7810 ID-3 (125 × 88), single-sided

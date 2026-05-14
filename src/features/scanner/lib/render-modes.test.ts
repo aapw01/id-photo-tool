@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { applyMode } from './render-modes'
+import { applyMode, renderOutputMode } from './render-modes'
+import type { WatermarkConfig } from './watermark'
 
 function makeImageData(pixels: number[]): ImageData {
   // pixels: array of [r, g, b, a, r, g, b, a, ...]
@@ -69,5 +70,87 @@ describe('applyMode', () => {
   it('throws on an unknown mode', () => {
     const img = makeImageData([0, 0, 0, 255])
     expect(() => applyMode(img, 'nope' as never)).toThrow()
+  })
+})
+
+describe('renderOutputMode — watermark overlay', () => {
+  type StubCtx = { __drawCalls?: { method: string }[] }
+
+  function getRegistry(): StubCtx[] {
+    const g = globalThis as { __stubCtxRegistry?: StubCtx[] }
+    if (!g.__stubCtxRegistry) throw new Error('stubCtxRegistry missing — vitest setup not loaded')
+    return g.__stubCtxRegistry
+  }
+
+  function countTextDraws(registry: readonly StubCtx[]): number {
+    let total = 0
+    for (const ctx of registry) {
+      for (const call of ctx.__drawCalls ?? []) {
+        if (call.method === 'fillText' || call.method === 'strokeText') total += 1
+      }
+    }
+    return total
+  }
+
+  /**
+   * Forge a "bitmap-like" Blob — `vitest.setup.ts` stubs
+   * `createImageBitmap` as identity, so passing width/height on the
+   * Blob is enough to drive `renderOutputMode`'s canvas sizing without
+   * needing real PNG bytes.
+   */
+  function makeBitmapBlob(width: number, height: number): Blob {
+    const blob = new Blob([new Uint8Array(4)], { type: 'image/png' })
+    Object.assign(blob, { width, height })
+    return blob
+  }
+
+  it('omits the watermark pass when called without a config', async () => {
+    const registry = getRegistry()
+    registry.length = 0
+    const out = await renderOutputMode(makeBitmapBlob(256, 256), 'scan')
+    expect(out.blob.type).toBe('image/png')
+    expect(out.mode).toBe('scan')
+    // No `fillText`/`strokeText` calls — watermark kernel was skipped.
+    expect(countTextDraws(registry)).toBe(0)
+  })
+
+  it('overlays watermark glyphs when called with an enabled config', async () => {
+    const registry = getRegistry()
+    registry.length = 0
+    const watermark: WatermarkConfig = {
+      enabled: true,
+      text: 'TEST WATERMARK',
+      opacity: 0.4,
+      density: 'sparse',
+    }
+    const out = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', watermark)
+    expect(out.blob.type).toBe('image/png')
+    // Diagonal tiling makes the exact count environment-dependent —
+    // just assert the kernel produced a non-trivial set of glyphs so
+    // the watermarked variant is visibly different from the bare pass.
+    expect(countTextDraws(registry)).toBeGreaterThan(0)
+  })
+
+  it('passing a disabled config behaves identically to passing undefined', async () => {
+    // First, capture the bare-pass baseline.
+    const registry = getRegistry()
+    registry.length = 0
+    const bare = await renderOutputMode(makeBitmapBlob(256, 256), 'scan')
+    const baseTextDraws = countTextDraws(registry)
+
+    // Then run with an explicit `enabled: false` config — drawWatermark
+    // is contractually a noop in that case.
+    registry.length = 0
+    const disabled: WatermarkConfig = {
+      enabled: false,
+      text: 'IGNORED',
+      opacity: 0.7,
+      density: 'dense',
+    }
+    const off = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', disabled)
+    expect(off.blob.type).toBe(bare.blob.type)
+    expect(off.mode).toBe(bare.mode)
+    expect(countTextDraws(registry)).toBe(baseTextDraws)
+    expect(countTextDraws(registry)).toBe(0)
   })
 })

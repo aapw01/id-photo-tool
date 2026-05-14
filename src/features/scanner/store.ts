@@ -25,7 +25,7 @@
 
 import { create } from 'zustand'
 
-import { loadDocumentImage } from './lib/load-document-image'
+import { loadDocumentImage, type LoadedDocumentImage } from './lib/load-document-image'
 import { rectifyDocument } from './lib/rectify'
 import { DEFAULT_DOC_SPEC_ID, getDocSpec } from './lib/doc-specs'
 import { renderOutputMode, type OutputMode } from './lib/render-modes'
@@ -71,10 +71,18 @@ export interface ScannerSlot {
   file: File
   /** Decoded bitmap with EXIF orientation applied. */
   bitmap: ImageBitmap
-  /** Bytes used for decoding (HEIC slots hold the JPEG output). */
+  /** Bytes used for decoding (HEIC slots hold the JPEG output; PDFs hold the rendered PNG). */
   blob: Blob
   /** True iff `blob` is the heic2any output, not the original file. */
   convertedFromHeic: boolean
+  /** True iff `blob` is the rendered PNG of a PDF page, not the original file. */
+  convertedFromPdf: boolean
+  /**
+   * Total pages in the source PDF (1 for single-page docs).
+   * `undefined` for non-PDF uploads. The UI uses this to surface a
+   * "page 1 of N" badge / toast on multi-page PDFs.
+   */
+  sourcePageCount: number | undefined
   /** Raw color rectified output (post warpPerspective, pre output mode). */
   rectified: RectifiedResult | null
   /** State machine for rectification. */
@@ -99,13 +107,26 @@ export interface ScannerState {
   /** Paper size used for the packed A4/Letter/A5 export sheet. */
   paperSize: PaperSize
 
-  setFrontImage: (file: File) => Promise<void>
-  setBackImage: (file: File) => Promise<void>
+  /**
+   * Decode the file, install it as the front slot, and kick off
+   * rectification. Returns the loaded metadata so the caller (the
+   * upload card) can surface a "page 1 of N" toast when the upload
+   * was a multi-page PDF — the store stays free of i18n + toast
+   * concerns.
+   */
+  setFrontImage: (file: File) => Promise<LoadedDocumentImage>
+  /** Same contract as `setFrontImage` but targets the back slot. */
+  setBackImage: (file: File) => Promise<LoadedDocumentImage>
   clearFront: () => void
   clearBack: () => void
   setHasBack: (hasBack: boolean) => void
   setDocSpecId: (id: string) => void
   setOutputMode: (mode: OutputMode) => void
+  /**
+   * Toggle the optional anti-misuse watermark. Off by default so
+   * previews and exports stay clean until the user opts in.
+   */
+  setWatermarkEnabled: (enabled: boolean) => void
   /** Update watermark text. Empty string ⇒ caller-localized fallback is used. */
   setWatermarkText: (text: string) => void
   /** Update watermark opacity. Clamped to [0.3, 0.7] in the kernel. */
@@ -158,6 +179,7 @@ const INITIAL: Pick<
   docSpecId: DEFAULT_DOC_SPEC_ID,
   outputMode: 'scan' as OutputMode,
   watermark: {
+    enabled: false,
     text: '',
     opacity: DEFAULT_WATERMARK_OPACITY,
     density: 'normal',
@@ -175,6 +197,8 @@ function makeFreshSlot(loaded: Awaited<ReturnType<typeof loadDocumentImage>>): S
     bitmap: loaded.bitmap,
     blob: loaded.blob,
     convertedFromHeic: loaded.convertedFromHeic,
+    convertedFromPdf: loaded.convertedFromPdf,
+    sourcePageCount: loaded.sourcePageCount,
     rectified: null,
     rectifyState: 'idle',
     rectifyError: null,
@@ -191,6 +215,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     closeSlot(get().front)
     set({ front: makeFreshSlot(loaded) })
     void get().rectifySide('front')
+    return loaded
   },
 
   async setBackImage(file) {
@@ -198,6 +223,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     closeSlot(get().back)
     set({ back: makeFreshSlot(loaded) })
     void get().rectifySide('back')
+    return loaded
   },
 
   clearFront() {
@@ -237,22 +263,39 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
+  setWatermarkEnabled(enabled) {
+    if (enabled === get().watermark.enabled) return
+    set((state) => ({ watermark: { ...state.watermark, enabled } }))
+    // Toggling visibility changes the per-side blob and the page
+    // overlay — re-render so the preview / single-side PNG follow.
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
+  },
+
   setWatermarkText(text) {
     if (text === get().watermark.text) return
     set((state) => ({ watermark: { ...state.watermark, text } }))
-    // Watermark only affects the final A4 export now (single layer),
-    // so we don't re-render per-side blobs on every keystroke.
+    // Re-render the per-side blobs so the live preview + single-side
+    // PNG download reflect the new watermark text. The A4 export path
+    // re-renders watermark-free per side, so this does not produce a
+    // double watermark on the packed sheet.
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
   setWatermarkOpacity(opacity) {
     const next = clampWatermarkOpacity(opacity)
     if (next === get().watermark.opacity) return
     set((state) => ({ watermark: { ...state.watermark, opacity: next } }))
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
   setWatermarkDensity(density) {
     if (density === get().watermark.density) return
     set((state) => ({ watermark: { ...state.watermark, density } }))
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
   setPaperSize(paperSize) {
@@ -375,6 +418,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     if (!baseline?.rectified) return
     const sourceBlob = baseline.rectified.blob
     const mode = get().outputMode
+    const watermark = get().watermark
     set((state) => {
       const current = state[side]
       if (!current?.rectified || current.rectified.blob !== sourceBlob) return state
@@ -383,7 +427,15 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       } as Partial<ScannerState>
     })
     try {
-      const out = await renderOutputMode(sourceBlob, mode)
+      // Watermark is opt-in: pass it through only when the user has
+      // turned it on so the per-side preview / single PNG stays clean
+      // by default. `drawWatermark` also guards on `enabled` for
+      // defence in depth.
+      const out = await renderOutputMode(
+        sourceBlob,
+        mode,
+        watermark.enabled ? watermark : undefined,
+      )
       set((state) => {
         const current = state[side]
         // Guard: rectified blob changed (user redetected mid-render).
@@ -432,20 +484,35 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
  * and pack them onto the chosen paper size. Skips slots that are
  * still rectifying so the user never accidentally exports a partial
  * sheet.
+ *
+ * Important: `slot.rendered.blob` carries the per-side watermark used
+ * by the preview / single-side PNG download. We must NOT feed that
+ * blob into `packSheet` — it would compose the per-side watermark with
+ * the page-wide one and reintroduce the double-watermark look. Instead
+ * we re-run `renderOutputMode` on the clean rectified blob without a
+ * watermark and let `packSheet` stamp the single page-wide layer. The
+ * extra pass is cheap (a pure pixel sweep, ~50–100 ms per ID-card-
+ * sized image).
  */
 async function packCurrentSides(state: ScannerState) {
   const spec = getDocSpec(state.docSpecId)
+  const mode = state.outputMode
   const sides: PackedSide[] = []
-  const frontReady = state.front?.rendered ?? state.front?.rectified
-  if (frontReady) sides.push({ blob: frontReady.blob, spec })
+
+  if (state.front?.rectified) {
+    const clean = await renderOutputMode(state.front.rectified.blob, mode)
+    sides.push({ blob: clean.blob, spec })
+  }
   // No explicit gate on `state.hasBack`: if the user uploaded a back
   // image, we pack it; if they didn't, the slot is null and we skip.
   // The `hasBack` field is kept on the store for API stability but no
   // longer affects pack/export selection.
-  const backReady = state.back?.rendered ?? state.back?.rectified
-  if (backReady) sides.push({ blob: backReady.blob, spec })
-  // Watermark is forwarded so packSheet overlays it across the full
-  // page (including margins) — the per-side renderer already stamped
-  // the document body, but empty A4 white-space needs protection too.
-  return packSheet(sides, state.paperSize, { watermark: state.watermark })
+  if (state.back?.rectified) {
+    const clean = await renderOutputMode(state.back.rectified.blob, mode)
+    sides.push({ blob: clean.blob, spec })
+  }
+
+  return packSheet(sides, state.paperSize, {
+    watermark: state.watermark.enabled ? state.watermark : undefined,
+  })
 }

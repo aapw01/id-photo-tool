@@ -21,9 +21,18 @@
  *   enhance — saturation × 1.30 + contrast × 1.15. Useful when the
  *             phone capture is dim or hazy. Keeps it color.
  *
+ * Watermark policy: this kernel optionally stamps the watermark on
+ * the per-side output when called with a `watermark` argument — the
+ * preview pane + single-side PNG download both want the user-visible
+ * watermark so they can verify their settings. The A4 pack path
+ * passes `undefined` so `packSheet` remains the single, page-wide
+ * watermark layer on the export (no double stamping inside cards).
+ *
  * Return shape mirrors warp-perspective: a `Blob` + width + height
  * tuple, ready for `<img>` preview or the S5 PDF embed.
  */
+
+import { drawWatermark, type WatermarkConfig } from './watermark'
 
 export type OutputMode = 'scan' | 'copy' | 'enhance'
 
@@ -39,14 +48,16 @@ export interface RenderedOutput {
  * input via `createImageBitmap`, runs the pixel pass, and re-encodes
  * as PNG. The bitmap is closed immediately so no GPU memory is held.
  *
- * No watermark is applied here. Watermarking is centralized at the
- * `packSheet` export step so the user sees exactly one layer of
- * watermark on the final A4 PDF / PNG. (An earlier revision drew a
- * second smaller watermark on the per-side blob, which produced the
- * "double watermark with mismatched font sizes" look users
- * complained about.)
+ * When `watermark` is supplied the watermark is drawn on top of the
+ * mode-processed pixels before re-encoding. Per-side preview / single
+ * PNG download paths pass the watermark; the A4 pack path omits it so
+ * `packSheet` stays the sole watermark stage on the final export.
  */
-export async function renderOutputMode(input: Blob, mode: OutputMode): Promise<RenderedOutput> {
+export async function renderOutputMode(
+  input: Blob,
+  mode: OutputMode,
+  watermark?: WatermarkConfig,
+): Promise<RenderedOutput> {
   const bitmap = await createImageBitmap(input)
   try {
     const { width, height } = bitmap
@@ -59,6 +70,9 @@ export async function renderOutputMode(input: Blob, mode: OutputMode): Promise<R
     const data = ctx.getImageData(0, 0, width, height)
     applyMode(data, mode)
     ctx.putImageData(data, 0, 0)
+    if (watermark) {
+      drawWatermark(ctx, width, height, watermark, mode)
+    }
     const blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error('renderOutputMode: toBlob returned null'))),

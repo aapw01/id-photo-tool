@@ -791,16 +791,17 @@
   "Scanner": {
     "title": "ID Document Scanner",
     "subtitle": "Upload phone-shot photos of your ID card, passport, or driver license and instantly generate an official-looking PDF scan or photocopy — fully in your browser, no upload, no signup.",
-    "metaDescription": "Free browser-based ID document scanner: upload an ID card, passport, or driver license photo and get an A4 PDF with perspective correction and anti-abuse watermark. Scan / photocopy / enhance modes. 100% offline processing.",
+    "metaDescription": "Free browser-based ID document scanner: upload an ID card, passport, or driver license photo (or single-page PDF) and get an A4 PDF with perspective correction and an optional anti-misuse watermark. Scan / photocopy / enhance modes. 100% offline processing.",
     "shell": {
       "previewTitle": "Scan preview",
       "previewEmpty": "Once you upload an image, the perspective-corrected scan will appear here",
       "configTitle": "Settings",
-      "configHint": "Document type, output mode, watermark, A4 layout"
+      "configHint": "Document type, output mode, watermark, A4 layout",
+      "loadingShell": "Loading scanner workspace"
     },
     "upload": {
       "frontTitle": "Document front",
-      "frontHint": "JPG / PNG / HEIC · single file ≤ 20 MB",
+      "frontHint": "JPG / PNG / HEIC / PDF · single file ≤ 20 MB",
       "backTitle": "Document back",
       "backHint": "Optional — leave empty if your document has no back side",
       "browse": "Choose file",
@@ -809,11 +810,14 @@
       "replace": "Replace",
       "uploading": "Processing…",
       "heicBadge": "HEIC converted",
+      "pdfBadge": "PDF page 1 of {count}",
+      "pdfMultiPageNotice": "Multi-page PDF detected — using page 1 of {count}.",
       "previewAlt": "Uploaded document preview",
       "errors": {
         "too_large": "{name} exceeds the 20 MB limit",
-        "unsupported_type": "{name} is not a supported image format (JPG / PNG / WebP / HEIC only)",
+        "unsupported_type": "{name} is not a supported image format (JPG / PNG / WebP / HEIC / PDF only)",
         "heic_convert_failed": "HEIC conversion failed; please try a JPG / PNG photo instead",
+        "pdf_decode_failed": "Failed to render PDF: {name}",
         "decode_failed": "Failed to decode image: {name}",
         "unknown": "Upload failed; please try again"
       }
@@ -853,6 +857,7 @@
       "tw-id-card": "Taiwan National ID",
       "sg-nric": "Singapore NRIC",
       "in-aadhaar": "India Aadhaar",
+      "bank-card": "Bank card",
       "us-driver-license": "US driver license",
       "passport-bio": "Passport bio page",
       "cn-driver-license": "PRC driver license",
@@ -875,17 +880,18 @@
     },
     "mode": {
       "scan": "Scan",
-      "scanDesc": "Color · auto white balance",
+      "scanDesc": "Color · auto WB",
       "copy": "Copy",
-      "copyDesc": "Black & white binarize",
+      "copyDesc": "B&W binarize",
       "enhance": "Enhance",
-      "enhanceDesc": "Saturation + contrast"
+      "enhanceDesc": "More color & contrast"
     },
     "watermark": {
-      "label": "Anti-misuse watermark",
+      "label": "Watermark",
+      "toggleLabel": "Add watermark to exports",
+      "toggleHint": "Off by default. Turn on to stamp a diagonal text watermark on the preview, the single-side PNG, and the A4 export.",
       "textLabel": "Watermark text",
       "textPlaceholder": "For this application only",
-      "defaultText": "For this application only",
       "opacityLabel": "Opacity",
       "densityLabel": "Density",
       "density": {
@@ -913,8 +919,8 @@
           "body": "Perspective correction, photocopy / scan / enhance rendering, watermark, and PDF assembly all run locally in your browser. We do not host, upload, or analyse your document photos."
         },
         "watermark": {
-          "title": "Watermark is mandatory",
-          "body": "Every exported PDF / PNG carries an anti-misuse watermark. You customise the text (e.g. \"For XYZ Co. onboarding only\") and opacity (minimum 30 %), but the watermark itself can not be disabled. This is a compliance requirement to deter ID-card impersonation."
+          "title": "Watermark is optional",
+          "body": "The anti-misuse watermark is off by default. Flip the toggle in Settings to stamp a diagonal text watermark across the preview, the single-side PNG, and the A4 export — you control the text (e.g. \"For XYZ Co. onboarding only\"), density, and opacity. While enabled, opacity stays clamped to 30 %–70 % so the watermark remains visible enough to be useful."
         },
         "lawful": {
           "title": "Lawful use only",
@@ -931,12 +937,12 @@
       "heading": "Why an ID document scanner",
       "paragraphs": {
         "0": "Job applications, online filings, visa submissions, and contract signing often require a 'scanned' PDF — not a phone snapshot. But most people don't own a scanner. The ID Document Scanner rectifies, white-balances, and shadow-strips your phone-shot ID photo to mimic real scanner output, and exports it as A4 PDF with one click.",
-        "1": "Photocopy mode applies adaptive binarization for the black-and-white look that exam registrations and government offices expect. Every output carries a watermark that cannot be fully disabled — you choose the text (e.g. 'For XYZ Company onboarding only') to deter ID-card misuse and impersonation fraud. The entire pipeline runs in your browser; nothing is ever uploaded."
+        "1": "Photocopy mode applies adaptive binarization for the black-and-white look that exam registrations and government offices expect. Need an extra layer of protection? Switch on the optional anti-misuse watermark — off by default, with custom text (e.g. 'For XYZ Company onboarding only') so a downstream copy is harder to redirect for ID-card fraud. The entire pipeline runs in your browser; nothing is ever uploaded."
       }
     },
     "supported": {
       "heading": "Supported document types",
-      "subtitle": "Eleven built-in document profiles cover the most common scan targets across China, Hong Kong, Taiwan, Singapore, India, the US, plus generic passport bio pages and full-page A4 / Letter documents.",
+      "subtitle": "Twelve built-in document profiles cover the most common scan targets across China, Hong Kong, Taiwan, Singapore, India, the US, plus bank cards, generic passport bio pages, and full-page A4 / Letter documents.",
       "cardCta": "Open this guide",
       "dimensionTagline": "{w} × {h} mm"
     },
@@ -953,8 +959,8 @@
           "a": "No. Perspective correction, white balance, photocopy mode, watermark, and PDF assembly all happen locally on your device. Nothing is sent over the network."
         },
         "watermark": {
-          "q": "Why is the watermark mandatory?",
-          "a": "Photo-based ID-document fraud is a real abuse vector. The watermark text (which you customise, e.g. 'For XYZ Company onboarding only') is clamped to a minimum 30 % opacity so the output can't easily be cleaned up and forwarded. This is a compliance requirement we do not offer to disable."
+          "q": "Can I add an anti-misuse watermark?",
+          "a": "Yes — it's off by default. Turn it on in Settings and the preview, the single-side PNG, and the A4 export will all carry a diagonal text watermark. You customise the text, density, and opacity (clamped to 30 %–70 % when enabled so the watermark stays visible enough to be useful)."
         },
         "official": {
           "q": "Is the output accepted by government portals?",
@@ -968,8 +974,8 @@
     },
     "detail": {
       "metaTitle": "{name} scan online · Pixfit",
-      "metaDescription": "Free in-browser scanner for {name}: upload a phone-shot photo, get an A4 / Letter / A5 PDF with perspective correction, anti-misuse watermark, and scan / photocopy / enhance output modes. 100 % offline.",
-      "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · Mandatory watermark",
+      "metaDescription": "Free in-browser scanner for {name}: upload a phone-shot photo (or single-page PDF), get an A4 / Letter / A5 PDF with perspective correction, an optional anti-misuse watermark, and scan / photocopy / enhance output modes. 100 % offline.",
+      "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · Optional watermark",
       "summarySection": {
         "title": "About {name}",
         "subtitle": "What it is and where it gets requested"
@@ -997,7 +1003,7 @@
           },
           "configure": {
             "name": "Pick output mode + watermark",
-            "text": "Switch between Scan (color + auto white balance), Copy (B&W binarize), or Enhance (saturation + contrast). Customise the mandatory anti-misuse watermark text + opacity + density."
+            "text": "Switch between Scan (color + auto white balance), Copy (B&W binarize), or Enhance (saturation + contrast). Optionally turn on the anti-misuse watermark and customise its text + opacity + density."
           },
           "export": {
             "name": "Export as A4 / Letter / A5 PDF",
@@ -1010,15 +1016,15 @@
         "items": {
           "free": {
             "q": "Is scanning {name} in Pixfit free?",
-            "a": "Yes. Pixfit's ID Document Scanner is free with no watermark on the workspace, no signup, and no monthly cap. The output PDF carries an anti-misuse watermark, but that's by design (and you customise the text)."
+            "a": "Yes. Pixfit's ID Document Scanner is free with no watermark on the workspace, no signup, and no monthly cap. The optional anti-misuse watermark on the output is off by default — you decide whether to turn it on."
           },
           "privacy": {
             "q": "Will the {name} photo be uploaded to a server?",
             "a": "No. Perspective correction, watermark compositing, and PDF assembly all run locally in your browser. The phone-shot photo of {name} never leaves your device."
           },
           "watermark": {
-            "q": "Can I remove the watermark when scanning {name}?",
-            "a": "The text and opacity are customisable (down to 30 %) but the watermark itself can not be disabled. This is an anti-fraud measure: an ID document photo with no anti-misuse mark is too easy to redirect into impersonation scams."
+            "q": "Can I add an anti-misuse watermark to {name}?",
+            "a": "Yes, it's optional and off by default. When you turn it on, the text and opacity are fully customisable (opacity clamps to 30 %–70 % so the watermark stays visible enough to be useful) — handy when you want to mark the scan as 'For XYZ Company onboarding only' before sending."
           },
           "official": {
             "q": "Will the scan of {name} be accepted by official portals?",
@@ -1052,6 +1058,10 @@
       "in-aadhaar": {
         "summary": "The Indian Aadhaar card is a CR80-sized (85.6 × 54 mm) two-sided national identity proof issued by the Unique Identification Authority of India (UIDAI).",
         "usage": "KYC for banks, SIM cards, government welfare schemes, tax filings, and many private-sector services across India. Both the photo side and the QR-code side are commonly scanned for submission."
+      },
+      "bank-card": {
+        "summary": "Bank, credit, and debit cards follow ISO/IEC 7810 ID-1 (CR80, 85.6 × 54 mm) with the card number, holder name, and expiry on the front and the magnetic stripe / CVV / signature panel on the back.",
+        "usage": "Replacing a lost or expired card, submitting account-recovery or fraud-dispute paperwork, KYC for cross-border transfers, and corporate expense reimbursement that requires both sides of the corporate card."
       },
       "us-driver-license": {
         "summary": "US state driver licenses are CR80-sized (85.6 × 54 mm) two-sided plastic cards issued by each state's Department of Motor Vehicles.",

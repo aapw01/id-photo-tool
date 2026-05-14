@@ -1,22 +1,27 @@
 'use client'
 
 /**
- * Watermark drawing — mandatory per the PRD (§9.1, "anti-misuse
- * watermark cannot be fully disabled").
+ * Watermark drawing — optional anti-misuse overlay the user can opt
+ * into via the Scanner config panel. Off by default.
  *
- * Enforcement levers:
+ * Knobs when the user enables it:
  *
- *   - `MIN_OPACITY = 0.3` — clamped at the renderer regardless of
- *     the UI control, so a tampered store value can't disable it.
- *   - `MAX_OPACITY = 0.7` — keeps the document still readable.
- *   - Diagonal tiled layout — covers the entire output, not just a
- *     stamp; a single crop or rotation can't remove it.
+ *   - `MIN_OPACITY = 0.3` / `MAX_OPACITY = 0.7` — clamped so an
+ *     enabled watermark is always visible enough to deter casual
+ *     misuse but never opaque enough to block document content.
+ *   - Diagonal tiled layout — covers the entire output once on,
+ *     making a single crop or rotation insufficient to strip it.
  *   - Both fill and stroke — survives moderate JPEG re-compression
  *     better than fill-only.
  *
  * The watermark is rendered on a 2D canvas context the caller
  * supplies, so the same kernel works for per-side previews and the
  * A4 PDF layout (in S5's pack-a4.ts).
+ *
+ * When `config.enabled === false` `drawWatermark` returns immediately
+ * — callers are still encouraged to gate the call so they don't pay
+ * any setup cost, but the kernel-level guard makes the contract
+ * bulletproof.
  */
 
 import type { OutputMode } from './render-modes'
@@ -28,6 +33,12 @@ export const DEFAULT_WATERMARK_OPACITY = 0.4
 export type WatermarkDensity = 'sparse' | 'normal' | 'dense'
 
 export interface WatermarkConfig {
+  /**
+   * Whether the watermark should be drawn at all. Default off — the
+   * Scanner store initialises this to `false` so previews and exports
+   * stay clean unless the user explicitly opts in.
+   */
+  enabled: boolean
   /** Localized fallback applied when the user clears the input. */
   text: string
   opacity: number
@@ -42,8 +53,8 @@ const DEFAULT_TEXTS: Record<string, string> = {
 
 /**
  * Resolve a localized default watermark text. The Scanner UI shows
- * this as the input placeholder; if the user empties the field we
- * still draw the localized default so the watermark stays mandatory.
+ * this as the input placeholder; when the user enables the watermark
+ * but leaves the field empty, this string seeds the actual draw.
  */
 export function getDefaultWatermarkText(locale: string): string {
   return DEFAULT_TEXTS[locale] ?? DEFAULT_TEXTS['en']!
@@ -76,12 +87,16 @@ const DENSITY_TABLE: Record<WatermarkDensity, DensitySpec> = {
  * `mode` is used to choose a readable color: black-on-white for
  * scan/enhance, light gray on the copy mode's pure-white background
  * (so the watermark stays subtle but still survives photocopying).
+ *
+ * A `config.enabled === false` short-circuits before any state is
+ * touched — defence in depth so a stale plumbing path can't sneak
+ * a watermark onto an opted-out export.
  */
 /**
- * Hardcoded fallback so an empty / tampered config can never disable
- * the watermark. The UI substitutes a locale-aware default before
- * the user sees the input, but a manually-cleared field still ends
- * up here with this string — keeps the anti-misuse guarantee.
+ * Hardcoded fallback used only when the user enables the watermark
+ * but the field is empty AND the caller didn't substitute a localized
+ * default. Should never surface in normal UI flows — the config panel
+ * passes the locale-aware placeholder when the input is blank.
  */
 const FALLBACK_WATERMARK_TEXT = 'PIXFIT · For this application only'
 
@@ -92,6 +107,7 @@ export function drawWatermark(
   config: WatermarkConfig,
   mode: OutputMode,
 ): void {
+  if (!config.enabled) return
   const text = (config.text || '').trim() || FALLBACK_WATERMARK_TEXT
 
   const opacity = clampWatermarkOpacity(config.opacity)

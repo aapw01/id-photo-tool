@@ -26,21 +26,23 @@ import { toast } from 'sonner'
 import { ImageUp, Loader2, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
-import { DocumentUploadError } from '../lib/load-document-image'
+import { DocumentUploadError, type LoadedDocumentImage } from '../lib/load-document-image'
 import type { ScannerSlot } from '../store'
 
 /**
- * Accept everything we can read, including HEIC. The `.heic` /
- * `.heif` extensions are spelled out for Safari, which sometimes
- * leaves `file.type` empty for those formats.
+ * Accept everything we can read: standard browser image MIMEs, HEIC,
+ * and single-page PDFs. The `.heic` / `.heif` / `.pdf` extensions are
+ * spelled out for Safari, which sometimes leaves `file.type` empty
+ * for those formats.
  */
-const ACCEPT = 'image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif'
+const ACCEPT =
+  'image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf,.heic,.heif,.pdf'
 
 interface ScannerUploadCardProps {
   slot: ScannerSlot | null
   title: string
   hint: string
-  onPick: (file: File) => Promise<void>
+  onPick: (file: File) => Promise<LoadedDocumentImage>
   onClear: () => void
   /** When true, render the disabled/placeholder appearance (no interactions). */
   disabled?: boolean
@@ -67,7 +69,17 @@ export function ScannerUploadCard({
     async (file: File) => {
       setBusy(true)
       try {
-        await onPick(file)
+        const loaded = await onPick(file)
+        // Multi-page PDFs: V1 only renders page 1, but the user should
+        // know we didn't silently drop pages 2+. A single-page PDF
+        // (sourcePageCount === 1) flows through without a toast.
+        if (
+          loaded.convertedFromPdf &&
+          typeof loaded.sourcePageCount === 'number' &&
+          loaded.sourcePageCount > 1
+        ) {
+          toast.info(t('pdfMultiPageNotice', { count: loaded.sourcePageCount }))
+        }
       } catch (err) {
         if (err instanceof DocumentUploadError) {
           toast.error(t(`errors.${err.code}`, { name: err.fileName ?? '' }))
@@ -191,17 +203,23 @@ export function ScannerUploadCard({
         />
       )}
 
-      {/* Bottom info strip — file name + size + HEIC badge */}
+      {/* Bottom info strip — file name + size + HEIC / PDF badge.
+          HEIC and PDF are mutually exclusive sources, so we render at
+          most one badge per slot to keep the strip uncrowded. */}
       <div className="absolute right-0 bottom-0 left-0 flex items-center gap-2 bg-gradient-to-t from-black/70 via-black/40 to-transparent px-3 pt-6 pb-2 text-white">
         <div className="min-w-0 flex-1">
           <div className="truncate text-xs font-medium">{slot.file.name}</div>
           <div className="text-[10px] opacity-80">{formatBytes(slot.file.size)}</div>
         </div>
-        {slot.convertedFromHeic && (
+        {slot.convertedFromPdf && typeof slot.sourcePageCount === 'number' ? (
+          <span className="shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase">
+            {t('pdfBadge', { count: slot.sourcePageCount })}
+          </span>
+        ) : slot.convertedFromHeic ? (
           <span className="shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase">
             {t('heicBadge')}
           </span>
-        )}
+        ) : null}
       </div>
 
       {/* Remove button — top-right */}

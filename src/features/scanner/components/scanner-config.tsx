@@ -4,16 +4,16 @@
  * Right-rail config panel.
  *
  * S4 contributed: doc-type picker + output mode (scan/copy/enhance).
- * S5 adds: mandatory watermark controls (text + opacity + density)
- *          and the export CTAs (A4 PDF, A4 PNG).
+ * S5 adds: optional watermark controls (toggle + text + opacity +
+ *          density) and the export CTAs (A4 PDF, A4 PNG).
  *
- * Watermark is enforced at the kernel layer (clampWatermarkOpacity
- * + hardcoded fallback) — this UI is just the friendly surface for
- * customization. The "mandatory" note tells the user why opacity
- * doesn't go below 30 %.
+ * Watermark is off by default. When the user turns it on, the
+ * opacity slider still clamps at 30–70 % via the kernel so the
+ * watermark stays visible enough to deter casual misuse — but the
+ * whole feature can be disabled in one click.
  */
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Download, FileDown, FilePenLine, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -123,7 +123,11 @@ function OutputModePicker() {
               <span className="block font-medium">
                 {tMode(mode as Parameters<typeof tMode>[0])}
               </span>
-              <span className={`mt-0.5 block text-[10px] ${active ? 'opacity-90' : 'opacity-60'}`}>
+              <span
+                className={`mt-0.5 block truncate text-[10px] whitespace-nowrap ${
+                  active ? 'opacity-90' : 'opacity-60'
+                }`}
+              >
                 {tMode(`${mode}Desc` as Parameters<typeof tMode>[0])}
               </span>
             </button>
@@ -137,92 +141,114 @@ function OutputModePicker() {
 function WatermarkConfig() {
   const t = useTranslations('Scanner.watermark')
   const watermark = useScannerStore((s) => s.watermark)
+  const setWatermarkEnabled = useScannerStore((s) => s.setWatermarkEnabled)
   const setWatermarkText = useScannerStore((s) => s.setWatermarkText)
   const setWatermarkOpacity = useScannerStore((s) => s.setWatermarkOpacity)
   const setWatermarkDensity = useScannerStore((s) => s.setWatermarkDensity)
 
-  // Pre-fill the watermark with the locale-localized default on first
-  // render so the user starts with a sensible value. The mandatory
-  // kernel fallback still kicks in if the user later clears the field.
-  const defaultText = t('defaultText')
-  useEffect(() => {
-    if (!watermark.text) {
-      setWatermarkText(defaultText)
-    }
-    // We only want this to fire once per locale change, not whenever
-    // the user is typing.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultText])
+  const enabled = watermark.enabled
+  const fieldsDisabled = !enabled
 
   return (
     <div className="space-y-3 border-t border-[var(--color-border)] pt-4">
-      <span className="text-xs font-medium text-[var(--color-text)]">{t('label')}</span>
-      <div className="space-y-1.5">
-        <label
-          htmlFor="scanner-watermark-text"
-          className="text-[11px] font-medium text-[var(--color-text-mute)]"
-        >
-          {t('textLabel')}
-        </label>
-        <input
-          id="scanner-watermark-text"
-          type="text"
-          value={watermark.text}
-          placeholder={t('textPlaceholder')}
-          onChange={(e) => setWatermarkText(e.target.value)}
-          className="block w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-mute)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]"
-          maxLength={48}
-        />
-      </div>
-      <div className="space-y-1.5">
-        <label
-          htmlFor="scanner-watermark-opacity"
-          className="flex justify-between text-[11px] font-medium text-[var(--color-text-mute)]"
-        >
-          <span>{t('opacityLabel')}</span>
-          <span>{Math.round(watermark.opacity * 100)}%</span>
-        </label>
-        <input
-          id="scanner-watermark-opacity"
-          type="range"
-          min={MIN_WATERMARK_OPACITY * 100}
-          max={MAX_WATERMARK_OPACITY * 100}
-          step={1}
-          value={Math.round(watermark.opacity * 100)}
-          onChange={(e) => setWatermarkOpacity(Number(e.target.value) / 100)}
-          className="block w-full accent-[var(--color-primary)]"
-        />
-      </div>
-      <div className="space-y-1.5">
-        <label className="text-[11px] font-medium text-[var(--color-text-mute)]">
-          {t('densityLabel')}
-        </label>
-        <div
-          role="radiogroup"
-          aria-label={t('densityLabel')}
-          className="flex overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)]"
-        >
-          {DENSITIES.map((density) => {
-            const active = watermark.density === density
-            return (
-              <button
-                key={density}
-                type="button"
-                role="radio"
-                aria-checked={active}
-                onClick={() => setWatermarkDensity(density)}
-                className={`flex-1 border-[var(--color-border)] px-1.5 py-1 text-[11px] transition-colors first:border-r last:border-l ${
-                  active
-                    ? 'bg-[var(--color-primary)] text-white'
-                    : 'text-[var(--color-text)] hover:bg-[var(--color-divider)]'
-                }`}
-              >
-                {t(`density.${density}` as Parameters<typeof t>[0])}
-              </button>
-            )
-          })}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <span className="block text-xs font-medium text-[var(--color-text)]">{t('label')}</span>
+          <p className="mt-1 text-[10px] leading-snug text-[var(--color-text-mute)]">
+            {t('toggleHint')}
+          </p>
         </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={enabled}
+          aria-label={t('toggleLabel')}
+          onClick={() => setWatermarkEnabled(!enabled)}
+          className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] ${
+            enabled ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-divider)]'
+          }`}
+        >
+          <span
+            aria-hidden="true"
+            className={`inline-block size-4 transform rounded-full bg-white shadow-[var(--shadow-sm)] transition-transform ${
+              enabled ? 'translate-x-4' : 'translate-x-0.5'
+            }`}
+          />
+        </button>
       </div>
+      <fieldset
+        disabled={fieldsDisabled}
+        aria-disabled={fieldsDisabled || undefined}
+        className={`space-y-3 ${fieldsDisabled ? 'opacity-50' : ''}`}
+      >
+        <div className="space-y-1.5">
+          <label
+            htmlFor="scanner-watermark-text"
+            className="text-[11px] font-medium text-[var(--color-text-mute)]"
+          >
+            {t('textLabel')}
+          </label>
+          <input
+            id="scanner-watermark-text"
+            type="text"
+            value={watermark.text}
+            placeholder={t('textPlaceholder')}
+            onChange={(e) => setWatermarkText(e.target.value)}
+            className="block w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-mute)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] disabled:cursor-not-allowed"
+            maxLength={48}
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label
+            htmlFor="scanner-watermark-opacity"
+            className="flex justify-between text-[11px] font-medium text-[var(--color-text-mute)]"
+          >
+            <span>{t('opacityLabel')}</span>
+            <span>{Math.round(watermark.opacity * 100)}%</span>
+          </label>
+          <input
+            id="scanner-watermark-opacity"
+            type="range"
+            min={MIN_WATERMARK_OPACITY * 100}
+            max={MAX_WATERMARK_OPACITY * 100}
+            step={1}
+            value={Math.round(watermark.opacity * 100)}
+            onChange={(e) => setWatermarkOpacity(Number(e.target.value) / 100)}
+            className="block w-full accent-[var(--color-primary)] disabled:cursor-not-allowed"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-[11px] font-medium text-[var(--color-text-mute)]">
+            {t('densityLabel')}
+          </label>
+          <div
+            role="radiogroup"
+            aria-label={t('densityLabel')}
+            className="flex overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)]"
+          >
+            {DENSITIES.map((density) => {
+              const active = watermark.density === density
+              return (
+                <button
+                  key={density}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  disabled={fieldsDisabled}
+                  onClick={() => setWatermarkDensity(density)}
+                  className={`flex-1 border-[var(--color-border)] px-1.5 py-1 text-[11px] transition-colors first:border-r last:border-l ${
+                    active
+                      ? 'bg-[var(--color-primary)] text-white'
+                      : 'text-[var(--color-text)] hover:bg-[var(--color-divider)]'
+                  } disabled:cursor-not-allowed`}
+                >
+                  {t(`density.${density}` as Parameters<typeof t>[0])}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </fieldset>
     </div>
   )
 }

@@ -49,9 +49,19 @@ type StubContext = Record<string, unknown> & {
   __drawCalls: { method: string; args: unknown[] }[]
 }
 
+/**
+ * Tests that need to inspect cross-canvas draw activity (e.g. confirm
+ * a watermark composed glyphs onto a transient canvas owned by
+ * `renderOutputMode`) can read this registry. Reset it at the start
+ * of any test that asserts on draw counts so prior tests' contexts
+ * don't bleed in.
+ */
+const stubCtxRegistry: StubContext[] = []
+;(globalThis as { __stubCtxRegistry?: StubContext[] }).__stubCtxRegistry = stubCtxRegistry
+
 function makeStubContext(): StubContext {
   const calls: StubContext['__drawCalls'] = []
-  return new Proxy(
+  const proxy: StubContext = new Proxy(
     {
       imageSmoothingEnabled: true,
       imageSmoothingQuality: 'high',
@@ -83,6 +93,15 @@ function makeStubContext(): StubContext {
             colorSpace: 'srgb' as const,
           })
         }
+        if (prop === 'measureText') {
+          return (text: string) => {
+            calls.push({ method: 'measureText', args: [text] })
+            // Approximate metric — `drawWatermark` only reads `width`
+            // to compute its grid step, so a coarse linear estimate is
+            // enough to exercise the tiling loop without a real font.
+            return { width: text.length * 6 } as TextMetrics
+          }
+        }
         // Every other method is a recorded noop. Tests inspect
         // `ctx.__drawCalls` to assert what got drawn.
         return (...args: unknown[]) => {
@@ -96,6 +115,8 @@ function makeStubContext(): StubContext {
       },
     },
   )
+  stubCtxRegistry.push(proxy)
+  return proxy
 }
 
 // happy-dom doesn't provide `createImageBitmap`; some helpers want it.

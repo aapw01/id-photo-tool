@@ -8,6 +8,25 @@ import {
   type PackedSide,
   type PaperSize,
 } from './pack-a4'
+import type { WatermarkConfig } from './watermark'
+
+type StubCtx = { __drawCalls?: { method: string }[] }
+
+function getRegistry(): StubCtx[] {
+  const g = globalThis as { __stubCtxRegistry?: StubCtx[] }
+  if (!g.__stubCtxRegistry) throw new Error('stubCtxRegistry missing — vitest setup not loaded')
+  return g.__stubCtxRegistry
+}
+
+function countTextDraws(registry: readonly StubCtx[]): number {
+  let total = 0
+  for (const ctx of registry) {
+    for (const call of ctx.__drawCalls ?? []) {
+      if (call.method === 'fillText' || call.method === 'strokeText') total += 1
+    }
+  }
+  return total
+}
 
 /**
  * Build a fake "rectified" PackedSide for the given spec. The blob is
@@ -132,6 +151,47 @@ describe('packSheet — physical-size, evenly-distributed layout', () => {
     const sheet = await packSheet(sides, 'a4')
     expect(sheet).not.toBeNull()
     expect(sheet!.paperSize).toBe('a4')
+  })
+})
+
+describe('packSheet — watermark overlay', () => {
+  it('emits no watermark glyphs when called without a watermark config', async () => {
+    const registry = getRegistry()
+    registry.length = 0
+    const sheet = await packSheet([makeSide('cn-id-card')], 'a4')
+    expect(sheet).not.toBeNull()
+    expect(countTextDraws(registry)).toBe(0)
+  })
+
+  it('emits no watermark glyphs when watermark is disabled', async () => {
+    // `enabled: false` must be treated as a noop — same as omitting it.
+    // Defends against the previous "watermark always on" assumption
+    // accidentally creeping back via packSheet.
+    const registry = getRegistry()
+    registry.length = 0
+    const watermark: WatermarkConfig = {
+      enabled: false,
+      text: 'IGNORED',
+      opacity: 0.7,
+      density: 'dense',
+    }
+    const sheet = await packSheet([makeSide('cn-id-card')], 'a4', { watermark })
+    expect(sheet).not.toBeNull()
+    expect(countTextDraws(registry)).toBe(0)
+  })
+
+  it('paints watermark glyphs when watermark is enabled', async () => {
+    const registry = getRegistry()
+    registry.length = 0
+    const watermark: WatermarkConfig = {
+      enabled: true,
+      text: 'CONFIDENTIAL',
+      opacity: 0.4,
+      density: 'sparse',
+    }
+    const sheet = await packSheet([makeSide('cn-id-card')], 'a4', { watermark })
+    expect(sheet).not.toBeNull()
+    expect(countTextDraws(registry)).toBeGreaterThan(0)
   })
 })
 
