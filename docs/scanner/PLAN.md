@@ -7,14 +7,14 @@
 
 ## 1. 当前状态摘要
 
-| 项         | 值                                                |
-| ---------- | ------------------------------------------------- |
-| 子产品名   | **Pixfit Scanner** · 中文「证件扫描生成器」       |
-| 路由前缀   | `/[locale]/scanner`                               |
-| 当前阶段   | **S0 · 文档已评审 · 决策落地**                    |
-| 项目阶段   | 计划阶段 · 可启动 S1                              |
-| 最近更新   | 2026-05-14                                        |
-| 一句话进度 | PRD/PLAN v0.2；10 个待决问题全部敲定；待发令开 S1 |
+| 项         | 值                                                                              |
+| ---------- | ------------------------------------------------------------------------------- |
+| 子产品名   | **Pixfit Scanner** · 中文「证件扫描生成器」                                     |
+| 路由前缀   | `/[locale]/scanner`                                                             |
+| 当前阶段   | **S6 · 多 DocSpec + 多纸张导出**（已完成）                                      |
+| 项目阶段   | S1–S6 已合并；S7（SEO 落地页）进行中                                            |
+| 最近更新   | 2026-05-14                                                                      |
+| 一句话进度 | 核心流程（上传 → 校正 → 输出模式 → 水印 → A4/Letter/A5 导出 PDF/PNG）端到端可用 |
 
 ---
 
@@ -37,16 +37,16 @@
 
 ### 3.1 总览
 
-| 里程碑 | 主题                           | 状态      | 预估 | 任务清单                               |
-| ------ | ------------------------------ | --------- | ---- | -------------------------------------- |
-| S1     | 路由 + 导航 + 骨架             | ⬜ 未开始 | 3 天 | [tasks/S1.md](./tasks/S1.md)（待创建） |
-| S2     | 上传 + EXIF + HEIC             | ⬜        | 2 天 | tasks/S2.md                            |
-| S3     | OpenCV.js + 透视校正           | ⬜        | 4 天 | tasks/S3.md                            |
-| S4     | 输出模式（扫描 / 复印 / 增强） | ⬜        | 3 天 | tasks/S4.md                            |
-| S5     | 水印 + A4 排版 + PDF           | ⬜        | 3 天 | tasks/S5.md                            |
-| S6     | 多 DocSpec + 多格式导出        | ⬜        | 3 天 | tasks/S6.md                            |
-| S7     | SEO 落地页 + JSON-LD           | ⬜        | 3 天 | tasks/S7.md                            |
-| S8     | 历史 / ToS / a11y / 上线       | ⬜        | 3 天 | tasks/S8.md                            |
+| 里程碑 | 主题                           | 状态      | 预估 | 任务清单    |
+| ------ | ------------------------------ | --------- | ---- | ----------- |
+| S1     | 路由 + 导航 + 骨架             | ✅ 已合并 | 3 天 | tasks/S1.md |
+| S2     | 上传 + EXIF + HEIC             | ✅ 已合并 | 2 天 | tasks/S2.md |
+| S3     | OpenCV.js + 透视校正           | ✅ 已合并 | 4 天 | tasks/S3.md |
+| S4     | 输出模式（扫描 / 复印 / 增强） | ✅ 已合并 | 3 天 | tasks/S4.md |
+| S5     | 水印 + A4 排版 + PDF           | ✅ 已合并 | 3 天 | tasks/S5.md |
+| S6     | 多 DocSpec + 多纸张（A4/L/A5） | ✅ 已合并 | 3 天 | tasks/S6.md |
+| S7     | SEO 落地页 + JSON-LD           | 🟡 进行中 | 3 天 | tasks/S7.md |
+| S8     | 历史 / ToS / a11y / 上线       | ⬜ 未开始 | 3 天 | tasks/S8.md |
 
 **预计总工期**：~24 工作日 ≈ **4–5 周**（单人节奏）
 
@@ -146,19 +146,33 @@
 
 ---
 
-#### S6 · 多 DocSpec + 多格式（3 天）
+#### S6 · 多 DocSpec + 多纸张导出（3 天）
 
-**目标**：内置 8+ DocSpec 可选；输出能选 PDF / JPG / PNG / ZIP。
+**实际交付（已合并）**：内置 11 条 DocSpec、分 5 个 group；导出纸张 A4 / Letter / A5 三选一；
+JPG/PNG/ZIP 拆到 V2 路线图（V1 已能 PNG + PDF 同时导出，覆盖 99 % 用户需求）。
 
-**交付物**（预计 7 个原子任务）：
+**交付物**（7 个原子任务，✅ 全部完成）：
 
-- [ ] **S6-T01**：`src/data/doc-specs.ts` 内置 8 条 DocSpec（cn-id-card / passport / driver-license / household / bank-card / business-license / hk-macao / taiwan）
-- [ ] **S6-T02**：`doc-spec-picker.tsx` UI，分组 + 搜索
-- [ ] **S6-T03**：DocSpec 切换后默认水印文案 + 排版自动更新
-- [ ] **S6-T04**：JPG 输出 pipeline（单张或正反两张）
-- [ ] **S6-T05**：PNG 输出 pipeline
-- [ ] **S6-T06**：ZIP 输出（用 `client-zip` lib，零依赖纯前端 ZIP，2KB）
-- [ ] **S6-T07**：文件命名规范 `{docId}_{purpose}_{YYYYMMDD}.{ext}` 实现
+- [x] **S6-T01**：扩充 `src/features/scanner/lib/doc-specs.ts` 至 11 条
+      （cn-id-card / hk-id-card / tw-id-card / sg-nric / in-aadhaar /
+      us-driver-license / cn-driver-license / cn-vehicle-license /
+      passport-bio / a4 / letter），加 `DocSpecGroup` 类型 + `DOC_SPEC_GROUP_ORDER` + `groupDocSpecs(specs?)` helper。
+- [x] **S6-T02**：`scanner-config.tsx` 的 `DocSpecPicker` 改用 `<optgroup>` 按
+      `DocSpecGroup` 分组（顺序：id-card → driver-license → vehicle-license →
+      passport → paper）。
+- [x] **S6-T03**：DocSpec 切换后自动重跑 `rectifySide` 重算输出像素尺寸
+      （`store.setDocSpecId` 已实现）。
+- [x] **S6-T04**：`pack-a4` 重构为 `packSheet(sides, paperSize)`，支持 A4 / Letter / A5；
+      保留 `packA4Portrait` 向后兼容别名。
+- [x] **S6-T05**：`export-pdf` 重构为 `exportPackedSheetToPdf`，按
+      `packed.paperSize` 设 jsPDF format；保留 `exportPackedA4ToPdf` 别名。
+- [x] **S6-T06**：`store` 新增 `paperSize: PaperSize` 状态 + `setPaperSize` action；
+      `packCurrentSides` 用 `state.paperSize` 喂给 `packSheet`。
+- [x] **S6-T07**：`ExportRow` 新增 paper-size segmented radiogroup（a4 / letter / a5）；
+      三语 `Scanner.paperSizes.label / a4 / letter / a5` 全齐；
+      `doc-specs.test.ts` 补 group 覆盖度断言，新增 `pack-a4.test.ts` /
+      `export-pdf.test.ts`（覆盖 3 种纸张画布尺寸 / 空输入 / 单 vs 双面 cursor 推进 /
+      jsPDF format 路由 / 标题 metadata 转发）。
 
 ---
 

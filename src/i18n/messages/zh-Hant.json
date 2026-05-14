@@ -848,11 +848,29 @@
     },
     "docSpecs": {
       "cn-id-card": "中國身分證",
+      "hk-id-card": "香港身分證",
+      "tw-id-card": "中華民國身分證",
+      "sg-nric": "新加坡 NRIC",
+      "in-aadhaar": "印度 Aadhaar",
+      "us-driver-license": "美國駕駛執照",
       "passport-bio": "護照資料頁",
       "cn-driver-license": "中國駕駛執照",
       "cn-vehicle-license": "中國行車執照",
       "a4": "A4 文件",
       "letter": "Letter 文件"
+    },
+    "docSpecGroups": {
+      "id-card": "身分證 / 居民卡",
+      "passport": "護照",
+      "driver-license": "駕駛執照",
+      "vehicle-license": "行車執照",
+      "paper": "文件紙張"
+    },
+    "paperSizes": {
+      "label": "紙張尺寸",
+      "a4": "A4",
+      "letter": "Letter (US)",
+      "a5": "A5"
     },
     "mode": {
       "scan": "掃描",

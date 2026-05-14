@@ -848,11 +848,29 @@
     },
     "docSpecs": {
       "cn-id-card": "PRC ID card",
+      "hk-id-card": "Hong Kong ID card",
+      "tw-id-card": "Taiwan National ID",
+      "sg-nric": "Singapore NRIC",
+      "in-aadhaar": "India Aadhaar",
+      "us-driver-license": "US driver license",
       "passport-bio": "Passport bio page",
       "cn-driver-license": "PRC driver license",
       "cn-vehicle-license": "PRC vehicle license",
       "a4": "A4 document",
       "letter": "Letter document"
+    },
+    "docSpecGroups": {
+      "id-card": "ID / Resident card",
+      "passport": "Passport",
+      "driver-license": "Driver license",
+      "vehicle-license": "Vehicle license",
+      "paper": "Paper document"
+    },
+    "paperSizes": {
+      "label": "Paper size",
+      "a4": "A4",
+      "letter": "Letter (US)",
+      "a5": "A5"
     },
     "mode": {
       "scan": "Scan",

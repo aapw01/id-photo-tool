@@ -17,22 +17,20 @@
 
 import jsPDF from 'jspdf'
 
-import type { PackedA4Result } from './pack-a4'
+import { PAPER_DIMENSIONS, type PackedSheetResult } from './pack-a4'
 
 export interface ExportPdfOptions {
-  /** Sheet from `packA4Portrait`. */
-  packed: PackedA4Result
+  /** Sheet from `packSheet`. */
+  packed: PackedSheetResult
   /** JPEG quality for the embedded image. Defaults to 0.92. */
   quality?: number
   /** Optional metadata title for the PDF reader. */
   title?: string
 }
 
-const A4_WIDTH_MM = 210
-const A4_HEIGHT_MM = 297
-
-export async function exportPackedA4ToPdf(options: ExportPdfOptions): Promise<Blob> {
+export async function exportPackedSheetToPdf(options: ExportPdfOptions): Promise<Blob> {
   const { packed, quality = 0.92, title } = options
+  const paper = PAPER_DIMENSIONS[packed.paperSize]
 
   // Decode the packed PNG, then re-encode as JPEG for embedding.
   // jspdf accepts dataUrls; canvas → JPEG dataUrl is the most
@@ -43,20 +41,23 @@ export async function exportPackedA4ToPdf(options: ExportPdfOptions): Promise<Bl
     canvas.width = bitmap.width
     canvas.height = bitmap.height
     const ctx = canvas.getContext('2d')
-    if (!ctx) throw new Error('exportPackedA4ToPdf: failed to create 2d context')
+    if (!ctx) throw new Error('exportPackedSheetToPdf: failed to create 2d context')
     ctx.drawImage(bitmap, 0, 0)
     const dataUrl = canvas.toDataURL('image/jpeg', quality)
 
     const pdf = new jsPDF({
       unit: 'mm',
-      format: 'a4',
+      format: packed.paperSize,
       orientation: 'portrait',
       compress: true,
     })
     if (title) pdf.setProperties({ title })
-    pdf.addImage(dataUrl, 'JPEG', 0, 0, A4_WIDTH_MM, A4_HEIGHT_MM, undefined, 'FAST')
+    pdf.addImage(dataUrl, 'JPEG', 0, 0, paper.widthMm, paper.heightMm, undefined, 'FAST')
     return pdf.output('blob')
   } finally {
     bitmap.close?.()
   }
 }
+
+/** Back-compat alias kept for the S5 callsite name. */
+export const exportPackedA4ToPdf = exportPackedSheetToPdf

@@ -18,7 +18,8 @@ import { useTranslations } from 'next-intl'
 import { Download, FileDown, FilePenLine, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
-import { DOC_SPECS } from '../lib/doc-specs'
+import { groupDocSpecs } from '../lib/doc-specs'
+import type { PaperSize } from '../lib/pack-a4'
 import type { OutputMode } from '../lib/render-modes'
 import {
   MAX_WATERMARK_OPACITY,
@@ -29,6 +30,7 @@ import { useScannerStore } from '../store'
 
 const MODES: readonly OutputMode[] = ['scan', 'copy', 'enhance'] as const
 const DENSITIES: readonly WatermarkDensity[] = ['sparse', 'normal', 'dense'] as const
+const PAPER_SIZES: readonly PaperSize[] = ['a4', 'letter', 'a5'] as const
 
 export function ScannerConfig() {
   const t = useTranslations('Scanner.config')
@@ -56,8 +58,10 @@ export function ScannerConfig() {
 function DocSpecPicker() {
   const t = useTranslations('Scanner.config')
   const tDoc = useTranslations('Scanner.docSpecs')
+  const tGroup = useTranslations('Scanner.docSpecGroups')
   const docSpecId = useScannerStore((s) => s.docSpecId)
   const setDocSpecId = useScannerStore((s) => s.setDocSpecId)
+  const groups = groupDocSpecs()
 
   return (
     <div className="space-y-2">
@@ -73,10 +77,14 @@ function DocSpecPicker() {
         onChange={(e) => setDocSpecId(e.target.value)}
         className="block w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-2 text-sm text-[var(--color-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]"
       >
-        {DOC_SPECS.map((spec) => (
-          <option key={spec.id} value={spec.id}>
-            {tDoc(spec.id as Parameters<typeof tDoc>[0])}
-          </option>
+        {groups.map(({ group, specs }) => (
+          <optgroup key={group} label={tGroup(group as Parameters<typeof tGroup>[0])}>
+            {specs.map((spec) => (
+              <option key={spec.id} value={spec.id}>
+                {tDoc(spec.id as Parameters<typeof tDoc>[0])}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
     </div>
@@ -225,9 +233,12 @@ function WatermarkConfig() {
 
 function ExportRow() {
   const t = useTranslations('Scanner.export')
+  const tPaper = useTranslations('Scanner.paperSizes')
   const front = useScannerStore((s) => s.front)
   const back = useScannerStore((s) => s.back)
   const hasBack = useScannerStore((s) => s.hasBack)
+  const paperSize = useScannerStore((s) => s.paperSize)
+  const setPaperSize = useScannerStore((s) => s.setPaperSize)
   const exportPdfBlob = useScannerStore((s) => s.exportPdfBlob)
   const exportA4PngBlob = useScannerStore((s) => s.exportA4PngBlob)
   const [busy, setBusy] = useState<'pdf' | 'png' | null>(null)
@@ -263,8 +274,38 @@ function ExportRow() {
   }
 
   return (
-    <div className="space-y-2 border-t border-[var(--color-border)] pt-4">
+    <div className="space-y-3 border-t border-[var(--color-border)] pt-4">
       <span className="text-xs font-medium text-[var(--color-text)]">{t('title')}</span>
+      <div className="space-y-1.5">
+        <label className="text-[11px] font-medium text-[var(--color-text-mute)]">
+          {tPaper('label')}
+        </label>
+        <div
+          role="radiogroup"
+          aria-label={tPaper('label')}
+          className="flex overflow-hidden rounded-[var(--radius-md)] border border-[var(--color-border)]"
+        >
+          {PAPER_SIZES.map((size) => {
+            const active = paperSize === size
+            return (
+              <button
+                key={size}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                onClick={() => setPaperSize(size)}
+                className={`flex-1 border-[var(--color-border)] px-1.5 py-1 text-[11px] transition-colors first:border-r last:border-l ${
+                  active
+                    ? 'bg-[var(--color-primary)] text-white'
+                    : 'text-[var(--color-text)] hover:bg-[var(--color-divider)]'
+                }`}
+              >
+                {tPaper(size as Parameters<typeof tPaper>[0])}
+              </button>
+            )
+          })}
+        </div>
+      </div>
       <div className="flex flex-col gap-2">
         <button
           type="button"

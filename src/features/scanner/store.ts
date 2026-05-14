@@ -35,9 +35,11 @@ import {
   type WatermarkConfig,
   type WatermarkDensity,
 } from './lib/watermark'
-import { packA4Portrait, type PackedSide } from './lib/pack-a4'
-import { exportPackedA4ToPdf } from './lib/export-pdf'
+import { packSheet, type PackedSide, type PaperSize } from './lib/pack-a4'
+import { exportPackedSheetToPdf } from './lib/export-pdf'
 import type { Quad } from './lib/detect-corners'
+
+export type { PaperSize }
 
 export type { OutputMode, WatermarkConfig, WatermarkDensity }
 
@@ -88,6 +90,8 @@ export interface ScannerState {
   docSpecId: string
   outputMode: OutputMode
   watermark: WatermarkConfig
+  /** Paper size used for the packed A4/Letter/A5 export sheet. */
+  paperSize: PaperSize
 
   setFrontImage: (file: File) => Promise<void>
   setBackImage: (file: File) => Promise<void>
@@ -102,6 +106,8 @@ export interface ScannerState {
   setWatermarkOpacity: (opacity: number) => void
   /** Update watermark density (sparse / normal / dense). */
   setWatermarkDensity: (density: WatermarkDensity) => void
+  /** Update paper size for sheet export (A4 / Letter / A5). */
+  setPaperSize: (paperSize: PaperSize) => void
   /**
    * Re-run the rectify pipeline for `side`. If `quad` is provided
    * it overrides the auto-detection (used by the corner editor).
@@ -131,7 +137,7 @@ export interface ScannerState {
 
 const INITIAL: Pick<
   ScannerState,
-  'front' | 'back' | 'hasBack' | 'docSpecId' | 'outputMode' | 'watermark'
+  'front' | 'back' | 'hasBack' | 'docSpecId' | 'outputMode' | 'watermark' | 'paperSize'
 > = {
   front: null,
   back: null,
@@ -143,6 +149,7 @@ const INITIAL: Pick<
     opacity: DEFAULT_WATERMARK_OPACITY,
     density: 'normal',
   },
+  paperSize: 'a4' as PaperSize,
 }
 
 function closeSlot(slot: ScannerSlot | null): void {
@@ -238,6 +245,12 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     set((state) => ({ watermark: { ...state.watermark, density } }))
     if (get().front?.rectified) void get().renderSide('front')
     if (get().back?.rectified && get().hasBack) void get().renderSide('back')
+  },
+
+  setPaperSize(paperSize) {
+    if (paperSize === get().paperSize) return
+    set({ paperSize })
+    // Paper size only affects export; no need to re-render per-side.
   },
 
   async rectifySide(side, overrideQuad) {
@@ -350,7 +363,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   async exportPdfBlob() {
     const packed = await packCurrentSides(get())
     if (!packed) return null
-    return exportPackedA4ToPdf({ packed, title: 'Pixfit Scanner' })
+    return exportPackedSheetToPdf({ packed, title: 'Pixfit Scanner' })
   },
 
   async exportA4PngBlob() {
@@ -368,8 +381,9 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
 
 /**
  * Collect the ready-to-export sides from the current store snapshot
- * and pack them onto A4. Skips slots that are still rectifying so
- * the user never accidentally exports a partial sheet.
+ * and pack them onto the chosen paper size. Skips slots that are
+ * still rectifying so the user never accidentally exports a partial
+ * sheet.
  */
 async function packCurrentSides(state: ScannerState) {
   const spec = getDocSpec(state.docSpecId)
@@ -380,5 +394,5 @@ async function packCurrentSides(state: ScannerState) {
     const backReady = state.back?.rendered ?? state.back?.rectified
     if (backReady) sides.push({ blob: backReady.blob, spec })
   }
-  return packA4Portrait(sides)
+  return packSheet(sides, state.paperSize)
 }

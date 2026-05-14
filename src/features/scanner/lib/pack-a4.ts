@@ -1,14 +1,14 @@
 'use client'
 
 /**
- * Pack one or two rectified document images onto a single A4
- * portrait page, ready for PDF embed or PNG export.
+ * Pack one or two rectified document images onto a single paper
+ * sheet (A4 / Letter / A5, portrait), ready for PDF embed or PNG
+ * export.
  *
  * Decisions:
  *
- *   - **A4 portrait at 300 DPI** (2480 × 3508 px). Almost every
- *     government / HR portal wants this — letter @ 300 DPI ships in
- *     S6 once we add the paper picker.
+ *   - **Portrait at 300 DPI**. A4 (210 × 297 mm), Letter (215.9 ×
+ *     279.4 mm) and A5 (148 × 210 mm) supported in V1.
  *   - **Native print scale**: each card is drawn at its physical
  *     dimensions (`docSpec.widthMm × heightMm`), not stretched to
  *     fill the page. That keeps a printout the right physical size
@@ -23,8 +23,19 @@
 
 import { getOutputPixels, type DocSpec } from './doc-specs'
 
-const A4_WIDTH_MM = 210
-const A4_HEIGHT_MM = 297
+export type PaperSize = 'a4' | 'letter' | 'a5'
+
+export interface PaperDimensions {
+  widthMm: number
+  heightMm: number
+}
+
+export const PAPER_DIMENSIONS: Record<PaperSize, PaperDimensions> = {
+  a4: { widthMm: 210, heightMm: 297 },
+  letter: { widthMm: 215.9, heightMm: 279.4 },
+  a5: { widthMm: 148, heightMm: 210 },
+}
+
 const PAGE_MARGIN_MM = 15
 const CARD_GAP_MM = 8
 const CUT_MARK_LENGTH_MM = 4
@@ -37,8 +48,8 @@ export interface PackedSide {
   spec: DocSpec
 }
 
-export interface PackedA4Result {
-  /** PNG of the full A4 sheet (lossless; jsPDF re-encodes as JPEG for size). */
+export interface PackedSheetResult {
+  /** PNG of the full sheet (lossless; jsPDF re-encodes as JPEG for size). */
   blob: Blob
   /** Pixel width of the rendered sheet. */
   width: number
@@ -46,24 +57,29 @@ export interface PackedA4Result {
   height: number
   /** Pixels per millimeter for the rendered sheet (DPI-derived). */
   pxPerMm: number
+  /** The paper size this sheet was rendered at. */
+  paperSize: PaperSize
 }
 
 /**
- * Compose `sides` onto a single A4 portrait sheet and return it as a
- * PNG blob. Order is preserved: front first, then back (when present).
+ * Compose `sides` onto a single sheet of `paperSize` portrait and
+ * return it as a PNG blob. Order is preserved: front first, then
+ * back (when present).
  *
  * Returns `null` when called with no sides — caller should disable
  * the export CTA in that case.
  */
-export async function packA4Portrait(
+export async function packSheet(
   sides: readonly PackedSide[],
+  paperSize: PaperSize = 'a4',
   dpi: number = DEFAULT_DPI,
-): Promise<PackedA4Result | null> {
+): Promise<PackedSheetResult | null> {
   if (sides.length === 0) return null
 
+  const paper = PAPER_DIMENSIONS[paperSize]
   const pxPerMm = dpi / 25.4
-  const pageWidth = Math.round(A4_WIDTH_MM * pxPerMm)
-  const pageHeight = Math.round(A4_HEIGHT_MM * pxPerMm)
+  const pageWidth = Math.round(paper.widthMm * pxPerMm)
+  const pageHeight = Math.round(paper.heightMm * pxPerMm)
   const margin = Math.round(PAGE_MARGIN_MM * pxPerMm)
   const gap = Math.round(CARD_GAP_MM * pxPerMm)
 
@@ -108,8 +124,16 @@ export async function packA4Portrait(
     width: pageWidth,
     height: pageHeight,
     pxPerMm,
+    paperSize,
   }
 }
+
+/**
+ * Back-compat alias for the V1 A4 default. New callers should prefer
+ * `packSheet(sides, paperSize)` so they can let the user pick.
+ */
+export const packA4Portrait = (sides: readonly PackedSide[], dpi?: number) =>
+  packSheet(sides, 'a4', dpi)
 
 /**
  * Draw light corner ticks just outside the card boundaries so the
@@ -154,9 +178,7 @@ function drawCutMarks(
   ctx.restore()
 }
 
-export const PACK_A4_CONSTANTS = {
-  A4_WIDTH_MM,
-  A4_HEIGHT_MM,
+export const PACK_SHEET_CONSTANTS = {
   PAGE_MARGIN_MM,
   CARD_GAP_MM,
   DEFAULT_DPI,

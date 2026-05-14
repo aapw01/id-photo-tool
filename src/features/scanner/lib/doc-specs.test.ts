@@ -1,6 +1,14 @@
 import { describe, expect, it } from 'vitest'
 
-import { DEFAULT_DOC_SPEC_ID, DOC_SPECS, getDocSpec, getOutputPixels } from './doc-specs'
+import {
+  DEFAULT_DOC_SPEC_ID,
+  DOC_SPECS,
+  DOC_SPEC_GROUP_ORDER,
+  getDocSpec,
+  getOutputPixels,
+  groupDocSpecs,
+  type DocSpecGroup,
+} from './doc-specs'
 
 describe('doc-specs catalog', () => {
   it('exposes a non-empty catalog with stable ids', () => {
@@ -47,5 +55,61 @@ describe('doc-specs catalog', () => {
     expect(width).toBe(2480)
     // 297 / 25.4 * 300 = 3507.87 → 3508
     expect(height).toBe(3508)
+  })
+
+  it('every spec belongs to a known group', () => {
+    const valid: ReadonlySet<DocSpecGroup> = new Set(DOC_SPEC_GROUP_ORDER)
+    for (const spec of DOC_SPECS) {
+      expect(valid.has(spec.group)).toBe(true)
+    }
+  })
+
+  it('every group in DOC_SPEC_GROUP_ORDER has at least one spec — no orphan headers', () => {
+    for (const group of DOC_SPEC_GROUP_ORDER) {
+      const matched = DOC_SPECS.filter((s) => s.group === group)
+      expect(matched.length, `group ${group} has no specs`).toBeGreaterThan(0)
+    }
+  })
+
+  it('covers the five core jurisdictions for ID-card scans', () => {
+    const ids = new Set(DOC_SPECS.map((s) => s.id))
+    for (const required of [
+      'cn-id-card',
+      'hk-id-card',
+      'tw-id-card',
+      'sg-nric',
+      'in-aadhaar',
+      'us-driver-license',
+    ]) {
+      expect(ids.has(required), `missing required spec: ${required}`).toBe(true)
+    }
+  })
+})
+
+describe('groupDocSpecs', () => {
+  it('preserves the canonical group order — id-card first, paper last', () => {
+    const groups = groupDocSpecs()
+    expect(groups[0]?.group).toBe('id-card')
+    expect(groups[groups.length - 1]?.group).toBe('paper')
+  })
+
+  it('returns every catalog entry exactly once across the groups', () => {
+    const groups = groupDocSpecs()
+    const flattenedIds = groups.flatMap((g) => g.specs.map((s) => s.id))
+    expect(flattenedIds).toHaveLength(DOC_SPECS.length)
+    expect(new Set(flattenedIds).size).toBe(DOC_SPECS.length)
+  })
+
+  it('drops groups with zero specs so the picker has no empty headers', () => {
+    const subset = DOC_SPECS.filter((s) => s.group === 'id-card')
+    const groups = groupDocSpecs(subset)
+    expect(groups).toHaveLength(1)
+    expect(groups[0]?.group).toBe('id-card')
+  })
+
+  it('returns each group with at least one spec', () => {
+    for (const { group, specs } of groupDocSpecs()) {
+      expect(specs.length, `group ${group} returned empty`).toBeGreaterThan(0)
+    }
   })
 })

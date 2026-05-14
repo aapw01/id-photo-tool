@@ -848,11 +848,29 @@
     },
     "docSpecs": {
       "cn-id-card": "中国身份证",
+      "hk-id-card": "香港身份证",
+      "tw-id-card": "台湾身份证",
+      "sg-nric": "新加坡 NRIC",
+      "in-aadhaar": "印度 Aadhaar",
+      "us-driver-license": "美国驾驶证",
       "passport-bio": "护照资料页",
       "cn-driver-license": "中国驾驶证",
       "cn-vehicle-license": "中国行驶证",
       "a4": "A4 文档",
       "letter": "Letter 文档"
+    },
+    "docSpecGroups": {
+      "id-card": "身份证 / 居民卡",
+      "passport": "护照",
+      "driver-license": "驾驶证",
+      "vehicle-license": "行驶证 / 行车证",
+      "paper": "文档纸张"
+    },
+    "paperSizes": {
+      "label": "纸张尺寸",
+      "a4": "A4",
+      "letter": "Letter (US)",
+      "a5": "A5"
     },
     "mode": {
       "scan": "扫描",
