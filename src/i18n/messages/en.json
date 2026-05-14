@@ -911,6 +911,150 @@
         "1": "Photocopy mode applies adaptive binarization for the black-and-white look that exam registrations and government offices expect. Every output carries a watermark that cannot be fully disabled — you choose the text (e.g. 'For XYZ Company onboarding only') to deter ID-card misuse and impersonation fraud. The entire pipeline runs in your browser; nothing is ever uploaded."
       }
     },
+    "supported": {
+      "heading": "Supported document types",
+      "subtitle": "Eleven built-in document profiles cover the most common scan targets across China, Hong Kong, Taiwan, Singapore, India, the US, plus generic passport bio pages and full-page A4 / Letter documents.",
+      "cardCta": "Open this guide",
+      "dimensionTagline": "{w} × {h} mm"
+    },
+    "faq": {
+      "heading": "Frequently asked questions",
+      "subtitle": "About scanning documents in your browser, anti-misuse watermarks, and output accuracy.",
+      "items": {
+        "free": {
+          "q": "Is the ID Document Scanner free?",
+          "a": "Yes — completely free, no signup, no usage limits. The whole pipeline runs in your browser, so we have no server cost to pass on."
+        },
+        "privacy": {
+          "q": "Will my document photo be uploaded to a server?",
+          "a": "No. Perspective correction, white balance, photocopy mode, watermark, and PDF assembly all happen locally on your device. Nothing is sent over the network."
+        },
+        "watermark": {
+          "q": "Why is the watermark mandatory?",
+          "a": "Photo-based ID-document fraud is a real abuse vector. The watermark text (which you customise, e.g. 'For XYZ Company onboarding only') is clamped to a minimum 30 % opacity so the output can't easily be cleaned up and forwarded. This is a compliance requirement we do not offer to disable."
+        },
+        "official": {
+          "q": "Is the output accepted by government portals?",
+          "a": "Most online submission portals accept rectified phone-camera scans, and our output mimics a flatbed scanner closely. That said, official requirements differ — for high-stakes filings (visas, banking) we recommend reading the portal's exact spec before submitting."
+        },
+        "accuracy": {
+          "q": "How accurate is the auto perspective correction?",
+          "a": "OpenCV.js detects the four document corners from the largest enclosed quadrilateral. Most well-lit, contrast-clean phone photos resolve in under 200 ms. If detection misses, you can drag the four corner handles manually — keyboard arrows + Shift work too."
+        }
+      }
+    },
+    "detail": {
+      "metaTitle": "{name} scan online · Pixfit",
+      "metaDescription": "Free in-browser scanner for {name}: upload a phone-shot photo, get an A4 / Letter / A5 PDF with perspective correction, anti-misuse watermark, and scan / photocopy / enhance output modes. 100 % offline.",
+      "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · Mandatory watermark",
+      "summarySection": {
+        "title": "About {name}",
+        "subtitle": "What it is and where it gets requested"
+      },
+      "specSection": {
+        "title": "Physical specification",
+        "dimensions": "Dimensions",
+        "pixels": "Pixels at 300 DPI",
+        "twoSided": "Two-sided",
+        "twoSidedYes": "Yes — front + back are packed onto the same sheet",
+        "twoSidedNo": "No — single-sided document"
+      },
+      "howTo": {
+        "title": "How to scan {name} with Pixfit",
+        "subtitle": "Four steps, entirely in your browser. Your photo never leaves your device.",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "Upload a phone-shot photo of {name}",
+            "text": "Drop the front (and optionally the back) photo into the scanner workspace. JPG / PNG / HEIC up to 20 MB per file. We decode EXIF orientation automatically."
+          },
+          "detect": {
+            "name": "Auto perspective correction",
+            "text": "OpenCV.js detects the four corners of {name} and warps the image to a flat scanner-style rectangle. If a corner is off, drag the handle — keyboard arrows work too."
+          },
+          "configure": {
+            "name": "Pick output mode + watermark",
+            "text": "Switch between Scan (color + auto white balance), Copy (B&W binarize), or Enhance (saturation + contrast). Customise the mandatory anti-misuse watermark text + opacity + density."
+          },
+          "export": {
+            "name": "Export as A4 / Letter / A5 PDF",
+            "text": "Pack both sides onto a single sheet with cut marks, and download as PDF or PNG. The file is generated locally — no upload required."
+          }
+        }
+      },
+      "faq": {
+        "title": "{name} — frequently asked questions",
+        "items": {
+          "free": {
+            "q": "Is scanning {name} in Pixfit free?",
+            "a": "Yes. Pixfit's ID Document Scanner is free with no watermark on the workspace, no signup, and no monthly cap. The output PDF carries an anti-misuse watermark, but that's by design (and you customise the text)."
+          },
+          "privacy": {
+            "q": "Will the {name} photo be uploaded to a server?",
+            "a": "No. Perspective correction, watermark compositing, and PDF assembly all run locally in your browser. The phone-shot photo of {name} never leaves your device."
+          },
+          "watermark": {
+            "q": "Can I remove the watermark when scanning {name}?",
+            "a": "The text and opacity are customisable (down to 30 %) but the watermark itself can not be disabled. This is an anti-fraud measure: an ID document photo with no anti-misuse mark is too easy to redirect into impersonation scams."
+          },
+          "official": {
+            "q": "Will the scan of {name} be accepted by official portals?",
+            "a": "Most online submission portals accept rectified phone-camera scans of {name}, and the output mimics a flatbed scanner closely. For high-stakes filings, check the destination portal's exact spec — file size, DPI, color or black-and-white — and pick the matching output mode before exporting."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Open the scanner with {name}",
+        "secondary": "Browse all document types"
+      },
+      "backLink": "Back to scanner"
+    },
+    "docTypes": {
+      "cn-id-card": {
+        "summary": "The PRC Resident Identity Card (居民身份证) is the standard CR80-sized (85.6 × 54 mm) two-sided ID issued to all Chinese citizens.",
+        "usage": "Workplace onboarding, hotel check-in, banking, exam registrations, courier verification, and online portal sign-ups across mainland China. Most online forms request both the portrait side and the national-emblem side on a single page."
+      },
+      "hk-id-card": {
+        "summary": "The Hong Kong Identity Card (香港身份證) is the standard CR80-sized (85.6 × 54 mm) identity card issued to Hong Kong residents.",
+        "usage": "Banking, telecom contracts, employment paperwork, and travel scenarios where Hong Kong residents must produce a scanned identity card. The smart-chip front and the bilingual back are routinely scanned together."
+      },
+      "tw-id-card": {
+        "summary": "The Taiwan National Identity Card (中華民國身分證) is the standard CR80-sized (85.6 × 54 mm) two-sided national ID issued in the Republic of China.",
+        "usage": "Banking, government services, postal pickup, telecom contracts, and online portal sign-ups across Taiwan. Front (national emblem + photo) and back (parental info) are usually scanned together."
+      },
+      "sg-nric": {
+        "summary": "The Singapore National Registration Identity Card (NRIC) is the standard CR80-sized (85.6 × 54 mm) two-sided ID issued to Singapore citizens and permanent residents.",
+        "usage": "Bank account opening, telecom signups, HDB applications, healthcare registration, and corporate onboarding paperwork. The card's front (photo + NRIC number) and back (residential address) are often scanned together."
+      },
+      "in-aadhaar": {
+        "summary": "The Indian Aadhaar card is a CR80-sized (85.6 × 54 mm) two-sided national identity proof issued by the Unique Identification Authority of India (UIDAI).",
+        "usage": "KYC for banks, SIM cards, government welfare schemes, tax filings, and many private-sector services across India. Both the photo side and the QR-code side are commonly scanned for submission."
+      },
+      "us-driver-license": {
+        "summary": "US state driver licenses are CR80-sized (85.6 × 54 mm) two-sided plastic cards issued by each state's Department of Motor Vehicles.",
+        "usage": "I-9 employment eligibility, lease applications, rental cars, alcohol purchase, TSA travel verification, and identity proofing for online services. Many employers and landlords ask for both sides on a single PDF."
+      },
+      "passport-bio": {
+        "summary": "Passport bio pages are ISO/IEC 7810 ID-3 sized (125 × 88 mm) and contain the photograph, machine-readable zone, and personal details.",
+        "usage": "Visa applications, hotel check-in, corporate onboarding for foreign hires, bank KYC, and any scenario that requires identity proof for non-resident travel. Only the bio page is scanned; the rest of the passport stays private."
+      },
+      "cn-driver-license": {
+        "summary": "The PRC driver license (机动车驾驶证) is an 88 × 60 mm booklet card with photo and personal info on the front and endorsement classes on the back.",
+        "usage": "Car rental, rideshare driver registration, traffic court paperwork, insurance claims, and employer-mandated driving privilege verification."
+      },
+      "cn-vehicle-license": {
+        "summary": "The PRC vehicle license (行驶证) is an 88 × 60 mm booklet card listing the vehicle's plate number, owner, model, and engine ID.",
+        "usage": "Insurance renewal, rideshare onboarding (Didi etc.), car resale, parking permit applications, and any traffic-law-related filing where vehicle ownership must be proven."
+      },
+      "a4": {
+        "summary": "A4 (210 × 297 mm) is the ISO 216 standard letter-size paper used outside North America.",
+        "usage": "Single-page contracts, receipts, certificates, transcripts, and any business document the user needs to fold-flat and 'scan' from a phone photo into a clean PDF."
+      },
+      "letter": {
+        "summary": "US Letter (215.9 × 279.4 mm) is the North American standard letter-size paper — slightly wider and shorter than A4.",
+        "usage": "Single-page US contracts, IRS forms, US-printed receipts, and any North American business document the user needs to scan into a clean PDF from a phone photo."
+      }
+    },
     "footer": {
       "heading": "Scanner"
     }

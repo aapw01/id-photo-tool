@@ -11,8 +11,8 @@
 | ---------- | ------------------------------------------------------------------------------- |
 | 子产品名   | **Pixfit Scanner** · 中文「证件扫描生成器」                                     |
 | 路由前缀   | `/[locale]/scanner`                                                             |
-| 当前阶段   | **S6 · 多 DocSpec + 多纸张导出**（已完成）                                      |
-| 项目阶段   | S1–S6 已合并；S7（SEO 落地页）进行中                                            |
+| 当前阶段   | **S7 · SEO 落地页 + JSON-LD**（已完成）                                         |
+| 项目阶段   | S1–S7 已合并；S8（历史 + ToS + a11y + 上线）进行中                              |
 | 最近更新   | 2026-05-14                                                                      |
 | 一句话进度 | 核心流程（上传 → 校正 → 输出模式 → 水印 → A4/Letter/A5 导出 PDF/PNG）端到端可用 |
 
@@ -45,7 +45,7 @@
 | S4     | 输出模式（扫描 / 复印 / 增强） | ✅ 已合并 | 3 天 | tasks/S4.md |
 | S5     | 水印 + A4 排版 + PDF           | ✅ 已合并 | 3 天 | tasks/S5.md |
 | S6     | 多 DocSpec + 多纸张（A4/L/A5） | ✅ 已合并 | 3 天 | tasks/S6.md |
-| S7     | SEO 落地页 + JSON-LD           | 🟡 进行中 | 3 天 | tasks/S7.md |
+| S7     | SEO 落地页 + JSON-LD           | ✅ 已合并 | 3 天 | tasks/S7.md |
 | S8     | 历史 / ToS / a11y / 上线       | ⬜ 未开始 | 3 天 | tasks/S8.md |
 
 **预计总工期**：~24 工作日 ≈ **4–5 周**（单人节奏）
@@ -178,18 +178,33 @@ JPG/PNG/ZIP 拆到 V2 路线图（V1 已能 PNG + PDF 同时导出，覆盖 99 %
 
 #### S7 · SEO 落地页 + JSON-LD（3 天）
 
-**目标**：8 条 DocSpec 各生成一个 SSR 着陆页，三语 24 个 URL 全部进 sitemap。
+**实际交付（已合并）**：每条 DocSpec × 3 语 = 33 个静态生成的 SSR 着陆页；主
+`/scanner` 页加分组卡片网格 + FAQ；JSON-LD 覆盖 WebApplication / ItemList /
+HowTo / FAQ / BreadcrumbList。
 
-**交付物**（预计 8 个原子任务）：
+**交付物**（8 个原子任务，✅ 全部完成）：
 
-- [ ] **S7-T01**：`src/app/[locale]/scanner/[docType]/page.tsx` 动态路由 + `generateStaticParams`
-- [ ] **S7-T02**：`generateMetadata` 生成 hreflang × canonical × title × description × OG
-- [ ] **S7-T03**：HowTo JSON-LD（3 步固定）
-- [ ] **S7-T04**：FAQ JSON-LD（每个 DocSpec 5–7 条问题，i18n 三语）
-- [ ] **S7-T05**：BreadcrumbList JSON-LD
-- [ ] **S7-T06**：把 24 条 URL 加进 `sitemap-entries.ts`
-- [ ] **S7-T07**：Footer 加「热门扫描件」内链矩阵（同 Pixfit 主 Footer 范式）
-- [ ] **S7-T08**：单元测试 `metadata.test.ts` / `sitemap-entries.test.ts` 增补
+- [x] **S7-T01**：`src/app/[locale]/scanner/[docType]/page.tsx` 动态路由 +
+      `generateStaticParams`（11 docSpec × 3 locale = 33 个静态参数），
+      不存在的 docType 走 `notFound()`。
+- [x] **S7-T02**：`generateMetadata` 用 `Scanner.detail.metaTitle` /
+      `metaDescription` + `buildMetadata` 自动落地 hreflang × canonical × OG ×
+      Twitter。
+- [x] **S7-T03**：HowTo JSON-LD（4 步固定：upload / detect / configure / export，
+      totalTime PT2M），三语完全翻译。
+- [x] **S7-T04**：FAQ JSON-LD —— 每个 DocSpec 4 条 FAQ
+      （free / privacy / watermark / official），都用 `{name}` 插值，i18n 三语。
+      主页 `/scanner` 额外有 5 条 scanner 级 FAQ。
+- [x] **S7-T05**：BreadcrumbList JSON-LD（Home › Scanner › DocType name）。
+- [x] **S7-T06**：`sitemap-entries.ts` 新增 `scannerDocTypeRoutes()`，priority
+      0.7，changeFrequency monthly；33 条 URL 全部进 sitemap，hreflang alternates
+      自动覆盖。
+- [x] **S7-T07**：主 `/scanner` 页加「支持的证件类型」卡片网格（5 个 group），
+      每张卡片链接到对应的 DocType 落地页；并加 `ItemList` JSON-LD。
+- [x] **S7-T08**：`sitemap-entries.test.ts` 补 4 条新断言（DocType route 数量
+      / 含 URL 列表 / hreflang 完整 / 优先级 ≤ sizes route，防止两者顺序错位）。
+- [x] **附加**：`scanner-shell.tsx` 加 `?spec=` 深链勾子，从 SEO 落地页 CTA
+      点击「Open scanner with X」时自动预选对应 DocSpec。
 
 ---
 

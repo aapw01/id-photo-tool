@@ -7,6 +7,7 @@
 import type { MetadataRoute } from 'next'
 
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
+import { DOC_SPECS as SCANNER_DOC_SPECS } from '@/features/scanner/lib/doc-specs'
 import type { Locale } from '@/i18n/routing'
 import { buildAlternateLanguages, buildCanonical } from './metadata'
 import { SUPPORTED_LOCALES } from './site-config'
@@ -55,13 +56,29 @@ export function specDetailRoutes(): RouteSpec[] {
 }
 
 /**
+ * Scanner sub-product DocType landing pages. One per built-in
+ * Scanner DocSpec (`cn-id-card`, `hk-id-card`, `passport-bio`, …).
+ * `priority` is intentionally lower than `/sizes/[specId]` (the
+ * primary product surface) but still meaningful — these pages target
+ * long-tail queries like "中国身份证扫描 在线" / "US driver license
+ * scan PDF" and need to be indexable.
+ */
+export function scannerDocTypeRoutes(): RouteSpec[] {
+  return SCANNER_DOC_SPECS.map((spec) => ({
+    path: `/scanner/${spec.id}`,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+}
+
+/**
  * Build sitemap entries with hreflang alternates.
  *
  * `now` is parameterised so tests can pin the timestamp.
  */
 export function buildSitemapEntries(
   now: Date = new Date(),
-  routes: RouteSpec[] = [...SITEMAP_ROUTES, ...specDetailRoutes()],
+  routes: RouteSpec[] = [...SITEMAP_ROUTES, ...specDetailRoutes(), ...scannerDocTypeRoutes()],
   locales: readonly Locale[] = SUPPORTED_LOCALES,
 ): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = []
