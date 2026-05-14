@@ -120,19 +120,21 @@ pnpm models:fetch
 
 所有正式路由都按 `/[locale]/...` 三语 SSG 出（locale ∈ `zh-Hans` / `zh-Hant` / `en`，默认 `zh-Hans`）。
 
-| 路由              | 内容                                                         |
-| ----------------- | ------------------------------------------------------------ |
-| `/`               | 首页 · 落地 + 上传                                           |
-| `/studio`         | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）    |
-| `/sizes`          | 28 条内置照片规格列表（SEO 着陆页）                          |
-| `/sizes/[specId]` | 单条规格详情（含 HowTo / FAQ JSON-LD）                       |
-| `/paper`          | 7 条内置相纸规格列表                                         |
-| `/templates`      | 12 条内置排版模板列表                                        |
-| `/specs`          | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate     |
-| `/privacy`        | 隐私政策                                                     |
-| `/terms`          | 服务条款                                                     |
-| `/sitemap.xml`    | 自动收录全部上述路由 × 三 locale（hreflang alternates 齐全） |
-| `/robots.txt`     | 公开抓取规则                                                 |
+| 路由                 | 内容                                                            |
+| -------------------- | --------------------------------------------------------------- |
+| `/`                  | 首页 · 落地 + 上传                                              |
+| `/studio`            | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）       |
+| `/scanner`           | **子产品** · 证件扫描生成器（S1 骨架已上线，S2–S8 进行中）      |
+| `/scanner/[docType]` | 单条 DocSpec SEO 落地页（计划 S7 上线，含 HowTo / FAQ JSON-LD） |
+| `/sizes`             | 28 条内置照片规格列表（SEO 着陆页）                             |
+| `/sizes/[specId]`    | 单条规格详情（含 HowTo / FAQ JSON-LD）                          |
+| `/paper`             | 7 条内置相纸规格列表                                            |
+| `/templates`         | 12 条内置排版模板列表                                           |
+| `/specs`             | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate        |
+| `/privacy`           | 隐私政策                                                        |
+| `/terms`             | 服务条款                                                        |
+| `/sitemap.xml`       | 自动收录全部上述路由 × 三 locale（hreflang alternates 齐全）    |
+| `/robots.txt`        | 公开抓取规则                                                    |
 
 dev-only 路由（`/dev/*`）默认隐藏；需 `NEXT_PUBLIC_ENABLE_DEV_PAGES=1` 才会编译。
 

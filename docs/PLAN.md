@@ -8,35 +8,38 @@
 
 ## 1. 当前状态摘要
 
-| 项         | 值                                                                                                      |
-| ---------- | ------------------------------------------------------------------------------------------------------- |
-| 产品名     | **Pixfit · 像配**                                                                                       |
-| 域名       | `pix-fit.com`（已确认可注册）                                                                           |
-| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M5 ✅ + M6 ✅ + M7 ✅ + M8 ✅（M8a + M8b 全部代码完成）**             |
-| 最近更新   | 2026-05-12                                                                                              |
-| 进度       | M1–M8 全部代码完成；M8b 添加 deeplink + 移动 Studio + 触摸把手 + 404/error + 微信提示；合并后总测 325   |
-| 一句话进度 | 三语 8 路由 SEO 就绪 + 24 sitemap URL；Studio 移动端底 nav + Sheet；详情页 / 历史会话 / 撤销重做 → V1.1 |
+| 项         | 值                                                                                           |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| 产品名     | **Pixfit · 像配**（含子产品「证件扫描生成器」，详见 [scanner/PLAN.md](./scanner/PLAN.md)）   |
+| 域名       | `pix-fit.com`（已确认可注册）                                                                |
+| 项目阶段   | **M1 ✅ + M2 ✅ + M3 ✅ + M4 ✅ + M5 ✅ + M6 ✅ + M7 ✅ + M8 ✅（M8a + M8b 全部代码完成）**  |
+| 子产品阶段 | **Scanner S1 ✅**（路由 / 导航 / i18n 骨架就位，S2–S8 进行中）                               |
+| 最近更新   | 2026-05-14                                                                                   |
+| 进度       | M1–M8 全部代码完成；Scanner 子产品启动，S1 路由骨架 + 三语 i18n + Header / 移动端 nav 已接入 |
+| 一句话进度 | 主站 8 路由 SEO 就绪；Scanner `/scanner` 三语骨架页上线，等 S2 接 OpenCV.js + 透视校正       |
 
 ---
 
 ## 2. 文档索引
 
-| 文档               | 路径                               | 状态                                          |
-| ------------------ | ---------------------------------- | --------------------------------------------- |
-| 产品需求文档       | [PRD.md](./PRD.md)                 | v0.2 Draft                                    |
-| 技术架构设计       | [TECH_DESIGN.md](./TECH_DESIGN.md) | v0.2 Draft                                    |
-| 项目计划（本文档） | [PLAN.md](./PLAN.md)               | v0.3 Draft                                    |
-| UI 设计规范        | [DESIGN.md](./DESIGN.md)           | v0.1 Draft（M1 前置）                         |
-| 部署指南           | [DEPLOYMENT.md](./DEPLOYMENT.md)   | v0.1 Draft（M1 新增）                         |
-| M1 任务清单        | [tasks/M1.md](./tasks/M1.md)       | v0.1 Draft（24 个原子任务，全部完成）         |
-| M2 任务清单        | [tasks/M2.md](./tasks/M2.md)       | v0.1（20 个原子任务，19 完成 + 1 待真机回填） |
-| M3 任务清单        | [tasks/M3.md](./tasks/M3.md)       | v0.1（10 个原子任务，全部完成）               |
-| M4 任务清单        | [tasks/M4.md](./tasks/M4.md)       | v0.1（15 个原子任务，全部完成）               |
-| M5 任务清单        | [tasks/M5.md](./tasks/M5.md)       | v0.1（7 个原子任务，全部完成）                |
-| M6 任务清单        | [tasks/M6.md](./tasks/M6.md)       | v0.1（12 个原子任务，全部完成）               |
-| M7 任务清单        | [tasks/M7.md](./tasks/M7.md)       | v0.1（11 个原子任务，全部完成）               |
-| M8 任务清单        | [tasks/M8.md](./tasks/M8.md)       | v0.1（20 个原子任务，M8a + M8b 全部完成）     |
-| 项目 README        | [../README.md](../README.md)       | v0.1（M1 完成 / M8a 加 Pages 段）             |
+| 文档                  | 路径                                 | 状态                                          |
+| --------------------- | ------------------------------------ | --------------------------------------------- |
+| 产品需求文档          | [PRD.md](./PRD.md)                   | v0.2 Draft                                    |
+| 技术架构设计          | [TECH_DESIGN.md](./TECH_DESIGN.md)   | v0.2 Draft                                    |
+| 项目计划（本文档）    | [PLAN.md](./PLAN.md)                 | v0.3 Draft                                    |
+| 子产品 · Scanner PRD  | [scanner/PRD.md](./scanner/PRD.md)   | v0.2（10/10 决策落地）                        |
+| 子产品 · Scanner PLAN | [scanner/PLAN.md](./scanner/PLAN.md) | v0.2（S1 进行中）                             |
+| UI 设计规范           | [DESIGN.md](./DESIGN.md)             | v0.1 Draft（M1 前置）                         |
+| 部署指南              | [DEPLOYMENT.md](./DEPLOYMENT.md)     | v0.1 Draft（M1 新增）                         |
+| M1 任务清单           | [tasks/M1.md](./tasks/M1.md)         | v0.1 Draft（24 个原子任务，全部完成）         |
+| M2 任务清单           | [tasks/M2.md](./tasks/M2.md)         | v0.1（20 个原子任务，19 完成 + 1 待真机回填） |
+| M3 任务清单           | [tasks/M3.md](./tasks/M3.md)         | v0.1（10 个原子任务，全部完成）               |
+| M4 任务清单           | [tasks/M4.md](./tasks/M4.md)         | v0.1（15 个原子任务，全部完成）               |
+| M5 任务清单           | [tasks/M5.md](./tasks/M5.md)         | v0.1（7 个原子任务，全部完成）                |
+| M6 任务清单           | [tasks/M6.md](./tasks/M6.md)         | v0.1（12 个原子任务，全部完成）               |
+| M7 任务清单           | [tasks/M7.md](./tasks/M7.md)         | v0.1（11 个原子任务，全部完成）               |
+| M8 任务清单           | [tasks/M8.md](./tasks/M8.md)         | v0.1（20 个原子任务，M8a + M8b 全部完成）     |
+| 项目 README           | [../README.md](../README.md)         | v0.1（M1 完成 / M8a 加 Pages 段）             |
 
 ---
 

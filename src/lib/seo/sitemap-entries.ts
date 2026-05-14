@@ -31,6 +31,7 @@ interface RouteSpec {
 export const SITEMAP_ROUTES: RouteSpec[] = [
   { path: '/', changeFrequency: 'weekly', priority: 1 },
   { path: '/studio', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/scanner', changeFrequency: 'weekly', priority: 0.85 },
   { path: '/sizes', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/paper', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/templates', changeFrequency: 'monthly', priority: 0.7 },

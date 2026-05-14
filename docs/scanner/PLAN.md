@@ -9,7 +9,7 @@
 
 | 项         | 值                                                |
 | ---------- | ------------------------------------------------- |
-| 子产品名   | **Pixfit Scanner** · 中文「证件扫描」             |
+| 子产品名   | **Pixfit Scanner** · 中文「证件扫描生成器」       |
 | 路由前缀   | `/[locale]/scanner`                               |
 | 当前阶段   | **S0 · 文档已评审 · 决策落地**                    |
 | 项目阶段   | 计划阶段 · 可启动 S1                              |
@@ -62,11 +62,11 @@
 - [ ] **S1-T02**：创建 `src/features/scanner/` 模块目录，分层 `components/` `store/` `lib/` `model/`
 - [ ] **S1-T03**：写 `src/features/scanner/store/scanner-store.ts`（Zustand），独立于 `studio-store`
 - [ ] **S1-T04**：i18n namespace `Scanner.*`：在 `zh-Hans` / `zh-Hant` / `en` 各写 30+ 个 placeholder key，跑 `pnpm i18n:check` 验证一致性
-- [ ] **S1-T05**：改 `src/components/site-header.tsx` 把 Studio 单链改成「工具 ▾」下拉（NavigationMenu），含 Studio / 证件扫描 / 规格库 / 排版打印 四项
+- [ ] **S1-T05**：改 `src/components/site-header.tsx` 把 Studio 单链改成「工具 ▾」下拉（NavigationMenu），含 Studio / 证件扫描生成器 / 规格库 / 排版打印 四项
 - [ ] **S1-T06**：改 `src/components/site-mobile-nav.tsx` —— **按 Q7 决策**把扫描入口**归并到「工具」二级菜单**（点底部"工具"图标打开 sheet/popover 列出全部工具项），而非加第 5 个 tab
 - [ ] **S1-T07**：写 `src/features/scanner/components/scanner-shell.tsx` 骨架（左上传区 / 中预览占位 / 右配置面板）
 - [ ] **S1-T08**：把 `<ScannerShell />` 用 `dynamic({ ssr: false })` 懒加载到 `/scanner` 页面（同 Studio 模式），减少 SSR 负担
-- [ ] **S1-T09**：**同步主产品文档**——按 Q10 决策更新 `docs/PLAN.md`（加 Scanner 子产品入口）+ `README.md`（在路由表 / 文档索引里加证件扫描）+ `docs/PRD.md`（在 §13 V2+ 路线图标注 Scanner 已成独立子产品，不再算 V2 项）
+- [ ] **S1-T09**：**同步主产品文档**——按 Q10 决策更新 `docs/PLAN.md`（加 Scanner 子产品入口）+ `README.md`（在路由表 / 文档索引里加证件扫描生成器）+ `docs/PRD.md`（在 §13 V2+ 路线图标注 Scanner 已成独立子产品，不再算 V2 项）
 - [ ] **S1-T10**：在 `src/i18n/messages/*.json` 加 `Nav.tools.*` 键（"工具" 下拉的菜单项文案三语对齐）
 
 **验收**：
@@ -204,7 +204,7 @@
 
 | 编号 | 问题                                 | 决策                                                                                         |
 | ---- | ------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Q1   | Scanner 模块中文最终名称             | ✅ **「证件扫描」**                                                                          |
+| Q1   | Scanner 模块中文最终名称             | ✅ **「证件扫描生成器」**                                                                    |
 | Q2   | 是否需要独立 Logo？                  | ✅ 不需要。共用主 Pixfit Logo + 子图标 Lucide `ScanLine`                                     |
 | Q3   | OpenCV.js 版本                       | ✅ **`opencv.js@4.10.x` LTS**（S3-T01 时锁定具体补丁号）                                     |
 | Q4   | OpenCV.js 缓存策略                   | ✅ **Cache Storage**（HTTP 304 友好）；命中率低再加 IndexedDB                                |

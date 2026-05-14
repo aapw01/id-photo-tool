@@ -50,4 +50,12 @@ describe('buildSitemapEntries', () => {
     expect(urls).toContain(`${SITE_URL}/en/privacy`)
     expect(urls).toContain(`${SITE_URL}/zh-Hant/terms`)
   })
+
+  it('covers the scanner sub-product entry route across locales', () => {
+    const entries = buildSitemapEntries(fixed)
+    const urls = entries.map((e) => e.url)
+    expect(urls).toContain(`${SITE_URL}/zh-Hans/scanner`)
+    expect(urls).toContain(`${SITE_URL}/zh-Hant/scanner`)
+    expect(urls).toContain(`${SITE_URL}/en/scanner`)
+  })
 })
