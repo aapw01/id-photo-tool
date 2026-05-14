@@ -796,10 +796,7 @@
       "previewTitle": "掃描預覽",
       "previewEmpty": "上傳後將在這裡顯示透視校正後的掃描結果",
       "configTitle": "設定",
-      "configHint": "證件類型、輸出模式、浮水印、A4 排版",
-      "comingSoonBadge": "即將上線",
-      "comingSoonHeading": "證件掃描產生器即將上線",
-      "comingSoonBody": "我們正在打磨透視校正、掃描件 / 影印件渲染、強制浮水印與 A4 排版能力。骨架頁已就位，功能將隨後續迭代陸續推出。"
+      "configHint": "證件類型、輸出模式、浮水印、A4 排版"
     },
     "upload": {
       "frontTitle": "證件正面",
@@ -829,7 +826,8 @@
       "retry": "重試",
       "editCorners": "調整 4 角",
       "downloadCurrent": "下載目前這面",
-      "downloadHint": "完整匯出（A4 / PDF / 影印件 / 浮水印）將隨後續版本上線"
+      "downloadHint": "單面 PNG · 完整匯出（A4 / PDF / 影印件 / 浮水印）請用右側匯出區",
+      "adjustHint": "首次預覽按規格比例從原圖中心裁切，請點「調整 4 角」對齊證件實際邊緣"
     },
     "editor": {
       "title": "拖曳 4 個圓點對齊證件邊緣",

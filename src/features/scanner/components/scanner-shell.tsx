@@ -14,7 +14,6 @@
 
 import { useEffect, useRef } from 'react'
 import { useTranslations } from 'next-intl'
-import { ClockFading } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { DOC_SPECS } from '../lib/doc-specs'
@@ -53,33 +52,10 @@ export function ScannerShell() {
   useSpecDeeplink()
 
   return (
-    <div className="space-y-6">
-      <div
-        role="status"
-        className="flex items-start gap-3 rounded-[var(--radius-lg)] border border-[var(--color-primary-soft)] bg-[var(--color-primary-soft)]/40 p-4"
-      >
-        <ClockFading
-          aria-hidden="true"
-          className="mt-0.5 size-5 shrink-0 text-[var(--color-primary-dk)]"
-        />
-        <div className="flex-1">
-          <div className="flex flex-wrap items-baseline gap-2">
-            <h2 className="text-base font-semibold text-[var(--color-text)]">
-              {t('comingSoonHeading')}
-            </h2>
-            <span className="rounded-full bg-[var(--color-primary-dk)] px-2 py-0.5 text-[10px] font-medium tracking-wide text-white uppercase">
-              {t('comingSoonBadge')}
-            </span>
-          </div>
-          <p className="mt-1 text-sm text-[var(--color-text-mute)]">{t('comingSoonBody')}</p>
-        </div>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr_1fr]">
-        <ScannerUploads />
-        <ScannerPreview emptyLabel={t('previewTitle')} emptyHint={t('previewEmpty')} />
-        <ScannerConfig />
-      </div>
+    <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr_1fr]">
+      <ScannerUploads />
+      <ScannerPreview emptyLabel={t('previewTitle')} emptyHint={t('previewEmpty')} />
+      <ScannerConfig />
     </div>
   )
 }

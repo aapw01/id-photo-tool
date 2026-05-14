@@ -21,7 +21,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Edit3, Loader2, Download } from 'lucide-react'
+import { Edit3, Info, Loader2, Download } from 'lucide-react'
 
 import { useScannerStore, type ScannerSlot, type ScannerSide } from '../store'
 import { ScannerCornerEditor } from './scanner-corner-editor'
@@ -112,11 +112,24 @@ function PreviewCard({ side, slot }: { side: ScannerSide; slot: ScannerSlot }) {
           }}
         />
       ) : (
-        <PreviewBody
-          slot={slot}
-          rectifiedUrl={rectifiedUrl}
-          onRetry={() => void rectifySide(side)}
-        />
+        <>
+          {slot.rectified && !slot.rectified.userAdjusted && (
+            <div className="flex items-start gap-2 rounded-[var(--radius-md)] border border-[var(--color-primary-soft)] bg-[var(--color-primary-soft)]/30 px-3 py-2">
+              <Info
+                aria-hidden="true"
+                className="mt-0.5 size-3.5 shrink-0 text-[var(--color-primary-dk)]"
+              />
+              <p className="text-[11px] leading-relaxed text-[var(--color-text)]">
+                {t('adjustHint')}
+              </p>
+            </div>
+          )}
+          <PreviewBody
+            slot={slot}
+            rectifiedUrl={rectifiedUrl}
+            onRetry={() => void rectifySide(side)}
+          />
+        </>
       )}
 
       {slot.rectified && slot.rectifyState === 'ready' && (

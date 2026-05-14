@@ -40,14 +40,49 @@ export interface Quad {
 const DEFAULT_INSET_RATIO = 0.06
 
 /**
- * A sensible starting quad for the manual editor: centered on the
- * source bitmap, inset 6 % from each side. The user drags handles
- * outward (or inward) to align with the actual document edges.
+ * A sensible starting quad for the manual editor.
+ *
+ * When `targetAspect` (= DocSpec width / height ratio) is provided,
+ * returns the largest centered rectangle inside the bitmap that
+ * matches that ratio, inset 6 % from the limiting edges. This means
+ * the user's first warp doesn't stretch the document into a wrong
+ * aspect — they see a centered, correct-ratio preview that they then
+ * refine by dragging the corners. Without it, a 4:3 phone photo
+ * would be squashed into the 1.586:1 ID-card output.
+ *
+ * Without `targetAspect`, returns the plain image-corner inset rect
+ * — useful for the editor's "reset" gesture when the user just wants
+ * the handles to snap back to the photo edges.
  *
  * Coordinates are in *source bitmap pixel space* so the rectify
  * pipeline can warp the full-resolution image directly.
  */
-export function defaultQuad(width: number, height: number): Quad {
+export function defaultQuad(width: number, height: number, targetAspect?: number): Quad {
+  if (targetAspect && targetAspect > 0) {
+    const imageAspect = width / height
+    let rectW: number
+    let rectH: number
+    if (imageAspect > targetAspect) {
+      // Image is "wider than target" — height bounds the rect.
+      rectH = height * (1 - 2 * DEFAULT_INSET_RATIO)
+      rectW = rectH * targetAspect
+    } else {
+      // Image is taller than target — width bounds the rect.
+      rectW = width * (1 - 2 * DEFAULT_INSET_RATIO)
+      rectH = rectW / targetAspect
+    }
+    const cx = width / 2
+    const cy = height / 2
+    const halfW = rectW / 2
+    const halfH = rectH / 2
+    return {
+      topLeft: { x: cx - halfW, y: cy - halfH },
+      topRight: { x: cx + halfW, y: cy - halfH },
+      bottomRight: { x: cx + halfW, y: cy + halfH },
+      bottomLeft: { x: cx - halfW, y: cy + halfH },
+    }
+  }
+
   const dx = width * DEFAULT_INSET_RATIO
   const dy = height * DEFAULT_INSET_RATIO
   return {

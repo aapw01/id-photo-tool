@@ -51,7 +51,7 @@ export interface RectifyResult {
 
 export async function rectifyDocument(options: RectifyOptions): Promise<RectifyResult> {
   const { bitmap, spec, quad, dpi = 300, mime = 'image/png' } = options
-  const finalQuad = quad ?? defaultQuad(bitmap.width, bitmap.height)
+  const finalQuad = quad ?? defaultQuad(bitmap.width, bitmap.height, spec.widthMm / spec.heightMm)
   const output = getOutputPixels(spec, dpi)
   const warped = await warpPerspective(bitmap, finalQuad, {
     outputWidth: output.width,

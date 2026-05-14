@@ -61,4 +61,38 @@ describe('defaultQuad', () => {
     const reordered = orderClockwise([q.topLeft, q.topRight, q.bottomRight, q.bottomLeft])
     expect(reordered).toEqual(q)
   })
+
+  it('builds a centered rectangle matching targetAspect for a wider-than-target image', () => {
+    // 16:9 photo (1.778) is wider than ID-card aspect (1.586) — so
+    // height bounds the rect, width follows.
+    const q = defaultQuad(1600, 900, 1.586)
+    const rectH = 900 * (1 - 2 * 0.06)
+    const rectW = rectH * 1.586
+    expect(q.topLeft.x).toBeCloseTo((1600 - rectW) / 2, 4)
+    expect(q.topLeft.y).toBeCloseTo((900 - rectH) / 2, 4)
+    expect(q.bottomRight.x - q.topLeft.x).toBeCloseTo(rectW, 4)
+    expect(q.bottomRight.y - q.topLeft.y).toBeCloseTo(rectH, 4)
+    expect((q.bottomRight.x - q.topLeft.x) / (q.bottomRight.y - q.topLeft.y)).toBeCloseTo(1.586, 4)
+  })
+
+  it('builds a centered rectangle matching targetAspect for a narrower-than-target image', () => {
+    // 4:3 phone photo (1.333) is narrower than ID-card aspect
+    // (1.586) — so width bounds the rect, height follows.
+    const q = defaultQuad(1000, 750, 1.586)
+    const rectW = 1000 * (1 - 2 * 0.06)
+    const rectH = rectW / 1.586
+    expect(q.topLeft.x).toBeCloseTo((1000 - rectW) / 2, 4)
+    expect(q.topLeft.y).toBeCloseTo((750 - rectH) / 2, 4)
+    expect((q.bottomRight.x - q.topLeft.x) / (q.bottomRight.y - q.topLeft.y)).toBeCloseTo(1.586, 4)
+  })
+
+  it('builds a centered rectangle matching targetAspect for a tall portrait phone photo', () => {
+    // 9:16 portrait — much narrower than target, width-bound.
+    const q = defaultQuad(1080, 1920, 1.586)
+    const rectW = 1080 * (1 - 2 * 0.06)
+    const rectH = rectW / 1.586
+    expect(q.topLeft.x).toBeCloseTo((1080 - rectW) / 2, 4)
+    expect(q.topLeft.y).toBeCloseTo((1920 - rectH) / 2, 4)
+    expect((q.bottomRight.x - q.topLeft.x) / (q.bottomRight.y - q.topLeft.y)).toBeCloseTo(1.586, 4)
+  })
 })

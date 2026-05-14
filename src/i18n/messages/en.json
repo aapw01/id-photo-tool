@@ -796,10 +796,7 @@
       "previewTitle": "Scan preview",
       "previewEmpty": "Once you upload an image, the perspective-corrected scan will appear here",
       "configTitle": "Settings",
-      "configHint": "Document type, output mode, watermark, A4 layout",
-      "comingSoonBadge": "Coming soon",
-      "comingSoonHeading": "ID Document Scanner is on the way",
-      "comingSoonBody": "We're polishing perspective correction, scan / photocopy rendering, mandatory watermark, and A4 layout. The shell is here today; features roll out in upcoming iterations."
+      "configHint": "Document type, output mode, watermark, A4 layout"
     },
     "upload": {
       "frontTitle": "Document front",
@@ -829,7 +826,8 @@
       "retry": "Retry",
       "editCorners": "Adjust corners",
       "downloadCurrent": "Download this side",
-      "downloadHint": "Full export (A4 / PDF / photocopy / watermark) lands in upcoming releases"
+      "downloadHint": "Single-side PNG · use the right-rail export for full A4 / PDF / photocopy / watermark",
+      "adjustHint": "First preview is a center crop matched to the spec — click 'Adjust corners' to align the handles with the actual document edges."
     },
     "editor": {
       "title": "Drag the four handles to the document edges",

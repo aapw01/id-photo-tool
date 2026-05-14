@@ -51,8 +51,13 @@ export interface RectifiedResult {
   quad: Quad
   width: number
   height: number
-  /** True iff `quad` came from auto-detection (not fallback or user edit). */
-  detected: boolean
+  /**
+   * True iff `quad` came from the user's manual corner editor. False
+   * means the warp used `defaultQuad`, which is a centered crop at
+   * the spec's aspect ratio — useful for the preview pane to gently
+   * nudge the user to adjust corners for a correct result.
+   */
+  userAdjusted: boolean
 }
 
 export interface RenderedOutput {
@@ -291,7 +296,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
               quad: result.quad,
               width: result.width,
               height: result.height,
-              detected: result.detected,
+              userAdjusted: overrideQuad !== undefined,
             },
             // The previous mode-applied output is stale once the
             // underlying rectified bytes change — clear it so the
@@ -395,5 +400,8 @@ async function packCurrentSides(state: ScannerState) {
   // longer affects pack/export selection.
   const backReady = state.back?.rendered ?? state.back?.rectified
   if (backReady) sides.push({ blob: backReady.blob, spec })
-  return packSheet(sides, state.paperSize)
+  // Watermark is forwarded so packSheet overlays it across the full
+  // page (including margins) — the per-side renderer already stamped
+  // the document body, but empty A4 white-space needs protection too.
+  return packSheet(sides, state.paperSize, { watermark: state.watermark })
 }

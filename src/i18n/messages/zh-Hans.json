@@ -796,10 +796,7 @@
       "previewTitle": "扫描预览",
       "previewEmpty": "上传后将在这里显示透视校正后的扫描结果",
       "configTitle": "配置",
-      "configHint": "证件类型、输出模式、水印、A4 排版",
-      "comingSoonBadge": "即将上线",
-      "comingSoonHeading": "证件扫描生成器即将上线",
-      "comingSoonBody": "我们正在打磨透视校正、扫描件 / 复印件渲染、强制水印与 A4 排版能力。骨架页已就位，功能将随后续迭代陆续推出。"
+      "configHint": "证件类型、输出模式、水印、A4 排版"
     },
     "upload": {
       "frontTitle": "证件正面",
@@ -829,7 +826,8 @@
       "retry": "重试",
       "editCorners": "调整 4 角",
       "downloadCurrent": "下载当前面",
-      "downloadHint": "完整导出（A4 / PDF / 复印件 / 水印）将随后续版本上线"
+      "downloadHint": "单面 PNG · 完整导出（A4 / PDF / 复印件 / 水印）请用右侧导出区",
+      "adjustHint": "首次预览按规格比例从原图中心裁切，请点「调整 4 角」对齐证件实际边缘"
     },
     "editor": {
       "title": "拖动 4 个圆点对齐证件边缘",
