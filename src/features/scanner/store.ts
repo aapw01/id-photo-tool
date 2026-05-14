@@ -29,9 +29,17 @@ import { loadDocumentImage } from './lib/load-document-image'
 import { rectifyDocument } from './lib/rectify'
 import { DEFAULT_DOC_SPEC_ID, getDocSpec } from './lib/doc-specs'
 import { renderOutputMode, type OutputMode } from './lib/render-modes'
+import {
+  clampWatermarkOpacity,
+  DEFAULT_WATERMARK_OPACITY,
+  type WatermarkConfig,
+  type WatermarkDensity,
+} from './lib/watermark'
+import { packA4Portrait, type PackedSide } from './lib/pack-a4'
+import { exportPackedA4ToPdf } from './lib/export-pdf'
 import type { Quad } from './lib/detect-corners'
 
-export type { OutputMode }
+export type { OutputMode, WatermarkConfig, WatermarkDensity }
 
 export type RectifyState = 'idle' | 'processing' | 'ready' | 'error'
 export type RenderState = 'idle' | 'processing' | 'ready'
@@ -79,6 +87,7 @@ export interface ScannerState {
   hasBack: boolean
   docSpecId: string
   outputMode: OutputMode
+  watermark: WatermarkConfig
 
   setFrontImage: (file: File) => Promise<void>
   setBackImage: (file: File) => Promise<void>
@@ -87,6 +96,12 @@ export interface ScannerState {
   setHasBack: (hasBack: boolean) => void
   setDocSpecId: (id: string) => void
   setOutputMode: (mode: OutputMode) => void
+  /** Update watermark text. Empty string ⇒ caller-localized fallback is used. */
+  setWatermarkText: (text: string) => void
+  /** Update watermark opacity. Clamped to [0.3, 0.7] in the kernel. */
+  setWatermarkOpacity: (opacity: number) => void
+  /** Update watermark density (sparse / normal / dense). */
+  setWatermarkDensity: (density: WatermarkDensity) => void
   /**
    * Re-run the rectify pipeline for `side`. If `quad` is provided
    * it overrides the auto-detection (used by the corner editor).
@@ -98,15 +113,36 @@ export interface ScannerState {
    * flips the mode toggle.
    */
   renderSide: (side: ScannerSide) => Promise<void>
+
+  /**
+   * Pack the currently-rendered sides onto A4 and return a PDF blob.
+   * Returns `null` when nothing is ready to export. Caller is
+   * responsible for triggering the download (object URL + <a>).
+   */
+  exportPdfBlob: () => Promise<Blob | null>
+  /**
+   * Pack the currently-rendered sides onto A4 and return the PNG.
+   * Same null contract as `exportPdfBlob`.
+   */
+  exportA4PngBlob: () => Promise<Blob | null>
+
   reset: () => void
 }
 
-const INITIAL: Pick<ScannerState, 'front' | 'back' | 'hasBack' | 'docSpecId' | 'outputMode'> = {
+const INITIAL: Pick<
+  ScannerState,
+  'front' | 'back' | 'hasBack' | 'docSpecId' | 'outputMode' | 'watermark'
+> = {
   front: null,
   back: null,
   hasBack: true,
   docSpecId: DEFAULT_DOC_SPEC_ID,
   outputMode: 'scan' as OutputMode,
+  watermark: {
+    text: '',
+    opacity: DEFAULT_WATERMARK_OPACITY,
+    density: 'normal',
+  },
 }
 
 function closeSlot(slot: ScannerSlot | null): void {
@@ -182,6 +218,28 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
+  setWatermarkText(text) {
+    if (text === get().watermark.text) return
+    set((state) => ({ watermark: { ...state.watermark, text } }))
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
+  },
+
+  setWatermarkOpacity(opacity) {
+    const next = clampWatermarkOpacity(opacity)
+    if (next === get().watermark.opacity) return
+    set((state) => ({ watermark: { ...state.watermark, opacity: next } }))
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
+  },
+
+  setWatermarkDensity(density) {
+    if (density === get().watermark.density) return
+    set((state) => ({ watermark: { ...state.watermark, density } }))
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
+  },
+
   async rectifySide(side, overrideQuad) {
     const baseline = get()[side]
     if (!baseline) return
@@ -253,6 +311,9 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     if (!baseline?.rectified) return
     const sourceBlob = baseline.rectified.blob
     const mode = get().outputMode
+    // Snapshot the watermark config so a flurry of fast slider
+    // changes doesn't make us encode stale values.
+    const watermarkSnapshot = { ...get().watermark }
     set((state) => {
       const current = state[side]
       if (!current?.rectified || current.rectified.blob !== sourceBlob) return state
@@ -261,7 +322,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       } as Partial<ScannerState>
     })
     try {
-      const out = await renderOutputMode(sourceBlob, mode)
+      const out = await renderOutputMode(sourceBlob, mode, watermarkSnapshot)
       set((state) => {
         const current = state[side]
         // Guard: rectified blob changed (user redetected mid-render).
@@ -286,6 +347,17 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     }
   },
 
+  async exportPdfBlob() {
+    const packed = await packCurrentSides(get())
+    if (!packed) return null
+    return exportPackedA4ToPdf({ packed, title: 'Pixfit Scanner' })
+  },
+
+  async exportA4PngBlob() {
+    const packed = await packCurrentSides(get())
+    return packed?.blob ?? null
+  },
+
   reset() {
     const prev = get()
     closeSlot(prev.front)
@@ -293,3 +365,20 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     set(INITIAL)
   },
 }))
+
+/**
+ * Collect the ready-to-export sides from the current store snapshot
+ * and pack them onto A4. Skips slots that are still rectifying so
+ * the user never accidentally exports a partial sheet.
+ */
+async function packCurrentSides(state: ScannerState) {
+  const spec = getDocSpec(state.docSpecId)
+  const sides: PackedSide[] = []
+  const frontReady = state.front?.rendered ?? state.front?.rectified
+  if (frontReady) sides.push({ blob: frontReady.blob, spec })
+  if (state.hasBack) {
+    const backReady = state.back?.rendered ?? state.back?.rectified
+    if (backReady) sides.push({ blob: backReady.blob, spec })
+  }
+  return packA4Portrait(sides)
+}

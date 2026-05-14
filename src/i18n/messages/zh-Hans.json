@@ -862,6 +862,30 @@
       "enhance": "增强",
       "enhanceDesc": "饱和度 + 对比度"
     },
+    "watermark": {
+      "label": "防滥用水印",
+      "textLabel": "水印文字",
+      "textPlaceholder": "仅供本次申请使用",
+      "defaultText": "仅供本次申请使用",
+      "opacityLabel": "不透明度",
+      "densityLabel": "密度",
+      "density": {
+        "sparse": "疏",
+        "normal": "标准",
+        "dense": "密"
+      },
+      "mandatoryNote": "为防止证件照片被滥用，水印强制开启且最低 30% 不透明度（合规要求）"
+    },
+    "export": {
+      "title": "导出",
+      "pdf": "下载 A4 PDF",
+      "png": "下载 A4 PNG",
+      "preparing": "正在生成…",
+      "noContent": "上传至少一面证件后即可导出",
+      "successPdf": "PDF 已下载",
+      "successPng": "PNG 已下载",
+      "errorGeneric": "导出失败：{message}"
+    },
     "seoIntro": {
       "heading": "为什么需要证件扫描生成器",
       "paragraphs": {

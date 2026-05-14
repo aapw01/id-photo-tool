@@ -862,6 +862,30 @@
       "enhance": "增強",
       "enhanceDesc": "飽和度 + 對比度"
     },
+    "watermark": {
+      "label": "防濫用浮水印",
+      "textLabel": "浮水印文字",
+      "textPlaceholder": "僅供本次申請使用",
+      "defaultText": "僅供本次申請使用",
+      "opacityLabel": "不透明度",
+      "densityLabel": "密度",
+      "density": {
+        "sparse": "疏",
+        "normal": "標準",
+        "dense": "密"
+      },
+      "mandatoryNote": "為防止證件相片被濫用，浮水印強制啟用且最低 30% 不透明度（合規要求）"
+    },
+    "export": {
+      "title": "匯出",
+      "pdf": "下載 A4 PDF",
+      "png": "下載 A4 PNG",
+      "preparing": "產生中…",
+      "noContent": "至少上傳一面證件後即可匯出",
+      "successPdf": "PDF 已下載",
+      "successPng": "PNG 已下載",
+      "errorGeneric": "匯出失敗：{message}"
+    },
     "seoIntro": {
       "heading": "為何需要證件掃描產生器",
       "paragraphs": {

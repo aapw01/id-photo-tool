@@ -862,6 +862,30 @@
       "enhance": "Enhance",
       "enhanceDesc": "Saturation + contrast"
     },
+    "watermark": {
+      "label": "Anti-misuse watermark",
+      "textLabel": "Watermark text",
+      "textPlaceholder": "For this application only",
+      "defaultText": "For this application only",
+      "opacityLabel": "Opacity",
+      "densityLabel": "Density",
+      "density": {
+        "sparse": "Sparse",
+        "normal": "Normal",
+        "dense": "Dense"
+      },
+      "mandatoryNote": "Watermark is mandatory and clamped to a 30 % minimum opacity (compliance requirement)"
+    },
+    "export": {
+      "title": "Export",
+      "pdf": "Download A4 PDF",
+      "png": "Download A4 PNG",
+      "preparing": "Generating…",
+      "noContent": "Upload at least one side to enable export",
+      "successPdf": "PDF downloaded",
+      "successPng": "PNG downloaded",
+      "errorGeneric": "Export failed: {message}"
+    },
     "seoIntro": {
       "heading": "Why an ID document scanner",
       "paragraphs": {
