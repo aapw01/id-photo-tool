@@ -805,7 +805,7 @@
       "frontTitle": "Document front",
       "frontHint": "JPG / PNG / HEIC · single file ≤ 20 MB",
       "backTitle": "Document back",
-      "backHint": "Optional — toggle off on the right if not needed",
+      "backHint": "Optional — leave empty if your document has no back side",
       "browse": "Choose file",
       "dragHint": "Drop here or click to pick",
       "remove": "Remove",
@@ -813,7 +813,6 @@
       "uploading": "Processing…",
       "heicBadge": "HEIC converted",
       "previewAlt": "Uploaded document preview",
-      "hasBackToggle": "Upload document back side",
       "errors": {
         "too_large": "{name} exceeds the 20 MB limit",
         "unsupported_type": "{name} is not a supported image format (JPG / PNG / WebP / HEIC only)",
@@ -825,7 +824,7 @@
     "preview": {
       "frontLabel": "Front",
       "backLabel": "Back",
-      "loadingOpenCV": "Downloading OpenCV (~8 MB, first time only)…",
+      "loadingOpenCV": "Caching the detection engine (~8 MB · one-time)…",
       "processing": "Rectifying perspective…",
       "rectifyError": "Failed: {message}",
       "retry": "Retry",

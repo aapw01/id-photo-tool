@@ -390,9 +390,11 @@ async function packCurrentSides(state: ScannerState) {
   const sides: PackedSide[] = []
   const frontReady = state.front?.rendered ?? state.front?.rectified
   if (frontReady) sides.push({ blob: frontReady.blob, spec })
-  if (state.hasBack) {
-    const backReady = state.back?.rendered ?? state.back?.rectified
-    if (backReady) sides.push({ blob: backReady.blob, spec })
-  }
+  // No explicit gate on `state.hasBack`: if the user uploaded a back
+  // image, we pack it; if they didn't, the slot is null and we skip.
+  // The `hasBack` field is kept on the store for API stability but no
+  // longer affects pack/export selection.
+  const backReady = state.back?.rendered ?? state.back?.rectified
+  if (backReady) sides.push({ blob: backReady.blob, spec })
   return packSheet(sides, state.paperSize)
 }

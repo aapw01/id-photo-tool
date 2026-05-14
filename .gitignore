@@ -44,6 +44,9 @@ yarn-error.log*
 # ML model artifacts (download via `pnpm models:fetch`)
 public/_models/*.onnx
 
+# OpenCV.js self-hosted bundle (download via `pnpm opencv:fetch`)
+public/vendor/opencv/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

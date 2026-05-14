@@ -2,13 +2,13 @@
 
 /**
  * Composes two `ScannerUploadCard`s (front + back) into the upload
- * column of the Scanner workspace, plus the "this document has a
- * back side" toggle.
+ * column of the Scanner workspace.
  *
- * The toggle defaults to true (id-card / driver-license) and can be
- * flipped off for single-sided documents (passport personal page,
- * birth certificate, etc.) — turning it off also clears any back
- * slot via the store so the bitmap isn't retained in memory.
+ * Both cards always render. The back card is optional from the user's
+ * perspective — leaving it empty is a supported flow; export packs
+ * only the sides that are actually rectified. We dropped the explicit
+ * "does this doc have a back?" toggle because it added a click users
+ * routinely ignored and didn't change any downstream behavior.
  */
 
 import { useTranslations } from 'next-intl'
@@ -20,12 +20,10 @@ export function ScannerUploads() {
   const t = useTranslations('Scanner.upload')
   const front = useScannerStore((s) => s.front)
   const back = useScannerStore((s) => s.back)
-  const hasBack = useScannerStore((s) => s.hasBack)
   const setFrontImage = useScannerStore((s) => s.setFrontImage)
   const setBackImage = useScannerStore((s) => s.setBackImage)
   const clearFront = useScannerStore((s) => s.clearFront)
   const clearBack = useScannerStore((s) => s.clearBack)
-  const setHasBack = useScannerStore((s) => s.setHasBack)
 
   return (
     <div className="flex flex-col gap-4">
@@ -36,27 +34,13 @@ export function ScannerUploads() {
         onPick={setFrontImage}
         onClear={clearFront}
       />
-
-      {/* Toggle: does this document have a back side? */}
-      <label className="flex items-center gap-3 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-sm text-[var(--color-text)]">
-        <input
-          type="checkbox"
-          checked={hasBack}
-          onChange={(e) => setHasBack(e.target.checked)}
-          className="size-4 rounded border-[var(--color-border)] text-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]/40"
-        />
-        <span className="flex-1">{t('hasBackToggle')}</span>
-      </label>
-
-      {hasBack && (
-        <ScannerUploadCard
-          slot={back}
-          title={t('backTitle')}
-          hint={t('backHint')}
-          onPick={setBackImage}
-          onClear={clearBack}
-        />
-      )}
+      <ScannerUploadCard
+        slot={back}
+        title={t('backTitle')}
+        hint={t('backHint')}
+        onPick={setBackImage}
+        onClear={clearBack}
+      />
     </div>
   )
 }

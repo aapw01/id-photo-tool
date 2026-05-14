@@ -805,7 +805,7 @@
       "frontTitle": "證件正面",
       "frontHint": "支援 JPG / PNG / HEIC · 單張 ≤ 20 MB",
       "backTitle": "證件背面",
-      "backHint": "若不需要可於右側關閉",
+      "backHint": "可選 · 沒有背面可跳過",
       "browse": "選擇檔案",
       "dragHint": "拖到這裡或點擊選擇",
       "remove": "移除",
@@ -813,7 +813,6 @@
       "uploading": "處理中…",
       "heicBadge": "HEIC 已轉換",
       "previewAlt": "已上傳的證件預覽",
-      "hasBackToggle": "上傳證件背面",
       "errors": {
         "too_large": "{name} 超過 20 MB 上限",
         "unsupported_type": "{name} 不是支援的圖片格式（僅支援 JPG / PNG / WebP / HEIC）",
@@ -825,7 +824,7 @@
     "preview": {
       "frontLabel": "正面",
       "backLabel": "背面",
-      "loadingOpenCV": "首次使用需要下載 OpenCV（約 8 MB）…",
+      "loadingOpenCV": "首次使用需快取辨識引擎（約 8 MB · 一次性）…",
       "processing": "正在校正透視…",
       "rectifyError": "處理失敗：{message}",
       "retry": "重試",

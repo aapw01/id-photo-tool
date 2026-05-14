@@ -13,6 +13,15 @@
  * HTTP cache the browser sets up automatically can survive new
  * minor releases of the Scanner without redownloading the WASM.
  *
+ * Hosting: we self-host the bundle at `/vendor/opencv/<ver>/opencv.js`
+ * (downloaded at build/dev time via `pnpm opencv:fetch`). This keeps
+ * the script same-origin so it works on locked-down networks and
+ * doesn't depend on docs.opencv.org, which is intermittently
+ * unreachable from mainland China dev environments. If the same-origin
+ * file is missing (e.g. someone forgot to run the fetch script in a
+ * fresh checkout), we fall back to jsdelivr's `@techstark/opencv-js`
+ * mirror — its `dist/opencv.js` is the same upstream artifact.
+ *
  * Runtime init: OpenCV.js's WASM runtime initializes asynchronously
  * after the JS finishes parsing — even after `script.onload` the
  * `cv.Mat` constructor is sometimes still undefined. We use the
@@ -21,14 +30,18 @@
  * with a poll-and-timeout for builds that don't expose the thenable.
  *
  * `loadOpenCV()` returns a singleton promise. Subsequent calls reuse
- * it — the script tag is only ever appended once.
+ * it — the script tag is only ever appended once per attempt.
  *
  * Failure model: rejection with a typed `OpenCVLoadError` so the UI
  * can render a localized retry CTA.
  */
 
 const OPENCV_VERSION = '4.10.0'
-const OPENCV_URL = `https://docs.opencv.org/${OPENCV_VERSION}/opencv.js`
+const OPENCV_URLS = [
+  `/vendor/opencv/${OPENCV_VERSION}/opencv.js`,
+  `https://cdn.jsdelivr.net/npm/@techstark/opencv-js@${OPENCV_VERSION}/dist/opencv.js`,
+] as const
+const OPENCV_URL = OPENCV_URLS[0]
 
 const RUNTIME_INIT_TIMEOUT_MS = 30_000
 const RUNTIME_POLL_INTERVAL_MS = 50
@@ -157,8 +170,6 @@ export function loadOpenCV(): Promise<OpenCV> {
   if (cachedPromise) return cachedPromise
 
   cachedPromise = new Promise<OpenCV>((resolve, reject) => {
-    const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${OPENCV_URL}"]`)
-
     const finalize = () => {
       const start = Date.now()
       const tick = () => {
@@ -208,27 +219,46 @@ export function loadOpenCV(): Promise<OpenCV> {
       tick()
     }
 
-    if (existingScript) {
-      // Script tag is already in the document (e.g. another instance of
-      // this loader was kicked off first) — wait on the runtime poll.
-      finalize()
-      return
+    // If any of our candidate scripts already exists in the document
+    // (another loader call lost the race), just poll the runtime.
+    for (const url of OPENCV_URLS) {
+      if (document.querySelector<HTMLScriptElement>(`script[src="${url}"]`)) {
+        finalize()
+        return
+      }
     }
 
-    const script = document.createElement('script')
-    script.src = OPENCV_URL
-    script.async = true
-    script.crossOrigin = 'anonymous'
-    script.onload = finalize
-    script.onerror = () => {
-      reject(
-        new OpenCVLoadError(
-          'script_failed',
-          `Failed to load OpenCV.js from ${OPENCV_URL} — check the network`,
-        ),
-      )
+    const tried: string[] = []
+    const tryNext = (idx: number) => {
+      if (idx >= OPENCV_URLS.length) {
+        reject(
+          new OpenCVLoadError(
+            'script_failed',
+            `Failed to load OpenCV.js from any source (${tried.join(', ')}) — check the network`,
+          ),
+        )
+        return
+      }
+      const url = OPENCV_URLS[idx]
+      if (!url) {
+        tryNext(idx + 1)
+        return
+      }
+      tried.push(url)
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      // Same-origin path doesn't need CORS; remote fallback benefits
+      // from `anonymous` so we can use the response from cache.
+      if (/^https?:\/\//.test(url)) script.crossOrigin = 'anonymous'
+      script.onload = finalize
+      script.onerror = () => {
+        script.remove()
+        tryNext(idx + 1)
+      }
+      document.head.appendChild(script)
     }
-    document.head.appendChild(script)
+    tryNext(0)
   })
 
   // If the load fails, allow a retry by clearing the cached promise.
@@ -245,4 +275,4 @@ function isReadyOpenCV(
   return typeof (candidate as Partial<OpenCV>).Mat === 'function'
 }
 
-export { OPENCV_URL, OPENCV_VERSION }
+export { OPENCV_URL, OPENCV_URLS, OPENCV_VERSION }
