@@ -978,6 +978,15 @@
       "successPng": "PNG 已下載",
       "errorGeneric": "匯出失敗：{message}"
     },
+    "preview": {
+      "trigger": "預覽整頁",
+      "title": "整頁預覽",
+      "description": "下載的 {paper} 整頁效果——紙張、浮水印、圓角與匯出完全一致。",
+      "loading": "正在產生預覽…",
+      "empty": "至少上傳一面證件後即可預覽整頁",
+      "error": "預覽產生失敗，請調整設定後再試。",
+      "imageAlt": "{paper} 整頁排版預覽"
+    },
     "usage": {
       "heading": "掃描前 —— 使用須知",
       "summary": "在上傳證件前請閱讀：照片不會離開你的瀏覽器，以下是我們做了什麼、不會做什麼，以及使用本工具時你需要遵守的約束。",

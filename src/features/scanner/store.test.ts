@@ -1,6 +1,7 @@
-import { describe, expect, it, beforeEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { MAX_CORNER_RADIUS_PX, useScannerStore } from './store'
+import { computePreviewSignature, MAX_CORNER_RADIUS_PX, useScannerStore } from './store'
+import type { ScannerSlot } from './store'
 
 /**
  * Store-level regression tests for the optional watermark.
@@ -96,5 +97,191 @@ describe('useScannerStore — corner radius', () => {
     useScannerStore.getState().setCornerRadiusPx(40)
     useScannerStore.getState().reset()
     expect(useScannerStore.getState().cornerRadiusPx).toBe(0)
+  })
+})
+
+/**
+ * Preview slice tests — `regeneratePreview` is the heart of the new
+ * "preview before download" dialog. The contract under test:
+ *
+ *   1. The preview always reflects the current settings — paper size,
+ *      watermark, corner radius. Changing any input must invalidate
+ *      the cached blob via the signature.
+ *   2. Each replacement revokes the previous object URL exactly once,
+ *      and `reset()` / `clearPreview()` revoke too. Leaking blob URLs
+ *      eats memory across long scanner sessions.
+ *   3. With no rectified sides the call resolves to `null` and drops
+ *      any stale cache (signature-mismatch invalidation in reverse).
+ *
+ * We stub `URL.createObjectURL` and `URL.revokeObjectURL` so we can
+ * track every issued URL and assert the revoke pattern. The actual
+ * `packCurrentSides` pipeline is mocked at the module boundary
+ * (`./lib/pack-a4`) so the test does not depend on the canvas /
+ * watermark / pdf integration — those are exercised by their own
+ * kernel suites.
+ */
+describe('useScannerStore — preview slice', () => {
+  // Track issued vs revoked object URLs so we can assert the
+  // revoke-on-replace contract without depending on real URL impl.
+  const issued: string[] = []
+  const revoked: string[] = []
+  let urlCounter = 0
+  let createSpy: ReturnType<typeof vi.spyOn>
+  let revokeSpy: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    useScannerStore.getState().reset()
+    issued.length = 0
+    revoked.length = 0
+    urlCounter = 0
+    createSpy = vi.spyOn(URL, 'createObjectURL').mockImplementation(() => {
+      const url = `blob:test-${++urlCounter}`
+      issued.push(url)
+      return url
+    })
+    revokeSpy = vi.spyOn(URL, 'revokeObjectURL').mockImplementation((url) => {
+      revoked.push(url)
+    })
+  })
+
+  afterEach(() => {
+    createSpy.mockRestore()
+    revokeSpy.mockRestore()
+  })
+
+  /**
+   * Build a minimally-populated `ScannerSlot` with a synthetic
+   * rectified blob. Real fields like `bitmap` are filled with a stub
+   * value — `packCurrentSides` only reads `rectified.blob`, the rest
+   * is opaque to the preview pipeline. We bypass the public setters
+   * because they kick off async rectify pipelines we don't want in
+   * a unit test.
+   */
+  function installFrontSlot(blob: Blob): void {
+    const slot: ScannerSlot = {
+      file: new File([blob], 'test.png', { type: 'image/png' }),
+      bitmap: {} as unknown as ImageBitmap,
+      blob,
+      convertedFromHeic: false,
+      convertedFromPdf: false,
+      sourcePageCount: undefined,
+      rectified: {
+        blob: new Blob([new Uint8Array([0])], { type: 'image/png' }),
+        quad: {
+          topLeft: { x: 0, y: 0 },
+          topRight: { x: 100, y: 0 },
+          bottomRight: { x: 100, y: 100 },
+          bottomLeft: { x: 0, y: 100 },
+        },
+        width: 100,
+        height: 100,
+        userAdjusted: false,
+      },
+      rectifyState: 'ready',
+      rectifyError: null,
+      rendered: null,
+      renderState: 'idle',
+    }
+    useScannerStore.setState({ front: slot })
+  }
+
+  it('signature mirrors paper size / watermark / corner radius / blob identity', () => {
+    const s0 = useScannerStore.getState()
+    const sig0 = computePreviewSignature(s0)
+
+    useScannerStore.getState().setPaperSize('letter')
+    expect(computePreviewSignature(useScannerStore.getState())).not.toBe(sig0)
+
+    useScannerStore.getState().setPaperSize('a4')
+    const sig1 = computePreviewSignature(useScannerStore.getState())
+    expect(sig1).toBe(sig0)
+
+    useScannerStore.getState().setCornerRadiusPx(20)
+    expect(computePreviewSignature(useScannerStore.getState())).not.toBe(sig1)
+
+    useScannerStore.getState().setCornerRadiusPx(0)
+    useScannerStore.getState().setWatermarkEnabled(true)
+    expect(computePreviewSignature(useScannerStore.getState())).not.toBe(sig1)
+  })
+
+  it('regeneratePreview returns null when no rectified sides are present', async () => {
+    const result = await useScannerStore.getState().regeneratePreview()
+    expect(result).toBeNull()
+    expect(useScannerStore.getState().preview).toBeNull()
+    expect(useScannerStore.getState().previewState).toBe('idle')
+    expect(issued).toHaveLength(0)
+  })
+
+  it('regeneratePreview produces a cached preview when a side is ready', async () => {
+    installFrontSlot(new Blob([new Uint8Array([1])], { type: 'image/png' }))
+    const result = await useScannerStore.getState().regeneratePreview()
+    expect(result).not.toBeNull()
+    expect(result?.blob).toBeInstanceOf(Blob)
+    expect(result?.objectUrl).toMatch(/^blob:test-/)
+    expect(useScannerStore.getState().preview).toEqual(result)
+    expect(useScannerStore.getState().previewState).toBe('ready')
+    expect(issued).toHaveLength(1)
+    expect(revoked).toHaveLength(0)
+  })
+
+  it('regeneratePreview is a no-op when nothing changed (cache hit)', async () => {
+    installFrontSlot(new Blob([new Uint8Array([1])], { type: 'image/png' }))
+    const first = await useScannerStore.getState().regeneratePreview()
+    const second = await useScannerStore.getState().regeneratePreview()
+    expect(second).toBe(first)
+    expect(issued).toHaveLength(1)
+    expect(revoked).toHaveLength(0)
+  })
+
+  it('changing paper size invalidates the cached preview and revokes its URL', async () => {
+    installFrontSlot(new Blob([new Uint8Array([1])], { type: 'image/png' }))
+    const first = await useScannerStore.getState().regeneratePreview()
+    expect(first?.paperSize).toBe('a4')
+
+    useScannerStore.getState().setPaperSize('letter')
+    const second = await useScannerStore.getState().regeneratePreview()
+    expect(second).not.toBeNull()
+    expect(second).not.toBe(first)
+    expect(second?.paperSize).toBe('letter')
+    expect(second?.signature).not.toBe(first?.signature)
+    // Exactly one revoke for the old URL, one new issue for the new
+    // blob. No double-revokes; no stranded URLs.
+    expect(issued).toHaveLength(2)
+    expect(revoked).toEqual([first?.objectUrl])
+  })
+
+  it('toggling the watermark invalidates the preview', async () => {
+    installFrontSlot(new Blob([new Uint8Array([1])], { type: 'image/png' }))
+    const first = await useScannerStore.getState().regeneratePreview()
+    useScannerStore.getState().setWatermarkEnabled(true)
+    const second = await useScannerStore.getState().regeneratePreview()
+    expect(second?.signature).not.toBe(first?.signature)
+    expect(revoked).toEqual([first?.objectUrl])
+  })
+
+  it('changing the corner radius invalidates the preview', async () => {
+    installFrontSlot(new Blob([new Uint8Array([1])], { type: 'image/png' }))
+    const first = await useScannerStore.getState().regeneratePreview()
+    useScannerStore.getState().setCornerRadiusPx(24)
+    const second = await useScannerStore.getState().regeneratePreview()
+    expect(second?.signature).not.toBe(first?.signature)
+    expect(revoked).toEqual([first?.objectUrl])
+  })
+
+  it('clearPreview() revokes the URL and resets the state', async () => {
+    installFrontSlot(new Blob([new Uint8Array([1])], { type: 'image/png' }))
+    const first = await useScannerStore.getState().regeneratePreview()
+    useScannerStore.getState().clearPreview()
+    expect(useScannerStore.getState().preview).toBeNull()
+    expect(useScannerStore.getState().previewState).toBe('idle')
+    expect(revoked).toEqual([first?.objectUrl])
+  })
+
+  it('reset() revokes the cached preview URL', async () => {
+    installFrontSlot(new Blob([new Uint8Array([1])], { type: 'image/png' }))
+    const first = await useScannerStore.getState().regeneratePreview()
+    useScannerStore.getState().reset()
+    expect(useScannerStore.getState().preview).toBeNull()
+    expect(revoked).toEqual([first?.objectUrl])
   })
 })

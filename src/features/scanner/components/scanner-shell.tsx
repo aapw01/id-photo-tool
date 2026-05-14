@@ -51,6 +51,19 @@ export function ScannerShell() {
   const t = useTranslations('Scanner.shell')
   useSpecDeeplink()
 
+  // The preview dialog caches a packed-sheet blob URL on the store
+  // for fast reopen. When the user navigates away from /scanner the
+  // store stays mounted (Zustand is module-singleton) but the URL
+  // belongs to a vanishing DOM, so we proactively revoke it here.
+  // The cached preview will rebuild lazily the next time the dialog
+  // opens with rectified sides ready.
+  const clearPreview = useScannerStore((s) => s.clearPreview)
+  useEffect(() => {
+    return () => {
+      clearPreview()
+    }
+  }, [clearPreview])
+
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr_1fr]">
       <ScannerUploads />

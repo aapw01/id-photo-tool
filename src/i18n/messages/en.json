@@ -978,6 +978,15 @@
       "successPng": "PNG downloaded",
       "errorGeneric": "Export failed: {message}"
     },
+    "preview": {
+      "trigger": "Preview sheet",
+      "title": "Sheet preview",
+      "description": "Exactly what your downloaded {paper} sheet will look like — same paper, watermark, and rounded corners.",
+      "loading": "Generating preview…",
+      "empty": "Upload at least one side to preview the sheet",
+      "error": "Couldn't generate the preview. Adjust a setting and try again.",
+      "imageAlt": "{paper} packed sheet preview"
+    },
     "usage": {
       "heading": "Before you scan — usage notice",
       "summary": "Read this before you upload your ID. Your photos never leave the browser — this is what we do, what we don't, and what you agree to by using the scanner.",

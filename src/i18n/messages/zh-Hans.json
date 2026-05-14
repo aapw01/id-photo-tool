@@ -978,6 +978,15 @@
       "successPng": "PNG 已下载",
       "errorGeneric": "导出失败：{message}"
     },
+    "preview": {
+      "trigger": "预览整页",
+      "title": "整页预览",
+      "description": "下载的 {paper} 整页效果——纸张、水印、圆角与导出完全一致。",
+      "loading": "正在生成预览…",
+      "empty": "上传至少一面证件后即可预览整页",
+      "error": "预览生成失败，请调整设置后重试。",
+      "imageAlt": "{paper} 整页排版预览"
+    },
     "usage": {
       "heading": "扫描前 —— 使用须知",
       "summary": "在上传证件前请阅读：照片不会离开你的浏览器，以下是我们做了什么、不会做什么，以及使用本工具时你需要遵守的约束。",
