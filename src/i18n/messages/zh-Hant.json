@@ -824,7 +824,7 @@
     "preview": {
       "frontLabel": "正面",
       "backLabel": "背面",
-      "loadingOpenCV": "首次使用需快取辨識引擎（約 8 MB · 一次性）…",
+      "loadingOpenCV": "正在背景啟動辨識引擎…",
       "processing": "正在校正透視…",
       "rectifyError": "處理失敗：{message}",
       "retry": "重試",

@@ -1,7 +1,15 @@
 'use client'
 
 /**
- * OpenCV.js singleton loader.
+ * OpenCV.js singleton loader (main-thread fallback only).
+ *
+ * The Scanner's preferred CV path is the Web Worker in
+ * `opencv-worker-client.ts` + `opencv.worker.ts`, which runs both the
+ * 10 MB opencv.js parse + WASM compile and the actual CV pipeline
+ * off the main thread. This module exists as a fallback for runtimes
+ * that don't expose `Worker` (extremely rare — happy-dom in unit
+ * tests, certain legacy WebView builds). New callers should not use
+ * `loadOpenCV()` directly.
  *
  * OpenCV.js is shipped as an ~8 MB `opencv.js` bundle that registers
  * itself on `window.cv`. We don't want it in the initial Scanner

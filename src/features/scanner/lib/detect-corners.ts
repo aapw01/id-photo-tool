@@ -3,7 +3,8 @@
 /**
  * Auto-detect the 4 corners of a document inside a bitmap.
  *
- * Pipeline (mirrors the canonical "scanner" recipe):
+ * Pipeline (mirrors the canonical "scanner" recipe, now hosted in
+ * `opencv.worker.ts` so the CV work never touches the main thread):
  *
  *   1. Downscale the source bitmap to a working size with the long
  *      side capped (default 1024 px). Edge detection on a 12 MP phone
@@ -24,9 +25,17 @@
  * Coordinates returned are in the *original* bitmap pixel space, not
  * the working downscale — so callers can warp the full-resolution
  * image without re-mapping.
+ *
+ * Worker-first execution: `detectCorners` posts to the OpenCV worker.
+ * When the worker is unavailable (extremely rare — happy-dom in
+ * tests, some legacy WebViews), it falls back to a synchronous
+ * main-thread run via `opencv-loader.ts`. The fallback path is the
+ * legacy implementation, kept intact so the user-visible behavior is
+ * identical.
  */
 
-import type { CVMat, OpenCV } from './opencv-loader'
+import { loadOpenCV, type CVMat, type OpenCV } from './opencv-loader'
+import { detectCornersInWorker, OpenCVWorkerUnavailableError } from './opencv-worker-client'
 
 const WORK_LONGSIDE_PX = 1024
 const TOPK_CONTOURS = 5
@@ -56,7 +65,25 @@ export interface DetectCornersResult {
  * auto-detection fails, falls back to the four image corners so the
  * UI can present a sensible default that the user can drag.
  */
-export function detectCorners(cv: OpenCV, bitmap: ImageBitmap): DetectCornersResult {
+export async function detectCorners(bitmap: ImageBitmap): Promise<DetectCornersResult> {
+  try {
+    return await detectCornersInWorker(bitmap)
+  } catch (err) {
+    if (err instanceof OpenCVWorkerUnavailableError) {
+      const cv = await loadOpenCV()
+      return detectCornersOnMainThread(cv, bitmap)
+    }
+    throw err
+  }
+}
+
+/**
+ * Legacy main-thread implementation, used only when the OpenCV
+ * worker can't be spawned. Kept verbatim from the pre-worker codebase
+ * so behavior is bit-identical to the fallback path. New callers
+ * should use the worker-first `detectCorners` above.
+ */
+function detectCornersOnMainThread(cv: OpenCV, bitmap: ImageBitmap): DetectCornersResult {
   const longest = Math.max(bitmap.width, bitmap.height)
   const scale = longest > WORK_LONGSIDE_PX ? WORK_LONGSIDE_PX / longest : 1
   const workW = Math.max(1, Math.round(bitmap.width * scale))
@@ -100,10 +127,6 @@ export function detectCorners(cv: OpenCV, bitmap: ImageBitmap): DetectCornersRes
       if (area / imageArea < MIN_AREA_RATIO) break
 
       const peri = cv.arcLength(contour, true)
-      // Try a few epsilons. 0.02 is the canonical OpenCV scanner
-      // value; tightening it helps when text inside the document
-      // pulls the approximation off; loosening it helps when the
-      // document edges are noisy.
       const epsilons = [0.02, 0.03, 0.05, 0.07]
       for (const eps of epsilons) {
         const approx = new cv.Mat()
@@ -124,7 +147,6 @@ export function detectCorners(cv: OpenCV, bitmap: ImageBitmap): DetectCornersRes
     if (!bestQuad) {
       return { quad: imageCorners(bitmap), detected: false }
     }
-    // Scale back into original bitmap pixel space.
     const invScale = 1 / scale
     return {
       quad: scaleQuad(bestQuad, invScale, invScale),
@@ -141,7 +163,6 @@ export function detectCorners(cv: OpenCV, bitmap: ImageBitmap): DetectCornersRes
 }
 
 function readQuadFromApprox(approx: CVMat): QuadPoint[] {
-  // OpenCV.js approxPolyDP returns Int32 (x,y) pairs in `data32S`.
   const data = approx.data32S
   return [
     { x: data[0]!, y: data[1]! },

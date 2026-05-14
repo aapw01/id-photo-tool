@@ -13,9 +13,16 @@
  *   - the localStorage history thumbnail (S8)
  * — all three consume bytes, not GPU textures. Re-decoding on
  * demand is cheap and avoids leaking texture memory.
+ *
+ * Worker-first execution: the warp + PNG encode now run inside the
+ * OpenCV worker (`opencv.worker.ts`) — both for the CV work and for
+ * the encode step (via `OffscreenCanvas.convertToBlob`) — so the main
+ * thread stays free for UI input. When the worker is unavailable, we
+ * fall back to the legacy synchronous main-thread implementation.
  */
 
-import type { OpenCV } from './opencv-loader'
+import { loadOpenCV, type OpenCV } from './opencv-loader'
+import { OpenCVWorkerUnavailableError, rectifyInWorker } from './opencv-worker-client'
 import type { Quad } from './detect-corners'
 
 export interface WarpPerspectiveOptions {
@@ -40,19 +47,52 @@ export interface WarpPerspectiveResult {
  * four corners of an `outputWidth × outputHeight` image.
  *
  * The output is encoded as a `Blob` of `options.mime` (default
- * `image/png`). All OpenCV `Mat`s allocated internally are deleted
- * before return so the WASM heap doesn't grow unboundedly.
+ * `image/png`).
  */
 export async function warpPerspective(
-  cv: OpenCV,
   source: ImageBitmap,
   quad: Quad,
   options: WarpPerspectiveOptions,
 ): Promise<WarpPerspectiveResult> {
   const { outputWidth, outputHeight, mime = 'image/png', quality = 0.92 } = options
+  try {
+    return await rectifyInWorker({
+      bitmap: source,
+      quad,
+      outputWidth,
+      outputHeight,
+      mime,
+      quality,
+    })
+  } catch (err) {
+    if (err instanceof OpenCVWorkerUnavailableError) {
+      const cv = await loadOpenCV()
+      return warpPerspectiveOnMainThread(cv, source, quad, {
+        outputWidth,
+        outputHeight,
+        mime,
+        quality,
+      })
+    }
+    throw err
+  }
+}
 
-  // Draw the source onto a canvas first so OpenCV.js's `imread` can
-  // pull a Mat out of it (it does not accept ImageBitmap directly).
+/**
+ * Legacy main-thread implementation, kept verbatim from the
+ * pre-worker codebase so the fallback path is bit-identical to the
+ * old behavior. New callers should use `warpPerspective` above.
+ */
+async function warpPerspectiveOnMainThread(
+  cv: OpenCV,
+  source: ImageBitmap,
+  quad: Quad,
+  options: Required<
+    Pick<WarpPerspectiveOptions, 'outputWidth' | 'outputHeight' | 'mime' | 'quality'>
+  >,
+): Promise<WarpPerspectiveResult> {
+  const { outputWidth, outputHeight, mime, quality } = options
+
   const inputCanvas = document.createElement('canvas')
   inputCanvas.width = source.width
   inputCanvas.height = source.height
@@ -61,8 +101,6 @@ export async function warpPerspective(
   inputCtx.drawImage(source, 0, 0)
 
   const src = cv.imread(inputCanvas)
-
-  // Source point matrix (4 × 1 × CV_32FC2)
   const srcMat = cv.matFromArray(4, 1, cv.CV_32FC2, [
     quad.topLeft.x,
     quad.topLeft.y,
@@ -112,7 +150,6 @@ export async function warpPerspective(
     )
   })
 
-  // Tidy up all WASM heap allocations.
   src.delete()
   srcMat.delete()
   dstMat.delete()

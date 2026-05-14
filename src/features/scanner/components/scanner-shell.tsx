@@ -24,6 +24,7 @@ import { ClockFading } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { DOC_SPECS } from '../lib/doc-specs'
+import { getOpenCVWorker } from '../lib/opencv-worker-client'
 import { useScannerStore } from '../store'
 import { ScannerConfig } from './scanner-config'
 import { ScannerPreview } from './scanner-preview'
@@ -54,9 +55,26 @@ function useSpecDeeplink() {
   }, [searchParams, setDocSpecId])
 }
 
+/**
+ * Preheat the OpenCV Web Worker on shell mount.
+ *
+ * The user typically spends a few seconds locating a file after
+ * landing here; using that idle window to spawn the worker + parse
+ * opencv.js (in the worker, so the main thread stays responsive)
+ * means the first upload usually hits an already-ready engine. We
+ * swallow errors — the actual rectify call surfaces a localized
+ * retry CTA on failure.
+ */
+function usePreheatOpenCVWorker() {
+  useEffect(() => {
+    getOpenCVWorker().catch(() => {})
+  }, [])
+}
+
 export function ScannerShell() {
   const t = useTranslations('Scanner.shell')
   useSpecDeeplink()
+  usePreheatOpenCVWorker()
 
   return (
     <div className="space-y-6">

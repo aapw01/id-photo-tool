@@ -8,13 +8,13 @@
  * the manual corner editor in `scanner-corner-editor.tsx` to re-warp
  * after the user drags a handle).
  *
- * This module is the orchestration layer: it owns OpenCV's lifetime
- * for a single call (`loadOpenCV()` then runs detect + warp) but
- * neither imports React nor touches the store, so it can be unit
- * tested headlessly with a mocked OpenCV module.
+ * Worker-first: both `detectCorners` and `warpPerspective` route to
+ * the OpenCV Web Worker (see `opencv-worker-client.ts`); this module
+ * stays a thin orchestration layer that owns neither the OpenCV
+ * runtime nor any DOM, so it remains unit-testable headlessly by
+ * mocking the worker client.
  */
 
-import { loadOpenCV, type OpenCV } from './opencv-loader'
 import { detectCorners, type DetectCornersResult, type Quad } from './detect-corners'
 import { warpPerspective } from './warp-perspective'
 import { getOutputPixels, type DocSpec } from './doc-specs'
@@ -41,12 +41,11 @@ export interface RectifyResult {
 
 export async function rectifyDocument(options: RectifyOptions): Promise<RectifyResult> {
   const { bitmap, spec, quad, dpi = 300, mime = 'image/png' } = options
-  const cv: OpenCV = await loadOpenCV()
   const detection: DetectCornersResult = quad
     ? { quad, detected: false }
-    : detectCorners(cv, bitmap)
+    : await detectCorners(bitmap)
   const output = getOutputPixels(spec, dpi)
-  const warped = await warpPerspective(cv, bitmap, detection.quad, {
+  const warped = await warpPerspective(bitmap, detection.quad, {
     outputWidth: output.width,
     outputHeight: output.height,
     mime,

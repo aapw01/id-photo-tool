@@ -824,7 +824,7 @@
     "preview": {
       "frontLabel": "正面",
       "backLabel": "背面",
-      "loadingOpenCV": "首次使用需缓存识别引擎（约 8 MB · 一次性）…",
+      "loadingOpenCV": "正在后台启动识别引擎…",
       "processing": "正在校正透视…",
       "rectifyError": "处理失败：{message}",
       "retry": "重试",
