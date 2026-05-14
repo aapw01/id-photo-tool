@@ -122,3 +122,33 @@ export function orderClockwise(points: QuadPoint[]): Quad {
   const bl = withMetrics.reduce((a, b) => (a.diff >= b.diff ? a : b)).p
   return { topLeft: tl, topRight: tr, bottomRight: br, bottomLeft: bl }
 }
+
+/**
+ * Rotate a `Quad` defined in a `sourceWidth × sourceHeight` source
+ * bitmap by 90° clockwise to land in the rotated bitmap's coordinate
+ * space (now `sourceHeight × sourceWidth`).
+ *
+ * For canvas-space rotation by π/2 (visually clockwise because the y
+ * axis grows downward) a source pixel `(x, y)` lands at canvas
+ * `(sourceHeight - y, x)`. Applying that to each corner re-labels
+ * them so the visual document orientation stays consistent in the
+ * rotated frame:
+ *
+ *   old top-left    → new top-right
+ *   old top-right   → new bottom-right
+ *   old bottom-right→ new bottom-left
+ *   old bottom-left → new top-left
+ *
+ * Used by `store.rotateSide` so a user who already adjusted the 4
+ * corners keeps their crop through a rotation, instead of being
+ * reset to the auto center-quad.
+ */
+export function rotateQuadCW90(quad: Quad, sourceHeight: number): Quad {
+  const rot = (p: QuadPoint): QuadPoint => ({ x: sourceHeight - p.y, y: p.x })
+  return {
+    topLeft: rot(quad.bottomLeft),
+    topRight: rot(quad.topLeft),
+    bottomRight: rot(quad.topRight),
+    bottomLeft: rot(quad.bottomRight),
+  }
+}

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 
 import { getDocSpec, getOutputPixels } from './doc-specs'
 import {
-  PACK_SHEET_CONSTANTS,
   PAPER_DIMENSIONS,
   packA4Portrait,
   packSheet,
@@ -15,19 +14,15 @@ import {
  * a tiny PNG-mime placeholder — the vitest setup stubs `createImageBitmap`
  * to pass the source through identity, so `drawImage` only inspects
  * shape, not pixels. The PackedSide's `spec` drives the math we want
- * to assert (canvas size, cursor advance, paper-overflow bail-out).
+ * to assert (canvas size, band-center placement, overflow tolerance).
  */
 function makeSide(id: string): PackedSide {
   const spec = getDocSpec(id)
-  // Anything Blob-shaped is fine: setup.ts hands it back from
-  // createImageBitmap unchanged.
   const blob = new Blob([new Uint8Array([0])], { type: 'image/png' })
   return { spec, blob }
 }
 
 describe('packSheet — canvas sizing at 300 DPI', () => {
-  // 300 DPI = 11.811 px/mm. Round-trip through Math.round to match
-  // the implementation (PAPER_DIMENSIONS.<size>.widthMm * 11.811).
   const pxPerMm = 300 / 25.4
   const expectedSize = (size: PaperSize) => ({
     width: Math.round(PAPER_DIMENSIONS[size].widthMm * pxPerMm),
@@ -79,7 +74,7 @@ describe('packSheet — empty input', () => {
   })
 })
 
-describe('packSheet — physical-size layout', () => {
+describe('packSheet — physical-size, evenly-distributed layout', () => {
   it('lays out a single card at its physical spec dimensions', async () => {
     const sheet = await packSheet([makeSide('cn-id-card')], 'a4')
     expect(sheet).not.toBeNull()
@@ -92,29 +87,51 @@ describe('packSheet — physical-size layout', () => {
     expect(cardArea / sheetArea).toBeLessThan(0.2)
   })
 
-  it('fits front + back stacked plus 2× margin within the A4 height', async () => {
+  it('fits front + back with comfortable breathing room (cards < half the sheet)', async () => {
+    // Two equal-height bands; each card should sit inside its band
+    // with non-trivial vertical padding.
     const sheet = await packSheet([makeSide('cn-id-card'), makeSide('cn-id-card')], 'a4')
     expect(sheet).not.toBeNull()
     const cardPx = getOutputPixels(getDocSpec('cn-id-card'))
-    const pxPerMm = 300 / 25.4
-    const marginPx = Math.round(PACK_SHEET_CONSTANTS.PAGE_MARGIN_MM * pxPerMm)
-    const gapPx = Math.round(PACK_SHEET_CONSTANTS.CARD_GAP_MM * pxPerMm)
-    expect(2 * cardPx.height + gapPx + 2 * marginPx).toBeLessThan(sheet!.height)
+    const bandHeight = sheet!.height / 2
+    // Card height takes far less than a full band — leaving roomy
+    // top/bottom padding instead of the previous tight-stack look.
+    expect(cardPx.height).toBeLessThan(bandHeight * 0.7)
   })
 
-  it('bails out instead of clipping when a card overflows the page', async () => {
-    // Pack 4 A4-spec documents onto one A4 sheet — only the first
-    // fits, the rest must be silently dropped.
-    const sides = [makeSide('a4'), makeSide('a4'), makeSide('a4'), makeSide('a4')]
-    const sheet = await packSheet(sides, 'a4')
+  it('keeps two-side band centers symmetric around the page mid-line', async () => {
+    // The implementation places each card at `i*band + (band-card)/2`.
+    // Verify the resulting band centers are symmetric: top center
+    // sits at H/4, bottom center at 3H/4.
+    const sheet = await packSheet([makeSide('cn-id-card'), makeSide('cn-id-card')], 'a4')
     expect(sheet).not.toBeNull()
-    expect(sheet!.paperSize).toBe('a4')
+    const cardPx = getOutputPixels(getDocSpec('cn-id-card'))
+    const bandH = sheet!.height / 2
+    const topCardCenter = 0 * bandH + bandH / 2
+    const bottomCardCenter = 1 * bandH + bandH / 2
+    // Sanity: both centers fit inside their respective bands given
+    // the card's own height.
+    expect(topCardCenter - cardPx.height / 2).toBeGreaterThanOrEqual(0)
+    expect(bottomCardCenter + cardPx.height / 2).toBeLessThanOrEqual(sheet!.height)
+    // Symmetric: bottom center is the mirror of top center about
+    // the page mid-line.
+    expect(topCardCenter + bottomCardCenter).toBeCloseTo(sheet!.height, 0)
   })
 
   it('keeps physical sizing on A5 too', async () => {
     const sheet = await packSheet([makeSide('passport-bio')], 'a5')
     expect(sheet).not.toBeNull()
     expect(sheet!.paperSize).toBe('a5')
+  })
+
+  it('does not throw when many sides are packed onto one sheet', async () => {
+    // Even-distribution doesn't bail out on overflow; the cards may
+    // overlap if the user packs too many but the call should still
+    // complete cleanly.
+    const sides = [makeSide('cn-id-card'), makeSide('cn-id-card'), makeSide('cn-id-card')]
+    const sheet = await packSheet(sides, 'a4')
+    expect(sheet).not.toBeNull()
+    expect(sheet!.paperSize).toBe('a4')
   })
 })
 

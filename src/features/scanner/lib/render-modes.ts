@@ -25,8 +25,6 @@
  * tuple, ready for `<img>` preview or the S5 PDF embed.
  */
 
-import { drawWatermark, type WatermarkConfig } from './watermark'
-
 export type OutputMode = 'scan' | 'copy' | 'enhance'
 
 export interface RenderedOutput {
@@ -37,17 +35,18 @@ export interface RenderedOutput {
 }
 
 /**
- * Apply `mode` + the mandatory watermark to an already-rectified
- * color image. Decodes the input via `createImageBitmap`, runs the
- * pixel pass, overlays the watermark via 2D canvas compositing, and
- * re-encodes as PNG. The bitmap is closed immediately so no GPU
- * memory is held.
+ * Apply `mode` to an already-rectified color image. Decodes the
+ * input via `createImageBitmap`, runs the pixel pass, and re-encodes
+ * as PNG. The bitmap is closed immediately so no GPU memory is held.
+ *
+ * No watermark is applied here. Watermarking is centralized at the
+ * `packSheet` export step so the user sees exactly one layer of
+ * watermark on the final A4 PDF / PNG. (An earlier revision drew a
+ * second smaller watermark on the per-side blob, which produced the
+ * "double watermark with mismatched font sizes" look users
+ * complained about.)
  */
-export async function renderOutputMode(
-  input: Blob,
-  mode: OutputMode,
-  watermark: WatermarkConfig,
-): Promise<RenderedOutput> {
+export async function renderOutputMode(input: Blob, mode: OutputMode): Promise<RenderedOutput> {
   const bitmap = await createImageBitmap(input)
   try {
     const { width, height } = bitmap
@@ -60,11 +59,6 @@ export async function renderOutputMode(
     const data = ctx.getImageData(0, 0, width, height)
     applyMode(data, mode)
     ctx.putImageData(data, 0, 0)
-    // The watermark is part of the render — applied to *every* image
-    // the user can see or download. It cannot be removed from the
-    // pipeline; the opacity is clamped to MIN_WATERMARK_OPACITY in
-    // drawWatermark itself.
-    drawWatermark(ctx, width, height, watermark, mode)
     const blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error('renderOutputMode: toBlob returned null'))),

@@ -38,7 +38,7 @@ import {
 } from './lib/watermark'
 import { packSheet, type PackedSide, type PaperSize } from './lib/pack-a4'
 import { exportPackedSheetToPdf } from './lib/export-pdf'
-import type { Quad } from './lib/detect-corners'
+import { rotateQuadCW90, type Quad } from './lib/detect-corners'
 
 export type { PaperSize }
 
@@ -240,23 +240,19 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   setWatermarkText(text) {
     if (text === get().watermark.text) return
     set((state) => ({ watermark: { ...state.watermark, text } }))
-    if (get().front?.rectified) void get().renderSide('front')
-    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
+    // Watermark only affects the final A4 export now (single layer),
+    // so we don't re-render per-side blobs on every keystroke.
   },
 
   setWatermarkOpacity(opacity) {
     const next = clampWatermarkOpacity(opacity)
     if (next === get().watermark.opacity) return
     set((state) => ({ watermark: { ...state.watermark, opacity: next } }))
-    if (get().front?.rectified) void get().renderSide('front')
-    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
   setWatermarkDensity(density) {
     if (density === get().watermark.density) return
     set((state) => ({ watermark: { ...state.watermark, density } }))
-    if (get().front?.rectified) void get().renderSide('front')
-    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
   setPaperSize(paperSize) {
@@ -268,6 +264,14 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   async rotateSide(side) {
     const slot = get()[side]
     if (!slot) return
+    // Snapshot the previous bitmap dimensions + manually-adjusted
+    // quad before we rotate. The quad lives in source-bitmap pixel
+    // space, so rotating the bitmap also rotates the quad — without
+    // this remap the next rectify would silently reset to the
+    // default center crop.
+    const prevHeight = slot.bitmap.height
+    const prevQuad = slot.rectified && slot.rectified.userAdjusted ? slot.rectified.quad : null
+
     let rotated: Awaited<ReturnType<typeof rotateImage>>
     try {
       rotated = await rotateImage(slot.bitmap, 90)
@@ -296,7 +300,8 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
         },
       } as Partial<ScannerState>
     })
-    void get().rectifySide(side)
+    const carriedQuad = prevQuad ? rotateQuadCW90(prevQuad, prevHeight) : undefined
+    void get().rectifySide(side, carriedQuad)
   },
 
   async rectifySide(side, overrideQuad) {
@@ -370,9 +375,6 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     if (!baseline?.rectified) return
     const sourceBlob = baseline.rectified.blob
     const mode = get().outputMode
-    // Snapshot the watermark config so a flurry of fast slider
-    // changes doesn't make us encode stale values.
-    const watermarkSnapshot = { ...get().watermark }
     set((state) => {
       const current = state[side]
       if (!current?.rectified || current.rectified.blob !== sourceBlob) return state
@@ -381,7 +383,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       } as Partial<ScannerState>
     })
     try {
-      const out = await renderOutputMode(sourceBlob, mode, watermarkSnapshot)
+      const out = await renderOutputMode(sourceBlob, mode)
       set((state) => {
         const current = state[side]
         // Guard: rectified blob changed (user redetected mid-render).

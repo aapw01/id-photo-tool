@@ -10,21 +10,29 @@
  *   - **Portrait at 300 DPI**. A4 (210 × 297 mm), Letter (215.9 ×
  *     279.4 mm) and A5 (148 × 210 mm).
  *   - **Physical-size print scale**: each card is drawn at its
- *     spec dimensions (`docSpec.widthMm × heightMm`), centered
- *     horizontally and stacked vertically with an 8 mm gap. This
- *     mimics what a photocopier produces when copying an ID card
- *     onto A4 — the document keeps its real-world size; the rest of
- *     the page stays white. (Users who want the document blown up to
- *     fill the page should print "Fit to page" in their printer
- *     driver — we don't bake that into the export bytes.)
- *   - **Watermark over the entire sheet**: after laying out the
- *     cards we draw the diagonal-tile watermark across the full page
- *     (not just the document rects), so empty margins are protected
- *     too and a user who screenshots only the white area can't get
- *     a clean copy.
- *   - **Cut marks at each card's corners** assist physical trimming.
+ *     spec dimensions (`docSpec.widthMm × heightMm`). This mimics
+ *     what a photocopier produces when copying an ID card onto A4 —
+ *     the document keeps its real-world size; the rest of the page
+ *     stays white. (Users who want the document blown up to fill
+ *     the page should pick "Fit to page" in their printer driver —
+ *     we don't bake that into the export bytes.)
+ *   - **Evenly distributed vertically**: when the user packs N
+ *     sides we split the page into N equal-height bands and center
+ *     each card inside its band. This avoids the previous tight-stack
+ *     layout where front + back sat shoulder-to-shoulder near the top
+ *     of an otherwise-empty A4. With even distribution two ID cards
+ *     on A4 sit roughly at the page's quarter and three-quarter
+ *     heights — visually balanced regardless of doc spec / paper size.
+ *   - **Page-wide watermark**: drawn after the cards, covers the
+ *     entire sheet (margins + cards). The per-side renderer no longer
+ *     stamps the document body, so this is the single watermark layer
+ *     visible in the export.
  *   - **White background** — explicitly painted so PDF/JPEG re-
  *     encoders don't surprise us with transparency artifacts.
+ *
+ * No cut marks: an earlier revision drew small corner tick marks
+ * outside each card boundary as trimming guides. The user found them
+ * noisy on the digital PDF; they're gone now.
  */
 
 import type { DocSpec } from './doc-specs'
@@ -43,10 +51,6 @@ export const PAPER_DIMENSIONS: Record<PaperSize, PaperDimensions> = {
   a5: { widthMm: 148, heightMm: 210 },
 }
 
-const PAGE_MARGIN_MM = 15
-const CARD_GAP_MM = 8
-const CUT_MARK_LENGTH_MM = 4
-const CUT_MARK_OFFSET_MM = 2
 const DEFAULT_DPI = 300
 
 export interface PackedSide {
@@ -73,8 +77,7 @@ export interface PackSheetOptions {
   dpi?: number
   /**
    * Watermark to draw across the entire page after cards are laid
-   * out. Omit to leave the sheet's empty margins unprotected —
-   * usually only desirable in tests.
+   * out. Omit to leave the sheet unwatermarked (only useful in tests).
    */
   watermark?: WatermarkConfig
 }
@@ -99,8 +102,6 @@ export async function packSheet(
   const pxPerMm = dpi / 25.4
   const pageWidth = Math.round(paper.widthMm * pxPerMm)
   const pageHeight = Math.round(paper.heightMm * pxPerMm)
-  const margin = Math.round(PAGE_MARGIN_MM * pxPerMm)
-  const gap = Math.round(CARD_GAP_MM * pxPerMm)
 
   const canvas = document.createElement('canvas')
   canvas.width = pageWidth
@@ -111,32 +112,30 @@ export async function packSheet(
   ctx.fillStyle = '#ffffff'
   ctx.fillRect(0, 0, pageWidth, pageHeight)
 
-  let cursorY = margin
-  for (const side of sides) {
-    // Each card draws at its physical mm dimensions so the printed
-    // result keeps the document's real-world size — same behavior as
-    // a photocopier copying an ID onto A4.
+  // Equal-height bands, one per side. Each card centers inside its
+  // band so different doc specs / paper sizes get balanced spacing
+  // without per-spec margin tuning.
+  const bandHeight = pageHeight / sides.length
+  for (let i = 0; i < sides.length; i++) {
+    const side = sides[i]!
     const drawW = Math.round(side.spec.widthMm * pxPerMm)
     const drawH = Math.round(side.spec.heightMm * pxPerMm)
     const x = Math.round((pageWidth - drawW) / 2)
-    // Bail before drawing anything that would clip the bottom margin.
-    if (cursorY + drawH > pageHeight - margin) break
+    const y = Math.round(i * bandHeight + (bandHeight - drawH) / 2)
 
     const bitmap = await createImageBitmap(side.blob)
     try {
-      ctx.drawImage(bitmap, x, cursorY, drawW, drawH)
+      ctx.drawImage(bitmap, x, y, drawW, drawH)
     } finally {
       bitmap.close?.()
     }
-
-    drawCutMarks(ctx, x, cursorY, drawW, drawH, pxPerMm)
-    cursorY += drawH + gap
   }
 
-  // Overlay watermark across the entire page (margins + cards). The
-  // per-side watermark from render-modes still keeps single-side PNG
-  // downloads protected; this page-wide pass is what makes the empty
-  // A4 surface unusable for a clean re-copy.
+  // Single watermark layer — page-wide, covers cards + margins. The
+  // per-side renderer intentionally stopped stamping the document
+  // body so users don't see double watermarks (mismatched font sizes
+  // between the small per-side stamp and the large page-wide tile
+  // looked sloppy in the PDF).
   if (watermark) {
     drawWatermark(ctx, pageWidth, pageHeight, watermark, 'scan')
   }
@@ -165,49 +164,6 @@ export async function packSheet(
 export const packA4Portrait = (sides: readonly PackedSide[], dpi?: number) =>
   packSheet(sides, 'a4', { dpi })
 
-/**
- * Draw light corner ticks just outside the card boundaries so the
- * user can cut precisely after printing. 4 mm long, 2 mm offset, 0.3
- * mm stroke — visible without being noisy.
- */
-function drawCutMarks(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  pxPerMm: number,
-): void {
-  const len = Math.round(CUT_MARK_LENGTH_MM * pxPerMm)
-  const off = Math.round(CUT_MARK_OFFSET_MM * pxPerMm)
-  ctx.save()
-  ctx.strokeStyle = '#999'
-  ctx.lineWidth = Math.max(1, Math.round(0.3 * pxPerMm))
-
-  // 4 corners × 2 ticks each (one vertical, one horizontal). 8
-  // strokes total.
-  const corners = [
-    { cx: x, cy: y, dx: -1, dy: -1 }, // top-left
-    { cx: x + w, cy: y, dx: 1, dy: -1 }, // top-right
-    { cx: x, cy: y + h, dx: -1, dy: 1 }, // bottom-left
-    { cx: x + w, cy: y + h, dx: 1, dy: 1 }, // bottom-right
-  ] as const
-
-  for (const corner of corners) {
-    ctx.beginPath()
-    ctx.moveTo(corner.cx, corner.cy + corner.dy * off)
-    ctx.lineTo(corner.cx, corner.cy + corner.dy * (off + len))
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.moveTo(corner.cx + corner.dx * off, corner.cy)
-    ctx.lineTo(corner.cx + corner.dx * (off + len), corner.cy)
-    ctx.stroke()
-  }
-  ctx.restore()
-}
-
 export const PACK_SHEET_CONSTANTS = {
-  PAGE_MARGIN_MM,
-  CARD_GAP_MM,
   DEFAULT_DPI,
 } as const

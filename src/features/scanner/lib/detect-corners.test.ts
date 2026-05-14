@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { defaultQuad, orderClockwise, type QuadPoint } from './detect-corners'
+import { defaultQuad, orderClockwise, rotateQuadCW90, type QuadPoint } from './detect-corners'
 
 describe('orderClockwise', () => {
   it('orders 4 points in TL → TR → BR → BL', () => {
@@ -94,5 +94,54 @@ describe('defaultQuad', () => {
     expect(q.topLeft.x).toBeCloseTo((1080 - rectW) / 2, 4)
     expect(q.topLeft.y).toBeCloseTo((1920 - rectH) / 2, 4)
     expect((q.bottomRight.x - q.topLeft.x) / (q.bottomRight.y - q.topLeft.y)).toBeCloseTo(1.586, 4)
+  })
+})
+
+describe('rotateQuadCW90', () => {
+  it('rotates each corner so the labels match the new visual orientation', () => {
+    // Source 1000 × 600, a centered 200 × 100 quad.
+    const sourceHeight = 600
+    const q = {
+      topLeft: { x: 400, y: 250 },
+      topRight: { x: 600, y: 250 },
+      bottomRight: { x: 600, y: 350 },
+      bottomLeft: { x: 400, y: 350 },
+    }
+    const rotated = rotateQuadCW90(q, sourceHeight)
+    // After a 90° CW rotation in canvas space the old bottom-left
+    // becomes the new top-left, etc. The arithmetic is rot(x, y) =
+    // (sourceHeight - y, x).
+    expect(rotated.topLeft).toEqual({ x: sourceHeight - 350, y: 400 })
+    expect(rotated.topRight).toEqual({ x: sourceHeight - 250, y: 400 })
+    expect(rotated.bottomRight).toEqual({ x: sourceHeight - 250, y: 600 })
+    expect(rotated.bottomLeft).toEqual({ x: sourceHeight - 350, y: 600 })
+  })
+
+  it('round-trips to the original after 4 successive rotations', () => {
+    // Source 800 × 500, asymmetric quad so any sign / axis mistake
+    // would surface here.
+    const q = {
+      topLeft: { x: 120, y: 80 },
+      topRight: { x: 700, y: 60 },
+      bottomRight: { x: 680, y: 440 },
+      bottomLeft: { x: 100, y: 460 },
+    }
+    let r = q
+    let w = 800
+    let h = 500
+    for (let i = 0; i < 4; i++) {
+      r = rotateQuadCW90(r, h)
+      const tmp = w
+      w = h
+      h = tmp
+    }
+    expect(r.topLeft.x).toBeCloseTo(q.topLeft.x, 6)
+    expect(r.topLeft.y).toBeCloseTo(q.topLeft.y, 6)
+    expect(r.topRight.x).toBeCloseTo(q.topRight.x, 6)
+    expect(r.topRight.y).toBeCloseTo(q.topRight.y, 6)
+    expect(r.bottomRight.x).toBeCloseTo(q.bottomRight.x, 6)
+    expect(r.bottomRight.y).toBeCloseTo(q.bottomRight.y, 6)
+    expect(r.bottomLeft.x).toBeCloseTo(q.bottomLeft.x, 6)
+    expect(r.bottomLeft.y).toBeCloseTo(q.bottomLeft.y, 6)
   })
 })
