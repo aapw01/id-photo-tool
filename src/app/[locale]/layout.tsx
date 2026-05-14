@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { fontMono, fontSans } from '@/lib/fonts'
 import { routing } from '@/i18n/routing'
 import { Toaster } from '@/components/ui/sonner'
@@ -61,7 +62,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           {children}
           <Toaster position="top-right" richColors closeButton />
         </NextIntlClientProvider>
-        {ON_VERCEL && <Analytics />}
+        {ON_VERCEL && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   )
