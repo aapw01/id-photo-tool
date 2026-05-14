@@ -97,6 +97,16 @@ export interface ScannerSlot {
 
 export type ScannerSide = 'front' | 'back'
 
+/**
+ * Maximum corner radius the UI allows in pixels (relative to the
+ * 300-DPI rectified-side canvas). 80 px ≈ 6.8 mm — slightly past the
+ * physical corner radius of a passport / bank card so the user gets
+ * room to dial in pronounced rounded edges without nuking the card
+ * geometry. The kernel clamps further to `min(width, height) / 2` per
+ * card, so this is a UX cap, not a correctness one.
+ */
+export const MAX_CORNER_RADIUS_PX = 80
+
 export interface ScannerState {
   front: ScannerSlot | null
   back: ScannerSlot | null
@@ -106,6 +116,14 @@ export interface ScannerState {
   watermark: WatermarkConfig
   /** Paper size used for the packed A4/Letter/A5 export sheet. */
   paperSize: PaperSize
+  /**
+   * Optional rounded-corner radius applied to each rectified side, in
+   * pixels at the side's 300-DPI render resolution. 0 = square corners
+   * (default), max = `MAX_CORNER_RADIUS_PX`. Same value is reused for
+   * preview, single-side PNG download, and the A4 pack path so the
+   * corners on every surface match.
+   */
+  cornerRadiusPx: number
 
   /**
    * Decode the file, install it as the front slot, and kick off
@@ -135,6 +153,13 @@ export interface ScannerState {
   setWatermarkDensity: (density: WatermarkDensity) => void
   /** Update paper size for sheet export (A4 / Letter / A5). */
   setPaperSize: (paperSize: PaperSize) => void
+  /**
+   * Update the rounded-corner radius (px) applied to every rectified
+   * side. Clamped to `[0, MAX_CORNER_RADIUS_PX]` here so a tampered
+   * value never reaches the kernel; per-side absolute cap (half the
+   * shorter side) is enforced inside `renderOutputMode`.
+   */
+  setCornerRadiusPx: (px: number) => void
   /**
    * Re-run the rectify pipeline for `side`. If `quad` is provided
    * it overrides the auto-detection (used by the corner editor).
@@ -171,7 +196,14 @@ export interface ScannerState {
 
 const INITIAL: Pick<
   ScannerState,
-  'front' | 'back' | 'hasBack' | 'docSpecId' | 'outputMode' | 'watermark' | 'paperSize'
+  | 'front'
+  | 'back'
+  | 'hasBack'
+  | 'docSpecId'
+  | 'outputMode'
+  | 'watermark'
+  | 'paperSize'
+  | 'cornerRadiusPx'
 > = {
   front: null,
   back: null,
@@ -185,6 +217,13 @@ const INITIAL: Pick<
     density: 'normal',
   },
   paperSize: 'a4' as PaperSize,
+  cornerRadiusPx: 0,
+}
+
+function clampCornerRadius(px: number): number {
+  if (!Number.isFinite(px) || px <= 0) return 0
+  if (px > MAX_CORNER_RADIUS_PX) return MAX_CORNER_RADIUS_PX
+  return Math.round(px)
 }
 
 function closeSlot(slot: ScannerSlot | null): void {
@@ -304,6 +343,18 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     // Paper size only affects export; no need to re-render per-side.
   },
 
+  setCornerRadiusPx(px) {
+    const next = clampCornerRadius(px)
+    if (next === get().cornerRadiusPx) return
+    set({ cornerRadiusPx: next })
+    // The radius bakes into the per-side blob (alpha-cut corners), so
+    // both sides need a re-render to keep the preview / single-PNG
+    // download in sync. Pack/export pulls the same value at trigger
+    // time, so it just works.
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
+  },
+
   async rotateSide(side) {
     const slot = get()[side]
     if (!slot) return
@@ -419,6 +470,7 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     const sourceBlob = baseline.rectified.blob
     const mode = get().outputMode
     const watermark = get().watermark
+    const cornerRadiusPx = get().cornerRadiusPx
     set((state) => {
       const current = state[side]
       if (!current?.rectified || current.rectified.blob !== sourceBlob) return state
@@ -430,12 +482,12 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
       // Watermark is opt-in: pass it through only when the user has
       // turned it on so the per-side preview / single PNG stays clean
       // by default. `drawWatermark` also guards on `enabled` for
-      // defence in depth.
-      const out = await renderOutputMode(
-        sourceBlob,
-        mode,
-        watermark.enabled ? watermark : undefined,
-      )
+      // defence in depth. Corner radius (0 by default) carves the
+      // rectified card into a rounded rect via alpha clipping.
+      const out = await renderOutputMode(sourceBlob, mode, {
+        watermark: watermark.enabled ? watermark : undefined,
+        cornerRadiusPx,
+      })
       set((state) => {
         const current = state[side]
         // Guard: rectified blob changed (user redetected mid-render).
@@ -497,10 +549,17 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
 async function packCurrentSides(state: ScannerState) {
   const spec = getDocSpec(state.docSpecId)
   const mode = state.outputMode
+  const cornerRadiusPx = state.cornerRadiusPx
   const sides: PackedSide[] = []
 
+  // Watermark is intentionally omitted from the per-side re-render —
+  // packSheet stamps the single page-wide layer. Corner radius IS
+  // applied here so the cards in the A4 export carve out white from
+  // packSheet's background (matching what the user sees in preview).
   if (state.front?.rectified) {
-    const clean = await renderOutputMode(state.front.rectified.blob, mode)
+    const clean = await renderOutputMode(state.front.rectified.blob, mode, {
+      cornerRadiusPx,
+    })
     sides.push({ blob: clean.blob, spec })
   }
   // No explicit gate on `state.hasBack`: if the user uploaded a back
@@ -508,7 +567,9 @@ async function packCurrentSides(state: ScannerState) {
   // The `hasBack` field is kept on the store for API stability but no
   // longer affects pack/export selection.
   if (state.back?.rectified) {
-    const clean = await renderOutputMode(state.back.rectified.blob, mode)
+    const clean = await renderOutputMode(state.back.rectified.blob, mode, {
+      cornerRadiusPx,
+    })
     sides.push({ blob: clean.blob, spec })
   }
 

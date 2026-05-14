@@ -26,7 +26,7 @@ import {
   MIN_WATERMARK_OPACITY,
   type WatermarkDensity,
 } from '../lib/watermark'
-import { useScannerStore } from '../store'
+import { MAX_CORNER_RADIUS_PX, useScannerStore } from '../store'
 
 const MODES: readonly OutputMode[] = ['scan', 'copy', 'enhance'] as const
 const DENSITIES: readonly WatermarkDensity[] = ['sparse', 'normal', 'dense'] as const
@@ -49,6 +49,7 @@ export function ScannerConfig() {
 
       <DocSpecPicker />
       <OutputModePicker />
+      <CornerRadiusConfig />
       <WatermarkConfig />
       <ExportRow />
     </div>
@@ -134,6 +135,37 @@ function OutputModePicker() {
           )
         })}
       </div>
+    </div>
+  )
+}
+
+function CornerRadiusConfig() {
+  const t = useTranslations('Scanner.cornerRadius')
+  const cornerRadiusPx = useScannerStore((s) => s.cornerRadiusPx)
+  const setCornerRadiusPx = useScannerStore((s) => s.setCornerRadiusPx)
+
+  return (
+    <div className="space-y-2 border-t border-[var(--color-border)] pt-4">
+      <label
+        htmlFor="scanner-corner-radius"
+        className="flex justify-between text-xs font-medium text-[var(--color-text-mute)]"
+      >
+        <span>{t('label')}</span>
+        <span aria-live="polite">
+          {cornerRadiusPx === 0 ? t('off') : t('value', { px: cornerRadiusPx })}
+        </span>
+      </label>
+      <input
+        id="scanner-corner-radius"
+        type="range"
+        min={0}
+        max={MAX_CORNER_RADIUS_PX}
+        step={1}
+        value={cornerRadiusPx}
+        onChange={(e) => setCornerRadiusPx(Number(e.target.value))}
+        className="block w-full accent-[var(--color-primary)]"
+      />
+      <p className="text-[10px] leading-snug text-[var(--color-text-mute)]">{t('hint')}</p>
     </div>
   )
 }

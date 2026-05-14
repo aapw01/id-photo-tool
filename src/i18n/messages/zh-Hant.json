@@ -886,6 +886,12 @@
       "enhance": "增強",
       "enhanceDesc": "提色增對比"
     },
+    "cornerRadius": {
+      "label": "圓角設定",
+      "off": "關閉",
+      "value": "{px}px",
+      "hint": "預設關閉。開啟後會將卡片四角切成圓角，預覽、單面 PNG 與 A4 匯出保持一致。"
+    },
     "watermark": {
       "label": "浮水印（可選）",
       "toggleLabel": "為匯出加上浮水印",

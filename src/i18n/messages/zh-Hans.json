@@ -886,6 +886,12 @@
       "enhance": "增强",
       "enhanceDesc": "提色增对比"
     },
+    "cornerRadius": {
+      "label": "圆角设置",
+      "off": "关闭",
+      "value": "{px}px",
+      "hint": "默认关闭。开启后会将卡片四角切成圆角，预览、单面 PNG 与 A4 导出保持一致。"
+    },
     "watermark": {
       "label": "水印（可选）",
       "toggleLabel": "为导出添加水印",

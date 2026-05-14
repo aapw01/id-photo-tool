@@ -886,6 +886,12 @@
       "enhance": "Enhance",
       "enhanceDesc": "More color & contrast"
     },
+    "cornerRadius": {
+      "label": "Corner radius",
+      "off": "Off",
+      "value": "{px}px",
+      "hint": "Off by default. Turn it up to round the four card corners — preview, single-side PNG, and A4 export stay in sync."
+    },
     "watermark": {
       "label": "Watermark",
       "toggleLabel": "Add watermark to exports",

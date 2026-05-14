@@ -82,14 +82,18 @@ describe('renderOutputMode — watermark overlay', () => {
     return g.__stubCtxRegistry
   }
 
-  function countTextDraws(registry: readonly StubCtx[]): number {
+  function countMethodCalls(registry: readonly StubCtx[], method: string): number {
     let total = 0
     for (const ctx of registry) {
       for (const call of ctx.__drawCalls ?? []) {
-        if (call.method === 'fillText' || call.method === 'strokeText') total += 1
+        if (call.method === method) total += 1
       }
     }
     return total
+  }
+
+  function countTextDraws(registry: readonly StubCtx[]): number {
+    return countMethodCalls(registry, 'fillText') + countMethodCalls(registry, 'strokeText')
   }
 
   /**
@@ -123,7 +127,7 @@ describe('renderOutputMode — watermark overlay', () => {
       opacity: 0.4,
       density: 'sparse',
     }
-    const out = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', watermark)
+    const out = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', { watermark })
     expect(out.blob.type).toBe('image/png')
     // Diagonal tiling makes the exact count environment-dependent —
     // just assert the kernel produced a non-trivial set of glyphs so
@@ -131,7 +135,7 @@ describe('renderOutputMode — watermark overlay', () => {
     expect(countTextDraws(registry)).toBeGreaterThan(0)
   })
 
-  it('passing a disabled config behaves identically to passing undefined', async () => {
+  it('passing a disabled config behaves identically to passing no options', async () => {
     // First, capture the bare-pass baseline.
     const registry = getRegistry()
     registry.length = 0
@@ -147,10 +151,48 @@ describe('renderOutputMode — watermark overlay', () => {
       opacity: 0.7,
       density: 'dense',
     }
-    const off = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', disabled)
+    const off = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', { watermark: disabled })
     expect(off.blob.type).toBe(bare.blob.type)
     expect(off.mode).toBe(bare.mode)
     expect(countTextDraws(registry)).toBe(baseTextDraws)
     expect(countTextDraws(registry)).toBe(0)
+  })
+
+  it('skips the rounded-corner clip when cornerRadiusPx is 0', async () => {
+    const registry = getRegistry()
+    registry.length = 0
+    const out = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', { cornerRadiusPx: 0 })
+    expect(out.blob.type).toBe('image/png')
+    expect(countMethodCalls(registry, 'roundRect')).toBe(0)
+  })
+
+  it('runs the rounded-corner clip when cornerRadiusPx > 0', async () => {
+    const registry = getRegistry()
+    registry.length = 0
+    const out = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', { cornerRadiusPx: 24 })
+    expect(out.blob.type).toBe('image/png')
+    // One `beginPath` + one `roundRect` + one `fill` per clip pass.
+    expect(countMethodCalls(registry, 'roundRect')).toBe(1)
+    expect(countMethodCalls(registry, 'fill')).toBeGreaterThanOrEqual(1)
+  })
+
+  it('clamps an oversized cornerRadiusPx inside the kernel', async () => {
+    const registry = getRegistry()
+    registry.length = 0
+    // A 256×256 canvas caps the radius at 128 — passing 9999 should
+    // still produce exactly one `roundRect` call with the clamped value.
+    const out = await renderOutputMode(makeBitmapBlob(256, 256), 'scan', {
+      cornerRadiusPx: 9999,
+    })
+    expect(out.blob.type).toBe('image/png')
+    const roundRectCalls = registry.flatMap(
+      (ctx) =>
+        (ctx as StubCtx & { __drawCalls?: { method: string; args: unknown[] }[] }).__drawCalls ??
+        [],
+    )
+    const roundRect = roundRectCalls.find((c) => c.method === 'roundRect')
+    expect(roundRect).toBeDefined()
+    // roundRect args = [x, y, w, h, radius]
+    expect(roundRect!.args[4]).toBeLessThanOrEqual(128)
   })
 })

@@ -22,11 +22,16 @@
  *             phone capture is dim or hazy. Keeps it color.
  *
  * Watermark policy: this kernel optionally stamps the watermark on
- * the per-side output when called with a `watermark` argument — the
+ * the per-side output when `options.watermark` is supplied — the
  * preview pane + single-side PNG download both want the user-visible
  * watermark so they can verify their settings. The A4 pack path
- * passes `undefined` so `packSheet` remains the single, page-wide
- * watermark layer on the export (no double stamping inside cards).
+ * omits it so `packSheet` remains the single, page-wide watermark
+ * layer on the export (no double stamping inside cards).
+ *
+ * Rounded corners: when `options.cornerRadiusPx > 0` we punch the
+ * card's bounding rectangle into a rounded rect via `destination-in`
+ * composite + `roundRect` — corners become transparent so the
+ * downstream surface (preview backdrop, A4 white) shows through.
  *
  * Return shape mirrors warp-perspective: a `Blob` + width + height
  * tuple, ready for `<img>` preview or the S5 PDF embed.
@@ -43,21 +48,36 @@ export interface RenderedOutput {
   mode: OutputMode
 }
 
+export interface RenderOutputModeOptions {
+  /**
+   * When supplied, the watermark is drawn on top of the mode-processed
+   * pixels before re-encoding. Omit to keep the per-side output clean
+   * (the A4 pack path relies on this so `packSheet` stays the sole
+   * watermark stage).
+   */
+  watermark?: WatermarkConfig
+  /**
+   * Corner radius in pixels. When > 0, the rectangular card is
+   * clipped to a rounded rect — the four corners go transparent.
+   * Caller chooses the unit (we treat the value as raw canvas pixels
+   * relative to the rectified-side output, which is 300 DPI by
+   * default; callers that prefer mm can multiply by `dpi / 25.4`).
+   * Defaults to 0 (square corners).
+   */
+  cornerRadiusPx?: number
+}
+
 /**
  * Apply `mode` to an already-rectified color image. Decodes the
  * input via `createImageBitmap`, runs the pixel pass, and re-encodes
  * as PNG. The bitmap is closed immediately so no GPU memory is held.
- *
- * When `watermark` is supplied the watermark is drawn on top of the
- * mode-processed pixels before re-encoding. Per-side preview / single
- * PNG download paths pass the watermark; the A4 pack path omits it so
- * `packSheet` stays the sole watermark stage on the final export.
  */
 export async function renderOutputMode(
   input: Blob,
   mode: OutputMode,
-  watermark?: WatermarkConfig,
+  options: RenderOutputModeOptions = {},
 ): Promise<RenderedOutput> {
+  const { watermark, cornerRadiusPx = 0 } = options
   const bitmap = await createImageBitmap(input)
   try {
     const { width, height } = bitmap
@@ -73,6 +93,12 @@ export async function renderOutputMode(
     if (watermark) {
       drawWatermark(ctx, width, height, watermark, mode)
     }
+    // Rounded-corner clip has to run AFTER watermark so the watermark
+    // tile itself respects the rounded boundary too — otherwise a tile
+    // fragment could survive in the would-be transparent corner.
+    if (cornerRadiusPx > 0) {
+      applyRoundedAlphaClip(ctx, width, height, cornerRadiusPx)
+    }
     const blob = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error('renderOutputMode: toBlob returned null'))),
@@ -83,6 +109,34 @@ export async function renderOutputMode(
   } finally {
     bitmap.close?.()
   }
+}
+
+/**
+ * Carve out a rounded-corner alpha mask on a 2D context whose pixels
+ * are already drawn. Uses `destination-in` composite so anything
+ * outside the rounded rect becomes transparent, while everything
+ * inside is preserved verbatim.
+ *
+ * `radiusPx` is clamped to half of the shorter side so an overly
+ * large radius collapses to a pill / circle instead of producing a
+ * malformed path.
+ */
+function applyRoundedAlphaClip(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  radiusPx: number,
+): void {
+  const maxRadius = Math.min(width, height) / 2
+  const r = Math.min(Math.max(0, radiusPx), maxRadius)
+  if (r <= 0) return
+  ctx.save()
+  ctx.globalCompositeOperation = 'destination-in'
+  ctx.fillStyle = '#000000'
+  ctx.beginPath()
+  ctx.roundRect(0, 0, width, height, r)
+  ctx.fill()
+  ctx.restore()
 }
 
 /**
