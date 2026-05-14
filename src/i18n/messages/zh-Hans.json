@@ -841,6 +841,27 @@
       "cancel": "取消",
       "reset": "重置为自动检测"
     },
+    "config": {
+      "docSpecLabel": "证件类型",
+      "modeLabel": "输出模式",
+      "modeHint": "切换不要重新检测——只对已校正的结果重着色"
+    },
+    "docSpecs": {
+      "cn-id-card": "中国身份证",
+      "passport-bio": "护照资料页",
+      "cn-driver-license": "中国驾驶证",
+      "cn-vehicle-license": "中国行驶证",
+      "a4": "A4 文档",
+      "letter": "Letter 文档"
+    },
+    "mode": {
+      "scan": "扫描",
+      "scanDesc": "彩色 · 自动白平衡",
+      "copy": "复印",
+      "copyDesc": "黑白二值化",
+      "enhance": "增强",
+      "enhanceDesc": "饱和度 + 对比度"
+    },
     "seoIntro": {
       "heading": "为什么需要证件扫描生成器",
       "paragraphs": {

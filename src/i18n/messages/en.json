@@ -841,6 +841,27 @@
       "cancel": "Cancel",
       "reset": "Reset to auto-detect"
     },
+    "config": {
+      "docSpecLabel": "Document type",
+      "modeLabel": "Output mode",
+      "modeHint": "Switching re-colors the rectified result; no need to redetect"
+    },
+    "docSpecs": {
+      "cn-id-card": "PRC ID card",
+      "passport-bio": "Passport bio page",
+      "cn-driver-license": "PRC driver license",
+      "cn-vehicle-license": "PRC vehicle license",
+      "a4": "A4 document",
+      "letter": "Letter document"
+    },
+    "mode": {
+      "scan": "Scan",
+      "scanDesc": "Color · auto white balance",
+      "copy": "Copy",
+      "copyDesc": "Black & white binarize",
+      "enhance": "Enhance",
+      "enhanceDesc": "Saturation + contrast"
+    },
     "seoIntro": {
       "heading": "Why an ID document scanner",
       "paragraphs": {

@@ -19,8 +19,9 @@
  */
 
 import { useTranslations } from 'next-intl'
-import { ClockFading, FilePenLine } from 'lucide-react'
+import { ClockFading } from 'lucide-react'
 
+import { ScannerConfig } from './scanner-config'
 import { ScannerPreview } from './scanner-preview'
 import { ScannerUploads } from './scanner-uploads'
 
@@ -57,33 +58,9 @@ export function ScannerShell() {
         {/* Preview column — rectified result via OpenCV.js (S3) */}
         <ScannerPreview emptyLabel={t('previewTitle')} emptyHint={t('previewEmpty')} />
 
-        {/* Config column (placeholder until S4-S5) */}
-        <div
-          aria-label={t('configTitle')}
-          className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
-        >
-          <div className="flex items-center gap-2">
-            <FilePenLine
-              aria-hidden="true"
-              className="size-4 text-[var(--color-text-mute)] opacity-70"
-            />
-            <h3 className="text-sm font-semibold text-[var(--color-text)]">{t('configTitle')}</h3>
-          </div>
-          <p className="text-xs text-[var(--color-text-mute)]">{t('configHint')}</p>
-          <ConfigRowPlaceholder />
-          <ConfigRowPlaceholder />
-          <ConfigRowPlaceholder />
-        </div>
+        {/* Config column — DocSpec + output mode (S4); watermark & A4 paper land in S5 */}
+        <ScannerConfig />
       </div>
-    </div>
-  )
-}
-
-function ConfigRowPlaceholder() {
-  return (
-    <div className="flex items-center gap-2">
-      <div className="h-2 w-16 rounded-full bg-[var(--color-divider)]" />
-      <div className="h-2 flex-1 rounded-full bg-[var(--color-divider)]/60" />
     </div>
   )
 }

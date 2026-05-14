@@ -65,7 +65,10 @@ function PreviewCard({ side, slot }: { side: ScannerSide; slot: ScannerSlot }) {
   const t = useTranslations('Scanner.preview')
   const rectifySide = useScannerStore((s) => s.rectifySide)
   const [editing, setEditing] = useState(false)
-  const rectifiedUrl = useBlobUrl(slot.rectified?.blob ?? null)
+  // Prefer the mode-applied output ("rendered") when available;
+  // fall back to the raw rectified blob while the post-pass runs.
+  const displayBlob = slot.rendered?.blob ?? slot.rectified?.blob ?? null
+  const rectifiedUrl = useBlobUrl(displayBlob)
 
   const label = side === 'front' ? t('frontLabel') : t('backLabel')
 

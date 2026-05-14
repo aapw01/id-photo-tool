@@ -841,6 +841,27 @@
       "cancel": "取消",
       "reset": "重設為自動偵測"
     },
+    "config": {
+      "docSpecLabel": "證件類型",
+      "modeLabel": "輸出模式",
+      "modeHint": "切換不會重新偵測——只對已校正的結果重新著色"
+    },
+    "docSpecs": {
+      "cn-id-card": "中國身分證",
+      "passport-bio": "護照資料頁",
+      "cn-driver-license": "中國駕駛執照",
+      "cn-vehicle-license": "中國行車執照",
+      "a4": "A4 文件",
+      "letter": "Letter 文件"
+    },
+    "mode": {
+      "scan": "掃描",
+      "scanDesc": "彩色 · 自動白平衡",
+      "copy": "影印",
+      "copyDesc": "黑白二值化",
+      "enhance": "增強",
+      "enhanceDesc": "飽和度 + 對比度"
+    },
     "seoIntro": {
       "heading": "為何需要證件掃描產生器",
       "paragraphs": {

@@ -28,11 +28,13 @@ import { create } from 'zustand'
 import { loadDocumentImage } from './lib/load-document-image'
 import { rectifyDocument } from './lib/rectify'
 import { DEFAULT_DOC_SPEC_ID, getDocSpec } from './lib/doc-specs'
+import { renderOutputMode, type OutputMode } from './lib/render-modes'
 import type { Quad } from './lib/detect-corners'
 
-export type OutputMode = 'scan' | 'copy' | 'enhance'
+export type { OutputMode }
 
 export type RectifyState = 'idle' | 'processing' | 'ready' | 'error'
+export type RenderState = 'idle' | 'processing' | 'ready'
 
 export interface RectifiedResult {
   blob: Blob
@@ -41,6 +43,11 @@ export interface RectifiedResult {
   height: number
   /** True iff `quad` came from auto-detection (not fallback or user edit). */
   detected: boolean
+}
+
+export interface RenderedOutput {
+  blob: Blob
+  mode: OutputMode
 }
 
 export interface ScannerSlot {
@@ -52,12 +59,16 @@ export interface ScannerSlot {
   blob: Blob
   /** True iff `blob` is the heic2any output, not the original file. */
   convertedFromHeic: boolean
-  /** Rectified output. `null` until rectifyState reaches 'ready'. */
+  /** Raw color rectified output (post warpPerspective, pre output mode). */
   rectified: RectifiedResult | null
   /** State machine for rectification. */
   rectifyState: RectifyState
   /** Last error message, present iff rectifyState === 'error'. */
   rectifyError: string | null
+  /** Output-mode applied final blob — what the UI displays + downloads. */
+  rendered: RenderedOutput | null
+  /** State machine for the post-rectify mode pass. */
+  renderState: RenderState
 }
 
 export type ScannerSide = 'front' | 'back'
@@ -81,6 +92,12 @@ export interface ScannerState {
    * it overrides the auto-detection (used by the corner editor).
    */
   rectifySide: (side: ScannerSide, quad?: Quad) => Promise<void>
+  /**
+   * Re-apply the current `outputMode` to an already-rectified side.
+   * Triggered internally after rectify completion and when the user
+   * flips the mode toggle.
+   */
+  renderSide: (side: ScannerSide) => Promise<void>
   reset: () => void
 }
 
@@ -105,6 +122,8 @@ function makeFreshSlot(loaded: Awaited<ReturnType<typeof loadDocumentImage>>): S
     rectified: null,
     rectifyState: 'idle',
     rectifyError: null,
+    rendered: null,
+    renderState: 'idle',
   }
 }
 
@@ -154,7 +173,13 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   },
 
   setOutputMode(outputMode) {
+    if (outputMode === get().outputMode) return
     set({ outputMode })
+    // Re-render any already-rectified sides with the new mode. We
+    // don't re-rectify (that's pure pixel work, no OpenCV) — just
+    // re-color via render-modes.
+    if (get().front?.rectified) void get().renderSide('front')
+    if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
 
   async rectifySide(side, overrideQuad) {
@@ -198,9 +223,16 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
               height: result.height,
               detected: result.detected,
             },
+            // The previous mode-applied output is stale once the
+            // underlying rectified bytes change — clear it so the
+            // preview doesn't briefly show the old mode'd PNG.
+            rendered: null,
+            renderState: 'idle',
           },
         } as Partial<ScannerState>
       })
+      // Kick off the mode pass with the current setting.
+      void get().renderSide(side)
     } catch (err) {
       set((state) => {
         const current = state[side]
@@ -211,6 +243,44 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
             rectifyState: 'error',
             rectifyError: err instanceof Error ? err.message : String(err),
           },
+        } as Partial<ScannerState>
+      })
+    }
+  },
+
+  async renderSide(side) {
+    const baseline = get()[side]
+    if (!baseline?.rectified) return
+    const sourceBlob = baseline.rectified.blob
+    const mode = get().outputMode
+    set((state) => {
+      const current = state[side]
+      if (!current?.rectified || current.rectified.blob !== sourceBlob) return state
+      return {
+        [side]: { ...current, renderState: 'processing' },
+      } as Partial<ScannerState>
+    })
+    try {
+      const out = await renderOutputMode(sourceBlob, mode)
+      set((state) => {
+        const current = state[side]
+        // Guard: rectified blob changed (user redetected mid-render).
+        if (!current?.rectified || current.rectified.blob !== sourceBlob) return state
+        return {
+          [side]: {
+            ...current,
+            renderState: 'ready',
+            rendered: { blob: out.blob, mode: out.mode },
+          },
+        } as Partial<ScannerState>
+      })
+    } catch {
+      // Best-effort: leave rectified untouched; UI falls back to it.
+      set((state) => {
+        const current = state[side]
+        if (!current?.rectified || current.rectified.blob !== sourceBlob) return state
+        return {
+          [side]: { ...current, renderState: 'idle' },
         } as Partial<ScannerState>
       })
     }
