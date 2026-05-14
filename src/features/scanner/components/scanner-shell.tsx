@@ -19,8 +19,9 @@
  */
 
 import { useTranslations } from 'next-intl'
-import { ClockFading, FilePenLine, ScanLine } from 'lucide-react'
+import { ClockFading, FilePenLine } from 'lucide-react'
 
+import { ScannerPreview } from './scanner-preview'
 import { ScannerUploads } from './scanner-uploads'
 
 export function ScannerShell() {
@@ -53,20 +54,8 @@ export function ScannerShell() {
         {/* Uploads column — drag/drop, HEIC conversion, EXIF orientation */}
         <ScannerUploads />
 
-        {/* Preview column (placeholder until S3) */}
-        <div
-          aria-label={t('previewTitle')}
-          className="flex aspect-[1/1.414] min-h-[420px] flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center"
-        >
-          <ScanLine
-            aria-hidden="true"
-            className="size-10 text-[var(--color-text-mute)] opacity-60"
-          />
-          <div className="text-sm font-medium text-[var(--color-text-mute)]">
-            {t('previewTitle')}
-          </div>
-          <p className="max-w-xs text-xs text-[var(--color-text-mute)]/80">{t('previewEmpty')}</p>
-        </div>
+        {/* Preview column — rectified result via OpenCV.js (S3) */}
+        <ScannerPreview emptyLabel={t('previewTitle')} emptyHint={t('previewEmpty')} />
 
         {/* Config column (placeholder until S4-S5) */}
         <div

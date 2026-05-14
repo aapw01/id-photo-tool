@@ -793,8 +793,8 @@
     "subtitle": "Upload phone-shot photos of your ID card, passport, or driver license and instantly generate an official-looking PDF scan or photocopy — fully in your browser, no upload, no signup.",
     "metaDescription": "Free browser-based ID document scanner: upload an ID card, passport, or driver license photo and get an A4 PDF with perspective correction and anti-abuse watermark. Scan / photocopy / enhance modes. 100% offline processing.",
     "shell": {
-      "previewTitle": "Live preview",
-      "previewEmpty": "Once you upload an image, the rectified, watermarked, A4-laid-out preview will appear here",
+      "previewTitle": "Scan preview",
+      "previewEmpty": "Once you upload an image, the perspective-corrected scan will appear here",
       "configTitle": "Settings",
       "configHint": "Document type, output mode, watermark, A4 layout",
       "comingSoonBadge": "Coming soon",
@@ -821,6 +821,25 @@
         "decode_failed": "Failed to decode image: {name}",
         "unknown": "Upload failed; please try again"
       }
+    },
+    "preview": {
+      "frontLabel": "Front",
+      "backLabel": "Back",
+      "loadingOpenCV": "Downloading OpenCV (~8 MB, first time only)…",
+      "processing": "Rectifying perspective…",
+      "rectifyError": "Failed: {message}",
+      "retry": "Retry",
+      "editCorners": "Adjust corners",
+      "redetect": "Re-detect",
+      "downloadCurrent": "Download this side",
+      "downloadHint": "Full export (A4 / PDF / photocopy / watermark) lands in upcoming releases"
+    },
+    "editor": {
+      "title": "Drag the four handles to the document edges",
+      "hint": "Magnify the corners with pinch or scroll to land them precisely",
+      "apply": "Apply",
+      "cancel": "Cancel",
+      "reset": "Reset to auto-detect"
     },
     "seoIntro": {
       "heading": "Why an ID document scanner",

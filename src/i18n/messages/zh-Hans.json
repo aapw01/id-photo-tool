@@ -793,8 +793,8 @@
     "subtitle": "上传手机拍的彩色身份证、护照、驾驶证等证件照片，一键生成符合官网要求的 PDF 扫描件或黑白复印件 —— 全程在浏览器内完成，照片不上传任何服务器。",
     "metaDescription": "免费的浏览器证件扫描件生成器：上传身份证 / 护照 / 驾照照片，自动透视校正，输出带防滥用水印的 A4 PDF。支持扫描件、复印件、照片增强三种模式，完全离线处理。",
     "shell": {
-      "previewTitle": "实时预览",
-      "previewEmpty": "上传后将在这里显示透视校正、水印与排版的实时预览",
+      "previewTitle": "扫描预览",
+      "previewEmpty": "上传后将在这里显示透视校正后的扫描结果",
       "configTitle": "配置",
       "configHint": "证件类型、输出模式、水印、A4 排版",
       "comingSoonBadge": "即将上线",
@@ -821,6 +821,25 @@
         "decode_failed": "图片解码失败：{name}",
         "unknown": "上传失败，请重试"
       }
+    },
+    "preview": {
+      "frontLabel": "正面",
+      "backLabel": "背面",
+      "loadingOpenCV": "首次使用需要下载 OpenCV（约 8 MB）…",
+      "processing": "正在校正透视…",
+      "rectifyError": "处理失败：{message}",
+      "retry": "重试",
+      "editCorners": "调整 4 角",
+      "redetect": "重新检测",
+      "downloadCurrent": "下载当前面",
+      "downloadHint": "完整导出（A4 / PDF / 复印件 / 水印）将随后续版本上线"
+    },
+    "editor": {
+      "title": "拖动 4 个圆点对齐证件边缘",
+      "hint": "靠近角落能更精准地命中——可以滚轮或捏合放大查看细节",
+      "apply": "应用",
+      "cancel": "取消",
+      "reset": "重置为自动检测"
     },
     "seoIntro": {
       "heading": "为什么需要证件扫描生成器",
