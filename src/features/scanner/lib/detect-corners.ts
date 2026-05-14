@@ -1,45 +1,22 @@
 'use client'
 
 /**
- * Auto-detect the 4 corners of a document inside a bitmap.
+ * Quad geometry — the 4-point polygon Scanner uses to describe a
+ * document inside a source bitmap.
  *
- * Pipeline (mirrors the canonical "scanner" recipe, now hosted in
- * `opencv.worker.ts` so the CV work never touches the main thread):
+ * Historical note: this file used to host a Canny + findContours +
+ * approxPolyDP auto-detection pipeline (port of an OpenCV recipe). It
+ * was retired in favor of a 4-corner manual editor + pure-JS warp
+ * because the 10 MB opencv.js dependency was the dominant Scanner
+ * load-time cost on slow networks. The geometry helpers (Quad type
+ * + clockwise ordering) live on because the corner editor, the warp
+ * kernel, and the rectify pipeline all share them.
  *
- *   1. Downscale the source bitmap to a working size with the long
- *      side capped (default 1024 px). Edge detection on a 12 MP phone
- *      capture is needlessly slow and the wider the band the more
- *      false edges Canny finds inside the document text.
- *   2. RGBA → grayscale → 5×5 Gaussian blur → Canny.
- *   3. `findContours` with RETR_EXTERNAL.
- *   4. Sort by area, scan the top-K candidates and run `approxPolyDP`
- *      at progressively looser epsilons until one yields a 4-vertex
- *      convex polygon.
- *   5. Sanity check: the polygon's area must exceed ~10% of the image
- *      area, otherwise we treat the detect as a failure (Canny picked
- *      up a printed photo *inside* the document or similar). Caller
- *      can fall back to the image bounds as identity corners.
- *   6. Order the 4 points clockwise from the top-left so downstream
- *      `warpPerspective` always sees the same vertex ordering.
- *
- * Coordinates returned are in the *original* bitmap pixel space, not
- * the working downscale — so callers can warp the full-resolution
- * image without re-mapping.
- *
- * Worker-first execution: `detectCorners` posts to the OpenCV worker.
- * When the worker is unavailable (extremely rare — happy-dom in
- * tests, some legacy WebViews), it falls back to a synchronous
- * main-thread run via `opencv-loader.ts`. The fallback path is the
- * legacy implementation, kept intact so the user-visible behavior is
- * identical.
+ * What used to detect corners is now `defaultQuad`: a deterministic
+ * starting position centered on the bitmap. The user drags the 4
+ * handles to the actual document edges — the same gesture every
+ * mature mobile scanner ships (Microsoft Lens, Adobe Scan, etc.).
  */
-
-import { loadOpenCV, type CVMat, type OpenCV } from './opencv-loader'
-import { detectCornersInWorker, OpenCVWorkerUnavailableError } from './opencv-worker-client'
-
-const WORK_LONGSIDE_PX = 1024
-const TOPK_CONTOURS = 5
-const MIN_AREA_RATIO = 0.1
 
 export interface QuadPoint {
   x: number
@@ -53,140 +30,31 @@ export interface Quad {
   bottomLeft: QuadPoint
 }
 
-export interface DetectCornersResult {
-  /** Detected corners, in the input bitmap's pixel space. */
-  quad: Quad
-  /** True iff auto-detect succeeded (vs. falling back to image bounds). */
-  detected: boolean
-}
+/**
+ * Inset ratio for the default quad — picked so the handles sit
+ * visibly inside the photo (rather than welded to the edges where
+ * they'd be hard to grab) but still gives the user a clear "drag me
+ * outward to the document edge" affordance. 6 % is roughly the
+ * default offset Microsoft Lens uses when it can't auto-detect.
+ */
+const DEFAULT_INSET_RATIO = 0.06
 
 /**
- * Run the corner detection pipeline. Always returns a `Quad`: when
- * auto-detection fails, falls back to the four image corners so the
- * UI can present a sensible default that the user can drag.
+ * A sensible starting quad for the manual editor: centered on the
+ * source bitmap, inset 6 % from each side. The user drags handles
+ * outward (or inward) to align with the actual document edges.
+ *
+ * Coordinates are in *source bitmap pixel space* so the rectify
+ * pipeline can warp the full-resolution image directly.
  */
-export async function detectCorners(bitmap: ImageBitmap): Promise<DetectCornersResult> {
-  try {
-    return await detectCornersInWorker(bitmap)
-  } catch (err) {
-    if (err instanceof OpenCVWorkerUnavailableError) {
-      const cv = await loadOpenCV()
-      return detectCornersOnMainThread(cv, bitmap)
-    }
-    throw err
-  }
-}
-
-/**
- * Legacy main-thread implementation, used only when the OpenCV
- * worker can't be spawned. Kept verbatim from the pre-worker codebase
- * so behavior is bit-identical to the fallback path. New callers
- * should use the worker-first `detectCorners` above.
- */
-function detectCornersOnMainThread(cv: OpenCV, bitmap: ImageBitmap): DetectCornersResult {
-  const longest = Math.max(bitmap.width, bitmap.height)
-  const scale = longest > WORK_LONGSIDE_PX ? WORK_LONGSIDE_PX / longest : 1
-  const workW = Math.max(1, Math.round(bitmap.width * scale))
-  const workH = Math.max(1, Math.round(bitmap.height * scale))
-
-  const canvas = document.createElement('canvas')
-  canvas.width = workW
-  canvas.height = workH
-  const ctx = canvas.getContext('2d')
-  if (!ctx) {
-    return { quad: imageCorners(bitmap), detected: false }
-  }
-  ctx.drawImage(bitmap, 0, 0, workW, workH)
-
-  const src = cv.imread(canvas)
-  const gray = new cv.Mat()
-  const blurred = new cv.Mat()
-  const edges = new cv.Mat()
-  const contours = new cv.MatVector()
-  const hierarchy = new cv.Mat()
-
-  try {
-    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY)
-    cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0)
-    cv.Canny(blurred, edges, 75, 200)
-    cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-
-    const candidates: { area: number; contour: CVMat }[] = []
-    for (let i = 0; i < contours.size(); i++) {
-      const c = contours.get(i)
-      const area = cv.contourArea(c)
-      candidates.push({ area, contour: c })
-    }
-    candidates.sort((a, b) => b.area - a.area)
-
-    const imageArea = workW * workH
-    let bestQuad: Quad | null = null
-
-    for (let i = 0; i < Math.min(TOPK_CONTOURS, candidates.length); i++) {
-      const { area, contour } = candidates[i]!
-      if (area / imageArea < MIN_AREA_RATIO) break
-
-      const peri = cv.arcLength(contour, true)
-      const epsilons = [0.02, 0.03, 0.05, 0.07]
-      for (const eps of epsilons) {
-        const approx = new cv.Mat()
-        try {
-          cv.approxPolyDP(contour, approx, peri * eps, true)
-          if (approx.rows === 4) {
-            const pts = readQuadFromApprox(approx)
-            bestQuad = orderClockwise(pts)
-            break
-          }
-        } finally {
-          approx.delete()
-        }
-      }
-      if (bestQuad) break
-    }
-
-    if (!bestQuad) {
-      return { quad: imageCorners(bitmap), detected: false }
-    }
-    const invScale = 1 / scale
-    return {
-      quad: scaleQuad(bestQuad, invScale, invScale),
-      detected: true,
-    }
-  } finally {
-    src.delete()
-    gray.delete()
-    blurred.delete()
-    edges.delete()
-    contours.delete()
-    hierarchy.delete()
-  }
-}
-
-function readQuadFromApprox(approx: CVMat): QuadPoint[] {
-  const data = approx.data32S
-  return [
-    { x: data[0]!, y: data[1]! },
-    { x: data[2]!, y: data[3]! },
-    { x: data[4]!, y: data[5]! },
-    { x: data[6]!, y: data[7]! },
-  ]
-}
-
-function imageCorners(bitmap: ImageBitmap): Quad {
+export function defaultQuad(width: number, height: number): Quad {
+  const dx = width * DEFAULT_INSET_RATIO
+  const dy = height * DEFAULT_INSET_RATIO
   return {
-    topLeft: { x: 0, y: 0 },
-    topRight: { x: bitmap.width, y: 0 },
-    bottomRight: { x: bitmap.width, y: bitmap.height },
-    bottomLeft: { x: 0, y: bitmap.height },
-  }
-}
-
-function scaleQuad(q: Quad, sx: number, sy: number): Quad {
-  return {
-    topLeft: { x: q.topLeft.x * sx, y: q.topLeft.y * sy },
-    topRight: { x: q.topRight.x * sx, y: q.topRight.y * sy },
-    bottomRight: { x: q.bottomRight.x * sx, y: q.bottomRight.y * sy },
-    bottomLeft: { x: q.bottomLeft.x * sx, y: q.bottomLeft.y * sy },
+    topLeft: { x: dx, y: dy },
+    topRight: { x: width - dx, y: dy },
+    bottomRight: { x: width - dx, y: height - dy },
+    bottomLeft: { x: dx, y: height - dy },
   }
 }
 
@@ -194,14 +62,15 @@ function scaleQuad(q: Quad, sx: number, sy: number): Quad {
  * Order an unordered 4-point polygon as top-left, top-right,
  * bottom-right, bottom-left.
  *
- * The standard trick is to use the per-point sums and differences:
+ * The standard trick is the per-point sum and difference:
  *   - smallest (x + y) is top-left
  *   - largest  (x + y) is bottom-right
  *   - smallest (y - x) is top-right (small y, large x)
  *   - largest  (y - x) is bottom-left (large y, small x)
  *
- * Exported so the unit test (and the manual corner editor in S3.5)
- * can call it on user-edited points to keep the warp consistent.
+ * Called on every "apply" from the corner editor so the warp always
+ * receives a consistent winding order, no matter how the user dragged
+ * the handles.
  */
 export function orderClockwise(points: QuadPoint[]): Quad {
   if (points.length !== 4) {

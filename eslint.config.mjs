@@ -30,7 +30,6 @@ const eslintConfig = defineConfig([
     '.open-next/**',
     '.wrangler/**',
     '.playwright-cli/**',
-    'public/vendor/**',
   ]),
 ])
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { orderClockwise, type QuadPoint } from './detect-corners'
+import { defaultQuad, orderClockwise, type QuadPoint } from './detect-corners'
 
 describe('orderClockwise', () => {
   it('orders 4 points in TL → TR → BR → BL', () => {
@@ -38,5 +38,27 @@ describe('orderClockwise', () => {
 
   it('throws on wrong point count', () => {
     expect(() => orderClockwise([{ x: 0, y: 0 }] as QuadPoint[])).toThrow(/4 points/)
+  })
+})
+
+describe('defaultQuad', () => {
+  it('insets ~6 % from the image edges and is already TL → TR → BR → BL', () => {
+    const q = defaultQuad(1000, 600)
+    expect(q.topLeft.x).toBeCloseTo(60, 4)
+    expect(q.topLeft.y).toBeCloseTo(36, 4)
+    expect(q.topRight.x).toBeCloseTo(940, 4)
+    expect(q.topRight.y).toBeCloseTo(36, 4)
+    expect(q.bottomRight.x).toBeCloseTo(940, 4)
+    expect(q.bottomRight.y).toBeCloseTo(564, 4)
+    expect(q.bottomLeft.x).toBeCloseTo(60, 4)
+    expect(q.bottomLeft.y).toBeCloseTo(564, 4)
+  })
+
+  it('survives a clockwise reorder unchanged', () => {
+    // defaultQuad already produces canonical ordering — round-tripping
+    // through orderClockwise should be a no-op.
+    const q = defaultQuad(800, 500)
+    const reordered = orderClockwise([q.topLeft, q.topRight, q.bottomRight, q.bottomLeft])
+    expect(reordered).toEqual(q)
   })
 })

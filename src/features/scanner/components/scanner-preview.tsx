@@ -21,7 +21,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Edit3, Loader2, RotateCcw, Download } from 'lucide-react'
+import { Edit3, Loader2, Download } from 'lucide-react'
 
 import { useScannerStore, type ScannerSlot, type ScannerSide } from '../store'
 import { ScannerCornerEditor } from './scanner-corner-editor'
@@ -85,24 +85,14 @@ function PreviewCard({ side, slot }: { side: ScannerSide; slot: ScannerSlot }) {
         <h3 className="text-sm font-semibold text-[var(--color-text)]">{label}</h3>
         <div className="flex items-center gap-1">
           {slot.rectifyState === 'ready' && (
-            <>
-              <button
-                type="button"
-                onClick={() => setEditing(true)}
-                className="inline-flex items-center gap-1 rounded-[var(--radius-md)] px-2 py-1 text-xs text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)]"
-              >
-                <Edit3 className="size-3.5" aria-hidden="true" />
-                {t('editCorners')}
-              </button>
-              <button
-                type="button"
-                onClick={() => void rectifySide(side)}
-                aria-label={t('redetect')}
-                className="inline-flex size-7 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)]"
-              >
-                <RotateCcw className="size-3.5" aria-hidden="true" />
-              </button>
-            </>
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="inline-flex items-center gap-1 rounded-[var(--radius-md)] px-2 py-1 text-xs text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)]"
+            >
+              <Edit3 className="size-3.5" aria-hidden="true" />
+              {t('editCorners')}
+            </button>
           )}
         </div>
       </div>
@@ -155,7 +145,6 @@ function PreviewBody({
           className="size-7 animate-spin text-[var(--color-primary-dk)]"
         />
         <p className="text-xs text-[var(--color-text-mute)]">{t('processing')}</p>
-        <p className="text-[10px] text-[var(--color-text-mute)]/70">{t('loadingOpenCV')}</p>
       </div>
     )
   }

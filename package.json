@@ -17,9 +17,9 @@
     "node": ">=22.13"
   },
   "scripts": {
-    "predev": "pnpm models:fetch && pnpm opencv:fetch",
+    "predev": "pnpm models:fetch",
     "dev": "next dev",
-    "prebuild": "pnpm models:fetch && pnpm opencv:fetch",
+    "prebuild": "pnpm models:fetch",
     "build": "next build",
     "postbuild": "node scripts/fix-tsconfig.mjs",
     "postcf:build": "node scripts/fix-tsconfig.mjs",
@@ -30,7 +30,6 @@
     "typecheck": "tsc --noEmit",
     "i18n:check": "node scripts/i18n-check.mjs",
     "models:fetch": "node scripts/fetch-model.mjs",
-    "opencv:fetch": "node scripts/fetch-opencv.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

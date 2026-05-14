@@ -1,29 +1,31 @@
 'use client'
 
 /**
- * Wrap OpenCV's `warpPerspective` into a tidy API that takes a
- * source `ImageBitmap` + 4 source corners + a target output size
- * and returns a rectified `Blob` (PNG by default; can be re-encoded
- * later in the pipeline).
+ * Perspective warp facade: takes a source `ImageBitmap` + a 4-point
+ * `Quad` describing where the document sits inside it + a target
+ * output size, returns a rectified `Blob` (PNG by default).
  *
- * Why a Blob and not an `ImageBitmap`: the Scanner pipeline hands
- * the rectified result to:
- *   - `<img>` for in-DOM preview (Blob URL)
- *   - jsPDF for embedding into the A4 PDF (S5)
- *   - the localStorage history thumbnail (S8)
- * — all three consume bytes, not GPU textures. Re-decoding on
- * demand is cheap and avoids leaking texture memory.
+ * Two execution paths share a single pure-JS kernel
+ * (`perspective.ts`):
  *
- * Worker-first execution: the warp + PNG encode now run inside the
- * OpenCV worker (`opencv.worker.ts`) — both for the CV work and for
- * the encode step (via `OffscreenCanvas.convertToBlob`) — so the main
- * thread stays free for UI input. When the worker is unavailable, we
- * fall back to the legacy synchronous main-thread implementation.
+ *   1. Worker path (default): posts to `warp.worker.ts`, which runs
+ *      the homography solve + bilinear warp + Blob encode inside an
+ *      OffscreenCanvas. The main thread sees no work between the
+ *      post and the reply.
+ *
+ *   2. Main-thread fallback: when `Worker` / `OffscreenCanvas` aren't
+ *      available (happy-dom in tests, some legacy WebViews), the
+ *      same kernel runs on the main thread against a regular
+ *      `<canvas>`. Sub-second for ID-card-sized inputs but blocks UI.
+ *
+ * Why Blob, not ImageBitmap: the rectified output feeds three
+ * downstream consumers — `<img>` preview, jsPDF embed, history
+ * thumbnail — all of which want bytes, not GPU textures.
  */
 
-import { loadOpenCV, type OpenCV } from './opencv-loader'
-import { OpenCVWorkerUnavailableError, rectifyInWorker } from './opencv-worker-client'
 import type { Quad } from './detect-corners'
+import { getPerspectiveTransform, warpPerspectiveBilinear } from './perspective'
+import { rectifyInWorker, WarpWorkerUnavailableError } from './warp-worker-client'
 
 export interface WarpPerspectiveOptions {
   /** Output width in pixels. */
@@ -42,13 +44,6 @@ export interface WarpPerspectiveResult {
   height: number
 }
 
-/**
- * Perspective-warp `source` so that its `quad` corners map to the
- * four corners of an `outputWidth × outputHeight` image.
- *
- * The output is encoded as a `Blob` of `options.mime` (default
- * `image/png`).
- */
 export async function warpPerspective(
   source: ImageBitmap,
   quad: Quad,
@@ -65,26 +60,20 @@ export async function warpPerspective(
       quality,
     })
   } catch (err) {
-    if (err instanceof OpenCVWorkerUnavailableError) {
-      const cv = await loadOpenCV()
-      return warpPerspectiveOnMainThread(cv, source, quad, {
-        outputWidth,
-        outputHeight,
-        mime,
-        quality,
-      })
+    if (err instanceof WarpWorkerUnavailableError) {
+      return warpPerspectiveOnMainThread(source, quad, { outputWidth, outputHeight, mime, quality })
     }
     throw err
   }
 }
 
 /**
- * Legacy main-thread implementation, kept verbatim from the
- * pre-worker codebase so the fallback path is bit-identical to the
- * old behavior. New callers should use `warpPerspective` above.
+ * Fallback path: identical numeric pipeline to the worker, but the
+ * pixel loop and the PNG encode happen on the main thread against a
+ * regular `<canvas>`. The two paths share `perspective.ts`, so the
+ * output is bit-identical.
  */
 async function warpPerspectiveOnMainThread(
-  cv: OpenCV,
   source: ImageBitmap,
   quad: Quad,
   options: Required<
@@ -93,54 +82,32 @@ async function warpPerspectiveOnMainThread(
 ): Promise<WarpPerspectiveResult> {
   const { outputWidth, outputHeight, mime, quality } = options
 
-  const inputCanvas = document.createElement('canvas')
-  inputCanvas.width = source.width
-  inputCanvas.height = source.height
-  const inputCtx = inputCanvas.getContext('2d')
-  if (!inputCtx) throw new Error('warpPerspective: failed to create input 2d context')
-  inputCtx.drawImage(source, 0, 0)
+  const srcCanvas = document.createElement('canvas')
+  srcCanvas.width = source.width
+  srcCanvas.height = source.height
+  const srcCtx = srcCanvas.getContext('2d')
+  if (!srcCtx) throw new Error('warpPerspective: failed to create input 2d context')
+  srcCtx.drawImage(source, 0, 0)
+  const srcImageData = srcCtx.getImageData(0, 0, source.width, source.height)
 
-  const src = cv.imread(inputCanvas)
-  const srcMat = cv.matFromArray(4, 1, cv.CV_32FC2, [
-    quad.topLeft.x,
-    quad.topLeft.y,
-    quad.topRight.x,
-    quad.topRight.y,
-    quad.bottomRight.x,
-    quad.bottomRight.y,
-    quad.bottomLeft.x,
-    quad.bottomLeft.y,
-  ])
-  const dstMat = cv.matFromArray(4, 1, cv.CV_32FC2, [
-    0,
-    0,
-    outputWidth,
-    0,
-    outputWidth,
-    outputHeight,
-    0,
-    outputHeight,
-  ])
-  const M = cv.getPerspectiveTransform(srcMat, dstMat)
+  const dstQuad: Quad = {
+    topLeft: { x: 0, y: 0 },
+    topRight: { x: outputWidth, y: 0 },
+    bottomRight: { x: outputWidth, y: outputHeight },
+    bottomLeft: { x: 0, y: outputHeight },
+  }
+  const forward = getPerspectiveTransform(quad, dstQuad)
+  const warped = warpPerspectiveBilinear(srcImageData, forward, outputWidth, outputHeight)
 
-  const warped = new cv.Mat()
-  cv.warpPerspective(
-    src,
-    warped,
-    M,
-    new cv.Size(outputWidth, outputHeight),
-    cv.INTER_LINEAR,
-    cv.BORDER_REPLICATE,
-    new cv.Scalar(0, 0, 0, 255),
-  )
-
-  const outputCanvas = document.createElement('canvas')
-  outputCanvas.width = outputWidth
-  outputCanvas.height = outputHeight
-  cv.imshow(outputCanvas, warped)
+  const dstCanvas = document.createElement('canvas')
+  dstCanvas.width = outputWidth
+  dstCanvas.height = outputHeight
+  const dstCtx = dstCanvas.getContext('2d')
+  if (!dstCtx) throw new Error('warpPerspective: failed to create output 2d context')
+  dstCtx.putImageData(warped, 0, 0)
 
   const blob = await new Promise<Blob>((resolve, reject) => {
-    outputCanvas.toBlob(
+    dstCanvas.toBlob(
       (b) => {
         if (b) resolve(b)
         else reject(new Error('warpPerspective: canvas.toBlob returned null'))
@@ -150,15 +117,5 @@ async function warpPerspectiveOnMainThread(
     )
   })
 
-  src.delete()
-  srcMat.delete()
-  dstMat.delete()
-  M.delete()
-  warped.delete()
-
-  return {
-    blob,
-    width: outputWidth,
-    height: outputHeight,
-  }
+  return { blob, width: outputWidth, height: outputHeight }
 }

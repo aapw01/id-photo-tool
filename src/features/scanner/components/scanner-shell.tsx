@@ -3,19 +3,13 @@
 /**
  * Scanner workspace shell.
  *
- * The right-rail "Coming soon" banner + the three-pane layout (uploads ·
- * preview · config) are stable as of S1. S2 swaps the upload column
- * placeholders for the real `ScannerUploads` (with drag/drop, HEIC
- * conversion, and EXIF-correct decode). S3+ will replace the preview
- * column placeholder with the live perspective-corrected preview, and
- * the config column placeholder with real spec / mode / watermark
- * controls.
+ * Three-pane layout (uploads · preview · config). The page route is
+ * a server component for SSR-friendly SEO; this shell mounts via
+ * `dynamic({ ssr: false })` so the rectify pipeline (Web Worker +
+ * canvas APIs) only runs on the client.
  *
- * Why a "shell" component:
- *   - Keeps the page route thin and SSR-friendly (page is a server
- *     component; this shell mounts via `dynamic({ ssr: false })`).
- *   - Crawlers see the SEO intro + title + h1 on first byte; the
- *     interactive editor mounts after hydration.
+ * Crawlers see the SEO intro + title + h1 on first byte; the
+ * interactive editor mounts after hydration.
  */
 
 import { useEffect, useRef } from 'react'
@@ -24,7 +18,6 @@ import { ClockFading } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 
 import { DOC_SPECS } from '../lib/doc-specs'
-import { getOpenCVWorker } from '../lib/opencv-worker-client'
 import { useScannerStore } from '../store'
 import { ScannerConfig } from './scanner-config'
 import { ScannerPreview } from './scanner-preview'
@@ -55,26 +48,9 @@ function useSpecDeeplink() {
   }, [searchParams, setDocSpecId])
 }
 
-/**
- * Preheat the OpenCV Web Worker on shell mount.
- *
- * The user typically spends a few seconds locating a file after
- * landing here; using that idle window to spawn the worker + parse
- * opencv.js (in the worker, so the main thread stays responsive)
- * means the first upload usually hits an already-ready engine. We
- * swallow errors — the actual rectify call surfaces a localized
- * retry CTA on failure.
- */
-function usePreheatOpenCVWorker() {
-  useEffect(() => {
-    getOpenCVWorker().catch(() => {})
-  }, [])
-}
-
 export function ScannerShell() {
   const t = useTranslations('Scanner.shell')
   useSpecDeeplink()
-  usePreheatOpenCVWorker()
 
   return (
     <div className="space-y-6">
@@ -100,13 +76,8 @@ export function ScannerShell() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr_1fr]">
-        {/* Uploads column — drag/drop, HEIC conversion, EXIF orientation */}
         <ScannerUploads />
-
-        {/* Preview column — rectified result via OpenCV.js (S3) */}
         <ScannerPreview emptyLabel={t('previewTitle')} emptyHint={t('previewEmpty')} />
-
-        {/* Config column — DocSpec + output mode (S4); watermark & A4 paper land in S5 */}
         <ScannerConfig />
       </div>
     </div>

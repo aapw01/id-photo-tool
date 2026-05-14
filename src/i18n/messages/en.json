@@ -824,12 +824,10 @@
     "preview": {
       "frontLabel": "Front",
       "backLabel": "Back",
-      "loadingOpenCV": "Booting the detection engine in the background…",
       "processing": "Rectifying perspective…",
       "rectifyError": "Failed: {message}",
       "retry": "Retry",
       "editCorners": "Adjust corners",
-      "redetect": "Re-detect",
       "downloadCurrent": "Download this side",
       "downloadHint": "Full export (A4 / PDF / photocopy / watermark) lands in upcoming releases"
     },
@@ -838,7 +836,7 @@
       "hint": "Magnify the corners with pinch or scroll to land them precisely. Keyboard: Tab between handles, arrow keys nudge ±1 px, Shift+arrow ±10 px.",
       "apply": "Apply",
       "cancel": "Cancel",
-      "reset": "Reset to auto-detect",
+      "reset": "Reset corners",
       "handles": {
         "topLeft": "Top-left corner",
         "topRight": "Top-right corner",
@@ -977,8 +975,8 @@
           "a": "Most online submission portals accept rectified phone-camera scans, and our output mimics a flatbed scanner closely. That said, official requirements differ — for high-stakes filings (visas, banking) we recommend reading the portal's exact spec before submitting."
         },
         "accuracy": {
-          "q": "How accurate is the auto perspective correction?",
-          "a": "OpenCV.js detects the four document corners from the largest enclosed quadrilateral. Most well-lit, contrast-clean phone photos resolve in under 200 ms. If detection misses, you can drag the four corner handles manually — keyboard arrows + Shift work too."
+          "q": "How accurate is the perspective rectification?",
+          "a": "Drag the four corner handles to the actual document edges in the photo, and Pixfit rebuilds the flat scanner-style rectangle with a pure-JS bilinear perspective transform — the output is visually comparable to a flatbed scanner. Keyboard arrows nudge ±1 px, Shift+arrow ±10 px for precise control."
         }
       }
     },
@@ -1008,8 +1006,8 @@
             "text": "Drop the front (and optionally the back) photo into the scanner workspace. JPG / PNG / HEIC up to 20 MB per file. We decode EXIF orientation automatically."
           },
           "detect": {
-            "name": "Auto perspective correction",
-            "text": "OpenCV.js detects the four corners of {name} and warps the image to a flat scanner-style rectangle. If a corner is off, drag the handle — keyboard arrows work too."
+            "name": "Drag the four corners to the document edges",
+            "text": "Drag the four circular handles overlaid on {name} to the actual document corners and Pixfit warps the tilted photo into a flat scanner-style rectangle. Keyboard arrows nudge ±1 px, Shift+arrow ±10 px."
           },
           "configure": {
             "name": "Pick output mode + watermark",

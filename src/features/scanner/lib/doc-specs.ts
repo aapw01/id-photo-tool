@@ -1,8 +1,11 @@
-'use client'
-
 /**
  * DocSpec catalog — physical dimensions of the documents the Scanner
  * can rectify into.
+ *
+ * Pure data + sync helpers, no DOM/browser API — must remain
+ * server-safe so RSC pages like `/scanner` (which renders the doc
+ * grid) and `/scanner/[docType]` (which uses `generateStaticParams`)
+ * can import directly without a Client Boundary.
  *
  * V1 ships a tight, deliberately small catalog covering the most
  * common scan targets:

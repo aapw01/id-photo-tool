@@ -218,9 +218,8 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
   setOutputMode(outputMode) {
     if (outputMode === get().outputMode) return
     set({ outputMode })
-    // Re-render any already-rectified sides with the new mode. We
-    // don't re-rectify (that's pure pixel work, no OpenCV) — just
-    // re-color via render-modes.
+    // Re-render any already-rectified sides with the new mode —
+    // pure 2D Canvas recolor via render-modes, no warp.
     if (get().front?.rectified) void get().renderSide('front')
     if (get().back?.rectified && get().hasBack) void get().renderSide('back')
   },
