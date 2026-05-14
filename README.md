@@ -18,6 +18,21 @@
 - **打印排版** — 7 种相纸 × 12 套排版模板，一次冲洗多张照片。
 - **完整三语 SEO** — `zh-Hans` / `zh-Hant` / `en`，hreflang × canonical × JSON-LD（WebApplication / HowTo / FAQPage / BreadcrumbList）齐全；28 条规格各有独立 SSR 落地页。
 
+## Pixfit Scanner · 证件扫描生成器
+
+子产品独立路由 `/[locale]/scanner`，把手机翻拍的证件照片变成「真扫描仪」级别的 PDF / PNG。
+S1–S8 已全部合并：
+
+- **透视校正** · OpenCV.js（自托管 4.10.0 wasm）懒加载 + Web Worker 端跑 Canny + findContours 自动 4 角检测；识别失败时可手动拖拽 / 键盘方向键微调（Tab 切角，方向键 ±1 px，Shift+方向键 ±10 px）。
+- **三种输出模式** · 扫描（彩色 + 自动白平衡）/ 复印（黑白二值化）/ 增强（饱和度 + 对比度），切换不需要重新检测，仅对已校正结果重渲染。
+- **强制防滥用水印** · 默认 45° 平铺，文字 / 不透明度 / 密度可调；最低不透明度 30%（合规要求，无法关闭），由用户自定义文字（如「仅供 XX 公司入职审核」）。
+- **多 DocSpec / 多纸张** · 内置 11 条 DocSpec（cn / hk / tw / sg / in 身份证、美中驾驶证、中国行驶证、护照资料页、A4 / Letter 全幅文档），可在 A4 / Letter / A5 三种纸张间切换。
+- **HEIC / EXIF / 大文件预压缩** · 手机 HEIC 自动转 JPG（`heic2any` 懒加载）；EXIF orientation 自动旋正；长边 > 4000 px 自动降采样防 OpenCV 爆内存。
+- **离线 SEO 落地页** · 11 条 DocSpec × 3 语 = 33 个 SSG 落地页（`/[locale]/scanner/[docType]`），每页带 HowTo / FAQ / BreadcrumbList JSON-LD；33 条 URL 全部进 sitemap，hreflang alternates 完整。
+- **最近会话** · 导出成功后自动把 _配置_（DocSpec / 纸张 / 输出模式 / 水印）写入 IndexedDB（`idb-keyval`），最多 10 条，TTL 30 天；**不保存任何图像字节**，照片永远不离开浏览器。
+- **使用须知 + 法律提示** · 主页底部「使用须知」折叠区块写明本地处理、强制水印、合法用途；服务条款明确禁止伪造 / 冒用。
+- **完整 a11y** · 4 角拖拽 SVG 控件全部可键盘操作（role/aria-valuetext），所有 form 控件有 label、所有按钮有 aria-label。
+
 ## 文档
 
 - 产品需求：[docs/PRD.md](docs/PRD.md)
@@ -120,19 +135,21 @@ pnpm models:fetch
 
 所有正式路由都按 `/[locale]/...` 三语 SSG 出（locale ∈ `zh-Hans` / `zh-Hant` / `en`，默认 `zh-Hans`）。
 
-| 路由              | 内容                                                         |
-| ----------------- | ------------------------------------------------------------ |
-| `/`               | 首页 · 落地 + 上传                                           |
-| `/studio`         | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）    |
-| `/sizes`          | 28 条内置照片规格列表（SEO 着陆页）                          |
-| `/sizes/[specId]` | 单条规格详情（含 HowTo / FAQ JSON-LD）                       |
-| `/paper`          | 7 条内置相纸规格列表                                         |
-| `/templates`      | 12 条内置排版模板列表                                        |
-| `/specs`          | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate     |
-| `/privacy`        | 隐私政策                                                     |
-| `/terms`          | 服务条款                                                     |
-| `/sitemap.xml`    | 自动收录全部上述路由 × 三 locale（hreflang alternates 齐全） |
-| `/robots.txt`     | 公开抓取规则                                                 |
+| 路由                 | 内容                                                         |
+| -------------------- | ------------------------------------------------------------ |
+| `/`                  | 首页 · 落地 + 上传                                           |
+| `/studio`            | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）    |
+| `/scanner`           | **子产品** · 证件扫描生成器（S1–S8 已上线，端到端可用）      |
+| `/scanner/[docType]` | 单条 DocSpec SEO 落地页（11 条 × 3 语 = 33 页 SSG）          |
+| `/sizes`             | 28 条内置照片规格列表（SEO 着陆页）                          |
+| `/sizes/[specId]`    | 单条规格详情（含 HowTo / FAQ JSON-LD）                       |
+| `/paper`             | 7 条内置相纸规格列表                                         |
+| `/templates`         | 12 条内置排版模板列表                                        |
+| `/specs`             | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate     |
+| `/privacy`           | 隐私政策                                                     |
+| `/terms`             | 服务条款                                                     |
+| `/sitemap.xml`       | 自动收录全部上述路由 × 三 locale（hreflang alternates 齐全） |
+| `/robots.txt`        | 公开抓取规则                                                 |
 
 dev-only 路由（`/dev/*`）默认隐藏；需 `NEXT_PUBLIC_ENABLE_DEV_PAGES=1` 才会编译。
 
