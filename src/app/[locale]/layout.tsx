@@ -2,10 +2,21 @@ import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
+import { Analytics } from '@vercel/analytics/next'
 import { fontMono, fontSans } from '@/lib/fonts'
 import { routing } from '@/i18n/routing'
 import { Toaster } from '@/components/ui/sonner'
 import { BRAND_PRIMARY_HEX, SITE_URL } from '@/lib/seo/site-config'
+
+/**
+ * `process.env.VERCEL` is statically inlined to `"1"` at build time on
+ * Vercel and remains `undefined` everywhere else (local dev, CF Workers
+ * via @opennextjs/cloudflare). This lets us render `<Analytics />` —
+ * which inlines a `<script src="https://va.vercel-scripts.com/...">`
+ * via next/script — only on the Vercel deployment, so the CF deploy
+ * doesn't ship a useless dead script to its users.
+ */
+const ON_VERCEL = process.env.VERCEL === '1'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -50,6 +61,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           {children}
           <Toaster position="top-right" richColors closeButton />
         </NextIntlClientProvider>
+        {ON_VERCEL && <Analytics />}
       </body>
     </html>
   )
