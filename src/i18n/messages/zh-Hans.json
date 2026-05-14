@@ -825,6 +825,7 @@
       "rectifyError": "处理失败：{message}",
       "retry": "重试",
       "editCorners": "调整 4 角",
+      "rotate": "旋转",
       "downloadCurrent": "下载当前面",
       "downloadHint": "单面 PNG · 完整导出（A4 / PDF / 复印件 / 水印）请用右侧导出区",
       "adjustHint": "首次预览按规格比例从原图中心裁切，请点「调整 4 角」对齐证件实际边缘"
@@ -844,8 +845,7 @@
     },
     "config": {
       "docSpecLabel": "证件类型",
-      "modeLabel": "输出模式",
-      "modeHint": "切换不要重新检测——只对已校正的结果重着色"
+      "modeLabel": "输出模式"
     },
     "docSpecs": {
       "cn-id-card": "中国身份证",
@@ -892,8 +892,7 @@
         "sparse": "疏",
         "normal": "标准",
         "dense": "密"
-      },
-      "mandatoryNote": "为防止证件照片被滥用，水印强制开启且最低 30% 不透明度（合规要求）"
+      }
     },
     "export": {
       "title": "导出",
@@ -904,17 +903,6 @@
       "successPdf": "PDF 已下载",
       "successPng": "PNG 已下载",
       "errorGeneric": "导出失败：{message}"
-    },
-    "history": {
-      "title": "最近会话",
-      "empty": "首次导出后会在这里显示最近的配置",
-      "hint": "最近 {max} 条配置 · 仅保存设置，不存储图像",
-      "restoreAria": "还原 {name} 的设置",
-      "deleteAria": "删除 {name} 的历史记录",
-      "toast": {
-        "restored": "已还原历史设置",
-        "deleted": "历史记录已删除"
-      }
     },
     "usage": {
       "heading": "扫描前 —— 使用须知",

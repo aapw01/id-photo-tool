@@ -825,6 +825,7 @@
       "rectifyError": "Failed: {message}",
       "retry": "Retry",
       "editCorners": "Adjust corners",
+      "rotate": "Rotate",
       "downloadCurrent": "Download this side",
       "downloadHint": "Single-side PNG · use the right-rail export for full A4 / PDF / photocopy / watermark",
       "adjustHint": "First preview is a center crop matched to the spec — click 'Adjust corners' to align the handles with the actual document edges."
@@ -844,8 +845,7 @@
     },
     "config": {
       "docSpecLabel": "Document type",
-      "modeLabel": "Output mode",
-      "modeHint": "Switching re-colors the rectified result; no need to redetect"
+      "modeLabel": "Output mode"
     },
     "docSpecs": {
       "cn-id-card": "PRC ID card",
@@ -892,8 +892,7 @@
         "sparse": "Sparse",
         "normal": "Normal",
         "dense": "Dense"
-      },
-      "mandatoryNote": "Watermark is mandatory and clamped to a 30 % minimum opacity (compliance requirement)"
+      }
     },
     "export": {
       "title": "Export",
@@ -904,17 +903,6 @@
       "successPdf": "PDF downloaded",
       "successPng": "PNG downloaded",
       "errorGeneric": "Export failed: {message}"
-    },
-    "history": {
-      "title": "Recent sessions",
-      "empty": "Your recent settings appear here after the first export",
-      "hint": "Last {max} configurations · settings only, no images stored",
-      "restoreAria": "Restore {name} settings",
-      "deleteAria": "Delete {name} history entry",
-      "toast": {
-        "restored": "Settings restored",
-        "deleted": "History entry removed"
-      }
     },
     "usage": {
       "heading": "Before you scan — usage notice",

@@ -9,23 +9,20 @@
  *
  *   - **Portrait at 300 DPI**. A4 (210 × 297 mm), Letter (215.9 ×
  *     279.4 mm) and A5 (148 × 210 mm).
- *   - **Fit-to-paper at the document's natural aspect ratio**: every
- *     card is scaled to the largest centered rectangle that fits
- *     `(inner_width × per_side_height)` while preserving its spec's
- *     width/height ratio. This keeps the sheet visually full instead
- *     of leaving 90 % of the A4 white — the original print-physical
- *     layout left an ID card occupying ~11 % of A4 which felt empty
- *     when the output is meant for online submission, not folder
- *     stapling.
- *   - **Stacked vertically** with a small mm gap between cards. The
- *     PRC ID-card workflow (front + back stacked) is the canonical
- *     use case; cut marks at each card's corners assist physical
- *     trimming.
+ *   - **Physical-size print scale**: each card is drawn at its
+ *     spec dimensions (`docSpec.widthMm × heightMm`), centered
+ *     horizontally and stacked vertically with an 8 mm gap. This
+ *     mimics what a photocopier produces when copying an ID card
+ *     onto A4 — the document keeps its real-world size; the rest of
+ *     the page stays white. (Users who want the document blown up to
+ *     fill the page should print "Fit to page" in their printer
+ *     driver — we don't bake that into the export bytes.)
  *   - **Watermark over the entire sheet**: after laying out the
  *     cards we draw the diagonal-tile watermark across the full page
  *     (not just the document rects), so empty margins are protected
  *     too and a user who screenshots only the white area can't get
  *     a clean copy.
+ *   - **Cut marks at each card's corners** assist physical trimming.
  *   - **White background** — explicitly painted so PDF/JPEG re-
  *     encoders don't surprise us with transparency artifacts.
  */
@@ -104,9 +101,6 @@ export async function packSheet(
   const pageHeight = Math.round(paper.heightMm * pxPerMm)
   const margin = Math.round(PAGE_MARGIN_MM * pxPerMm)
   const gap = Math.round(CARD_GAP_MM * pxPerMm)
-  const innerWidth = pageWidth - 2 * margin
-  const innerHeight = pageHeight - 2 * margin
-  const heightPerSide = (innerHeight - gap * (sides.length - 1)) / sides.length
 
   const canvas = document.createElement('canvas')
   canvas.width = pageWidth
@@ -119,19 +113,14 @@ export async function packSheet(
 
   let cursorY = margin
   for (const side of sides) {
-    // Fit each card into the per-side cell at its native aspect
-    // ratio. Width-bound first, then drop to height-bound if the
-    // resulting height exceeds the cell.
-    const aspect = side.spec.widthMm / side.spec.heightMm
-    let drawW = innerWidth
-    let drawH = drawW / aspect
-    if (drawH > heightPerSide) {
-      drawH = heightPerSide
-      drawW = drawH * aspect
-    }
-    drawW = Math.round(drawW)
-    drawH = Math.round(drawH)
+    // Each card draws at its physical mm dimensions so the printed
+    // result keeps the document's real-world size — same behavior as
+    // a photocopier copying an ID onto A4.
+    const drawW = Math.round(side.spec.widthMm * pxPerMm)
+    const drawH = Math.round(side.spec.heightMm * pxPerMm)
     const x = Math.round((pageWidth - drawW) / 2)
+    // Bail before drawing anything that would clip the bottom margin.
+    if (cursorY + drawH > pageHeight - margin) break
 
     const bitmap = await createImageBitmap(side.blob)
     try {

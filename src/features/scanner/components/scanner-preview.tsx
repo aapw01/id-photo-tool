@@ -21,7 +21,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Edit3, Info, Loader2, Download } from 'lucide-react'
+import { Edit3, Info, Loader2, Download, RotateCw } from 'lucide-react'
 
 import { useScannerStore, type ScannerSlot, type ScannerSide } from '../store'
 import { ScannerCornerEditor } from './scanner-corner-editor'
@@ -64,7 +64,9 @@ function EmptyPreview({ emptyLabel, emptyHint }: { emptyLabel: string; emptyHint
 function PreviewCard({ side, slot }: { side: ScannerSide; slot: ScannerSlot }) {
   const t = useTranslations('Scanner.preview')
   const rectifySide = useScannerStore((s) => s.rectifySide)
+  const rotateSide = useScannerStore((s) => s.rotateSide)
   const [editing, setEditing] = useState(false)
+  const [rotating, setRotating] = useState(false)
   // Prefer the mode-applied output ("rendered") when available;
   // fall back to the raw rectified blob while the post-pass runs.
   const displayBlob = slot.rendered?.blob ?? slot.rectified?.blob ?? null
@@ -81,14 +83,35 @@ function PreviewCard({ side, slot }: { side: ScannerSide; slot: ScannerSlot }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h3 className="text-sm font-semibold text-[var(--color-text)]">{label}</h3>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            disabled={rotating || slot.rectifyState === 'processing'}
+            onClick={async () => {
+              setRotating(true)
+              try {
+                await rotateSide(side)
+              } finally {
+                setRotating(false)
+              }
+            }}
+            aria-label={t('rotate')}
+            className="inline-flex items-center gap-1 rounded-[var(--radius-md)] px-2 py-1 text-xs whitespace-nowrap text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {rotating ? (
+              <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+            ) : (
+              <RotateCw className="size-3.5" aria-hidden="true" />
+            )}
+            {t('rotate')}
+          </button>
           {slot.rectifyState === 'ready' && (
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="inline-flex items-center gap-1 rounded-[var(--radius-md)] px-2 py-1 text-xs text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)]"
+              className="inline-flex items-center gap-1 rounded-[var(--radius-md)] px-2 py-1 text-xs whitespace-nowrap text-[var(--color-text-mute)] hover:bg-[var(--color-divider)] hover:text-[var(--color-text)]"
             >
               <Edit3 className="size-3.5" aria-hidden="true" />
               {t('editCorners')}
@@ -212,11 +235,13 @@ function DownloadRow({
   const baseName = slot.file.name.replace(/\.[^.]+$/, '')
   return (
     <div className="mt-1 flex items-center justify-between gap-2 rounded-[var(--radius-md)] bg-[var(--color-divider)]/40 px-3 py-2">
-      <span className="text-[11px] text-[var(--color-text-mute)]">{t('downloadHint')}</span>
+      <span className="min-w-0 flex-1 text-[11px] leading-snug text-[var(--color-text-mute)]">
+        {t('downloadHint')}
+      </span>
       <a
         href={rectifiedUrl}
         download={`${baseName}-scan-${side}.png`}
-        className="inline-flex items-center gap-1 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-2.5 py-1 text-xs font-medium text-white shadow-[var(--shadow-sm)] hover:bg-[var(--color-primary-dk)]"
+        className="inline-flex shrink-0 items-center gap-1 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-2.5 py-1 text-xs font-medium whitespace-nowrap text-white shadow-[var(--shadow-sm)] hover:bg-[var(--color-primary-dk)]"
       >
         <Download className="size-3.5" aria-hidden="true" />
         {t('downloadCurrent')}

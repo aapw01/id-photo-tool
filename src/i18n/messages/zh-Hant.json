@@ -825,6 +825,7 @@
       "rectifyError": "處理失敗：{message}",
       "retry": "重試",
       "editCorners": "調整 4 角",
+      "rotate": "旋轉",
       "downloadCurrent": "下載目前這面",
       "downloadHint": "單面 PNG · 完整匯出（A4 / PDF / 影印件 / 浮水印）請用右側匯出區",
       "adjustHint": "首次預覽按規格比例從原圖中心裁切，請點「調整 4 角」對齊證件實際邊緣"
@@ -844,8 +845,7 @@
     },
     "config": {
       "docSpecLabel": "證件類型",
-      "modeLabel": "輸出模式",
-      "modeHint": "切換不會重新偵測——只對已校正的結果重新著色"
+      "modeLabel": "輸出模式"
     },
     "docSpecs": {
       "cn-id-card": "中國身分證",
@@ -892,8 +892,7 @@
         "sparse": "疏",
         "normal": "標準",
         "dense": "密"
-      },
-      "mandatoryNote": "為防止證件相片被濫用，浮水印強制啟用且最低 30% 不透明度（合規要求）"
+      }
     },
     "export": {
       "title": "匯出",
@@ -904,17 +903,6 @@
       "successPdf": "PDF 已下載",
       "successPng": "PNG 已下載",
       "errorGeneric": "匯出失敗：{message}"
-    },
-    "history": {
-      "title": "最近會話",
-      "empty": "首次匯出後會在這裡顯示最近的設定",
-      "hint": "最近 {max} 條設定 · 僅保存設定，不儲存圖像",
-      "restoreAria": "還原 {name} 的設定",
-      "deleteAria": "刪除 {name} 的歷史記錄",
-      "toast": {
-        "restored": "已還原歷史設定",
-        "deleted": "歷史記錄已刪除"
-      }
     },
     "usage": {
       "heading": "掃描前 —— 使用須知",

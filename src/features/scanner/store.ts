@@ -29,6 +29,7 @@ import { loadDocumentImage } from './lib/load-document-image'
 import { rectifyDocument } from './lib/rectify'
 import { DEFAULT_DOC_SPEC_ID, getDocSpec } from './lib/doc-specs'
 import { renderOutputMode, type OutputMode } from './lib/render-modes'
+import { rotateImage } from './lib/rotate-image'
 import {
   clampWatermarkOpacity,
   DEFAULT_WATERMARK_OPACITY,
@@ -118,6 +119,13 @@ export interface ScannerState {
    * it overrides the auto-detection (used by the corner editor).
    */
   rectifySide: (side: ScannerSide, quad?: Quad) => Promise<void>
+  /**
+   * Rotate the source bitmap for `side` 90° clockwise, replacing
+   * both the slot's bitmap and its preview blob. Any rectified /
+   * rendered output is invalidated and a fresh rectify kicks off
+   * immediately so the user sees the rotated preview.
+   */
+  rotateSide: (side: ScannerSide) => Promise<void>
   /**
    * Re-apply the current `outputMode` to an already-rectified side.
    * Triggered internally after rectify completion and when the user
@@ -255,6 +263,40 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
     if (paperSize === get().paperSize) return
     set({ paperSize })
     // Paper size only affects export; no need to re-render per-side.
+  },
+
+  async rotateSide(side) {
+    const slot = get()[side]
+    if (!slot) return
+    let rotated: Awaited<ReturnType<typeof rotateImage>>
+    try {
+      rotated = await rotateImage(slot.bitmap, 90)
+    } catch {
+      // Canvas / toBlob failures are silently swallowed — the
+      // existing slot stays untouched so the user can retry.
+      return
+    }
+    // Close the previous bitmap before we drop our last reference.
+    slot.bitmap.close?.()
+    set((state) => {
+      const current = state[side]
+      if (!current) return state
+      return {
+        [side]: {
+          ...current,
+          bitmap: rotated.bitmap,
+          blob: rotated.blob,
+          // Rotation invalidates the warped quad coordinate space —
+          // wipe the rectified output and kick a fresh pass.
+          rectified: null,
+          rectifyState: 'idle',
+          rectifyError: null,
+          rendered: null,
+          renderState: 'idle',
+        },
+      } as Partial<ScannerState>
+    })
+    void get().rectifySide(side)
   },
 
   async rectifySide(side, overrideQuad) {

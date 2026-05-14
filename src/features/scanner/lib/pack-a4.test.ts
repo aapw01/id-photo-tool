@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { getDocSpec } from './doc-specs'
+import { getDocSpec, getOutputPixels } from './doc-specs'
 import {
   PACK_SHEET_CONSTANTS,
   PAPER_DIMENSIONS,
@@ -79,74 +79,42 @@ describe('packSheet — empty input', () => {
   })
 })
 
-describe('packSheet — fit-to-paper layout', () => {
-  // Helper: replicate the production scaling logic so we can assert
-  // that the resulting card always fits inside the per-side cell with
-  // the spec's aspect ratio preserved.
-  function expectedCardSize(specId: string, paperSize: PaperSize, sideCount: number) {
-    const spec = getDocSpec(specId)
-    const paper = PAPER_DIMENSIONS[paperSize]
-    const pxPerMm = 300 / 25.4
-    const pageWidth = Math.round(paper.widthMm * pxPerMm)
-    const pageHeight = Math.round(paper.heightMm * pxPerMm)
-    const margin = Math.round(PACK_SHEET_CONSTANTS.PAGE_MARGIN_MM * pxPerMm)
-    const gap = Math.round(PACK_SHEET_CONSTANTS.CARD_GAP_MM * pxPerMm)
-    const innerWidth = pageWidth - 2 * margin
-    const innerHeight = pageHeight - 2 * margin
-    const heightPerSide = (innerHeight - gap * (sideCount - 1)) / sideCount
-    const aspect = spec.widthMm / spec.heightMm
-    let drawW = innerWidth
-    let drawH = drawW / aspect
-    if (drawH > heightPerSide) {
-      drawH = heightPerSide
-      drawW = drawH * aspect
-    }
-    return { drawW: Math.round(drawW), drawH: Math.round(drawH), aspect }
-  }
-
-  it('scales a single ID card to fill more than 30 % of the A4 sheet area', async () => {
+describe('packSheet — physical-size layout', () => {
+  it('lays out a single card at its physical spec dimensions', async () => {
     const sheet = await packSheet([makeSide('cn-id-card')], 'a4')
     expect(sheet).not.toBeNull()
-    const { drawW, drawH, aspect } = expectedCardSize('cn-id-card', 'a4', 1)
-    // Drawn-width / drawn-height matches the spec aspect ratio — no
-    // squish, no stretch.
-    expect(drawW / drawH).toBeCloseTo(aspect, 2)
-    // The card now takes a meaningful slice of the sheet — far more
-    // than the old 11 % physical-size layout left.
+    const cardPx = getOutputPixels(getDocSpec('cn-id-card'))
     const sheetArea = sheet!.width * sheet!.height
-    const cardArea = drawW * drawH
-    expect(cardArea / sheetArea).toBeGreaterThan(0.3)
+    const cardArea = cardPx.width * cardPx.height
+    // ISO/IEC 7810 ID-1 on A4 should cover only a small fraction of
+    // the page — that's the photocopier-style behavior the user
+    // asked for.
+    expect(cardArea / sheetArea).toBeLessThan(0.2)
   })
 
-  it('fits two stacked sides inside the A4 inner area without overflow', async () => {
+  it('fits front + back stacked plus 2× margin within the A4 height', async () => {
     const sheet = await packSheet([makeSide('cn-id-card'), makeSide('cn-id-card')], 'a4')
     expect(sheet).not.toBeNull()
-    const { drawH } = expectedCardSize('cn-id-card', 'a4', 2)
+    const cardPx = getOutputPixels(getDocSpec('cn-id-card'))
     const pxPerMm = 300 / 25.4
     const marginPx = Math.round(PACK_SHEET_CONSTANTS.PAGE_MARGIN_MM * pxPerMm)
     const gapPx = Math.round(PACK_SHEET_CONSTANTS.CARD_GAP_MM * pxPerMm)
-    expect(2 * drawH + gapPx + 2 * marginPx).toBeLessThanOrEqual(sheet!.height)
+    expect(2 * cardPx.height + gapPx + 2 * marginPx).toBeLessThan(sheet!.height)
   })
 
-  it('keeps every output card the spec aspect ratio for A5 too', async () => {
-    const sheet = await packSheet([makeSide('passport-bio')], 'a5')
-    expect(sheet).not.toBeNull()
-    const { drawW, drawH, aspect } = expectedCardSize('passport-bio', 'a5', 1)
-    expect(drawW / drawH).toBeCloseTo(aspect, 2)
-  })
-
-  it('handles 4 sides on one A4 by scaling each to a smaller cell', async () => {
-    // Old behavior used absolute physical mm and would bail out on
-    // overflow. New behavior fits-to-cell so every side renders.
-    const sides = [
-      makeSide('cn-id-card'),
-      makeSide('cn-id-card'),
-      makeSide('cn-id-card'),
-      makeSide('cn-id-card'),
-    ]
+  it('bails out instead of clipping when a card overflows the page', async () => {
+    // Pack 4 A4-spec documents onto one A4 sheet — only the first
+    // fits, the rest must be silently dropped.
+    const sides = [makeSide('a4'), makeSide('a4'), makeSide('a4'), makeSide('a4')]
     const sheet = await packSheet(sides, 'a4')
     expect(sheet).not.toBeNull()
     expect(sheet!.paperSize).toBe('a4')
+  })
+
+  it('keeps physical sizing on A5 too', async () => {
+    const sheet = await packSheet([makeSide('passport-bio')], 'a5')
+    expect(sheet).not.toBeNull()
+    expect(sheet!.paperSize).toBe('a5')
   })
 })
 
