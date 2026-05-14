@@ -56,6 +56,7 @@
     "clsx": "^2.1.1",
     "flag-icons": "^7.5.0",
     "heic2any": "^0.0.4",
+    "idb-keyval": "^6.2.2",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.14.0",
     "next": "15.5.18",

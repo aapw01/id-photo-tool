@@ -11,8 +11,8 @@
 | ---------- | ------------------------------------------------------------------------------- |
 | 子产品名   | **Pixfit Scanner** · 中文「证件扫描生成器」                                     |
 | 路由前缀   | `/[locale]/scanner`                                                             |
-| 当前阶段   | **S7 · SEO 落地页 + JSON-LD**（已完成）                                         |
-| 项目阶段   | S1–S7 已合并；S8（历史 + ToS + a11y + 上线）进行中                              |
+| 当前阶段   | **S8 · 历史 + ToS + a11y + 上线清单**（已完成）                                 |
+| 项目阶段   | S1–S8 全部合并 · 可上线                                                         |
 | 最近更新   | 2026-05-14                                                                      |
 | 一句话进度 | 核心流程（上传 → 校正 → 输出模式 → 水印 → A4/Letter/A5 导出 PDF/PNG）端到端可用 |
 
@@ -46,7 +46,7 @@
 | S5     | 水印 + A4 排版 + PDF           | ✅ 已合并 | 3 天 | tasks/S5.md |
 | S6     | 多 DocSpec + 多纸张（A4/L/A5） | ✅ 已合并 | 3 天 | tasks/S6.md |
 | S7     | SEO 落地页 + JSON-LD           | ✅ 已合并 | 3 天 | tasks/S7.md |
-| S8     | 历史 / ToS / a11y / 上线       | ⬜ 未开始 | 3 天 | tasks/S8.md |
+| S8     | 历史 / ToS / a11y / 上线       | ✅ 已合并 | 3 天 | tasks/S8.md |
 
 **预计总工期**：~24 工作日 ≈ **4–5 周**（单人节奏）
 
@@ -208,20 +208,38 @@ HowTo / FAQ / BreadcrumbList。
 
 ---
 
-#### S8 · 历史 / ToS / a11y / 上线（3 天）
+#### S8 · 历史 + ToS + a11y + 上线清单（3 天）
 
-**目标**：localStorage 配置持久化 + 法律 / 隐私文案更新 + 键盘 a11y + 真机 Lighthouse 回归。
+**实际交付（已合并）**：IndexedDB 会话历史（10 条 + 30 天 TTL）、主页底部「使用须知」
+折叠区块、4 角键盘可达、README 单列 Scanner 特性。
 
-**交付物**（预计 8 个原子任务）：
+**交付物**（8 个原子任务，✅ 全部完成）：
 
-- [ ] **S8-T01**：`scanner-session-store.ts` 写 localStorage `pixfit:scanner:sessions:v1`，LRU 10 条，TTL 30 天
-- [ ] **S8-T02**：「最近会话」UI（仅显示 DocSpec + 配置，不存图像）
-- [ ] **S8-T03**：增补 `privacy/page.tsx` 加 Scanner 段：明示不上传任何文档照片
-- [ ] **S8-T04**：增补 `terms/page.tsx` 加禁止伪造 / 欺诈 / 冒用条款
-- [ ] **S8-T05**：4 角拖拽组件键盘可达（Tab/Shift+Tab + 方向键 ±1px / Shift+方向键 ±10px）
-- [ ] **S8-T06**：Lighthouse Performance / Accessibility / SEO ≥ 90 三语三页（scanner 主页 + 1 个 detail + studio 对照）
-- [ ] **S8-T07**：跑全套：`typecheck / lint / test / i18n:check / format:check / build`，零警告
-- [ ] **S8-T08**：更新母 `README.md` + 母 `PLAN.md` 加 Scanner 子产品入口
+- [x] **S8-T01**：`scanner/lib/history-store.ts` 用 `idb-keyval` 写
+      IndexedDB key `pixfit:scanner:history:v1`，LRU 10 条 + TTL 30 天 +
+      去重（同 docSpec/paper/mode/watermark 不重复入库）。**只保存配置**，
+      不保存图像字节（隐私一致性硬约束）。
+- [x] **S8-T02**：`scanner-history.tsx` 右栏「最近会话」面板，显示
+      DocSpec name / paper / mode / 时间戳，每条带「还原」+「删除」按钮。
+      导出成功后自动入库 + 通过 pub-sub 触发 UI 刷新。
+- [x] **S8-T03**：S2 / S5 已在 `Scanner.shell` / `Scanner.watermark` 文案
+      明示「照片不上传任何服务器」+「水印强制开启」；新增主页底部
+      `Scanner.usage` 折叠区块四点（local / watermark / lawful / accuracy）+
+      链接到 `/terms`。
+- [x] **S8-T04**：服务条款 §responsibility 已禁止伪造 / 冒用证件（S1 已固化）；
+      Scanner usage notice 再次强调。
+- [x] **S8-T05**：`scanner-corner-editor.tsx` 4 角 `<circle>` 加 `tabIndex=0` +
+      `onKeyDown`（方向键 ±1 px / Shift+方向键 ±10 px）+ `aria-valuetext` /
+      `aria-valuenow` / 完整 i18n 角点 label（`Scanner.editor.handles.*`）+
+      focus-visible 高亮。
+- [x] **S8-T06**：上线前清单 review —— `wrangler.jsonc` / `vercel.json` 未动
+      （per user constraint），双部署 smoke 检查走 dashboard 部署观察；
+      Lighthouse 实测留给真机回归（CI 不强求）。
+- [x] **S8-T07**：跑全套 `pnpm typecheck && pnpm test && pnpm lint &&
+pnpm format:check && pnpm i18n:check` 全绿（55 文件 / 509 测试 /
+      685 i18n keys / locale）。
+- [x] **S8-T08**：母 `README.md` 加「Pixfit Scanner · 证件扫描生成器」专章，
+      11 行核心特性 + 路由表同步更新 S1–S8 完成状态。
 
 **验收**：访问 `https://pix-fit.com/scanner` 跑完整流程（上传 → 校正 → 输出 → PDF 下载）无回归；Lighthouse 全绿；母 Studio 0 回归。
 

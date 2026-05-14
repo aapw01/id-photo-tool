@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ShieldAlert } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
@@ -21,6 +21,7 @@ interface ScannerPageProps {
 }
 
 const FAQ_ITEM_KEYS = ['free', 'privacy', 'watermark', 'official', 'accuracy'] as const
+const USAGE_KEYS = ['local', 'watermark', 'lawful', 'accuracy'] as const
 
 export async function generateMetadata({ params }: ScannerPageProps): Promise<Metadata> {
   const { locale } = await params
@@ -45,6 +46,7 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
   const tDocTypes = await getTranslations('Scanner.docTypes')
   const tSupported = await getTranslations('Scanner.supported')
   const tFaq = await getTranslations('Scanner.faq')
+  const tUsage = await getTranslations('Scanner.usage')
 
   const groups = groupDocSpecs()
 
@@ -210,6 +212,51 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
               </details>
             ))}
           </div>
+        </section>
+
+        {/* Mandatory usage notice — collapsed by default to keep the
+            page scannable, but always visible to the user before they
+            export their first scan. Re-asserts the local-only / watermark
+            / lawful-use posture from PRD §7 + the legal warning baked
+            into S5. */}
+        <section className="mx-auto max-w-4xl px-6 pb-20" aria-labelledby="scanner-usage-notice">
+          <details className="group rounded-[var(--radius-lg)] border border-[var(--color-warning-soft,var(--color-primary-soft))] bg-[var(--color-surface)] p-5 open:shadow-[var(--shadow-sm)]">
+            <summary className="flex cursor-pointer list-none items-start gap-3 marker:hidden">
+              <ShieldAlert
+                aria-hidden="true"
+                className="mt-0.5 size-5 shrink-0 text-[var(--color-primary-dk)]"
+              />
+              <div className="flex-1">
+                <h2
+                  id="scanner-usage-notice"
+                  className="text-base font-semibold text-[var(--color-text)]"
+                >
+                  {tUsage('heading')}
+                </h2>
+                <p className="mt-1 text-sm text-[var(--color-text-mute)]">{tUsage('summary')}</p>
+              </div>
+            </summary>
+            <ul className="mt-5 space-y-4 border-t border-[var(--color-border)] pt-5">
+              {USAGE_KEYS.map((key) => (
+                <li key={key}>
+                  <h3 className="text-sm font-medium text-[var(--color-text)]">
+                    {tUsage(`items.${key}.title` as Parameters<typeof tUsage>[0])}
+                  </h3>
+                  <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-mute)]">
+                    {tUsage(`items.${key}.body` as Parameters<typeof tUsage>[0])}
+                  </p>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-5 text-xs text-[var(--color-text-mute)]">
+              <Link
+                href={{ pathname: '/terms' }}
+                className="font-medium text-[var(--color-primary-dk)] underline-offset-2 hover:underline"
+              >
+                {tUsage('termsLink')}
+              </Link>
+            </p>
+          </details>
         </section>
       </main>
       <SiteFooter />

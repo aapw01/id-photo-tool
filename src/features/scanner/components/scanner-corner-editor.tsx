@@ -118,6 +118,48 @@ export function ScannerCornerEditor({
     onApply(reordered)
   }
 
+  /**
+   * Keyboard accessibility for the 4 corner handles. Each handle is
+   * focusable (`tabIndex=0`) so screen-reader users / keyboard-only
+   * users can step through TL → TR → BR → BL. Arrow keys nudge by 1
+   * source-bitmap pixel, Shift+arrow by 10 — same convention as the
+   * Studio crop frame.
+   */
+  const handleKeyDown = (key: Handle) => (e: React.KeyboardEvent<SVGCircleElement>) => {
+    const stepLarge = 10
+    const stepSmall = 1
+    const stride = e.shiftKey ? stepLarge : stepSmall
+    let dx = 0
+    let dy = 0
+    switch (e.key) {
+      case 'ArrowLeft':
+        dx = -stride
+        break
+      case 'ArrowRight':
+        dx = stride
+        break
+      case 'ArrowUp':
+        dy = -stride
+        break
+      case 'ArrowDown':
+        dy = stride
+        break
+      default:
+        return
+    }
+    e.preventDefault()
+    setQuad((q) => {
+      const p = q[key]
+      return {
+        ...q,
+        [key]: {
+          x: clamp(p.x + dx, 0, slot.bitmap.width),
+          y: clamp(p.y + dy, 0, slot.bitmap.height),
+        },
+      }
+    })
+  }
+
   const handleRadiusVB = computeHandleRadius(slot.bitmap)
 
   return (
@@ -167,9 +209,15 @@ export function ScannerCornerEditor({
                   e.currentTarget.setPointerCapture?.(e.pointerId)
                   setActiveHandle(key)
                 }}
-                className="cursor-grab active:cursor-grabbing"
+                onKeyDown={handleKeyDown(key)}
+                tabIndex={0}
+                className="cursor-grab focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)] active:cursor-grabbing"
                 role="slider"
-                aria-label={key}
+                aria-label={t(`handles.${key}` as Parameters<typeof t>[0])}
+                aria-valuetext={`${Math.round(p.x)}, ${Math.round(p.y)}`}
+                aria-valuemin={0}
+                aria-valuemax={Math.max(slot.bitmap.width, slot.bitmap.height)}
+                aria-valuenow={Math.round(p.x)}
               />
             )
           })}

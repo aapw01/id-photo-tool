@@ -29,6 +29,9 @@ importers:
       heic2any:
         specifier: ^0.0.4
         version: 0.0.4
+      idb-keyval:
+        specifier: ^6.2.2
+        version: 6.2.2
       jspdf:
         specifier: ^4.2.1
         version: 4.2.1
@@ -3941,6 +3944,9 @@ packages:
 
   icu-minify@4.11.1:
     resolution: {integrity: sha512-C0tsPVuvyNp+++qWJP+mty/KLLStjerOZqu3W1xWLJkChEDbDi9Taoj6blK7L/onxbuVzwgH6k9Sf+rOV6lOvw==}
+
+  idb-keyval@6.2.2:
+    resolution: {integrity: sha512-yjD9nARJ/jb1g+CvD0tlhUHOrJ9Sy0P8T9MF3YaLlHnSRpwPfpTX0XIvpmw3gAJUmEu3FiICLBDPXVwyEvrleg==}
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -9863,6 +9869,8 @@ snapshots:
   icu-minify@4.11.1:
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.7
+
+  idb-keyval@6.2.2: {}
 
   ignore@5.3.2: {}
 

@@ -19,6 +19,7 @@ import { Download, FileDown, FilePenLine, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { groupDocSpecs } from '../lib/doc-specs'
+import { addEntry as addHistoryEntry } from '../lib/history-store'
 import type { PaperSize } from '../lib/pack-a4'
 import type { OutputMode } from '../lib/render-modes'
 import {
@@ -27,6 +28,7 @@ import {
   type WatermarkDensity,
 } from '../lib/watermark'
 import { useScannerStore } from '../store'
+import { ScannerHistory } from './scanner-history'
 
 const MODES: readonly OutputMode[] = ['scan', 'copy', 'enhance'] as const
 const DENSITIES: readonly WatermarkDensity[] = ['sparse', 'normal', 'dense'] as const
@@ -34,6 +36,7 @@ const PAPER_SIZES: readonly PaperSize[] = ['a4', 'letter', 'a5'] as const
 
 export function ScannerConfig() {
   const t = useTranslations('Scanner.config')
+  const historyToken = useHistoryRefreshToken()
 
   return (
     <div className="flex flex-col gap-5 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
@@ -50,9 +53,33 @@ export function ScannerConfig() {
       <DocSpecPicker />
       <OutputModePicker />
       <WatermarkConfig />
-      <ExportRow />
+      <ExportRow onExportComplete={notifyHistoryRefresh} />
+      <ScannerHistory reloadToken={historyToken} />
     </div>
   )
+}
+
+/**
+ * Tiny pub-sub used to nudge the `ScannerHistory` panel into
+ * re-fetching after a successful export. A counter is enough — the
+ * history panel just needs *something* to change to retrigger the
+ * effect.
+ */
+let HISTORY_REFRESH_SIGNAL = 0
+const historyRefreshSubscribers = new Set<(token: number) => void>()
+function notifyHistoryRefresh(): void {
+  HISTORY_REFRESH_SIGNAL += 1
+  for (const sub of historyRefreshSubscribers) sub(HISTORY_REFRESH_SIGNAL)
+}
+function useHistoryRefreshToken(): number {
+  const [token, setToken] = useState(HISTORY_REFRESH_SIGNAL)
+  useEffect(() => {
+    historyRefreshSubscribers.add(setToken)
+    return () => {
+      historyRefreshSubscribers.delete(setToken)
+    }
+  }, [])
+  return token
 }
 
 function DocSpecPicker() {
@@ -231,13 +258,20 @@ function WatermarkConfig() {
   )
 }
 
-function ExportRow() {
+interface ExportRowProps {
+  onExportComplete?: () => void
+}
+
+function ExportRow({ onExportComplete }: ExportRowProps) {
   const t = useTranslations('Scanner.export')
   const tPaper = useTranslations('Scanner.paperSizes')
   const front = useScannerStore((s) => s.front)
   const back = useScannerStore((s) => s.back)
   const hasBack = useScannerStore((s) => s.hasBack)
+  const docSpecId = useScannerStore((s) => s.docSpecId)
   const paperSize = useScannerStore((s) => s.paperSize)
+  const outputMode = useScannerStore((s) => s.outputMode)
+  const watermark = useScannerStore((s) => s.watermark)
   const setPaperSize = useScannerStore((s) => s.setPaperSize)
   const exportPdfBlob = useScannerStore((s) => s.exportPdfBlob)
   const exportA4PngBlob = useScannerStore((s) => s.exportA4PngBlob)
@@ -266,6 +300,11 @@ function ExportRow() {
       // the download in flaky environments.
       setTimeout(() => URL.revokeObjectURL(url), 1000)
       toast.success(t(kind === 'pdf' ? 'successPdf' : 'successPng'))
+      // Persist the *config* to history (not the image bytes). Failure
+      // to write back is intentionally silent so the user still keeps
+      // the file they just downloaded.
+      await addHistoryEntry({ docSpecId, paperSize, outputMode, watermark })
+      onExportComplete?.()
     } catch (err) {
       toast.error(t('errorGeneric', { message: err instanceof Error ? err.message : '' }))
     } finally {

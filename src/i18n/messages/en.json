@@ -836,10 +836,16 @@
     },
     "editor": {
       "title": "Drag the four handles to the document edges",
-      "hint": "Magnify the corners with pinch or scroll to land them precisely",
+      "hint": "Magnify the corners with pinch or scroll to land them precisely. Keyboard: Tab between handles, arrow keys nudge ±1 px, Shift+arrow ±10 px.",
       "apply": "Apply",
       "cancel": "Cancel",
-      "reset": "Reset to auto-detect"
+      "reset": "Reset to auto-detect",
+      "handles": {
+        "topLeft": "Top-left corner",
+        "topRight": "Top-right corner",
+        "bottomRight": "Bottom-right corner",
+        "bottomLeft": "Bottom-left corner"
+      }
     },
     "config": {
       "docSpecLabel": "Document type",
@@ -903,6 +909,40 @@
       "successPdf": "PDF downloaded",
       "successPng": "PNG downloaded",
       "errorGeneric": "Export failed: {message}"
+    },
+    "history": {
+      "title": "Recent sessions",
+      "empty": "Your recent settings appear here after the first export",
+      "hint": "Last {max} configurations · settings only, no images stored",
+      "restoreAria": "Restore {name} settings",
+      "deleteAria": "Delete {name} history entry",
+      "toast": {
+        "restored": "Settings restored",
+        "deleted": "History entry removed"
+      }
+    },
+    "usage": {
+      "heading": "Before you scan — usage notice",
+      "summary": "Read this before you upload your ID. Your photos never leave the browser — this is what we do, what we don't, and what you agree to by using the scanner.",
+      "items": {
+        "local": {
+          "title": "Everything stays on your device",
+          "body": "Perspective correction, photocopy / scan / enhance rendering, watermark, and PDF assembly all run locally in your browser. We do not host, upload, or analyse your document photos."
+        },
+        "watermark": {
+          "title": "Watermark is mandatory",
+          "body": "Every exported PDF / PNG carries an anti-misuse watermark. You customise the text (e.g. \"For XYZ Co. onboarding only\") and opacity (minimum 30 %), but the watermark itself can not be disabled. This is a compliance requirement to deter ID-card impersonation."
+        },
+        "lawful": {
+          "title": "Lawful use only",
+          "body": "Use Pixfit Scanner only with documents you have the right to scan and only for purposes permitted by law in your jurisdiction. Forging, altering, or impersonating identity documents is prohibited."
+        },
+        "accuracy": {
+          "title": "Submission is your responsibility",
+          "body": "We do our best to match flatbed-scanner output, but official portals may have stricter spec on DPI, color, file size, or formatting. Verify the destination portal's requirements before submitting and re-export if needed."
+        }
+      },
+      "termsLink": "Full terms of service"
     },
     "seoIntro": {
       "heading": "Why an ID document scanner",
