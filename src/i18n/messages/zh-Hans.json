@@ -793,10 +793,6 @@
     "subtitle": "上传手机拍的彩色身份证、护照、驾驶证等证件照片，一键生成符合官网要求的 PDF 扫描件或黑白复印件 —— 全程在浏览器内完成，照片不上传任何服务器。",
     "metaDescription": "免费的浏览器证件扫描件生成器：上传身份证 / 护照 / 驾照照片，自动透视校正，输出带防滥用水印的 A4 PDF。支持扫描件、复印件、照片增强三种模式，完全离线处理。",
     "shell": {
-      "uploadFrontTitle": "证件正面",
-      "uploadFrontHint": "支持 JPG / PNG / HEIC · 单张 ≤ 20 MB",
-      "uploadBackTitle": "证件背面",
-      "uploadBackHint": "如不需要可在右侧关闭",
       "previewTitle": "实时预览",
       "previewEmpty": "上传后将在这里显示透视校正、水印与排版的实时预览",
       "configTitle": "配置",
@@ -804,6 +800,27 @@
       "comingSoonBadge": "即将上线",
       "comingSoonHeading": "证件扫描生成器即将上线",
       "comingSoonBody": "我们正在打磨透视校正、扫描件 / 复印件渲染、强制水印与 A4 排版能力。骨架页已就位，功能将随后续迭代陆续推出。"
+    },
+    "upload": {
+      "frontTitle": "证件正面",
+      "frontHint": "支持 JPG / PNG / HEIC · 单张 ≤ 20 MB",
+      "backTitle": "证件背面",
+      "backHint": "如不需要可在右侧关闭",
+      "browse": "选择文件",
+      "dragHint": "拖到这里或点击选择",
+      "remove": "移除",
+      "replace": "替换",
+      "uploading": "正在处理…",
+      "heicBadge": "HEIC 已转换",
+      "previewAlt": "已上传的证件预览",
+      "hasBackToggle": "上传证件背面",
+      "errors": {
+        "too_large": "{name} 超过 20 MB 上限",
+        "unsupported_type": "{name} 不是支持的图片格式（仅支持 JPG / PNG / WebP / HEIC）",
+        "heic_convert_failed": "HEIC 转换失败，请改用 JPG / PNG 照片重试",
+        "decode_failed": "图片解码失败：{name}",
+        "unknown": "上传失败，请重试"
+      }
     },
     "seoIntro": {
       "heading": "为什么需要证件扫描生成器",

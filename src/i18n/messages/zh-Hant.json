@@ -793,10 +793,6 @@
     "subtitle": "上傳手機拍攝的身分證、護照、駕駛執照等彩色照片，一鍵產生符合官方要求的 PDF 掃描件或黑白影印件 —— 全程在瀏覽器中完成，相片不上傳任何伺服器。",
     "metaDescription": "免費的瀏覽器證件掃描產生器：上傳身分證 / 護照 / 駕照照片，自動透視校正，輸出附防濫用浮水印的 A4 PDF。支援掃描件、影印件、相片增強三種模式，完全離線處理。",
     "shell": {
-      "uploadFrontTitle": "證件正面",
-      "uploadFrontHint": "支援 JPG / PNG / HEIC · 單張 ≤ 20 MB",
-      "uploadBackTitle": "證件背面",
-      "uploadBackHint": "若不需要可於右側關閉",
       "previewTitle": "即時預覽",
       "previewEmpty": "上傳後將在這裡顯示透視校正、浮水印與排版的即時預覽",
       "configTitle": "設定",
@@ -804,6 +800,27 @@
       "comingSoonBadge": "即將上線",
       "comingSoonHeading": "證件掃描產生器即將上線",
       "comingSoonBody": "我們正在打磨透視校正、掃描件 / 影印件渲染、強制浮水印與 A4 排版能力。骨架頁已就位，功能將隨後續迭代陸續推出。"
+    },
+    "upload": {
+      "frontTitle": "證件正面",
+      "frontHint": "支援 JPG / PNG / HEIC · 單張 ≤ 20 MB",
+      "backTitle": "證件背面",
+      "backHint": "若不需要可於右側關閉",
+      "browse": "選擇檔案",
+      "dragHint": "拖到這裡或點擊選擇",
+      "remove": "移除",
+      "replace": "替換",
+      "uploading": "處理中…",
+      "heicBadge": "HEIC 已轉換",
+      "previewAlt": "已上傳的證件預覽",
+      "hasBackToggle": "上傳證件背面",
+      "errors": {
+        "too_large": "{name} 超過 20 MB 上限",
+        "unsupported_type": "{name} 不是支援的圖片格式（僅支援 JPG / PNG / WebP / HEIC）",
+        "heic_convert_failed": "HEIC 轉換失敗，請改用 JPG / PNG 相片重試",
+        "decode_failed": "圖片解碼失敗：{name}",
+        "unknown": "上傳失敗，請重試"
+      }
     },
     "seoIntro": {
       "heading": "為何需要證件掃描產生器",

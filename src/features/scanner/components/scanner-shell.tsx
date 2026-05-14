@@ -1,34 +1,33 @@
 'use client'
 
 /**
- * Scanner workspace skeleton (S1).
+ * Scanner workspace shell.
  *
- * This is a *static* placeholder UI: it sketches the three-pane layout
- * the live scanner will live in (upload zones · live preview · config
- * panel), shows a "coming soon" notice, and renders zero business
- * logic. The actual scan / copy / watermark / PDF pipeline arrives in
- * S2–S8.
+ * The right-rail "Coming soon" banner + the three-pane layout (uploads ·
+ * preview · config) are stable as of S1. S2 swaps the upload column
+ * placeholders for the real `ScannerUploads` (with drag/drop, HEIC
+ * conversion, and EXIF-correct decode). S3+ will replace the preview
+ * column placeholder with the live perspective-corrected preview, and
+ * the config column placeholder with real spec / mode / watermark
+ * controls.
  *
- * Why ship the shell now:
- *   - Locks the routing + i18n + nav surface area (the parts touching
- *     other parts of the codebase) so S2+ can be pure feature work
- *     inside this folder.
- *   - Gives crawlers a SSR-ready landing page with description copy
- *     for SEO from day one (the `/scanner` and `/scanner/[docType]`
- *     URLs need to exist before they can be indexed).
- *   - Lets us validate the lazy-mount + Vercel CPU profile end-to-end
- *     before any heavy code (OpenCV.js, jsPDF) gets pulled in.
+ * Why a "shell" component:
+ *   - Keeps the page route thin and SSR-friendly (page is a server
+ *     component; this shell mounts via `dynamic({ ssr: false })`).
+ *   - Crawlers see the SEO intro + title + h1 on first byte; the
+ *     interactive editor mounts after hydration.
  */
 
 import { useTranslations } from 'next-intl'
-import { ScanLine, ImageUp, FilePenLine, ClockFading } from 'lucide-react'
+import { ClockFading, FilePenLine, ScanLine } from 'lucide-react'
+
+import { ScannerUploads } from './scanner-uploads'
 
 export function ScannerShell() {
   const t = useTranslations('Scanner.shell')
 
   return (
     <div className="space-y-6">
-      {/* Coming-soon notice — replaced by the real workspace in S2+ */}
       <div
         role="status"
         className="flex items-start gap-3 rounded-[var(--radius-lg)] border border-[var(--color-primary-soft)] bg-[var(--color-primary-soft)]/40 p-4"
@@ -50,23 +49,11 @@ export function ScannerShell() {
         </div>
       </div>
 
-      {/* Three-pane skeleton: uploads · preview · config */}
       <div className="grid gap-4 lg:grid-cols-[1fr_1.4fr_1fr]">
-        {/* Uploads column */}
-        <div className="flex flex-col gap-4">
-          <UploadZonePlaceholder
-            label={t('uploadFrontTitle')}
-            hint={t('uploadFrontHint')}
-            icon={<ImageUp className="size-7" aria-hidden="true" />}
-          />
-          <UploadZonePlaceholder
-            label={t('uploadBackTitle')}
-            hint={t('uploadBackHint')}
-            icon={<ImageUp className="size-7" aria-hidden="true" />}
-          />
-        </div>
+        {/* Uploads column — drag/drop, HEIC conversion, EXIF orientation */}
+        <ScannerUploads />
 
-        {/* Preview column */}
+        {/* Preview column (placeholder until S3) */}
         <div
           aria-label={t('previewTitle')}
           className="flex aspect-[1/1.414] min-h-[420px] flex-col items-center justify-center gap-3 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-6 text-center"
@@ -81,7 +68,7 @@ export function ScannerShell() {
           <p className="max-w-xs text-xs text-[var(--color-text-mute)]/80">{t('previewEmpty')}</p>
         </div>
 
-        {/* Config column */}
+        {/* Config column (placeholder until S4-S5) */}
         <div
           aria-label={t('configTitle')}
           className="flex flex-col gap-3 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5"
@@ -94,30 +81,11 @@ export function ScannerShell() {
             <h3 className="text-sm font-semibold text-[var(--color-text)]">{t('configTitle')}</h3>
           </div>
           <p className="text-xs text-[var(--color-text-mute)]">{t('configHint')}</p>
-          {/* Disabled placeholder rows — make the eventual UI shape obvious */}
           <ConfigRowPlaceholder />
           <ConfigRowPlaceholder />
           <ConfigRowPlaceholder />
         </div>
       </div>
-    </div>
-  )
-}
-
-function UploadZonePlaceholder({
-  label,
-  hint,
-  icon,
-}: {
-  label: string
-  hint: string
-  icon: React.ReactNode
-}) {
-  return (
-    <div className="flex aspect-[1.586/1] flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface)] p-4 text-center">
-      <div className="text-[var(--color-text-mute)]/70">{icon}</div>
-      <div className="text-sm font-medium text-[var(--color-text-mute)]">{label}</div>
-      <div className="text-[11px] text-[var(--color-text-mute)]/70">{hint}</div>
     </div>
   )
 }
