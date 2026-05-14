@@ -836,7 +836,7 @@
     },
     "editor": {
       "title": "Drag the four handles to the document edges",
-      "hint": "Magnify the corners with pinch or scroll to land them precisely. Keyboard: Tab between handles, arrow keys nudge ±1 px, Shift+arrow ±10 px.",
+      "hint": "Drag the four handles to the actual document corners; pinch or scroll to zoom in for finer control.",
       "apply": "Apply",
       "cancel": "Cancel",
       "reset": "Reset corners",
@@ -974,7 +974,7 @@
         },
         "accuracy": {
           "q": "How accurate is the perspective rectification?",
-          "a": "Drag the four corner handles to the actual document edges in the photo, and Pixfit rebuilds the flat scanner-style rectangle with a pure-JS bilinear perspective transform — the output is visually comparable to a flatbed scanner. Keyboard arrows nudge ±1 px, Shift+arrow ±10 px for precise control."
+          "a": "Drag the four corner handles to the actual document edges in the photo, and Pixfit rebuilds the flat scanner-style rectangle with a pure-JS bilinear perspective transform — the output is visually comparable to a flatbed scanner."
         }
       }
     },
@@ -1005,7 +1005,7 @@
           },
           "detect": {
             "name": "Drag the four corners to the document edges",
-            "text": "Drag the four circular handles overlaid on {name} to the actual document corners and Pixfit warps the tilted photo into a flat scanner-style rectangle. Keyboard arrows nudge ±1 px, Shift+arrow ±10 px."
+            "text": "Drag the four circular handles overlaid on {name} to the actual document corners and Pixfit warps the tilted photo into a flat scanner-style rectangle."
           },
           "configure": {
             "name": "Pick output mode + watermark",
