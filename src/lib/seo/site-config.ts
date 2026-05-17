@@ -20,7 +20,21 @@ export const SITE_URL = readSiteUrl()
 export const SITE_NAME = 'Pixfit'
 export const SITE_NAME_FULL = 'Pixfit · 像配'
 
-export const SUPPORTED_LOCALES: readonly Locale[] = ['zh-Hans', 'zh-Hant', 'en'] as const
+export const SUPPORTED_LOCALES: readonly Locale[] = [
+  'zh-Hans',
+  'zh-Hant',
+  'en',
+  'ja',
+  'ko',
+  'es',
+  'pt-BR',
+  'fr',
+  'de',
+  'ru',
+  'it',
+  'vi',
+  'ar',
+] as const
 export const DEFAULT_LOCALE: Locale = 'zh-Hans'
 
 /**
@@ -39,4 +53,14 @@ export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
   'zh-Hans': 'zh-Hans',
   'zh-Hant': 'zh-Hant',
   en: 'en',
+  ja: 'ja',
+  ko: 'ko',
+  es: 'es',
+  'pt-BR': 'pt-BR',
+  fr: 'fr',
+  de: 'de',
+  ru: 'ru',
+  it: 'it',
+  vi: 'vi',
+  ar: 'ar',
 }

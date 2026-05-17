@@ -18,7 +18,12 @@ import { article as docGuideZhHant } from './12-doc-scan-pdf-guide/zh-Hant'
 
 import type { Locale } from '@/i18n/routing'
 
-type LocaleBodies = Record<Locale, ArticleBody>
+// Long-form blog bodies are hand-authored — we only have zh-Hans /
+// zh-Hant / en. For every other supported locale we fall back to the
+// English body so the route still resolves and the SSG build does not
+// crash. The locale-prefixed URL stays canonical; the visible copy is
+// English until a native-speaker contributor translates the article.
+type LocaleBodies = Partial<Record<Locale, ArticleBody>>
 
 const BODIES: Record<string, LocaleBodies> = {
   'us-visa-photo-2026': {
@@ -34,5 +39,7 @@ const BODIES: Record<string, LocaleBodies> = {
 }
 
 export function getArticleBody(slug: string, locale: Locale): ArticleBody | null {
-  return BODIES[slug]?.[locale] ?? null
+  const bodies = BODIES[slug]
+  if (!bodies) return null
+  return bodies[locale] ?? bodies.en ?? null
 }

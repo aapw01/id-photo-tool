@@ -6,7 +6,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { fontMono, fontSans } from '@/lib/fonts'
 import { JsonLd } from '@/components/jsonld'
-import { routing } from '@/i18n/routing'
+import { isRtlLocale, routing } from '@/i18n/routing'
 import type { Locale } from '@/i18n/routing'
 import { Toaster } from '@/components/ui/sonner'
 import { organizationSchema } from '@/lib/seo/jsonld'
@@ -79,8 +79,14 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
     description: tHome('metaDescription'),
   })
 
+  const dir = isRtlLocale(locale as Locale) ? 'rtl' : 'ltr'
+
   return (
-    <html lang={locale} className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}>
+    <html
+      lang={locale}
+      dir={dir}
+      className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
           {children}
