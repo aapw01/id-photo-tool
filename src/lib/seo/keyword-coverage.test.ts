@@ -13,9 +13,20 @@
 
 import { describe, expect, it } from 'vitest'
 
+import arMessages from '@/i18n/messages/ar.json'
+import deMessages from '@/i18n/messages/de.json'
 import enMessages from '@/i18n/messages/en.json'
+import esMessages from '@/i18n/messages/es.json'
+import frMessages from '@/i18n/messages/fr.json'
+import itMessages from '@/i18n/messages/it.json'
+import jaMessages from '@/i18n/messages/ja.json'
+import koMessages from '@/i18n/messages/ko.json'
+import ptBrMessages from '@/i18n/messages/pt-BR.json'
+import ruMessages from '@/i18n/messages/ru.json'
+import viMessages from '@/i18n/messages/vi.json'
 import zhHansMessages from '@/i18n/messages/zh-Hans.json'
 import zhHantMessages from '@/i18n/messages/zh-Hant.json'
+import { SUPPORTED_LOCALES } from '@/lib/seo/site-config'
 
 interface LocaleBundle {
   Home: {
@@ -248,6 +259,59 @@ describe('Boost pages carry the privacy / on-device cluster', () => {
         }
       },
     )
+  }
+})
+
+// Weak guard: every supported locale (including the 10 AI-translated
+// drafts) must at least surface a metaKeywords array on the boost
+// pages and keep metaDescription under SERP truncation. Translation
+// quality is not asserted — only structural / SEO-cap presence.
+const ALL_LOCALE_BUNDLES: Record<(typeof SUPPORTED_LOCALES)[number], LocaleBundle> = {
+  'zh-Hans': zhHansMessages as unknown as LocaleBundle,
+  'zh-Hant': zhHantMessages as unknown as LocaleBundle,
+  en: enMessages as unknown as LocaleBundle,
+  ja: jaMessages as unknown as LocaleBundle,
+  ko: koMessages as unknown as LocaleBundle,
+  es: esMessages as unknown as LocaleBundle,
+  'pt-BR': ptBrMessages as unknown as LocaleBundle,
+  fr: frMessages as unknown as LocaleBundle,
+  de: deMessages as unknown as LocaleBundle,
+  ru: ruMessages as unknown as LocaleBundle,
+  it: itMessages as unknown as LocaleBundle,
+  vi: viMessages as unknown as LocaleBundle,
+  ar: arMessages as unknown as LocaleBundle,
+}
+
+describe('All locales carry a metaKeywords array on boost pages', () => {
+  // Skips the en pre-existing Legal.privacy.metaDescription = 166 char
+  // outlier, which lives outside the boost-page surface and was not
+  // touched by the 10-locale expansion.
+  const cap = 160
+  for (const locale of SUPPORTED_LOCALES) {
+    const messages = ALL_LOCALE_BUNDLES[locale]
+    it(`${locale} boost pages have non-empty metaKeywords arrays`, () => {
+      expect(Array.isArray(messages.Home.metaKeywords)).toBe(true)
+      expect(messages.Home.metaKeywords.length).toBeGreaterThan(0)
+      expect(Array.isArray(messages.Studio.metaKeywords)).toBe(true)
+      expect(messages.Studio.metaKeywords.length).toBeGreaterThan(0)
+      expect(Array.isArray(messages.Scanner.metaKeywords)).toBe(true)
+      expect(messages.Scanner.metaKeywords.length).toBeGreaterThan(0)
+      expect(Array.isArray(messages.Sizes.metaKeywords)).toBe(true)
+      expect(messages.Sizes.metaKeywords.length).toBeGreaterThan(0)
+      expect(Array.isArray(messages.Paper.list.metaKeywords)).toBe(true)
+      expect(messages.Paper.list.metaKeywords.length).toBeGreaterThan(0)
+      expect(Array.isArray(messages.Templates.metaKeywords)).toBe(true)
+      expect(messages.Templates.metaKeywords.length).toBeGreaterThan(0)
+    })
+
+    it(`${locale} boost-page metaDescription stays <= 160 characters`, () => {
+      expect(messages.Home.metaDescription.length).toBeLessThanOrEqual(cap)
+      expect(messages.Studio.metaDescription.length).toBeLessThanOrEqual(cap)
+      expect(messages.Scanner.metaDescription.length).toBeLessThanOrEqual(cap)
+      expect(messages.Sizes.metaDescription.length).toBeLessThanOrEqual(cap)
+      expect(messages.Paper.list.metaDescription.length).toBeLessThanOrEqual(cap)
+      expect(messages.Templates.metaDescription.length).toBeLessThanOrEqual(cap)
+    })
   }
 })
 

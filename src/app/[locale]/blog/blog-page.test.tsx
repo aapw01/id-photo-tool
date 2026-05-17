@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { BLOG_POSTS } from '@/content/blog'
+import { SUPPORTED_LOCALES } from '@/lib/seo/site-config'
 
 const FIXTURE_INDEX: Record<string, string> = {
   'Blog.index.metaTitle': 'Pixfit blog · ID photo and document scan guides 2026 | Pixfit',
@@ -100,7 +101,7 @@ describe('BlogArticlePage', () => {
   it('generateStaticParams emits one entry per (locale, article) pair', async () => {
     const { generateStaticParams } = await import('./[slug]/page')
     const params = generateStaticParams()
-    expect(params).toHaveLength(BLOG_POSTS.length * 3)
+    expect(params).toHaveLength(BLOG_POSTS.length * SUPPORTED_LOCALES.length)
   })
 
   for (const post of BLOG_POSTS) {

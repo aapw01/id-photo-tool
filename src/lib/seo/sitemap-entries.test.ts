@@ -61,7 +61,7 @@ describe('buildSitemapEntries', () => {
     expect(compressTargetRoutes().every((r) => r.priority === 0.8)).toBe(true)
   })
 
-  it('emits exactly 36 scanner DocType URLs + 84 size detail URLs', () => {
+  it('emits one scanner DocType URL × locale + one size detail URL × locale', () => {
     const entries = buildSitemapEntries(fixed)
     const scannerDetailEntries = entries.filter(
       (e) => /\/scanner\/[^/]+$/.test(e.url) && !e.url.endsWith('/scanner'),
@@ -69,13 +69,11 @@ describe('buildSitemapEntries', () => {
     const sizeDetailEntries = entries.filter(
       (e) => /\/sizes\/[^/]+$/.test(e.url) && !e.url.endsWith('/sizes'),
     )
-    // 12 doc specs × 3 locales = 36, 28 photo specs × 3 locales = 84.
     // Pin against data-derived expectations so this test fails the
-    // day the catalog changes instead of silently drifting.
+    // day the catalog or locale list changes instead of silently
+    // drifting.
     expect(scannerDetailEntries).toHaveLength(SCANNER_DOC_SPECS.length * LOCALE_COUNT)
     expect(sizeDetailEntries).toHaveLength(BUILTIN_PHOTO_SPECS.length * LOCALE_COUNT)
-    expect(scannerDetailEntries.length).toBe(36)
-    expect(sizeDetailEntries.length).toBe(84)
   })
 
   it('emits the per-spec detail URL into the sitemap', () => {
@@ -86,14 +84,14 @@ describe('buildSitemapEntries', () => {
     expect(urls).toContain(`${SITE_URL}/zh-Hant/sizes/schengen`)
   })
 
-  it('populates hreflang alternates covering all three locales + x-default on every entry', () => {
+  it('populates hreflang alternates covering every supported locale + x-default on every entry', () => {
     const entries = buildSitemapEntries(fixed)
     for (const entry of entries) {
       const langs = entry.alternates?.languages as Record<string, string> | undefined
       expect(langs).toBeDefined()
-      expect(langs?.['zh-Hans']).toMatch(`${SITE_URL}/zh-Hans`)
-      expect(langs?.['zh-Hant']).toMatch(`${SITE_URL}/zh-Hant`)
-      expect(langs?.['en']).toMatch(`${SITE_URL}/en`)
+      for (const locale of SUPPORTED_LOCALES) {
+        expect(langs?.[locale]).toMatch(`${SITE_URL}/${locale}`)
+      }
       expect(langs?.['x-default']).toMatch(`${SITE_URL}/en`)
     }
   })
@@ -182,9 +180,9 @@ describe('buildSitemapEntries', () => {
     for (const entry of scannerEntries) {
       const langs = entry.alternates?.languages as Record<string, string> | undefined
       expect(langs).toBeDefined()
-      expect(langs?.['zh-Hans']).toBeDefined()
-      expect(langs?.['zh-Hant']).toBeDefined()
-      expect(langs?.['en']).toBeDefined()
+      for (const locale of SUPPORTED_LOCALES) {
+        expect(langs?.[locale]).toBeDefined()
+      }
       expect(langs?.['x-default']).toBeDefined()
     }
   })

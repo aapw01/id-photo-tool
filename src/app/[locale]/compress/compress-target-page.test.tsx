@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { COMPRESS_TARGETS } from '@/features/compress/targets'
+import { SUPPORTED_LOCALES } from '@/lib/seo/site-config'
 
 vi.mock('next-intl', () => ({
   hasLocale: (locales: readonly string[], locale: string) => locales.includes(locale),
@@ -93,8 +94,8 @@ describe('CompressTargetPage', () => {
   it('generateStaticParams emits one entry per (locale, target) pair', async () => {
     const { generateStaticParams } = await import('./[target]/page')
     const params = generateStaticParams()
-    // 3 locales × 5 targets = 15 entries.
-    expect(params).toHaveLength(15)
+    // SUPPORTED_LOCALES × COMPRESS_TARGETS entries.
+    expect(params).toHaveLength(SUPPORTED_LOCALES.length * COMPRESS_TARGETS.length)
     const slugs = new Set(params.map((p) => p.target))
     for (const target of COMPRESS_TARGETS) {
       expect(slugs.has(target.slug)).toBe(true)

@@ -44,8 +44,8 @@ describe('buildAlternateLanguages', () => {
     expect(map['x-default']).toBe(`${SITE_URL}/en/studio`)
   })
 
-  it('keys count matches 3 locales + x-default', () => {
-    expect(Object.keys(buildAlternateLanguages('/'))).toHaveLength(4)
+  it('keys count matches every supported locale + x-default', () => {
+    expect(Object.keys(buildAlternateLanguages('/'))).toHaveLength(SUPPORTED_LOCALES.length + 1)
   })
 
   it('covers every locale defined by SUPPORTED_LOCALES + x-default exactly', () => {
@@ -223,5 +223,21 @@ describe('ogLocaleFor', () => {
     expect(ogLocaleFor('zh-Hans')).toBe('zh_CN')
     expect(ogLocaleFor('zh-Hant')).toBe('zh_TW')
     expect(ogLocaleFor('en')).toBe('en_US')
+    expect(ogLocaleFor('ja')).toBe('ja_JP')
+    expect(ogLocaleFor('ko')).toBe('ko_KR')
+    expect(ogLocaleFor('es')).toBe('es_ES')
+    expect(ogLocaleFor('pt-BR')).toBe('pt_BR')
+    expect(ogLocaleFor('fr')).toBe('fr_FR')
+    expect(ogLocaleFor('de')).toBe('de_DE')
+    expect(ogLocaleFor('ru')).toBe('ru_RU')
+    expect(ogLocaleFor('it')).toBe('it_IT')
+    expect(ogLocaleFor('vi')).toBe('vi_VN')
+    expect(ogLocaleFor('ar')).toBe('ar_AR')
+  })
+
+  it('returns a non-empty og territory for every supported locale', () => {
+    for (const locale of SUPPORTED_LOCALES) {
+      expect(ogLocaleFor(locale)).toMatch(/^[a-z]{2}_[A-Z]{2}$/)
+    }
   })
 })
