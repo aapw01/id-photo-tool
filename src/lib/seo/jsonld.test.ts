@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest'
 
 import {
   breadcrumbSchema,
+  collectionPageSchema,
   itemListSchema,
   organizationSchema,
   serializeJsonLd,
   webApplicationSchema,
+  webPageSchema,
   webSiteSchema,
 } from './jsonld'
 import { SITE_URL } from './site-config'
@@ -122,6 +124,91 @@ describe('breadcrumbSchema', () => {
     const entries = schema.itemListElement as Array<Record<string, unknown>>
     expect(entries).toHaveLength(2)
     expect(entries[1]?.item).toBe(`${SITE_URL}/en/sizes`)
+  })
+})
+
+describe('collectionPageSchema', () => {
+  it('emits a CollectionPage anchored at the canonical URL', () => {
+    const schema = collectionPageSchema({
+      url: `${SITE_URL}/en/sizes`,
+      name: 'All ID photo sizes',
+      description: '28 specs',
+      inLanguage: 'en',
+    })
+    expect(schema['@type']).toBe('CollectionPage')
+    expect(schema.url).toBe(`${SITE_URL}/en/sizes`)
+    expect(schema.description).toBe('28 specs')
+    expect(schema.inLanguage).toBe('en')
+    // Anchored to the WebSite node so cross-blob references stay
+    // consistent — `@id` on Organization / WebSite is the stable
+    // hook the rest of the JSON-LD network points back at.
+    const partOf = schema.isPartOf as { '@type': string; '@id': string }
+    expect(partOf['@type']).toBe('WebSite')
+    expect(partOf['@id']).toBe(`${SITE_URL}/#website`)
+  })
+
+  it('embeds the ItemList as `mainEntity` so a single blob covers catalog + items', () => {
+    const schema = collectionPageSchema({
+      url: `${SITE_URL}/en/sizes`,
+      name: 'Sizes',
+      items: [
+        { url: `${SITE_URL}/en/sizes/us-visa`, name: 'US visa' },
+        { url: `${SITE_URL}/en/sizes/schengen`, name: 'Schengen', description: 'EU' },
+      ],
+    })
+    const mainEntity = schema.mainEntity as {
+      '@type': string
+      numberOfItems: number
+      itemListElement: Array<Record<string, unknown>>
+    }
+    expect(mainEntity['@type']).toBe('ItemList')
+    expect(mainEntity.numberOfItems).toBe(2)
+    expect(mainEntity.itemListElement[0]?.position).toBe(1)
+    expect(mainEntity.itemListElement[1]?.description).toBe('EU')
+  })
+
+  it('skips mainEntity entirely when no items are passed', () => {
+    const schema = collectionPageSchema({
+      url: `${SITE_URL}/en/sizes`,
+      name: 'Sizes',
+    })
+    expect(schema.mainEntity).toBeUndefined()
+  })
+})
+
+describe('webPageSchema', () => {
+  it('emits a WebPage anchored at the canonical URL', () => {
+    const schema = webPageSchema({
+      url: `${SITE_URL}/en/privacy`,
+      name: 'Privacy policy',
+      description: 'How Pixfit handles your data',
+      inLanguage: 'en',
+      dateModified: '2026-05-12',
+    })
+    expect(schema['@type']).toBe('WebPage')
+    expect(schema.url).toBe(`${SITE_URL}/en/privacy`)
+    expect(schema.dateModified).toBe('2026-05-12')
+    expect(schema.inLanguage).toBe('en')
+    expect(schema.description).toBe('How Pixfit handles your data')
+  })
+
+  it('omits optional date fields when not supplied', () => {
+    const schema = webPageSchema({
+      url: `${SITE_URL}/en/scanner`,
+      name: 'Scanner',
+    })
+    expect(schema.dateModified).toBeUndefined()
+    expect(schema.datePublished).toBeUndefined()
+  })
+
+  it('roots the page in the WebSite identity node for graph traversal', () => {
+    const schema = webPageSchema({
+      url: `${SITE_URL}/en/scanner`,
+      name: 'Scanner',
+    })
+    const partOf = schema.isPartOf as { '@type': string; '@id': string }
+    expect(partOf['@type']).toBe('WebSite')
+    expect(partOf['@id']).toBe(`${SITE_URL}/#website`)
   })
 })
 

@@ -15,7 +15,7 @@ import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
-import { faqSchema, itemListSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { faqSchema, itemListSchema, webApplicationSchema, webPageSchema } from '@/lib/seo/jsonld'
 import { buildCanonical, buildMetadata, normalizeKeywords } from '@/lib/seo/metadata'
 
 interface ScannerPageProps {
@@ -73,8 +73,9 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
     keywords: scannerKeywords,
   })
 
+  const scannerUrl = buildCanonical('/scanner', locale as Locale)
   const supportedListJsonLd = itemListSchema({
-    url: buildCanonical('/scanner', locale as Locale),
+    url: scannerUrl,
     name: tSupported('heading'),
     description: tSupported('subtitle'),
     items: DOC_SPECS.map((spec) => ({
@@ -82,6 +83,19 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
       name: tDoc(spec.id as Parameters<typeof tDoc>[0]),
       description: tDocTypes(`${spec.id}.summary` as Parameters<typeof tDocTypes>[0]),
     })),
+  })
+
+  // `/scanner` is a tool landing page, not a single SoftwareApplication
+  // — emit `WebPage` alongside `WebApplication` so Google can index
+  // it as long-form content (the H2 scanner-seoIntro + the 12-card
+  // catalog + the FAQ + the usage notice). The `WebApplication`
+  // node still anchors the brand product, the `WebPage` node
+  // anchors the article-style copy.
+  const scannerWebPage = webPageSchema({
+    url: scannerUrl,
+    name: t('title'),
+    description: t('metaDescription'),
+    inLanguage: locale as Locale,
   })
 
   return (
@@ -278,7 +292,7 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[scannerWebApp, supportedListJsonLd, breadcrumbs, faqJsonLd]} />
+      <JsonLd data={[scannerWebApp, scannerWebPage, supportedListJsonLd, breadcrumbs, faqJsonLd]} />
     </>
   )
 }

@@ -16,7 +16,7 @@ import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { localizeText } from '@/lib/i18n-text'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
-import { itemListSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { collectionPageSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
 
 interface TemplatesPageProps {
@@ -50,10 +50,11 @@ export default async function TemplatesPage({ params }: TemplatesPageProps) {
 
   const canonicalUrl = buildCanonical('/templates', locale as Locale)
 
-  const itemList = itemListSchema({
+  const collectionPage = collectionPageSchema({
     url: canonicalUrl,
     name: t('heading'),
     description: t('subtitle'),
+    inLanguage: locale as Locale,
     items: BUILTIN_LAYOUT_TEMPLATES.map((tmpl) => ({
       url: `${canonicalUrl}#${tmpl.id}`,
       name: localizeText(tmpl.name, locale),
@@ -175,7 +176,7 @@ export default async function TemplatesPage({ params }: TemplatesPageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[webApplicationSchema(locale as Locale), itemList, breadcrumbs]} />
+      <JsonLd data={[webApplicationSchema(locale as Locale), collectionPage, breadcrumbs]} />
     </>
   )
 }

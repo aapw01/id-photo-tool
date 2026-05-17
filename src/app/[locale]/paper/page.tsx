@@ -14,7 +14,7 @@ import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { localizeText } from '@/lib/i18n-text'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
-import { itemListSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { collectionPageSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
 
 interface PaperPageProps {
@@ -48,10 +48,11 @@ export default async function PaperPage({ params }: PaperPageProps) {
 
   const canonicalUrl = buildCanonical('/paper', locale as Locale)
 
-  const itemList = itemListSchema({
+  const collectionPage = collectionPageSchema({
     url: canonicalUrl,
     name: t('heading'),
     description: t('subtitle'),
+    inLanguage: locale as Locale,
     items: BUILTIN_PAPER_SPECS.map((paper) => ({
       url: `${canonicalUrl}#${paper.id}`,
       name: localizeText(paper.name, locale),
@@ -153,7 +154,7 @@ export default async function PaperPage({ params }: PaperPageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[webApplicationSchema(locale as Locale), itemList, breadcrumbs]} />
+      <JsonLd data={[webApplicationSchema(locale as Locale), collectionPage, breadcrumbs]} />
     </>
   )
 }

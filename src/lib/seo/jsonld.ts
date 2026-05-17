@@ -142,6 +142,91 @@ interface ItemListOpts {
   items: ItemListEntry[]
 }
 
+interface CollectionPageOpts {
+  /** Canonical absolute URL of the page. */
+  url: string
+  /** Page title — usually the H1 of the catalog landing page. */
+  name: string
+  /** Short paragraph describing what's in the collection. */
+  description?: string
+  /**
+   * Optional embedded ItemList. When supplied, the items render as
+   * `mainEntity` of the CollectionPage so a single JSON-LD blob
+   * communicates both "this is a catalog page" and "here are the
+   * items in it" without forcing the caller to emit a sibling
+   * `ItemList` node.
+   */
+  items?: ItemListEntry[]
+  inLanguage?: Locale
+}
+
+/**
+ * schema.org `CollectionPage`. Distinguishes catalog landing pages
+ * (sizes / paper / templates) from generic web pages so Google can
+ * surface them as a list result rather than a single doc. We embed
+ * the `ItemList` as `mainEntity` to keep the per-page JSON-LD count
+ * down — fewer blobs render faster and parse more reliably.
+ */
+export function collectionPageSchema(opts: CollectionPageOpts): JsonLdObject {
+  const out: JsonLdObject = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    url: opts.url,
+    name: opts.name,
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.inLanguage ? { inLanguage: opts.inLanguage } : {}),
+    isPartOf: { '@type': 'WebSite', '@id': `${SITE_URL}/#website` },
+  }
+  if (opts.items && opts.items.length > 0) {
+    out.mainEntity = {
+      '@type': 'ItemList',
+      numberOfItems: opts.items.length,
+      itemListElement: opts.items.map((item, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        url: item.url,
+        name: item.name,
+        ...(item.description ? { description: item.description } : {}),
+      })),
+    } as JsonLdObject
+  }
+  return out
+}
+
+interface WebPageOpts {
+  /** Canonical absolute URL of the page. */
+  url: string
+  /** Page title — usually the H1. */
+  name: string
+  description?: string
+  inLanguage?: Locale
+  /** ISO-8601 (YYYY-MM-DD or full instant) of the last copy edit. */
+  dateModified?: string
+  /** ISO-8601 of the first publication, if known. */
+  datePublished?: string
+}
+
+/**
+ * schema.org `WebPage`. Used as a "this is a content page" anchor
+ * for surfaces that don't fit `WebApplication` / `CollectionPage` —
+ * the scanner index (it's not a single SoftwareApplication), legal
+ * pages (Privacy / Terms), and similar long-form copy. `dateModified`
+ * is what Google leans on for legal-page freshness signals.
+ */
+export function webPageSchema(opts: WebPageOpts): JsonLdObject {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    url: opts.url,
+    name: opts.name,
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.inLanguage ? { inLanguage: opts.inLanguage } : {}),
+    ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
+    isPartOf: { '@type': 'WebSite', '@id': `${SITE_URL}/#website` },
+  }
+}
+
 /** schema.org `ItemList` used by the /sizes /paper /templates list pages. */
 export function itemListSchema(opts: ItemListOpts): JsonLdObject {
   return {

@@ -17,7 +17,7 @@ import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { localizeText } from '@/lib/i18n-text'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
-import { itemListSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { collectionPageSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
 
 interface SizesPageProps {
@@ -53,10 +53,11 @@ export default async function SizesPage({ params }: SizesPageProps) {
   const groups = groupPhotoSpecsByCategory()
   const canonicalUrl = buildCanonical('/sizes', locale as Locale)
 
-  const itemList = itemListSchema({
+  const collectionPage = collectionPageSchema({
     url: canonicalUrl,
     name: t('heading'),
     description: t('subtitle'),
+    inLanguage: locale as Locale,
     items: BUILTIN_PHOTO_SPECS.map((spec) => ({
       url: buildCanonical(`/sizes/${spec.id}`, locale as Locale),
       name: localizeText(spec.name, locale),
@@ -229,7 +230,7 @@ export default async function SizesPage({ params }: SizesPageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[webApplicationSchema(locale as Locale), itemList, breadcrumbs]} />
+      <JsonLd data={[webApplicationSchema(locale as Locale), collectionPage, breadcrumbs]} />
     </>
   )
 }
