@@ -168,6 +168,54 @@ describe('normalizeKeywords', () => {
   })
 })
 
+describe('canonical hygiene (no trailing slash) audit', () => {
+  // Lock in the no-trailing-slash invariant across representative
+  // routes so an accidental flip of `trailingSlash` in next.config or
+  // a regression in `normalizePath` breaks loudly. Picks one route per
+  // tier from the priority table in `sitemap-entries.ts`.
+  const routes = [
+    { path: '/', locale: 'en' as const, expected: `${SITE_URL}/en` },
+    { path: '/', locale: 'zh-Hans' as const, expected: `${SITE_URL}/zh-Hans` },
+    { path: '/studio', locale: 'zh-Hant' as const, expected: `${SITE_URL}/zh-Hant/studio` },
+    { path: '/scanner', locale: 'en' as const, expected: `${SITE_URL}/en/scanner` },
+    {
+      path: '/scanner/cn-id-card',
+      locale: 'en' as const,
+      expected: `${SITE_URL}/en/scanner/cn-id-card`,
+    },
+    { path: '/sizes', locale: 'zh-Hans' as const, expected: `${SITE_URL}/zh-Hans/sizes` },
+    { path: '/sizes/us-visa', locale: 'en' as const, expected: `${SITE_URL}/en/sizes/us-visa` },
+    { path: '/privacy', locale: 'zh-Hant' as const, expected: `${SITE_URL}/zh-Hant/privacy` },
+  ] as const
+
+  it('every representative route resolves to a no-slash canonical', () => {
+    for (const r of routes) {
+      const meta = buildMetadata({
+        locale: r.locale,
+        path: r.path,
+        title: 'placeholder',
+        description: 'placeholder',
+      })
+      expect(meta.alternates?.canonical).toBe(r.expected)
+      expect(String(meta.alternates?.canonical)).not.toMatch(/\/$/)
+    }
+  })
+
+  it('a trailing slash in the source path is stripped before the canonical is built', () => {
+    expect(buildCanonical('/sizes/us-visa/', 'en')).toBe(`${SITE_URL}/en/sizes/us-visa`)
+    expect(buildCanonical('/scanner/cn-id-card///', 'zh-Hans')).toBe(
+      `${SITE_URL}/zh-Hans/scanner/cn-id-card`,
+    )
+  })
+
+  it('hreflang alternates for the same route share the no-slash invariant', () => {
+    const langs = buildAlternateLanguages('/sizes/us-visa/')
+    for (const url of Object.values(langs)) {
+      expect(url).not.toMatch(/\/$/)
+    }
+  })
+})
+
 describe('ogLocaleFor', () => {
   it('maps each locale to its og territory code', () => {
     expect(ogLocaleFor('zh-Hans')).toBe('zh_CN')

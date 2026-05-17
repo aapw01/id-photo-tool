@@ -9,6 +9,12 @@ const withBundleAnalyzer = createBundleAnalyzer({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Pixfit's canonical URLs are no-slash (`/sizes/us-visa`, not
+  // `/sizes/us-visa/`); pin the default explicitly so a future Next
+  // major or a config import can't flip this behind our back. Search
+  // engines treat slash + no-slash as separate URLs, so we'd lose
+  // half our link-equity if this drifted.
+  trailingSlash: false,
 }
 
 export default withBundleAnalyzer(withNextIntl(nextConfig))
