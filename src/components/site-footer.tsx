@@ -64,6 +64,7 @@ const SPECS_LINKS = [
 ] as const
 
 const LEGAL_LINKS = [
+  { href: '/blog', key: 'blog' },
   { href: '/privacy', key: 'privacy' },
   { href: '/terms', key: 'terms' },
 ] as const

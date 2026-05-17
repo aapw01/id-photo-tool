@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
+import { BLOG_POSTS } from '@/content/blog'
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { COMPRESS_TARGETS } from '@/features/compress/targets'
 import { DOC_SPECS as SCANNER_DOC_SPECS } from '@/features/scanner/lib/doc-specs'
 import {
+  blogPostRoutes,
   buildSitemapEntries,
   compressTargetRoutes,
   SEO_LASTMOD,
@@ -18,15 +20,28 @@ const LOCALE_COUNT = SUPPORTED_LOCALES.length
 describe('buildSitemapEntries', () => {
   const fixed = new Date('2026-05-12T12:00:00Z')
 
-  it('emits one entry per route × locale, including spec + scanner + compress detail pages', () => {
+  it('emits one entry per route × locale, including spec/scanner/compress/blog detail pages', () => {
     const entries = buildSitemapEntries(fixed)
     const expected =
       (SITEMAP_ROUTES.length +
         BUILTIN_PHOTO_SPECS.length +
         SCANNER_DOC_SPECS.length +
-        COMPRESS_TARGETS.length) *
+        COMPRESS_TARGETS.length +
+        BLOG_POSTS.length) *
       LOCALE_COUNT
     expect(entries).toHaveLength(expected)
+  })
+
+  it('emits the /blog index + every article URL per locale', () => {
+    const entries = buildSitemapEntries(fixed)
+    const urls = entries.map((e) => e.url)
+    for (const locale of SUPPORTED_LOCALES) {
+      expect(urls).toContain(`${SITE_URL}/${locale}/blog`)
+      for (const post of BLOG_POSTS) {
+        expect(urls).toContain(`${SITE_URL}/${locale}/blog/${post.slug}`)
+      }
+    }
+    expect(blogPostRoutes().every((r) => r.priority === 0.7)).toBe(true)
   })
 
   it('emits the /compress index across locales', () => {

@@ -144,6 +144,7 @@
       "paper": "Paper sizes",
       "templates": "Layout templates",
       "compress": "Compress to KB",
+      "blog": "Blog",
       "privacy": "Privacy policy",
       "terms": "Terms of service",
       "github": "GitHub"
@@ -1309,6 +1310,49 @@
     },
     "footer": {
       "heading": "Scanner"
+    }
+  },
+  "Blog": {
+    "index": {
+      "metaTitle": "Pixfit blog · ID photo and document scan guides 2026 | Pixfit",
+      "metaDescription": "Long-form guides for online ID photos, document scan-to-PDF, and Pixfit's in-browser tools. Free, no upload, 2026.",
+      "metaKeywords": [
+        "Pixfit blog",
+        "ID photo guide 2026",
+        "scan to PDF guide",
+        "online ID photo",
+        "in-browser document scanner",
+        "no upload",
+        "2026"
+      ],
+      "breadcrumb": "Blog",
+      "heading": "Pixfit blog",
+      "subtitle": "Long-form guides on in-browser ID photos and document scanning. Free, no upload, 2026.",
+      "readingMinutes": "{minutes} min read",
+      "publishedOn": "Published {date}",
+      "openArticle": "Read article"
+    },
+    "posts": {
+      "us-visa-photo-2026": {
+        "card": {
+          "tagline": "Sizes, background, composition — the complete 2026 US B1/B2 photo guide."
+        }
+      },
+      "12-doc-scan-pdf-guide": {
+        "card": {
+          "tagline": "Every built-in Pixfit Scanner preset, with the right size and shoot tips."
+        }
+      }
+    },
+    "article": {
+      "backLink": "Back to blog",
+      "readingMinutes": "{minutes} min read",
+      "publishedOn": "Published {date}",
+      "updatedOn": "Updated {date}",
+      "ctaHeading": "Try Pixfit in the browser",
+      "ctaBody": "All Pixfit tools run on-device — no upload, no account, free.",
+      "ctaPrimary": "Open Studio",
+      "ctaSecondary": "Open Scanner"
     }
   }
 }

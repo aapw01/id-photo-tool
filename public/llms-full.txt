@@ -11,6 +11,8 @@
 - `/paper` — 7 photo paper stocks for layout
 - `/templates` — print layout templates per paper
 - `/specs` — custom spec manager (mm/px/DPI)
+- `/compress` — compress to KB hub (50KB / 100KB / 200KB / 500KB / 1MB)
+- `/blog` — long-form evergreen guides (newest-first)
 - `/privacy` — privacy posture (fully client-side)
 - `/terms` — usage terms (incl. lawful-use clause)
 
@@ -91,6 +93,19 @@ Each one is a long-form landing page with the exact mm dimensions, a 4-step HowT
 
 - `/scanner/a4`
 - `/scanner/letter`
+
+## Compress landing pages (`/compress/<target>`)
+
+- `/compress/50kb`
+- `/compress/100kb`
+- `/compress/200kb`
+- `/compress/500kb`
+- `/compress/1mb`
+
+## Blog articles (`/blog/<slug>`)
+
+- `/blog/us-visa-photo-2026` — US B1/B2 visa photo requirements 2026: sizes, background, composition
+- `/blog/12-doc-scan-pdf-guide` — 12 document scan-to-PDF guides — no scanner needed
 
 ## Sitemap & robots
 

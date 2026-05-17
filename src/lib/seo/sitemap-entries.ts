@@ -30,6 +30,7 @@
 
 import type { MetadataRoute } from 'next'
 
+import { BLOG_POSTS } from '@/content/blog'
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { COMPRESS_TARGETS } from '@/features/compress/targets'
 import { DOC_SPECS as SCANNER_DOC_SPECS } from '@/features/scanner/lib/doc-specs'
@@ -67,6 +68,7 @@ export const SITEMAP_ROUTES: RouteSpec[] = [
   { path: '/templates', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/specs', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/compress', changeFrequency: 'monthly', priority: 0.8 },
+  { path: '/blog', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.5 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.5 },
 ]
@@ -116,6 +118,19 @@ export function compressTargetRoutes(): RouteSpec[] {
 }
 
 /**
+ * Per-article blog posts. Articles are evergreen but get occasional
+ * copy refreshes, so they sit in the same priority tier as the
+ * landing hubs (0.7) and refresh monthly.
+ */
+export function blogPostRoutes(): RouteSpec[] {
+  return BLOG_POSTS.map((post) => ({
+    path: `/blog/${post.slug}`,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }))
+}
+
+/**
  * Build sitemap entries with hreflang alternates.
  *
  * `now` defaults to `SEO_LASTMOD` — pass an explicit Date in tests
@@ -128,6 +143,7 @@ export function buildSitemapEntries(
     ...specDetailRoutes(),
     ...scannerDocTypeRoutes(),
     ...compressTargetRoutes(),
+    ...blogPostRoutes(),
   ],
   locales: readonly Locale[] = SUPPORTED_LOCALES,
 ): MetadataRoute.Sitemap {

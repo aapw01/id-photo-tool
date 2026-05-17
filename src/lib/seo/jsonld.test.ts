@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  blogPostingSchema,
   breadcrumbSchema,
   collectionPageSchema,
   itemListSchema,
@@ -209,6 +210,56 @@ describe('webPageSchema', () => {
     const partOf = schema.isPartOf as { '@type': string; '@id': string }
     expect(partOf['@type']).toBe('WebSite')
     expect(partOf['@id']).toBe(`${SITE_URL}/#website`)
+  })
+})
+
+describe('blogPostingSchema', () => {
+  it('emits BlogPosting with author + publisher attributed to the org node', () => {
+    const schema = blogPostingSchema({
+      url: `${SITE_URL}/en/blog/us-visa-photo-2026`,
+      headline: 'US visa photo 2026',
+      description: 'Sizes, background, composition.',
+      datePublished: '2026-05-17',
+      inLanguage: 'en',
+    })
+    expect(schema['@type']).toBe('BlogPosting')
+    expect(schema.headline).toBe('US visa photo 2026')
+    expect(schema.url).toBe(`${SITE_URL}/en/blog/us-visa-photo-2026`)
+    expect(schema.inLanguage).toBe('en')
+    expect(schema.datePublished).toBe('2026-05-17')
+    // dateModified falls back to datePublished so Google never sees a missing
+    // field (a missing date can suppress the article rich result).
+    expect(schema.dateModified).toBe('2026-05-17')
+    const author = schema.author as { '@id': string }
+    const publisher = schema.publisher as { '@id': string }
+    expect(author['@id']).toBe(`${SITE_URL}/#organization`)
+    expect(publisher['@id']).toBe(`${SITE_URL}/#organization`)
+    const mainEntityOfPage = schema.mainEntityOfPage as { '@type': string; '@id': string }
+    expect(mainEntityOfPage['@type']).toBe('WebPage')
+    expect(mainEntityOfPage['@id']).toBe(`${SITE_URL}/en/blog/us-visa-photo-2026`)
+  })
+
+  it('respects an explicit dateModified when supplied', () => {
+    const schema = blogPostingSchema({
+      url: `${SITE_URL}/zh-Hans/blog/x`,
+      headline: 'x',
+      datePublished: '2026-01-10',
+      dateModified: '2026-05-01',
+      inLanguage: 'zh-Hans',
+    })
+    expect(schema.datePublished).toBe('2026-01-10')
+    expect(schema.dateModified).toBe('2026-05-01')
+  })
+
+  it('serialises keyword arrays as a comma-joined string', () => {
+    const schema = blogPostingSchema({
+      url: `${SITE_URL}/en/blog/x`,
+      headline: 'x',
+      datePublished: '2026-01-10',
+      inLanguage: 'en',
+      keywords: ['us visa photo', '2x2 inch', 'in-browser'],
+    })
+    expect(schema.keywords).toBe('us visa photo, 2x2 inch, in-browser')
   })
 })
 

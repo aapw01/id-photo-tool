@@ -32,6 +32,8 @@ export type BreadcrumbRouteKey =
   | 'specs'
   | 'compress'
   | 'compress-detail'
+  | 'blog'
+  | 'blog-detail'
   | 'privacy'
   | 'terms'
 
@@ -43,6 +45,7 @@ export interface BreadcrumbLabels {
   templates?: string
   specs?: string
   compress?: string
+  blog?: string
   privacy?: string
   terms?: string
 }
@@ -109,6 +112,16 @@ export function getBreadcrumbItems(
         home,
         { path: '/compress', name: labels.compress ?? 'Compress' },
         { path: `/compress/${detail.itemSlug}`, name: detail.itemName },
+      ]
+    }
+    case 'blog':
+      return [home, { path: '/blog', name: labels.blog ?? 'Blog' }]
+    case 'blog-detail': {
+      if (!detail) throw new Error('blog-detail requires `detail` options')
+      return [
+        home,
+        { path: '/blog', name: labels.blog ?? 'Blog' },
+        { path: `/blog/${detail.itemSlug}`, name: detail.itemName },
       ]
     }
     case 'privacy':

@@ -325,6 +325,63 @@ export function howToSchema(opts: HowToOpts): JsonLdObject {
   }
 }
 
+interface BlogPostingOpts {
+  /** Canonical absolute URL of the article. */
+  url: string
+  /** Article headline — usually the H1. */
+  headline: string
+  /** Plain-text article description / dek. */
+  description?: string
+  /** ISO-8601 (YYYY-MM-DD) of the first publication. */
+  datePublished: string
+  /**
+   * ISO-8601 of the last meaningful edit. Falls back to
+   * `datePublished` when omitted so Google never sees a missing
+   * field, which can suppress the article rich result.
+   */
+  dateModified?: string
+  /** BCP-47 language tag, e.g. 'en' / 'zh-Hans' / 'zh-Hant'. */
+  inLanguage: Locale
+  /**
+   * Optional absolute URL of a 1200×630 OG image. When supplied,
+   * Google can use it as the article hero in news / discovery
+   * surfaces.
+   */
+  image?: string
+  /** Optional list of keyword tags. */
+  keywords?: readonly string[]
+}
+
+/**
+ * schema.org `BlogPosting`. Used by the `/blog` index cards plus the
+ * per-article detail pages. We attribute every article to the
+ * `Organization` node already injected at the root layout so Google
+ * consolidates the byline under a single brand entity.
+ */
+export function blogPostingSchema(opts: BlogPostingOpts): JsonLdObject {
+  const out: JsonLdObject = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: opts.headline,
+    ...(opts.description ? { description: opts.description } : {}),
+    datePublished: opts.datePublished,
+    dateModified: opts.dateModified ?? opts.datePublished,
+    inLanguage: opts.inLanguage,
+    url: opts.url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': opts.url },
+    author: { '@id': `${SITE_URL}/#organization` },
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    isPartOf: { '@type': 'WebSite', '@id': `${SITE_URL}/#website` },
+  }
+  if (opts.image) {
+    out.image = opts.image
+  }
+  if (opts.keywords && opts.keywords.length > 0) {
+    out.keywords = opts.keywords.join(', ')
+  }
+  return out
+}
+
 /**
  * Serialise a JSON-LD payload while escaping `</` and `<!--` so the
  * resulting `<script>` tag can never be terminated early by user data.

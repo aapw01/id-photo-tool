@@ -18,6 +18,8 @@ The product has two primary surfaces:
 - [Paper](https://pix-fit.com/en/paper): 7 photo paper stocks used by the layout tool
 - [Templates](https://pix-fit.com/en/templates): preset 4R/5R/6R/A4 layouts per spec
 - [Specs](https://pix-fit.com/en/specs): spec manager (custom dimensions, mm/px/DPI)
+- [Compress](https://pix-fit.com/en/compress): KB-target compression landing pages (50KB / 100KB / 200KB / 500KB / 1MB)
+- [Blog](https://pix-fit.com/en/blog): long-form evergreen guides
 - [Privacy](https://pix-fit.com/en/privacy): full-clientside privacy posture
 - [Terms](https://pix-fit.com/en/terms): usage terms incl. lawful-use clause
 

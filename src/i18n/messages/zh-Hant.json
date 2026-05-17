@@ -144,6 +144,7 @@
       "paper": "相紙規格",
       "templates": "排版模板",
       "compress": "壓縮到指定 KB",
+      "blog": "部落格",
       "privacy": "隱私政策",
       "terms": "服務條款",
       "github": "GitHub"
@@ -1309,6 +1310,49 @@
     },
     "footer": {
       "heading": "證件掃描"
+    }
+  },
+  "Blog": {
+    "index": {
+      "metaTitle": "Pixfit 部落格 · 證件照與掃描 PDF 指南 2026 | Pixfit",
+      "metaDescription": "圍繞線上證件照、文件掃描轉 PDF 與 Pixfit 瀏覽器工具的長文指南。免費、不上傳、2026。",
+      "metaKeywords": [
+        "Pixfit 部落格",
+        "證件照指南 2026",
+        "掃描轉 PDF 教學",
+        "線上證件照",
+        "瀏覽器內文件掃描",
+        "不上傳",
+        "2026"
+      ],
+      "breadcrumb": "部落格",
+      "heading": "Pixfit 部落格",
+      "subtitle": "圍繞瀏覽器內證件照與文件掃描的長文指南。免費、不上傳、2026。",
+      "readingMinutes": "約 {minutes} 分鐘",
+      "publishedOn": "發佈於 {date}",
+      "openArticle": "閱讀全文"
+    },
+    "posts": {
+      "us-visa-photo-2026": {
+        "card": {
+          "tagline": "尺寸、背景與構圖——2026 美簽 B1/B2 照片完整指南。"
+        }
+      },
+      "12-doc-scan-pdf-guide": {
+        "card": {
+          "tagline": "Pixfit 掃描器內建全部預設，包含正確尺寸與拍攝技巧。"
+        }
+      }
+    },
+    "article": {
+      "backLink": "返回部落格",
+      "readingMinutes": "約 {minutes} 分鐘",
+      "publishedOn": "發佈於 {date}",
+      "updatedOn": "更新於 {date}",
+      "ctaHeading": "在瀏覽器內試用 Pixfit",
+      "ctaBody": "Pixfit 所有工具都在你本地瀏覽器內執行——不上傳、不需帳號，免費。",
+      "ctaPrimary": "開啟工作室",
+      "ctaSecondary": "開啟掃描器"
     }
   }
 }
