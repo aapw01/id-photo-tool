@@ -1,6 +1,17 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
-import { DEFAULT_LOCALE } from '@/lib/seo/site-config'
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/seo/site-config'
+
+/**
+ * Root 404 metadata. `index: false, follow: true` keeps the
+ * fallback page out of the search index but lets crawlers follow
+ * the locale-prefixed links onward into the canonical surfaces.
+ */
+export const metadata: Metadata = {
+  title: 'Not found · Pixfit',
+  robots: { index: false, follow: true },
+}
 
 /**
  * Top-level fallback for paths that don't match any locale segment
@@ -11,7 +22,8 @@ import { DEFAULT_LOCALE } from '@/lib/seo/site-config'
  * This page renders outside of `NextIntlClientProvider` and therefore
  * has no message catalogue — we deliberately ship a short English
  * fallback and point the user at the locale-prefixed routes where the
- * real localisation kicks in.
+ * real localisation kicks in. We render one link per supported locale
+ * so a crawler hitting `/foo` has at least three indexable hops.
  */
 export default function RootNotFound() {
   const fallbackHref = `/${DEFAULT_LOCALE}`
@@ -85,6 +97,26 @@ export default function RootNotFound() {
           >
             Back to Pixfit
           </Link>
+          <ul
+            style={{
+              listStyle: 'none',
+              margin: '20px 0 0',
+              padding: 0,
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '10px',
+              fontSize: '13px',
+            }}
+          >
+            {SUPPORTED_LOCALES.map((locale) => (
+              <li key={locale}>
+                <Link href={`/${locale}`} style={{ color: '#57534e', textDecoration: 'underline' }}>
+                  /{locale}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </main>
       </body>
     </html>

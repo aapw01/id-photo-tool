@@ -714,7 +714,19 @@
         "home": "回首頁",
         "studio": "開啟工作台"
       },
-      "metaTitle": "找不到頁面 · Pixfit · 像配"
+      "metaTitle": "找不到頁面 · Pixfit · 像配",
+      "metaDescription": "這個 Pixfit 頁面已不存在。返回首頁、Studio 工作台、Scanner 掃描，或完整的證件照尺寸庫繼續使用。",
+      "helpful": {
+        "heading": "試試這些連結",
+        "subtitle": "Pixfit 完全在瀏覽器內處理，從下方入口接著用即可。",
+        "home": "首頁",
+        "studio": "Studio 工作台",
+        "scanner": "Scanner 掃描",
+        "sizes": "全部證件照尺寸",
+        "scannerDocs": "全部證件類型"
+      },
+      "didYouMean": "你是不是要找「{name}」？",
+      "didYouMeanCta": "開啟 {name}"
     },
     "runtime": {
       "title": "出錯了",

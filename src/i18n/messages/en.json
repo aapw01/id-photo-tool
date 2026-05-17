@@ -714,7 +714,19 @@
         "home": "Back to home",
         "studio": "Open Studio"
       },
-      "metaTitle": "Not found · Pixfit"
+      "metaTitle": "Not found · Pixfit",
+      "metaDescription": "This Pixfit page could not be found. Jump to the home page, Studio, Scanner, or the full size catalog instead.",
+      "helpful": {
+        "heading": "Try one of these instead",
+        "subtitle": "Pixfit is fully in-browser — pick up where you left off without losing context.",
+        "home": "Home",
+        "studio": "Studio",
+        "scanner": "Scanner",
+        "sizes": "All ID photo sizes",
+        "scannerDocs": "All document types"
+      },
+      "didYouMean": "Did you mean {name}?",
+      "didYouMeanCta": "Open {name}"
     },
     "runtime": {
       "title": "Something went wrong",
