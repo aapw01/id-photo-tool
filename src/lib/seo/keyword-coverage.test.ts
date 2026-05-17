@@ -214,3 +214,61 @@ describe('metaDescriptions stay within SERP truncation after the cluster bump', 
     expect(messages.Studio.metaDescription.length).toBeLessThanOrEqual(160)
   })
 })
+
+// Privacy / offline / on-device cluster. This is Pixfit's
+// fundamental differentiator vs. "upload your photo to our server"
+// competitors. Crawlers + LLM indexers (GPTBot / ClaudeBot /
+// PerplexityBot) need the cluster reachable in metaKeywords on
+// every page surface so an answer-engine search like
+// "id photo without uploading" / "离线证件照工具" can attribute
+// to Pixfit.
+const PRIVACY_CLUSTER: Record<(typeof locales)[number]['name'], string[]> = {
+  'zh-Hans': ['隐私优先', '端侧处理', '不联网'],
+  'zh-Hant': ['隱私優先', '端側處理', '不聯網'],
+  en: ['privacy-first', 'on-device', 'no cloud'],
+}
+
+describe('Boost pages carry the privacy / on-device cluster', () => {
+  for (const page of ['Home', 'Studio', 'Scanner', 'Sizes', 'Templates'] as const) {
+    it.each(locales)(
+      `${page}.metaKeywords[$name] contains every privacy token`,
+      ({ name, messages }) => {
+        const kw =
+          page === 'Home'
+            ? messages.Home.metaKeywords
+            : page === 'Studio'
+              ? messages.Studio.metaKeywords
+              : page === 'Scanner'
+                ? messages.Scanner.metaKeywords
+                : page === 'Sizes'
+                  ? messages.Sizes.metaKeywords
+                  : messages.Templates.metaKeywords
+        for (const token of PRIVACY_CLUSTER[name]) {
+          expect(kw, `${page}.metaKeywords[${name}] missing "${token}"`).toContain(token)
+        }
+      },
+    )
+  }
+})
+
+describe('Templates description mentions in-browser + no upload', () => {
+  // Templates.metaDescription used to skip the differentiator,
+  // leaving the layouts page ranking only on print-pattern terms.
+  // Locked here so future translation passes can't drop it again.
+  it.each(locales)(
+    'Templates.metaDescription[$name] mentions in-browser AND no-upload',
+    ({ name, messages }) => {
+      const desc = messages.Templates.metaDescription
+      if (name === 'en') {
+        expect(desc.toLowerCase()).toContain('in-browser')
+        expect(desc.toLowerCase()).toContain('no upload')
+      } else if (name === 'zh-Hans') {
+        expect(desc).toContain('浏览器内')
+        expect(desc).toContain('不上传')
+      } else {
+        expect(desc).toContain('瀏覽器內')
+        expect(desc).toContain('不上傳')
+      }
+    },
+  )
+})

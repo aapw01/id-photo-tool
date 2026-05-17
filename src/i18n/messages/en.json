@@ -49,7 +49,10 @@
       "no upload",
       "in-browser",
       "2026",
-      "Pixfit"
+      "Pixfit",
+      "privacy-first",
+      "on-device",
+      "no cloud"
     ],
     "cta": "Get started",
     "ctaHint": "Free · No sign-up · 100% in your browser",
@@ -178,7 +181,10 @@
       "no upload",
       "in-browser",
       "2026",
-      "Pixfit Studio"
+      "Pixfit Studio",
+      "privacy-first",
+      "on-device",
+      "no cloud"
     ],
     "seoIntro": {
       "heading": "An intelligent ID photo studio inside your browser",
@@ -432,7 +438,10 @@
         "AI photo print sizes",
         "3R 4R 5R 6R 8R paper",
         "A4 ID photo layout",
-        "Pixfit paper"
+        "Pixfit paper",
+        "privacy-first",
+        "on-device",
+        "no cloud"
       ]
     }
   },
@@ -508,7 +517,10 @@
       "passport photo dimensions",
       "Schengen visa photo size",
       "US visa photo 51x51",
-      "Pixfit sizes"
+      "Pixfit sizes",
+      "privacy-first",
+      "on-device",
+      "no cloud"
     ],
     "detail": {
       "metaTitle": "{name} {w}×{h}mm · online crop 2026 | Pixfit",
@@ -610,14 +622,17 @@
     },
     "cta": "Open in Studio",
     "metaTitle": "Pixfit layout templates · 12 · 5R 6R A4 online tile generate PDF 2026 | Pixfit",
-    "metaDescription": "12 print layouts: 8 × 1-inch, 16 × 1-inch, mixed 1+2-inch, ID card, passport, wallet, across 5R / 6R / A4. Online generate PNG + vector PDF. Free 2026.",
+    "metaDescription": "12 print layouts: 8 × 1-inch, 16 × 1-inch, mixed 1+2-inch, ID card, passport, wallet, across 5R / 6R / A4. In-browser PNG + vector PDF, no upload, free 2026.",
     "metaKeywords": [
       "ID photo layout templates",
       "smart photo layout",
       "AI print tiling",
       "1-inch 16-up layout",
       "passport photo wallet",
-      "Pixfit templates"
+      "Pixfit templates",
+      "privacy-first",
+      "on-device",
+      "no cloud"
     ]
   },
   "Compress": {
@@ -632,7 +647,10 @@
         "in-browser photo compress",
         "free photo compress",
         "2026 compressor",
-        "Pixfit compress"
+        "Pixfit compress",
+        "privacy-first",
+        "on-device",
+        "no cloud"
       ],
       "heading": "Compress photos to an exact KB target",
       "subtitle": "Pick the size your visa, exam, or admissions portal needs. Pixfit re-encodes to within ±1KB of your target — entirely in the browser, no upload.",
@@ -657,7 +675,10 @@
         "photo compressor {label}",
         "online photo to {label}",
         "in-browser compress",
-        "Pixfit compress"
+        "Pixfit compress",
+        "privacy-first",
+        "on-device",
+        "no cloud"
       ],
       "backLink": "Back to compress",
       "heading": "Compress photos to {label}",
@@ -999,7 +1020,10 @@
       "no upload",
       "in-browser",
       "2026",
-      "Pixfit Scanner"
+      "Pixfit Scanner",
+      "privacy-first",
+      "on-device",
+      "no cloud"
     ],
     "shell": {
       "previewTitle": "Scan preview",
@@ -1032,6 +1056,13 @@
       }
     },
     "preview": {
+      "trigger": "Preview sheet",
+      "title": "Sheet preview",
+      "description": "Exactly what your downloaded {paper} sheet will look like — same paper, watermark, and rounded corners.",
+      "loading": "Generating preview…",
+      "empty": "Upload at least one side to preview the sheet",
+      "error": "Couldn't generate the preview. Adjust a setting and try again.",
+      "imageAlt": "{paper} packed sheet preview",
       "frontLabel": "Front",
       "backLabel": "Back",
       "processing": "Rectifying perspective…",
@@ -1124,25 +1155,6 @@
       "successPdf": "PDF downloaded",
       "successPng": "PNG downloaded",
       "errorGeneric": "Export failed: {message}"
-    },
-    "preview": {
-      "trigger": "Preview sheet",
-      "title": "Sheet preview",
-      "description": "Exactly what your downloaded {paper} sheet will look like — same paper, watermark, and rounded corners.",
-      "loading": "Generating preview…",
-      "empty": "Upload at least one side to preview the sheet",
-      "error": "Couldn't generate the preview. Adjust a setting and try again.",
-      "imageAlt": "{paper} packed sheet preview",
-      "frontLabel": "Front",
-      "backLabel": "Back",
-      "processing": "Rectifying perspective…",
-      "rectifyError": "Failed: {message}",
-      "retry": "Retry",
-      "editCorners": "Adjust corners",
-      "rotate": "Rotate",
-      "downloadCurrent": "Download this side",
-      "downloadHint": "Single-side PNG · use the right-rail export for full A4 / PDF / photocopy / watermark",
-      "adjustHint": "First preview is a center crop matched to the spec — click 'Adjust corners' to align the handles with the actual document edges."
     },
     "usage": {
       "heading": "Before you scan — usage notice",
@@ -1341,7 +1353,10 @@
         "online ID photo",
         "in-browser document scanner",
         "no upload",
-        "2026"
+        "2026",
+        "privacy-first",
+        "on-device",
+        "no cloud"
       ],
       "breadcrumb": "Blog",
       "heading": "Pixfit blog",
