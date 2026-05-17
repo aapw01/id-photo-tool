@@ -24,6 +24,7 @@ import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { DOC_SPECS, getOutputPixels, type DocSpec } from '@/features/scanner/lib/doc-specs'
+import { getRelatedDocSpecs } from '@/features/seo/related-specs'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
@@ -294,10 +295,72 @@ export default async function ScannerDocTypePage({ params }: PageProps) {
               </div>
             </div>
           </section>
+
+          <RelatedDocSpecsRow docId={spec.id} t={t} tNames={tNames} />
         </article>
       </main>
       <SiteFooter />
       <JsonLd data={[webApplicationSchema(locale as Locale), breadcrumbs, howTo, faq]} />
     </>
+  )
+}
+
+interface RelatedDocSpecsRowProps {
+  docId: string
+  t: Awaited<ReturnType<typeof getTranslations<'Scanner.detail'>>>
+  tNames: Awaited<ReturnType<typeof getTranslations<'Scanner.docSpecs'>>>
+}
+
+/**
+ * "Also try / 你可能还需要" row beneath the per-doc CTA. Renders 4–6
+ * related DocSpecs picked deterministically by `getRelatedDocSpecs`
+ * (same group first, then fill from other groups). The row is a
+ * `<nav aria-label>` so screen readers can skip into the
+ * recommendations directly.
+ */
+function RelatedDocSpecsRow({ docId, t, tNames }: RelatedDocSpecsRowProps) {
+  const related = getRelatedDocSpecs(docId)
+  if (related.length === 0) return null
+  return (
+    <nav
+      aria-label={t('related.heading')}
+      className="mt-12 border-t border-[var(--color-border)] pt-10"
+    >
+      <header className="mb-6">
+        <h2
+          className="text-[var(--color-text)]"
+          style={{
+            fontSize: 'var(--text-h3)',
+            lineHeight: 'var(--text-h3--line-height)',
+          }}
+        >
+          {t('related.heading')}
+        </h2>
+        <p className="mt-1 text-sm text-[var(--color-text-mute)]">{t('related.subtitle')}</p>
+      </header>
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {related.map((other) => (
+          <li key={other.id}>
+            <Link
+              href={{ pathname: `/scanner/${other.id}` }}
+              className="group flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 transition-colors hover:border-[var(--color-primary-soft)] hover:bg-[var(--color-primary-soft)]/30"
+            >
+              <span className="flex-1">
+                <span className="block text-sm font-medium text-[var(--color-text)]">
+                  {tNames(other.id as Parameters<typeof tNames>[0])}
+                </span>
+                <span className="mt-0.5 block font-mono text-xs text-[var(--color-text-weak)]">
+                  {other.widthMm} × {other.heightMm} mm
+                </span>
+              </span>
+              <ArrowRight
+                className="size-4 text-[var(--color-text-weak)] transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   )
 }

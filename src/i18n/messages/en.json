@@ -575,7 +575,11 @@
         "primary": "Open Studio with {name}",
         "secondary": "Browse all sizes"
       },
-      "backLink": "Back to sizes"
+      "backLink": "Back to sizes",
+      "related": {
+        "heading": "Also try",
+        "subtitle": "Other ID photo sizes you may need"
+      }
     }
   },
   "Templates": {
@@ -1133,7 +1137,11 @@
         "primary": "Open the scanner with {name}",
         "secondary": "Browse all document types"
       },
-      "backLink": "Back to scanner"
+      "backLink": "Back to scanner",
+      "related": {
+        "heading": "Also try",
+        "subtitle": "Other document types you can scan in your browser"
+      }
     },
     "docTypes": {
       "cn-id-card": {

@@ -575,7 +575,11 @@
         "primary": "前往工作台制作{name}",
         "secondary": "查看所有尺寸"
       },
-      "backLink": "返回尺寸库"
+      "backLink": "返回尺寸库",
+      "related": {
+        "heading": "你可能还需要",
+        "subtitle": "其他常用的证件照尺寸"
+      }
     }
   },
   "Templates": {
@@ -1133,7 +1137,11 @@
         "primary": "用 {name} 打开扫描器",
         "secondary": "浏览全部证件类型"
       },
-      "backLink": "返回扫描器"
+      "backLink": "返回扫描器",
+      "related": {
+        "heading": "你可能还需要",
+        "subtitle": "其他可在浏览器内扫描的证件类型"
+      }
     },
     "docTypes": {
       "cn-id-card": {
