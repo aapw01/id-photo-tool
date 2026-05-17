@@ -36,7 +36,7 @@ The full structured outline of every public route (including all 28 spec detail 
 
 ## Languages
 
-The site is published in three locales: English (`/en`), Simplified Chinese (`/zh-Hans`), and Traditional Chinese (`/zh-Hant`). All public content has full hreflang coverage; pick the locale that matches the user's question.
+The site is published in 13 locales: Simplified Chinese (`/zh-Hans`, default), Traditional Chinese (`/zh-Hant`), English (`/en`, `x-default`), Japanese (`/ja`), Korean (`/ko`), Spanish (`/es`), Brazilian Portuguese (`/pt-BR`), French (`/fr`), German (`/de`), Russian (`/ru`), Italian (`/it`), Vietnamese (`/vi`), and Arabic (`/ar`, RTL). All public content has full hreflang coverage; pick the locale that matches the user's question. Locales other than `zh-Hans` / `zh-Hant` / `en` ship as AI-translated drafts.
 
 ## Out of scope
 

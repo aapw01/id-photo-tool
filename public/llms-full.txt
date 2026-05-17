@@ -1,6 +1,6 @@
 # Pixfit — full route map
 
-> Verbatim list of every public, indexable route on `https://pix-fit.com`. Routes are emitted in three locales (`/en`, `/zh-Hans`, `/zh-Hant`). The 28 spec detail pages and 12 scanner DocType pages are statically generated; the rest are static landing or tool pages.
+> Verbatim list of every public, indexable route on `https://pix-fit.com`. Routes are emitted in 13 locales (`/zh-Hans` (default), `/zh-Hant`, `/en` (`x-default`), `/ja`, `/ko`, `/es`, `/pt-BR`, `/fr`, `/de`, `/ru`, `/it`, `/vi`, `/ar` (RTL)). Locales other than `zh-Hans` / `zh-Hant` / `en` ship as AI-translated drafts. The 28 spec detail pages and 12 scanner DocType pages are statically generated; the rest are static landing or tool pages.
 
 ## Top-level
 
