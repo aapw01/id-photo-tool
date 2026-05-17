@@ -143,6 +143,7 @@
       "sizes": "Photo sizes",
       "paper": "Paper sizes",
       "templates": "Layout templates",
+      "compress": "Compress to KB",
       "privacy": "Privacy policy",
       "terms": "Terms of service",
       "github": "GitHub"
@@ -605,6 +606,107 @@
       "passport photo wallet",
       "Pixfit templates"
     ]
+  },
+  "Compress": {
+    "index": {
+      "metaTitle": "Compress photos online · 50KB / 100KB / 200KB / 500KB / 1MB · free 2026 | Pixfit",
+      "metaDescription": "Compress JPG and PNG photos to 50KB, 100KB, 200KB, 500KB, or 1MB online. 100% in-browser, no upload, free, 2026. Pixfit.",
+      "metaKeywords": [
+        "compress photo online",
+        "compress jpg to KB",
+        "compress photo to 50KB",
+        "online photo compressor",
+        "in-browser photo compress",
+        "free photo compress",
+        "2026 compressor",
+        "Pixfit compress"
+      ],
+      "heading": "Compress photos to an exact KB target",
+      "subtitle": "Pick the size your visa, exam, or admissions portal needs. Pixfit re-encodes to within ±1KB of your target — entirely in the browser, no upload.",
+      "intro": "Online portals enforce strict upload limits — 50KB for some government services, 200KB for many visa applicants, 500KB for university admissions. Pixfit hits each target by adaptively re-encoding the JPG quality and resampling when needed, all client-side. Pick a preset below or fine-tune in Studio.",
+      "targets": {
+        "heading": "Pick a target",
+        "cardCta": "Compress to {label}",
+        "cardSubtitle": "{label} JPG"
+      },
+      "studio": {
+        "heading": "Need a custom size?",
+        "body": "Studio's Export tab lets you set any KB target from 5 KB upward, paired with an optional minimum so portals that enforce a window (e.g. 50–200 KB) still pass.",
+        "cta": "Open Studio · Export tab"
+      }
+    },
+    "detail": {
+      "metaTitle": "Compress photos to {label} online · free 2026 | Pixfit",
+      "metaDescription": "Compress photos to {label} online. 100% in-browser, no upload, free. Hits the {label} target within ±1KB. 2026 · Pixfit.",
+      "metaKeywords": [
+        "compress photo to {label}",
+        "compress jpg to {label}",
+        "photo compressor {label}",
+        "online photo to {label}",
+        "in-browser compress",
+        "Pixfit compress"
+      ],
+      "backLink": "Back to compress",
+      "heading": "Compress photos to {label}",
+      "tagline": "Target: {label}",
+      "intro": "Pixfit's compressor re-encodes your JPG / PNG photo so the final file lands within ±1KB of {label}. Everything runs in your browser — no upload, no account.",
+      "howTo": {
+        "title": "How to compress a photo to {label}",
+        "subtitle": "Four steps, all in your browser. Average run takes under five seconds for a 12MP photo.",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "Upload your photo",
+            "text": "Drop a JPG, PNG, or HEIC photo into Pixfit Studio. The file never leaves your device."
+          },
+          "target": {
+            "name": "Pick {label} as the target",
+            "text": "The Export tab is pre-set to {label} when you arrive from this page. You can override it any time."
+          },
+          "compress": {
+            "name": "Pixfit hits {label}",
+            "text": "Adaptive quality + on-the-fly resampling lock the output within ±1KB of {label} (typically in 3–5 iterations)."
+          },
+          "download": {
+            "name": "Download the result",
+            "text": "Click Export to save the {label}-compressed photo as a JPG. The original stays untouched."
+          }
+        }
+      },
+      "faq": {
+        "title": "Frequently asked questions about {label} compression",
+        "items": {
+          "quality": {
+            "q": "Will compressing to {label} ruin the photo quality?",
+            "a": "Pixfit picks the highest JPG quality that fits within {label} and only resamples the pixels when quality alone can't shrink the file enough. For most portrait photos a {label} target is visually indistinguishable from a 2MB original."
+          },
+          "target": {
+            "q": "How close does the output get to {label}?",
+            "a": "Pixfit binary-searches the JPG quality until the result lands within ±1KB of {label}. If you need an exact-window target (for example 50–{label}), use Studio's Export tab and set both min and max."
+          },
+          "format": {
+            "q": "Does the {label} compressor support PNG?",
+            "a": "Yes — Pixfit decodes PNG, JPG, and HEIC inputs. The output is always a re-encoded JPG, since PNG can't hit {label} for photographic content without unacceptable quality loss."
+          },
+          "batch": {
+            "q": "Can I batch-compress multiple photos to {label}?",
+            "a": "Studio is single-photo by design. For a batch run, drop each photo in one after another — the {label} preset stays applied across the session."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Open Studio with the {label} preset",
+        "secondary": "Full Studio control",
+        "secondaryHint": "Override the preset, add a min-size floor, or batch multiple photos."
+      }
+    },
+    "targetLabel": {
+      "50kb": "50KB",
+      "100kb": "100KB",
+      "200kb": "200KB",
+      "500kb": "500KB",
+      "1mb": "1MB"
+    }
   },
   "Legal": {
     "common": {

@@ -60,6 +60,7 @@ const SPECS_LINKS = [
   { href: '/paper', key: 'paper' },
   { href: '/templates', key: 'templates' },
   { href: '/specs', key: 'specs' },
+  { href: '/compress', key: 'compress' },
 ] as const
 
 const LEGAL_LINKS = [

@@ -143,6 +143,7 @@
       "sizes": "照片尺寸",
       "paper": "相纸规格",
       "templates": "排版模板",
+      "compress": "压缩到指定 KB",
       "privacy": "隐私政策",
       "terms": "服务条款",
       "github": "GitHub"
@@ -605,6 +606,107 @@
       "护照皮夹照",
       "Pixfit 模板"
     ]
+  },
+  "Compress": {
+    "index": {
+      "metaTitle": "在线压缩照片到指定大小 · 50KB/100KB/200KB/500KB/1MB · 免费 2026 | Pixfit",
+      "metaDescription": "在线把 JPG/PNG 照片压缩到 50KB、100KB、200KB、500KB 或 1MB。完全在浏览器内运行，不上传、免费、2026 更新 · Pixfit。",
+      "metaKeywords": [
+        "在线压缩照片",
+        "照片压缩到指定大小",
+        "压缩 jpg",
+        "在线照片压缩",
+        "浏览器内压缩",
+        "免费压缩",
+        "2026 压缩",
+        "Pixfit 压缩"
+      ],
+      "heading": "把照片压缩到指定 KB 大小",
+      "subtitle": "签证、考试、招生网站要求的体积，Pixfit 在浏览器里直接压缩到 ±1KB 范围内，不上传。",
+      "intro": "很多在线平台对图片体积有严格限制：部分政务系统要求 50KB 以内，签证常见 200KB 上限，招生系统多在 500KB 左右。Pixfit 通过自适应 JPG 质量 + 必要时降采样实现精准压缩，全过程在浏览器本地完成。下面挑一个预设，或直接进入 Studio 自定义。",
+      "targets": {
+        "heading": "选择压缩目标",
+        "cardCta": "压缩到 {label}",
+        "cardSubtitle": "{label} JPG"
+      },
+      "studio": {
+        "heading": "需要自定义大小？",
+        "body": "Studio 的「导出」标签支持从 5 KB 起任意目标值，可同时设最小值，方便部分网站需要的 50–200KB 区间。",
+        "cta": "进入 Studio · 导出标签"
+      }
+    },
+    "detail": {
+      "metaTitle": "在线压缩照片到 {label} · 免费 2026 | Pixfit",
+      "metaDescription": "在线把照片压缩到 {label}。完全在浏览器内运行，不上传、免费，结果落在 ±1KB 范围内。2026 · Pixfit。",
+      "metaKeywords": [
+        "压缩照片到 {label}",
+        "压缩 jpg 到 {label}",
+        "在线照片压缩 {label}",
+        "{label} 压缩",
+        "浏览器内压缩",
+        "Pixfit 压缩"
+      ],
+      "backLink": "返回压缩主页",
+      "heading": "把照片压缩到 {label}",
+      "tagline": "目标体积：{label}",
+      "intro": "Pixfit 压缩引擎会重新编码 JPG/PNG，让最终文件落在 {label} 的 ±1KB 范围内。整个过程在浏览器内进行，不上传、无账号。",
+      "howTo": {
+        "title": "如何把照片压缩到 {label}",
+        "subtitle": "四步搞定，全程浏览器本地。一张 12MP 照片通常 5 秒以内完成。",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "上传照片",
+            "text": "把 JPG、PNG 或 HEIC 照片拖进 Studio，文件始终留在你的设备上。"
+          },
+          "target": {
+            "name": "选择 {label} 目标",
+            "text": "从本页跳转过来时，导出标签会预设 {label}，你可以随时调整。"
+          },
+          "compress": {
+            "name": "Pixfit 压到 {label}",
+            "text": "自适应质量 + 必要时降采样，通常 3–5 次迭代就能锁定到 ±1KB 范围。"
+          },
+          "download": {
+            "name": "下载结果",
+            "text": "点击导出即可保存 {label} 压缩后的 JPG，原图不会被覆盖。"
+          }
+        }
+      },
+      "faq": {
+        "title": "关于 {label} 压缩的常见问题",
+        "items": {
+          "quality": {
+            "q": "压缩到 {label} 会牺牲画质吗？",
+            "a": "Pixfit 会选择能落在 {label} 范围内的最高 JPG 质量，仅当质量已不足以达到目标时才进行降采样。一般证件照在 {label} 内与 2MB 原图肉眼无差。"
+          },
+          "target": {
+            "q": "输出大小能多接近 {label}？",
+            "a": "Pixfit 使用二分搜索锁定 JPG 质量，结果落在 ±1KB 范围内。如果你需要严格区间（比如 50–{label}），请到 Studio 导出标签同时设上下限。"
+          },
+          "format": {
+            "q": "{label} 压缩支持 PNG 吗？",
+            "a": "支持。输入可以是 PNG / JPG / HEIC，但输出始终是重新编码的 JPG —— 因为照片类内容用 PNG 压到 {label} 几乎无法兼顾画质。"
+          },
+          "batch": {
+            "q": "可以批量压缩多张照片到 {label} 吗？",
+            "a": "Studio 默认单张操作。你可以连续拖入多张照片，{label} 预设会在整个会话期间保持有效。"
+          }
+        }
+      },
+      "cta": {
+        "primary": "用 {label} 预设打开 Studio",
+        "secondary": "完整 Studio 控制",
+        "secondaryHint": "可覆盖预设、加入最小尺寸下限、或批量处理多张。"
+      }
+    },
+    "targetLabel": {
+      "50kb": "50KB",
+      "100kb": "100KB",
+      "200kb": "200KB",
+      "500kb": "500KB",
+      "1mb": "1MB"
+    }
   },
   "Legal": {
     "common": {

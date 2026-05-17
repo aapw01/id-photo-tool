@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest'
 
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
+import { COMPRESS_TARGETS } from '@/features/compress/targets'
 import { DOC_SPECS as SCANNER_DOC_SPECS } from '@/features/scanner/lib/doc-specs'
 import {
   buildSitemapEntries,
+  compressTargetRoutes,
   SEO_LASTMOD,
   SITEMAP_ROUTES,
   scannerDocTypeRoutes,
@@ -16,11 +18,32 @@ const LOCALE_COUNT = SUPPORTED_LOCALES.length
 describe('buildSitemapEntries', () => {
   const fixed = new Date('2026-05-12T12:00:00Z')
 
-  it('emits one entry per route × locale, including spec + scanner detail pages', () => {
+  it('emits one entry per route × locale, including spec + scanner + compress detail pages', () => {
     const entries = buildSitemapEntries(fixed)
     const expected =
-      (SITEMAP_ROUTES.length + BUILTIN_PHOTO_SPECS.length + SCANNER_DOC_SPECS.length) * LOCALE_COUNT
+      (SITEMAP_ROUTES.length +
+        BUILTIN_PHOTO_SPECS.length +
+        SCANNER_DOC_SPECS.length +
+        COMPRESS_TARGETS.length) *
+      LOCALE_COUNT
     expect(entries).toHaveLength(expected)
+  })
+
+  it('emits the /compress index across locales', () => {
+    const entries = buildSitemapEntries(fixed)
+    const urls = entries.map((e) => e.url)
+    for (const locale of SUPPORTED_LOCALES) {
+      expect(urls).toContain(`${SITE_URL}/${locale}/compress`)
+    }
+  })
+
+  it('emits one /compress/[target] URL per target × locale (15 total)', () => {
+    const entries = buildSitemapEntries(fixed)
+    const compressDetail = entries.filter(
+      (e) => /\/compress\/[^/]+$/.test(e.url) && !e.url.endsWith('/compress'),
+    )
+    expect(compressDetail).toHaveLength(COMPRESS_TARGETS.length * LOCALE_COUNT)
+    expect(compressTargetRoutes().every((r) => r.priority === 0.8)).toBe(true)
   })
 
   it('emits exactly 36 scanner DocType URLs + 84 size detail URLs', () => {

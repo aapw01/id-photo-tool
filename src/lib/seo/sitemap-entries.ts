@@ -31,6 +31,7 @@
 import type { MetadataRoute } from 'next'
 
 import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
+import { COMPRESS_TARGETS } from '@/features/compress/targets'
 import { DOC_SPECS as SCANNER_DOC_SPECS } from '@/features/scanner/lib/doc-specs'
 import type { Locale } from '@/i18n/routing'
 import { buildAlternateLanguages, buildCanonical } from './metadata'
@@ -65,6 +66,7 @@ export const SITEMAP_ROUTES: RouteSpec[] = [
   { path: '/paper', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/templates', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/specs', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/compress', changeFrequency: 'monthly', priority: 0.8 },
   { path: '/privacy', changeFrequency: 'yearly', priority: 0.5 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.5 },
 ]
@@ -100,6 +102,20 @@ export function scannerDocTypeRoutes(): RouteSpec[] {
 }
 
 /**
+ * Per-target compression landing pages, one per
+ * `COMPRESS_TARGETS` entry (50kb / 100kb / 200kb / 500kb / 1mb).
+ * Same priority tier as the other tool detail pages — they target
+ * a high-intent long-tail cluster ("compress photo to 50kb").
+ */
+export function compressTargetRoutes(): RouteSpec[] {
+  return COMPRESS_TARGETS.map((target) => ({
+    path: `/compress/${target.slug}`,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+}
+
+/**
  * Build sitemap entries with hreflang alternates.
  *
  * `now` defaults to `SEO_LASTMOD` — pass an explicit Date in tests
@@ -107,7 +123,12 @@ export function scannerDocTypeRoutes(): RouteSpec[] {
  */
 export function buildSitemapEntries(
   now: Date = SEO_LASTMOD,
-  routes: RouteSpec[] = [...SITEMAP_ROUTES, ...specDetailRoutes(), ...scannerDocTypeRoutes()],
+  routes: RouteSpec[] = [
+    ...SITEMAP_ROUTES,
+    ...specDetailRoutes(),
+    ...scannerDocTypeRoutes(),
+    ...compressTargetRoutes(),
+  ],
   locales: readonly Locale[] = SUPPORTED_LOCALES,
 ): MetadataRoute.Sitemap {
   const entries: MetadataRoute.Sitemap = []

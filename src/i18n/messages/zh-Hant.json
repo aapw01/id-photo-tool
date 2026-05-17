@@ -143,6 +143,7 @@
       "sizes": "照片尺寸",
       "paper": "相紙規格",
       "templates": "排版模板",
+      "compress": "壓縮到指定 KB",
       "privacy": "隱私政策",
       "terms": "服務條款",
       "github": "GitHub"
@@ -605,6 +606,107 @@
       "護照皮夾照",
       "Pixfit 模板"
     ]
+  },
+  "Compress": {
+    "index": {
+      "metaTitle": "線上壓縮照片到指定大小 · 50KB/100KB/200KB/500KB/1MB · 免費 2026 | Pixfit",
+      "metaDescription": "線上把 JPG/PNG 照片壓縮到 50KB、100KB、200KB、500KB 或 1MB。全程於瀏覽器內運作，不上傳、免費、2026 更新 · Pixfit。",
+      "metaKeywords": [
+        "線上壓縮照片",
+        "照片壓縮到指定大小",
+        "壓縮 jpg",
+        "線上照片壓縮",
+        "瀏覽器內壓縮",
+        "免費壓縮",
+        "2026 壓縮",
+        "Pixfit 壓縮"
+      ],
+      "heading": "把照片壓縮到指定 KB 大小",
+      "subtitle": "簽證、考試、招生網站要求的檔案大小，Pixfit 在瀏覽器內直接壓到 ±1KB 範圍內，不上傳。",
+      "intro": "許多線上平台對照片有嚴格大小限制：部分政府系統要求 50KB 以內，簽證常見 200KB 上限，招生系統多在 500KB 左右。Pixfit 透過自動調整 JPG 品質 + 必要時降採樣達成精準壓縮，整個過程在瀏覽器本地完成。下方挑一個預設，或直接進入 Studio 自訂。",
+      "targets": {
+        "heading": "選擇壓縮目標",
+        "cardCta": "壓縮到 {label}",
+        "cardSubtitle": "{label} JPG"
+      },
+      "studio": {
+        "heading": "需要自訂大小？",
+        "body": "Studio 的「匯出」分頁支援從 5 KB 起的任意目標值，可同時設下限，便於部分網站需要的 50–200KB 區間。",
+        "cta": "進入 Studio · 匯出分頁"
+      }
+    },
+    "detail": {
+      "metaTitle": "線上壓縮照片到 {label} · 免費 2026 | Pixfit",
+      "metaDescription": "線上把照片壓縮到 {label}。完全於瀏覽器內運作，不上傳、免費，結果落在 ±1KB 範圍內。2026 · Pixfit。",
+      "metaKeywords": [
+        "壓縮照片到 {label}",
+        "壓縮 jpg 到 {label}",
+        "線上照片壓縮 {label}",
+        "{label} 壓縮",
+        "瀏覽器內壓縮",
+        "Pixfit 壓縮"
+      ],
+      "backLink": "返回壓縮主頁",
+      "heading": "把照片壓縮到 {label}",
+      "tagline": "目標大小：{label}",
+      "intro": "Pixfit 壓縮引擎會重新編碼 JPG/PNG，讓最終檔案落在 {label} 的 ±1KB 範圍內。整個流程在瀏覽器內完成，不上傳、無帳號。",
+      "howTo": {
+        "title": "如何把照片壓縮到 {label}",
+        "subtitle": "四個步驟，全程瀏覽器本地。12MP 照片通常 5 秒內完成。",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "上傳照片",
+            "text": "把 JPG、PNG 或 HEIC 照片拖進 Studio，檔案始終留在你的裝置上。"
+          },
+          "target": {
+            "name": "選擇 {label} 目標",
+            "text": "從本頁跳轉過來時，匯出分頁會預設 {label}，可隨時調整。"
+          },
+          "compress": {
+            "name": "Pixfit 壓到 {label}",
+            "text": "自動調整品質 + 必要時降採樣，通常 3–5 次迭代就能鎖定 ±1KB 範圍。"
+          },
+          "download": {
+            "name": "下載結果",
+            "text": "點擊匯出即可儲存 {label} 壓縮後的 JPG，原檔不會被覆蓋。"
+          }
+        }
+      },
+      "faq": {
+        "title": "關於 {label} 壓縮的常見問題",
+        "items": {
+          "quality": {
+            "q": "壓縮到 {label} 會犧牲畫質嗎？",
+            "a": "Pixfit 會選擇能落在 {label} 範圍內的最高 JPG 品質，僅當品質已不足以達到目標時才會降採樣。一般證件照在 {label} 內與 2MB 原圖肉眼無差。"
+          },
+          "target": {
+            "q": "輸出大小能多接近 {label}？",
+            "a": "Pixfit 使用二分搜尋鎖定 JPG 品質，結果落在 ±1KB 範圍內。如需嚴格區間（例如 50–{label}），請到 Studio 匯出分頁同時設上下限。"
+          },
+          "format": {
+            "q": "{label} 壓縮支援 PNG 嗎？",
+            "a": "支援。輸入可以是 PNG / JPG / HEIC，但輸出一律重新編碼為 JPG —— 因為照片內容用 PNG 壓到 {label} 幾乎無法兼顧畫質。"
+          },
+          "batch": {
+            "q": "可以批次壓縮多張照片到 {label} 嗎？",
+            "a": "Studio 預設為單張操作。可連續拖入多張照片，{label} 預設會在整個 session 中持續套用。"
+          }
+        }
+      },
+      "cta": {
+        "primary": "用 {label} 預設打開 Studio",
+        "secondary": "完整 Studio 控制",
+        "secondaryHint": "可覆寫預設、加入最小尺寸下限、或批次處理多張。"
+      }
+    },
+    "targetLabel": {
+      "50kb": "50KB",
+      "100kb": "100KB",
+      "200kb": "200KB",
+      "500kb": "500KB",
+      "1mb": "1MB"
+    }
   },
   "Legal": {
     "common": {
