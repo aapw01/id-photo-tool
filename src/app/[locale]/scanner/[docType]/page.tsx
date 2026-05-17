@@ -69,8 +69,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildMetadata({
     locale: locale as Locale,
     path: `/scanner/${spec.id}`,
-    title: t('metaTitle', { name }),
-    description: t('metaDescription', { name }),
+    title: t('metaTitle', { name, w: spec.widthMm, h: spec.heightMm }),
+    description: t('metaDescription', { name, w: spec.widthMm, h: spec.heightMm }),
     keywords,
   })
 }

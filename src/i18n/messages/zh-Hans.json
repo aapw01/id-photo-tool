@@ -32,8 +32,8 @@
   "Home": {
     "heroTitle": "智能证件照处理，一次搞定",
     "heroSubtitle": "Pixfit 是浏览器内运行的 AI 证件照工具：AI 一键抠图、智能换背景、智能裁剪到证件 / 签证规格、自动排版与压缩到指定大小——全程本地处理，照片不上传。",
-    "metaTitle": "Pixfit — 浏览器内的智能证件照处理与 AI 证件扫描工具",
-    "metaDescription": "免费的智能证件照处理工具：AI 一键抠图、智能换背景、智能裁剪到签证 / 护照 / 身份证规格，含 AI 证件扫描成 A4 PDF。全程浏览器内运行，照片不上传。",
+    "metaTitle": "Pixfit · 免费在线证件照工具 · 浏览器内 AI 抠图换背景 · 不上传 2026 | Pixfit",
+    "metaDescription": "免费在线证件照工具，浏览器内 AI 一键抠图、换背景、智能裁剪到签证 / 护照 / 身份证规格，含 AI 证件扫描成 A4 PDF。照片不上传，2026 全新规格。",
     "metaKeywords": [
       "智能证件照处理",
       "AI 证件照",
@@ -144,8 +144,8 @@
   "Studio": {
     "title": "工作台",
     "subtitle": "上传一张人像，AI 智能抠图、智能裁剪、AI 一键换背景、自动拼版与按 KB 压缩，全程浏览器内完成。",
-    "metaTitle": "Pixfit 工作台 — AI 证件照编辑器（智能抠图 / 智能裁剪 / 一键换背景）",
-    "metaDescription": "Pixfit 工作台：AI 证件照编辑器，支持 AI 一键抠图、智能裁剪到签证 / 护照 / 身份证规格、A4 / 5R / 6R 排版与按 KB 精准压缩。免费、浏览器内运行、不上传。",
+    "metaTitle": "Pixfit 工作台 · 在线裁剪 · 换背景 · 压缩 · 拼版打印 2026 | Pixfit",
+    "metaDescription": "Pixfit 工作台：在线裁剪、AI 一键换背景、按 KB 压缩、A4 / 5R / 6R 拼版打印，免费浏览器内运行，照片不上传。2026 支持 28 种证件规格。",
     "metaKeywords": [
       "AI 证件照编辑器",
       "智能证件照处理",
@@ -400,8 +400,8 @@
         "dpi": "DPI"
       },
       "cta": "在工作台使用",
-      "metaTitle": "智能证件照排版相纸规格 · Pixfit · 像配",
-      "metaDescription": "七张内置相纸（3R / 4R / 5R / 6R / 8R / A4 / A5），Pixfit 用 AI 自动把证件照拼版到这些相纸上，免费、浏览器内运行、不上传。",
+      "metaTitle": "Pixfit 证件照相纸规格 · 3R 4R 5R 6R 8R A4 A5 在线拼版 2026 | Pixfit",
+      "metaDescription": "七种打印相纸：3R / 4R / 5R / 6R / 8R / A4 / A5。在浏览器内免费把证件照在线拼版到相纸上，下载 PNG / PDF，照片不上传，2026 全新规格。",
       "metaKeywords": [
         "证件照打印相纸",
         "智能照片排版",
@@ -475,8 +475,8 @@
     "cta": "在工作台使用",
     "categoryEmpty": "该分类下暂无规格",
     "viewDetail": "查看详情",
-    "metaTitle": "智能证件照尺寸库（签证 · 证件 · 考试报名）· Pixfit",
-    "metaDescription": "28 条智能证件照规格——美国 / 申根 / 英国 / 加拿大 / 澳新 / 日韩 / 东南亚签证、中国 1 寸 / 2 寸 / 身份证、考试报名。AI 智能裁剪、免费、浏览器内运行、不上传。",
+    "metaTitle": "Pixfit 证件照尺寸库 · 28 种规格 在线裁剪 + AI 换背景 2026 | Pixfit",
+    "metaDescription": "28 条证件照规格：美国 / 申根 / 英国 / 日韩签证、中国身份证 / 1 寸 / 2 寸、考试报名。在线裁剪 + AI 换背景，免费浏览器内运行，照片不上传，2026 规格。",
     "metaKeywords": [
       "智能证件照尺寸",
       "AI 证件照规格",
@@ -487,8 +487,8 @@
       "Pixfit 尺寸库"
     ],
     "detail": {
-      "metaTitle": "{name}照片尺寸 {w}×{h}mm · AI 证件照在线制作",
-      "metaDescription": "{name}电子证件照：{w}×{h} 毫米（{wpx}×{hpx} 像素 @ {dpi} DPI），背景色 {bgLabel}。Pixfit 智能抠图、AI 一键换背景、智能裁剪、压缩一站完成，免费且不上传。",
+      "metaTitle": "{name} {w}×{h}mm / {wpx}×{hpx}px · 在线裁剪 2026 | Pixfit",
+      "metaDescription": "{name} 证件照 {w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推荐背景 {bgLabel}。在线裁剪 + AI 换背景，免费浏览器内运行，照片不上传，2026 规格。",
       "heading": "{name}照片尺寸",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "{name}电子证件照标准规格为 {w} × {h} 毫米（{wpx} × {hpx} 像素，{dpi} DPI），推荐背景色 {bgLabel}。本页提供完整规格说明、拍摄要求与免费在线制作入口。",
@@ -581,8 +581,8 @@
       "byPaper": "按相纸分组"
     },
     "cta": "在工作台打开",
-    "metaTitle": "AI 证件照打印排版模板 · Pixfit · 像配",
-    "metaDescription": "12 套智能打印模板（8 张 1 寸 / 16 张 1 寸 / 1 寸 + 2 寸混排 / 身份证 / 护照 / 皮夹照），覆盖 5R / 6R / A4 相纸，AI 一键拼版，输出 PNG 或矢量 PDF。",
+    "metaTitle": "Pixfit 证件照拼版模板 · 12 套 · 5R 6R A4 在线生成 PDF 2026 | Pixfit",
+    "metaDescription": "12 套打印模板：8 张 1 寸 / 16 张 1 寸 / 1 寸 + 2 寸混排 / 身份证 / 护照 / 皮夹照，覆盖 5R / 6R / A4。在线生成 PNG 与矢量 PDF，免费 2026。",
     "metaKeywords": [
       "证件照排版模板",
       "智能照片拼版",
@@ -841,8 +841,8 @@
   "Scanner": {
     "title": "智能证件扫描生成器",
     "subtitle": "上传手机拍的身份证、护照、驾驶证等证件照片，智能扫描自动透视校正、AI 调色与去阴影，一键生成 A4 / Letter / A5 PDF 扫描件 —— 全程在浏览器内完成。",
-    "metaTitle": "智能证件扫描 — AI 身份证 / 护照 / 驾驶证手机照转 PDF",
-    "metaDescription": "免费的智能证件扫描工具：AI 透视校正 + 扫描 / 复印 / 增强三种输出模式，把手机拍的身份证、护照、驾驶证一键变成 A4 PDF。全程浏览器本地处理，照片不上传。",
+    "metaTitle": "Pixfit 智能证件扫描 · 12 种证件浏览器内在线扫描 PDF 2026 | Pixfit Scanner",
+    "metaDescription": "在线扫描 12 种证件成 PDF：身份证、护照、驾驶证、银行卡。AI 透视校正 + 扫描 / 复印 / 增强模式，免费浏览器内运行，照片不上传，2026 更新。",
     "metaKeywords": [
       "智能证件扫描",
       "AI 证件扫描",
@@ -1060,8 +1060,8 @@
       }
     },
     "detail": {
-      "metaTitle": "{name} 智能扫描转 A4 PDF · Pixfit",
-      "metaDescription": "为 {name} 优化的智能证件扫描工具：AI 透视校正、扫描 / 复印 / 增强三种模式、可选防滥用水印、A4 / Letter / A5 PDF 导出，全程浏览器本地运行。",
+      "metaTitle": "{name} {w}×{h}mm 在线扫描 PDF 2026 | Pixfit Scanner",
+      "metaDescription": "在浏览器内扫描 {name}（{w}×{h}mm）：AI 透视校正 + 扫描 / 复印 / 增强模式，导出 A4 / Letter / A5 PDF。照片不上传，免费 2026。",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · 可选水印",
       "summarySection": {
         "title": "关于 {name}",

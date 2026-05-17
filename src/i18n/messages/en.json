@@ -32,8 +32,8 @@
   "Home": {
     "heroTitle": "Intelligent ID photos, done right in your browser",
     "heroSubtitle": "Pixfit is an AI-powered ID photo and document scanner that auto-cuts the subject, swaps backgrounds, crops to spec, lays out for printing, and compresses to portal limits — all in your browser, no upload.",
-    "metaTitle": "Pixfit — intelligent ID photo & AI document scanner in your browser",
-    "metaDescription": "Free AI ID photo maker plus intelligent document scanner — smart crop to visa / passport / ID specs, A4 PDF scans, all in your browser. No upload.",
+    "metaTitle": "Pixfit · Free in-browser ID photo tool · AI background removal · no upload · 2026 | Pixfit",
+    "metaDescription": "Free online ID photo tool runs entirely in your browser: AI background removal, smart crop to visa / passport specs, scan to PDF. No upload, 2026 updated.",
     "metaKeywords": [
       "intelligent ID photo",
       "AI ID photo",
@@ -144,8 +144,8 @@
   "Studio": {
     "title": "Studio",
     "subtitle": "Upload a portrait — AI cut-out, smart crop, one-click background swap, print layout, and exact-KB export, all in your browser.",
-    "metaTitle": "Pixfit Studio — AI ID photo editor with smart crop & background swap",
-    "metaDescription": "Pixfit Studio: AI ID photo editor with smart crop, one-click background swap, A4 / 5R / 6R layouts, exact-KB export. Free, in-browser, no upload.",
+    "metaTitle": "Pixfit Studio · Online crop · Change background · Compress · Print layout 2026 | Pixfit",
+    "metaDescription": "Pixfit Studio: online crop, AI change background, compress to KB, A4/5R/6R print layout. Free, in-browser, no upload. 2026 · 28 ID specs supported.",
     "metaKeywords": [
       "AI ID photo editor",
       "intelligent ID photo",
@@ -400,8 +400,8 @@
         "dpi": "DPI"
       },
       "cta": "Use in Studio",
-      "metaTitle": "Print paper sizes for AI ID photo layouts · Pixfit",
-      "metaDescription": "Seven print papers (3R / 4R / 5R / 6R / 8R / A4 / A5) Pixfit uses to auto-tile AI-cropped ID photos. Smart layout, free, in-browser, no upload.",
+      "metaTitle": "Pixfit print papers · 3R 4R 5R 6R 8R A4 A5 · online tile layout 2026 | Pixfit",
+      "metaDescription": "Pixfit print papers: 3R, 4R, 5R, 6R, 8R, A4, A5 — auto-tile your ID photos in your browser, free PNG / PDF download, no upload, 2026 updated.",
       "metaKeywords": [
         "ID photo print paper",
         "smart photo layout",
@@ -475,8 +475,8 @@
     "cta": "Use in Studio",
     "categoryEmpty": "No specs in this category yet",
     "viewDetail": "View details",
-    "metaTitle": "ID photo sizes — intelligent visa, ID & exam catalog",
-    "metaDescription": "28 AI ID photo specs — US / Schengen / UK / CA / AU / NZ / JP / KR visas, Chinese IDs, travel permits, exam formats. Smart crop, free, in-browser.",
+    "metaTitle": "Pixfit ID photo sizes · 28 specs · online crop + AI background 2026 | Pixfit",
+    "metaDescription": "28 ID photo specs: US / Schengen / UK / JP visas, Chinese IDs, exam formats. Online crop + AI background, free in-browser, no upload, 2026 updated.",
     "metaKeywords": [
       "intelligent ID photo sizes",
       "AI ID photo specifications",
@@ -487,8 +487,8 @@
       "Pixfit sizes"
     ],
     "detail": {
-      "metaTitle": "{name} photo size {w}×{h}mm · AI ID photo maker",
-      "metaDescription": "{name} ID photo: {w}×{h} mm ({wpx}×{hpx} px @ {dpi} DPI), background {bgLabel}. AI smart crop + one-click background swap in Pixfit — free, in-browser, no upload.",
+      "metaTitle": "{name} {w}×{h}mm / {wpx}×{hpx}px · online crop 2026 | Pixfit",
+      "metaDescription": "{name} ID photo {w}×{h}mm ({wpx}×{hpx}px @ {dpi} DPI), background {bgLabel}. Online crop + AI background. Free, in-browser, no upload, 2026 spec.",
       "heading": "{name} photo size",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "The standard {name} ID photo measures {w} × {h} mm ({wpx} × {hpx} px at {dpi} DPI) with a recommended background of {bgLabel}. This page covers the full specification, photography requirements, and a free in-browser tool for making one.",
@@ -581,8 +581,8 @@
       "byPaper": "Grouped by paper"
     },
     "cta": "Open in Studio",
-    "metaTitle": "AI ID photo print layout templates · Pixfit",
-    "metaDescription": "Twelve smart print layouts — 8 × 1-inch, 16 × 1-inch, mixed 1+2-inch, ID card, passport, wallet — across 5R / 6R / A4. AI-tiled, PNG or vector PDF.",
+    "metaTitle": "Pixfit layout templates · 12 · 5R 6R A4 online tile generate PDF 2026 | Pixfit",
+    "metaDescription": "12 print layouts: 8 × 1-inch, 16 × 1-inch, mixed 1+2-inch, ID card, passport, wallet, across 5R / 6R / A4. Online generate PNG + vector PDF. Free 2026.",
     "metaKeywords": [
       "ID photo layout templates",
       "smart photo layout",
@@ -841,8 +841,8 @@
   "Scanner": {
     "title": "Intelligent ID Document Scanner",
     "subtitle": "Upload a phone-shot photo of your ID card, passport, or driver license — the intelligent scanner rectifies perspective, white-balances, and exports an A4 / Letter / A5 PDF scan, all in your browser.",
-    "metaTitle": "Smart document scanner — AI ID card, passport & driver license to PDF",
-    "metaDescription": "Free AI ID document scanner: perspective correction + scan/copy/enhance modes turn a phone-shot ID, passport, or license into A4 PDF — all in your browser.",
+    "metaTitle": "Pixfit Scanner · 12 doc types online scan to PDF in browser · free 2026 | Pixfit Scanner",
+    "metaDescription": "Online scan 12 doc types to PDF in your browser: ID, passport, driver license, bank card. AI perspective correction + scan/copy/enhance. Free 2026, no upload.",
     "metaKeywords": [
       "smart document scanner",
       "intelligent ID scanner",
@@ -1060,8 +1060,8 @@
       }
     },
     "detail": {
-      "metaTitle": "{name} intelligent scan to A4 PDF · Pixfit",
-      "metaDescription": "Intelligent in-browser scanner for {name}: AI perspective correction, scan / photocopy / enhance modes, optional anti-misuse watermark, A4 / Letter / A5 PDF export. 100 % offline.",
+      "metaTitle": "{name} {w}×{h}mm scan to PDF 2026 | Pixfit Scanner",
+      "metaDescription": "Scan {name} ({w}×{h}mm) in your browser: AI perspective correction + scan / photocopy / enhance modes, export A4 / Letter / A5 PDF. Free, no upload, 2026.",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · Optional watermark",
       "summarySection": {
         "title": "About {name}",
