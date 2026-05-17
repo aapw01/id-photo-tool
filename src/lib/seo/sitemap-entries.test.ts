@@ -4,11 +4,14 @@ import { BUILTIN_PHOTO_SPECS } from '@/data/photo-specs'
 import { DOC_SPECS as SCANNER_DOC_SPECS } from '@/features/scanner/lib/doc-specs'
 import {
   buildSitemapEntries,
+  SEO_LASTMOD,
   SITEMAP_ROUTES,
   scannerDocTypeRoutes,
   specDetailRoutes,
 } from './sitemap-entries'
-import { SITE_URL } from './site-config'
+import { SITE_URL, SUPPORTED_LOCALES } from './site-config'
+
+const LOCALE_COUNT = SUPPORTED_LOCALES.length
 
 describe('buildSitemapEntries', () => {
   const fixed = new Date('2026-05-12T12:00:00Z')
@@ -16,14 +19,25 @@ describe('buildSitemapEntries', () => {
   it('emits one entry per route × locale, including spec + scanner detail pages', () => {
     const entries = buildSitemapEntries(fixed)
     const expected =
-      (SITEMAP_ROUTES.length + BUILTIN_PHOTO_SPECS.length + SCANNER_DOC_SPECS.length) * 3
+      (SITEMAP_ROUTES.length + BUILTIN_PHOTO_SPECS.length + SCANNER_DOC_SPECS.length) * LOCALE_COUNT
     expect(entries).toHaveLength(expected)
   })
 
-  it('produces a detail route for every built-in photo spec', () => {
-    const detail = specDetailRoutes()
-    expect(detail).toHaveLength(BUILTIN_PHOTO_SPECS.length)
-    expect(detail[0]?.path).toMatch(/^\/sizes\//)
+  it('emits exactly 36 scanner DocType URLs + 84 size detail URLs', () => {
+    const entries = buildSitemapEntries(fixed)
+    const scannerDetailEntries = entries.filter(
+      (e) => /\/scanner\/[^/]+$/.test(e.url) && !e.url.endsWith('/scanner'),
+    )
+    const sizeDetailEntries = entries.filter(
+      (e) => /\/sizes\/[^/]+$/.test(e.url) && !e.url.endsWith('/sizes'),
+    )
+    // 12 doc specs × 3 locales = 36, 28 photo specs × 3 locales = 84.
+    // Pin against data-derived expectations so this test fails the
+    // day the catalog changes instead of silently drifting.
+    expect(scannerDetailEntries).toHaveLength(SCANNER_DOC_SPECS.length * LOCALE_COUNT)
+    expect(sizeDetailEntries).toHaveLength(BUILTIN_PHOTO_SPECS.length * LOCALE_COUNT)
+    expect(scannerDetailEntries.length).toBe(36)
+    expect(sizeDetailEntries.length).toBe(84)
   })
 
   it('emits the per-spec detail URL into the sitemap', () => {
@@ -34,12 +48,14 @@ describe('buildSitemapEntries', () => {
     expect(urls).toContain(`${SITE_URL}/zh-Hant/sizes/schengen`)
   })
 
-  it('populates hreflang alternates on every entry', () => {
+  it('populates hreflang alternates covering all three locales + x-default on every entry', () => {
     const entries = buildSitemapEntries(fixed)
     for (const entry of entries) {
       const langs = entry.alternates?.languages as Record<string, string> | undefined
       expect(langs).toBeDefined()
       expect(langs?.['zh-Hans']).toMatch(`${SITE_URL}/zh-Hans`)
+      expect(langs?.['zh-Hant']).toMatch(`${SITE_URL}/zh-Hant`)
+      expect(langs?.['en']).toMatch(`${SITE_URL}/en`)
       expect(langs?.['x-default']).toMatch(`${SITE_URL}/en`)
     }
   })
@@ -49,6 +65,36 @@ describe('buildSitemapEntries', () => {
     const home = entries.find((e) => e.url === `${SITE_URL}/zh-Hans`)
     expect(home?.priority).toBe(1)
     expect(home?.lastModified).toBe(fixed)
+  })
+
+  it('honours the agreed priority tiers', () => {
+    const find = (path: string) => SITEMAP_ROUTES.find((r) => r.path === path)
+    expect(find('/')?.priority).toBe(1.0)
+    expect(find('/studio')?.priority).toBe(0.9)
+    expect(find('/scanner')?.priority).toBe(0.9)
+    expect(find('/sizes')?.priority).toBe(0.7)
+    expect(find('/paper')?.priority).toBe(0.7)
+    expect(find('/templates')?.priority).toBe(0.7)
+    expect(find('/specs')?.priority).toBe(0.7)
+    expect(find('/privacy')?.priority).toBe(0.5)
+    expect(find('/terms')?.priority).toBe(0.5)
+    expect(specDetailRoutes().every((r) => r.priority === 0.8)).toBe(true)
+    expect(scannerDocTypeRoutes().every((r) => r.priority === 0.8)).toBe(true)
+  })
+
+  it('uses weekly cadence for tool surfaces + monthly for landing hubs + yearly for legal', () => {
+    const cf = (path: string) => SITEMAP_ROUTES.find((r) => r.path === path)?.changeFrequency
+    expect(cf('/')).toBe('weekly')
+    expect(cf('/studio')).toBe('weekly')
+    expect(cf('/scanner')).toBe('weekly')
+    expect(cf('/sizes')).toBe('monthly')
+    expect(cf('/paper')).toBe('monthly')
+    expect(cf('/templates')).toBe('monthly')
+    expect(cf('/specs')).toBe('monthly')
+    expect(cf('/privacy')).toBe('yearly')
+    expect(cf('/terms')).toBe('yearly')
+    expect(specDetailRoutes().every((r) => r.changeFrequency === 'weekly')).toBe(true)
+    expect(scannerDocTypeRoutes().every((r) => r.changeFrequency === 'weekly')).toBe(true)
   })
 
   it('covers the legal pages', () => {
@@ -66,15 +112,18 @@ describe('buildSitemapEntries', () => {
     expect(urls).toContain(`${SITE_URL}/en/scanner`)
   })
 
+  it('covers the /specs hub across locales', () => {
+    const entries = buildSitemapEntries(fixed)
+    const urls = entries.map((e) => e.url)
+    expect(urls).toContain(`${SITE_URL}/zh-Hans/specs`)
+    expect(urls).toContain(`${SITE_URL}/zh-Hant/specs`)
+    expect(urls).toContain(`${SITE_URL}/en/specs`)
+  })
+
   it('produces one scanner DocType route per built-in spec', () => {
     const routes = scannerDocTypeRoutes()
     expect(routes).toHaveLength(SCANNER_DOC_SPECS.length)
     expect(routes.every((r) => r.path.startsWith('/scanner/'))).toBe(true)
-    // Per the S7 spec, scanner DocType pages are 0.7 priority — lower
-    // than the primary `/sizes/[specId]` surface (0.75) but still
-    // indexable for long-tail queries.
-    expect(routes.every((r) => r.priority === 0.7)).toBe(true)
-    expect(routes.every((r) => r.changeFrequency === 'monthly')).toBe(true)
   })
 
   it('emits every scanner DocType URL into the sitemap', () => {
@@ -91,7 +140,7 @@ describe('buildSitemapEntries', () => {
     const scannerEntries = entries.filter(
       (e) => e.url.includes('/scanner/') && !e.url.endsWith('/scanner'),
     )
-    expect(scannerEntries.length).toBe(SCANNER_DOC_SPECS.length * 3)
+    expect(scannerEntries.length).toBe(SCANNER_DOC_SPECS.length * LOCALE_COUNT)
     for (const entry of scannerEntries) {
       const langs = entry.alternates?.languages as Record<string, string> | undefined
       expect(langs).toBeDefined()
@@ -102,14 +151,8 @@ describe('buildSitemapEntries', () => {
     }
   })
 
-  it('scanner DocType priority is at most `/sizes/[specId]` priority', () => {
-    // Defensive: if someone bumps scanner priority above sizes by
-    // accident, the SEO ranking surface order shifts in ways the
-    // product hasn't decided. Pin it.
-    const scanner = scannerDocTypeRoutes()
-    const sizes = specDetailRoutes()
-    const maxScanner = Math.max(...scanner.map((r) => r.priority))
-    const minSizes = Math.min(...sizes.map((r) => r.priority))
-    expect(maxScanner).toBeLessThanOrEqual(minSizes)
+  it('exposes a SEO_LASTMOD constant for the default lastModified anchor', () => {
+    const entries = buildSitemapEntries()
+    expect(entries[0]?.lastModified).toBe(SEO_LASTMOD)
   })
 })
