@@ -95,13 +95,13 @@ describe('Landing metaTitle template', () => {
 
 describe('Detail metaTitle template', () => {
   it.each(locales)('Sizes.detail title has size token + Pixfit + 2026 in $name', ({ messages }) => {
+    // Title uses mm only — keeping it short (~60 chars) so the SERP
+    // doesn't truncate the brand. Pixel resolution lives in the
+    // metaDescription instead (and asserted below).
     const rendered = interpolate(messages.Sizes.detail.metaTitle, {
       name: 'US visa',
       w: 51,
       h: 51,
-      wpx: 600,
-      hpx: 600,
-      dpi: 300,
     })
     expect(rendered).toContain('Pixfit')
     expect(rendered).toContain('2026')
@@ -109,7 +109,18 @@ describe('Detail metaTitle template', () => {
     // template substitution untouched — we match either an ASCII "x"
     // or the proper U+00D7 multiplication sign.
     expect(rendered).toMatch(/51\s*[×x]\s*51\s*mm/i)
-    // Pixel token mirrors the spec's official pixel count.
+  })
+
+  it.each(locales)('Sizes.detail description retains pixel resolution in $name', ({ messages }) => {
+    const rendered = interpolate(messages.Sizes.detail.metaDescription, {
+      name: 'US visa',
+      w: 51,
+      h: 51,
+      wpx: 600,
+      hpx: 600,
+      dpi: 300,
+      bgLabel: 'white',
+    })
     expect(rendered).toMatch(/600\s*[×x]\s*600\s*px/i)
   })
 

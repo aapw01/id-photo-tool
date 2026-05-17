@@ -107,7 +107,14 @@ describe('CompressTargetPage', () => {
       const meta = await generateMetadata({
         params: Promise.resolve({ locale: 'en', target: target.slug }),
       })
-      const title = typeof meta.title === 'string' ? meta.title : ''
+      // `buildMetadata` returns titles as `{ absolute }` by default.
+      const rawTitle = meta.title
+      const title =
+        typeof rawTitle === 'string'
+          ? rawTitle
+          : typeof rawTitle === 'object' && rawTitle && 'absolute' in rawTitle
+            ? String(rawTitle.absolute)
+            : ''
       expect(title).toContain(target.label)
     }
   })

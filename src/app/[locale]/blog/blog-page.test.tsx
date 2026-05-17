@@ -127,7 +127,15 @@ describe('BlogArticlePage', () => {
       const meta = await generateMetadata({
         params: Promise.resolve({ locale: 'en', slug: post.slug }),
       })
-      const title = typeof meta.title === 'string' ? meta.title : ''
+      // `buildMetadata` defaults to absolute titles, so `meta.title`
+      // is shaped like `{ absolute: '…' }` — unwrap before measuring.
+      const rawTitle = meta.title
+      const title =
+        typeof rawTitle === 'string'
+          ? rawTitle
+          : typeof rawTitle === 'object' && rawTitle && 'absolute' in rawTitle
+            ? String(rawTitle.absolute)
+            : ''
       expect(title.length).toBeGreaterThan(10)
     }
   })

@@ -74,7 +74,9 @@ describe('buildMetadata', () => {
       title: 'Pixfit Sizes',
       description: 'Browse ID photo sizes.',
     })
-    expect(meta.title).toBe('Pixfit Sizes')
+    // `buildMetadata` defaults to absolute titles so the root
+    // layout's `template` doesn't double-stamp the brand suffix.
+    expect(meta.title).toEqual({ absolute: 'Pixfit Sizes' })
     expect(meta.description).toBe('Browse ID photo sizes.')
     expect(meta.alternates?.canonical).toBe(`${SITE_URL}/en/sizes`)
     const langs = meta.alternates?.languages as Record<string, string>

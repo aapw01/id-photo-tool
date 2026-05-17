@@ -511,7 +511,7 @@
       "Pixfit sizes"
     ],
     "detail": {
-      "metaTitle": "{name} {w}×{h}mm / {wpx}×{hpx}px · online crop 2026 | Pixfit",
+      "metaTitle": "{name} {w}×{h}mm · online crop 2026 | Pixfit",
       "metaDescription": "{name} ID photo {w}×{h}mm ({wpx}×{hpx}px @ {dpi} DPI), background {bgLabel}. Online crop + AI background. Free, in-browser, no upload, 2026 spec.",
       "heading": "{name} photo size",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",

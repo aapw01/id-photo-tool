@@ -52,12 +52,15 @@ interface BuildMetadataOptions {
   title: string
   description: string
   /**
-   * When true, the resulting `title` field becomes an `absolute`
-   * object so Next does NOT apply the root layout's
-   * `template` ("%s · Pixfit · 像配"). Use this for the home page —
-   * the brand is already in the title, and double-stamping reads as
-   * spam. Default `false` so per-page titles keep getting the brand
-   * suffix automatically.
+   * When true (the default), the resulting `title` field becomes an
+   * `absolute` object so Next does NOT apply the root layout's
+   * `template` ("%s · Pixfit · 像配") on top of it. The i18n bundles
+   * already end every per-page `metaTitle` with the brand
+   * (`… | Pixfit` for main routes, `… | Pixfit Scanner` for the
+   * sub-product), and double-stamping reads as spammy + truncates
+   * the long-tail keyword cluster in the SERP. Opt out by passing
+   * `titleAbsolute: false` if you want the template behaviour back
+   * (e.g. for an internal route where i18n omits the brand suffix).
    */
   titleAbsolute?: boolean
   /**
@@ -115,7 +118,10 @@ export function buildMetadata(opts: BuildMetadataOptions): Metadata {
   }
 
   const keywords = normalizeKeywords(opts.keywords)
-  const title: Metadata['title'] = opts.titleAbsolute ? { absolute: opts.title } : opts.title
+  // Default to `absolute` because every i18n `metaTitle` already
+  // carries the brand suffix (see the JSDoc on `titleAbsolute`).
+  const titleAbsolute = opts.titleAbsolute ?? true
+  const title: Metadata['title'] = titleAbsolute ? { absolute: opts.title } : opts.title
 
   return {
     title,

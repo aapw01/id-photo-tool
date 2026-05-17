@@ -509,7 +509,7 @@
       "Pixfit 尺寸库"
     ],
     "detail": {
-      "metaTitle": "{name} {w}×{h}mm / {wpx}×{hpx}px · 在线裁剪 2026 | Pixfit",
+      "metaTitle": "{name} {w}×{h}mm · 在线裁剪 2026 | Pixfit",
       "metaDescription": "{name} 证件照 {w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推荐背景 {bgLabel}。在线裁剪 + AI 换背景，免费浏览器内运行，照片不上传，2026 规格。",
       "heading": "{name}照片尺寸",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
