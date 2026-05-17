@@ -20,6 +20,7 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
+import { Breadcrumb } from '@/components/breadcrumb'
 import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -28,8 +29,9 @@ import { getRelatedDocSpecs } from '@/features/seo/related-specs'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
-import { breadcrumbSchema, faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
-import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
+import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
+import { faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { buildMetadata } from '@/lib/seo/metadata'
 
 interface PageProps {
   params: Promise<{ locale: string; docType: string }>
@@ -96,14 +98,11 @@ export default async function ScannerDocTypePage({ params }: PageProps) {
   const usage = tDocTypes(`${spec.id}.usage` as Parameters<typeof tDocTypes>[0])
   const { width: widthPx, height: heightPx } = getOutputPixels(spec)
 
-  const canonicalUrl = buildCanonical(`/scanner/${spec.id}`, locale as Locale)
-  const scannerUrl = buildCanonical('/scanner', locale as Locale)
-
-  const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
-    { url: scannerUrl, name: tScanner('title') },
-    { url: canonicalUrl, name },
-  ])
+  const breadcrumbItems = getBreadcrumbItems('scanner-detail', {
+    labels: { home: tNav('home'), scanner: tScanner('title') },
+    detail: { itemName: name, itemSlug: spec.id },
+  })
+  const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
 
   const howToSteps = HOWTO_STEP_KEYS.map((key) => ({
     name: t(`howTo.steps.${key}.name`, { name }),
@@ -128,6 +127,8 @@ export default async function ScannerDocTypePage({ params }: PageProps) {
       <SiteHeader />
       <main className="flex-1">
         <article className="mx-auto w-full max-w-4xl px-6 pt-10 pb-16">
+          <Breadcrumb items={breadcrumbItems} className="mb-6" />
+
           <nav className="mb-6">
             <Link
               href={{ pathname: '/scanner' }}

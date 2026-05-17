@@ -9,8 +9,9 @@ import { SiteHeader } from '@/components/site-header'
 import { LegalPage } from '@/features/legal/legal-page'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
-import { breadcrumbSchema, webApplicationSchema } from '@/lib/seo/jsonld'
-import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
+import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
+import { webApplicationSchema } from '@/lib/seo/jsonld'
+import { buildMetadata } from '@/lib/seo/metadata'
 
 interface TermsPageProps {
   params: Promise<{ locale: string }>
@@ -60,10 +61,10 @@ export default async function TermsPage({ params }: TermsPageProps) {
     body: t(`sections.${id}.body`),
   }))
 
-  const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
-    { url: buildCanonical('/terms', locale as Locale), name: t('heading') },
-  ])
+  const breadcrumbItems = getBreadcrumbItems('terms', {
+    labels: { home: tNav('home'), terms: t('heading') },
+  })
+  const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
 
   return (
     <>

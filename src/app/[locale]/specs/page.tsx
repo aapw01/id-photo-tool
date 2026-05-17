@@ -3,11 +3,14 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 
+import { Breadcrumb } from '@/components/breadcrumb'
+import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { SpecManagerShellLazy } from '@/features/spec-manager/spec-manager-shell-lazy'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
+import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
 import { buildMetadata } from '@/lib/seo/metadata'
 
 interface SpecsPageProps {
@@ -32,12 +35,19 @@ export default async function SpecsPage({ params }: SpecsPageProps) {
   setRequestLocale(locale)
 
   const t = await getTranslations('SpecManager')
+  const tNav = await getTranslations('Nav')
+
+  const breadcrumbItems = getBreadcrumbItems('specs', {
+    labels: { home: tNav('home'), specs: t('title') },
+  })
+  const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
 
   return (
     <>
       <SiteHeader />
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 pt-10 pb-16">
+          <Breadcrumb items={breadcrumbItems} className="mb-6" />
           <header className="mb-8">
             <h1
               className="font-semibold tracking-tight text-[var(--color-text)]"
@@ -59,6 +69,7 @@ export default async function SpecsPage({ params }: SpecsPageProps) {
         </section>
       </main>
       <SiteFooter />
+      <JsonLd data={[breadcrumbs]} />
     </>
   )
 }

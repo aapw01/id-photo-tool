@@ -4,6 +4,7 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
+import { Breadcrumb } from '@/components/breadcrumb'
 import { JsonLd } from '@/components/jsonld'
 import { RegionFlag } from '@/components/region-flag'
 import { SiteFooter } from '@/components/site-footer'
@@ -15,8 +16,9 @@ import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { localizeText } from '@/lib/i18n-text'
-import { breadcrumbSchema, faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
-import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
+import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
+import { faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { buildMetadata } from '@/lib/seo/metadata'
 import type { PhotoCategory, PhotoSpec } from '@/types/spec'
 
 interface SpecDetailPageProps {
@@ -149,14 +151,11 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
   const fileRulesRange = formatFileRuleRange(spec.fileRules?.minKB, spec.fileRules?.maxKB)
   const flag = flagCodeForRegion(spec.region)
 
-  const canonicalUrl = buildCanonical(`/sizes/${spec.id}`, locale as Locale)
-  const sizesUrl = buildCanonical('/sizes', locale as Locale)
-
-  const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
-    { url: sizesUrl, name: tSizes('heading') },
-    { url: canonicalUrl, name },
-  ])
+  const breadcrumbItems = getBreadcrumbItems('sizes-detail', {
+    labels: { home: tNav('home'), sizes: tSizes('heading') },
+    detail: { itemName: name, itemSlug: spec.id },
+  })
+  const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
 
   const howToSteps = HOWTO_STEP_KEYS.map((key) => ({
     name: t(`howto.steps.${key}.name`, { name }),
@@ -195,6 +194,8 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
       <SiteHeader />
       <main className="flex-1">
         <article className="mx-auto w-full max-w-4xl px-6 pt-10 pb-16">
+          <Breadcrumb items={breadcrumbItems} className="mb-6" />
+
           <nav className="mb-6">
             <Link
               href={{ pathname: '/sizes' }}
