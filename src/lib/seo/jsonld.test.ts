@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import {
   breadcrumbSchema,
   itemListSchema,
+  organizationSchema,
   serializeJsonLd,
   webApplicationSchema,
   webSiteSchema,
@@ -31,6 +32,36 @@ describe('webApplicationSchema', () => {
       keywords: ['智能证件照处理', 'AI 一键抠图证件照', '智能证件扫描'],
     })
     expect(schema.keywords).toBe('智能证件照处理, AI 一键抠图证件照, 智能证件扫描')
+  })
+})
+
+describe('organizationSchema', () => {
+  it('emits a stable @id anchor under SITE_URL', () => {
+    const schema = organizationSchema('en')
+    expect(schema['@type']).toBe('Organization')
+    expect(schema['@id']).toBe(`${SITE_URL}/#organization`)
+    expect(schema.url).toBe(SITE_URL)
+  })
+
+  it('carries the brand identity fields Google requires for knowledge graph', () => {
+    const schema = organizationSchema('en')
+    expect(schema.name).toBe('Pixfit')
+    expect(schema.alternateName).toBe('像配')
+    expect(schema.logo).toMatch(/^https?:\/\/.+\/icon\.png$/)
+    expect(schema.sameAs).toEqual(['https://github.com/aapw01/id-photo-tool'])
+  })
+
+  it('reflects the active locale on inLanguage so each locale shard advertises its own copy', () => {
+    expect(organizationSchema('zh-Hans').inLanguage).toBe('zh-Hans')
+    expect(organizationSchema('zh-Hant').inLanguage).toBe('zh-Hant')
+    expect(organizationSchema('en').inLanguage).toBe('en')
+  })
+
+  it('injects the description when supplied, omits the key otherwise', () => {
+    const without = organizationSchema('en')
+    expect(without.description).toBeUndefined()
+    const withDesc = organizationSchema('en', { description: 'Free in-browser ID photo tool.' })
+    expect(withDesc.description).toBe('Free in-browser ID photo tool.')
   })
 })
 

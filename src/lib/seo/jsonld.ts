@@ -28,6 +28,43 @@ interface WebApplicationOpts {
   keywords?: readonly string[]
 }
 
+interface OrganizationOpts {
+  /**
+   * Short organisation description — usually the home page's
+   * meta-description text. Optional so callers can omit it on
+   * locales that don't have one yet.
+   */
+  description?: string
+}
+
+/**
+ * Pixfit `Organization` schema injected into the root layout. This is
+ * the brand identity node Google uses to consolidate sitelinks under
+ * a single knowledge graph entity — Wikipedia / Wikidata / GitHub /
+ * social profiles get attached here via `sameAs`.
+ *
+ * `logo` is an absolute URL because Google's strictest knowledge-graph
+ * paths still won't resolve relative logo paths against
+ * `metadataBase`.
+ */
+export function organizationSchema(locale: Locale, opts: OrganizationOpts = {}): JsonLdObject {
+  const out: JsonLdObject = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: SITE_NAME,
+    alternateName: '像配',
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.png`,
+    inLanguage: locale,
+    sameAs: ['https://github.com/aapw01/id-photo-tool'],
+  }
+  if (opts.description) {
+    out.description = opts.description
+  }
+  return out
+}
+
 /** Default Pixfit WebApplication schema (injected into the home layout). */
 export function webApplicationSchema(locale: Locale, opts: WebApplicationOpts = {}): JsonLdObject {
   const out: JsonLdObject = {

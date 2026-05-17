@@ -1,12 +1,15 @@
 import type { Metadata, Viewport } from 'next'
 import { notFound } from 'next/navigation'
 import { hasLocale, NextIntlClientProvider } from 'next-intl'
-import { setRequestLocale } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { fontMono, fontSans } from '@/lib/fonts'
+import { JsonLd } from '@/components/jsonld'
 import { routing } from '@/i18n/routing'
+import type { Locale } from '@/i18n/routing'
 import { Toaster } from '@/components/ui/sonner'
+import { organizationSchema } from '@/lib/seo/jsonld'
 import { BRAND_PRIMARY_HEX, SITE_NAME_FULL, SITE_URL } from '@/lib/seo/site-config'
 
 /**
@@ -66,6 +69,16 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   if (!hasLocale(routing.locales, locale)) notFound()
   setRequestLocale(locale)
 
+  // Organization JSON-LD lives in the locale layout (not the page-
+  // level layouts) so every public route inherits the same brand
+  // identity node. We pull the description from `Home.metaDescription`
+  // — the canonical 1-sentence summary of what Pixfit is — so the
+  // knowledge-graph copy stays in lock-step with the home page.
+  const tHome = await getTranslations({ locale, namespace: 'Home' })
+  const organization = organizationSchema(locale as Locale, {
+    description: tHome('metaDescription'),
+  })
+
   return (
     <html lang={locale} className={`${fontSans.variable} ${fontMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
@@ -73,6 +86,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           {children}
           <Toaster position="top-right" richColors closeButton />
         </NextIntlClientProvider>
+        <JsonLd data={organization} />
         {ON_VERCEL && (
           <>
             <Analytics />

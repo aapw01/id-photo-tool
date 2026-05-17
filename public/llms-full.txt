@@ -1,0 +1,109 @@
+# Pixfit — full route map
+
+> Verbatim list of every public, indexable route on `https://pix-fit.com`. Routes are emitted in three locales (`/en`, `/zh-Hans`, `/zh-Hant`). The 28 spec detail pages and 12 scanner DocType pages are statically generated; the rest are static landing or tool pages.
+
+## Top-level
+
+- `/` — home, brand + feature overview
+- `/studio` — in-browser photo editor (Background / Crop / Size / Layout / Export)
+- `/scanner` — in-browser document scanner (12 DocTypes + HowTo + FAQ)
+- `/sizes` — catalog of 28 ID photo specs
+- `/paper` — 7 photo paper stocks for layout
+- `/templates` — print layout templates per paper
+- `/specs` — custom spec manager (mm/px/DPI)
+- `/privacy` — privacy posture (fully client-side)
+- `/terms` — usage terms (incl. lawful-use clause)
+
+## ID photo spec detail pages (`/sizes/<id>`)
+
+Each one is a long-form landing page with the exact mm/px dimensions, recommended background, file-size constraints, and a 4-step HowTo + 5-item FAQ. Specs are grouped below for ingestion.
+
+### Chinese domestic ID photos (`cn-*`)
+
+- `/sizes/cn-1inch`
+- `/sizes/cn-1inch-small`
+- `/sizes/cn-1inch-large`
+- `/sizes/cn-2inch`
+- `/sizes/cn-2inch-large`
+- `/sizes/cn-id-card`
+- `/sizes/cn-passport`
+
+### Chinese wallet-photo formats
+
+- `/sizes/cn-wallet-small`
+- `/sizes/cn-wallet-large`
+
+### Cross-strait / HK / Macao travel permits
+
+- `/sizes/permit-hk-macao`
+- `/sizes/permit-taiwan`
+
+### Visas (14 destinations)
+
+- `/sizes/us-visa`
+- `/sizes/schengen`
+- `/sizes/uk-visa`
+- `/sizes/ca-visa`
+- `/sizes/au-visa`
+- `/sizes/nz-visa`
+- `/sizes/jp-visa`
+- `/sizes/kr-visa`
+- `/sizes/sg-visa`
+- `/sizes/my-visa`
+- `/sizes/vn-visa-arrival`
+- `/sizes/th-visa-arrival`
+- `/sizes/ru-visa`
+- `/sizes/in-visa`
+
+### Chinese exam registration photos
+
+- `/sizes/exam-cn-civil`
+- `/sizes/exam-cn-ncre`
+- `/sizes/exam-cn-postgrad`
+
+## Scanner DocType pages (`/scanner/<id>`)
+
+Each one is a long-form landing page with the exact mm dimensions, a 4-step HowTo, and a 4-item FAQ.
+
+### ID cards (`group: id-card`)
+
+- `/scanner/cn-id-card`
+- `/scanner/hk-id-card`
+- `/scanner/tw-id-card`
+- `/scanner/sg-nric`
+- `/scanner/in-aadhaar`
+- `/scanner/bank-card`
+
+### Driver's licenses (`group: driver-license`)
+
+- `/scanner/us-driver-license`
+- `/scanner/cn-driver-license`
+
+### Vehicle license (`group: vehicle-license`)
+
+- `/scanner/cn-vehicle-license`
+
+### Passport (`group: passport`)
+
+- `/scanner/passport-bio`
+
+### Generic paper (`group: paper`)
+
+- `/scanner/a4`
+- `/scanner/letter`
+
+## Sitemap & robots
+
+- Sitemap XML: `https://pix-fit.com/sitemap.xml`
+- robots.txt: `https://pix-fit.com/robots.txt` — explicit allowlist for GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot, Applebot-Extended, Amazonbot.
+
+## Structured data
+
+Each page emits at least one of:
+
+- `WebApplication` (root)
+- `Organization` (root, in the locale layout)
+- `WebSite` (home)
+- `BreadcrumbList` (every inner page)
+- `ItemList` (catalog hubs: `/sizes`, `/paper`, `/templates`)
+- `FAQPage` + `HowTo` (every spec detail, every scanner DocType)

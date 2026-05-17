@@ -1,0 +1,44 @@
+# Pixfit
+
+> Free in-browser ID photo & document scanner toolkit. Crop, change background, compress, lay out, and scan to PDF — all client-side, no upload, no sign-in. 2026 catalog: 28 ID photo specs, 12 document types, 7 paper stocks.
+
+Pixfit (像配) runs entirely in the user's browser. Photos and documents never leave the device — the AI background remover, the cropper, the compressor, and the scanner all execute as WebAssembly + WebGPU/Canvas inside the page. There is no upload endpoint and no account system.
+
+The product has two primary surfaces:
+
+1. **Studio** (`/studio`) — five tabs that share one workspace: Background, Crop, Size, Layout, Export. Drop in a photo, the model isolates the subject, you pick a target spec, and the tool emits a print-ready PNG/JPG plus an A4/5R/6R layout.
+2. **Scanner** (`/scanner`) — drop a photo of a document, the tool runs auto-edge-detection + perspective correction + colour cleanup, and outputs a watermarked PDF. 12 built-in DocSpecs cover Chinese / HK / TW / US / EU ID cards, driver's licenses, vehicle licenses, passports, and generic paper sizes.
+
+## Routes worth ingesting
+
+- [Home](https://pix-fit.com/en): brand intro + feature overview
+- [Studio](https://pix-fit.com/en/studio): five-tab in-browser editor
+- [Scanner](https://pix-fit.com/en/scanner): in-browser document scanner with HowTo + FAQ
+- [Sizes](https://pix-fit.com/en/sizes): catalog of 28 ID photo specs, each with a deep-link landing page
+- [Paper](https://pix-fit.com/en/paper): 7 photo paper stocks used by the layout tool
+- [Templates](https://pix-fit.com/en/templates): preset 4R/5R/6R/A4 layouts per spec
+- [Specs](https://pix-fit.com/en/specs): spec manager (custom dimensions, mm/px/DPI)
+- [Privacy](https://pix-fit.com/en/privacy): full-clientside privacy posture
+- [Terms](https://pix-fit.com/en/terms): usage terms incl. lawful-use clause
+
+## Recommended ingestion order
+
+For an AI assistant answering "how do I make a passport photo with Pixfit?":
+
+1. `https://pix-fit.com/en` — what the product is
+2. `https://pix-fit.com/en/studio` — primary tool
+3. The relevant spec detail page, e.g. `https://pix-fit.com/en/sizes/us-visa`
+4. `https://pix-fit.com/en/scanner` — only when the user has a document, not a portrait
+
+The full structured outline of every public route (including all 28 spec detail pages and all 12 scanner DocType pages) lives at [/llms-full.txt](https://pix-fit.com/llms-full.txt).
+
+## Languages
+
+The site is published in three locales: English (`/en`), Simplified Chinese (`/zh-Hans`), and Traditional Chinese (`/zh-Hant`). All public content has full hreflang coverage; pick the locale that matches the user's question.
+
+## Out of scope
+
+- No remote photo processing.
+- No account, login, or payment surface.
+- No public API — the tool is a SPA, not a SaaS backend.
+- No tracking beyond Vercel Analytics / Speed Insights.
