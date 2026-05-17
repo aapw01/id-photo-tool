@@ -121,14 +121,24 @@
     "openSource": "開源 (MIT)",
     "tagline": "瀏覽器內的證件照工作台",
     "groups": {
-      "product": "產品",
-      "browse": "瀏覽",
-      "popular": "熱門尺寸",
-      "legal": "法律",
-      "about": "關於"
+      "studio": "工作台",
+      "scanner": "證件掃描",
+      "specs": "規格庫",
+      "resources": "資源"
+    },
+    "aria": {
+      "studio": "工作台導覽",
+      "scanner": "證件掃描導覽",
+      "specs": "規格庫導覽",
+      "resources": "資源與法律"
     },
     "links": {
       "studio": "工作台",
+      "studioBackground": "AI 換背景",
+      "studioCrop": "智慧裁切",
+      "studioLayout": "拼版列印",
+      "studioExport": "壓縮匯出",
+      "scanner": "證件掃描",
       "specs": "規格管理",
       "sizes": "照片尺寸",
       "paper": "相紙規格",

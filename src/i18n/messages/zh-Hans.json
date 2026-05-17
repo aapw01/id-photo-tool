@@ -121,14 +121,24 @@
     "openSource": "开源 (MIT)",
     "tagline": "浏览器内的证件照工作台",
     "groups": {
-      "product": "产品",
-      "browse": "浏览",
-      "popular": "热门尺寸",
-      "legal": "法律",
-      "about": "关于"
+      "studio": "工作台",
+      "scanner": "证件扫描",
+      "specs": "规格库",
+      "resources": "资源"
+    },
+    "aria": {
+      "studio": "工作台导航",
+      "scanner": "证件扫描导航",
+      "specs": "规格库导航",
+      "resources": "资源与法律"
     },
     "links": {
       "studio": "工作台",
+      "studioBackground": "AI 换背景",
+      "studioCrop": "智能裁剪",
+      "studioLayout": "拼版打印",
+      "studioExport": "压缩导出",
+      "scanner": "证件扫描",
       "specs": "规格管理",
       "sizes": "照片尺寸",
       "paper": "相纸规格",

@@ -121,14 +121,24 @@
     "openSource": "Open source (MIT)",
     "tagline": "ID photo studio inside your browser",
     "groups": {
-      "product": "Product",
-      "browse": "Browse",
-      "popular": "Popular sizes",
-      "legal": "Legal",
-      "about": "About"
+      "studio": "Studio",
+      "scanner": "Scanner",
+      "specs": "Specs",
+      "resources": "Resources"
+    },
+    "aria": {
+      "studio": "Studio navigation",
+      "scanner": "Scanner navigation",
+      "specs": "Spec catalog navigation",
+      "resources": "Resources and legal"
     },
     "links": {
       "studio": "Studio",
+      "studioBackground": "AI background",
+      "studioCrop": "Smart crop",
+      "studioLayout": "Print layout",
+      "studioExport": "Compress · export",
+      "scanner": "Scanner",
       "specs": "Spec manager",
       "sizes": "Photo sizes",
       "paper": "Paper sizes",
