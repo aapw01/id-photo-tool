@@ -175,3 +175,42 @@ describe('All boost pages have a metaKeywords array', () => {
     expect(messages.Templates.metaKeywords.length).toBeGreaterThan(0)
   })
 })
+
+// 2026 / online / free / no-download cluster per locale. These are
+// the long-tail tokens that surface during incognito searches for
+// "free online ID photo 2026" / "2026 在线证件照 免费". The cluster
+// has to live in the metaKeywords AND in the long-form copy so a
+// keyword-stripping translator pass can't quietly break ranking.
+const FREE_2026_CLUSTER: Record<(typeof locales)[number]['name'], string[]> = {
+  'zh-Hans': ['在线', '免费', '不用下载', '2026', '浏览器内'],
+  'zh-Hant': ['線上', '免費', '不用下載', '2026', '瀏覽器內'],
+  en: ['online', 'free', 'no download', 'no upload', '2026', 'in-browser'],
+}
+
+describe('Home / Scanner / Studio carry the 2026 free / online cluster', () => {
+  for (const page of ['Home', 'Scanner', 'Studio'] as const) {
+    it.each(locales)(`${page}.metaKeywords[$name] contains every 2026 / free token`, (locale) => {
+      const messages = locale.messages
+      const kw =
+        page === 'Home'
+          ? messages.Home.metaKeywords
+          : page === 'Scanner'
+            ? messages.Scanner.metaKeywords
+            : messages.Studio.metaKeywords
+      const expected = FREE_2026_CLUSTER[locale.name]
+      for (const token of expected) {
+        expect(kw, `${page}.metaKeywords[${locale.name}] missing "${token}"`).toContain(token)
+      }
+    })
+  }
+})
+
+describe('metaDescriptions stay within SERP truncation after the cluster bump', () => {
+  // Belt-and-braces: even after the cluster grew, every long-form
+  // description has to stay under the 160-char SERP truncation cap.
+  it.each(locales)('Home/Scanner/Studio in $name all still <= 160 chars', ({ messages }) => {
+    expect(messages.Home.metaDescription.length).toBeLessThanOrEqual(160)
+    expect(messages.Scanner.metaDescription.length).toBeLessThanOrEqual(160)
+    expect(messages.Studio.metaDescription.length).toBeLessThanOrEqual(160)
+  })
+})
