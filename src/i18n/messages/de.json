@@ -6,19 +6,19 @@
     "openStudio": "Studio öffnen",
     "learnMore": "Mehr erfahren",
     "languages": {
-      "zh-Hans": "Vereinfachtes Chinesisch",
-      "zh-Hant": "Traditionelles Chinesisch",
-      "en": "Englisch",
-      "ja": "Japanisch",
-      "ko": "Koreanisch",
-      "es": "Spanisch",
-      "pt-BR": "Portugiesisch (Brasilien)",
-      "fr": "Französisch",
+      "zh-Hans": "简体中文",
+      "zh-Hant": "繁體中文",
+      "en": "English",
+      "ja": "日本語",
+      "ko": "한국어",
+      "es": "Español",
+      "pt-BR": "Português (Brasil)",
+      "fr": "Français",
       "de": "Deutsch",
-      "ru": "Russisch",
-      "it": "Italienisch",
-      "vi": "Vietnamesisch",
-      "ar": "Arabisch"
+      "ru": "Русский",
+      "it": "Italiano",
+      "vi": "Tiếng Việt",
+      "ar": "العربية"
     }
   },
   "Nav": {
