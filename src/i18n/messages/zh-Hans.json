@@ -8,7 +8,17 @@
     "languages": {
       "zh-Hans": "简体中文",
       "zh-Hant": "繁體中文",
-      "en": "English"
+      "en": "English",
+      "ja": "日本語",
+      "ko": "한국어",
+      "es": "西班牙语",
+      "pt-BR": "葡萄牙语（巴西）",
+      "fr": "法语",
+      "de": "德语",
+      "ru": "俄语",
+      "it": "意大利语",
+      "vi": "越南语",
+      "ar": "阿拉伯语"
     }
   },
   "Nav": {
@@ -32,8 +42,8 @@
   "Home": {
     "heroTitle": "智能证件照处理，一次搞定",
     "heroSubtitle": "Pixfit 是浏览器内运行的 AI 证件照工具：AI 一键抠图、智能换背景、智能裁剪到证件 / 签证规格、自动排版与压缩到指定大小——全程本地处理，照片不上传。",
-    "metaTitle": "Pixfit — 浏览器内的智能证件照处理与 AI 证件扫描工具",
-    "metaDescription": "免费的智能证件照处理工具：AI 一键抠图、智能换背景、智能裁剪到签证 / 护照 / 身份证规格，含 AI 证件扫描成 A4 PDF。全程浏览器内运行，照片不上传。",
+    "metaTitle": "Pixfit · 免费在线证件照工具 · 浏览器内 AI 抠图换背景 · 不上传 2026 | Pixfit",
+    "metaDescription": "免费在线证件照工具，浏览器内 AI 一键抠图、换背景、智能裁剪到签证 / 护照 / 身份证规格，含 AI 证件扫描成 A4 PDF。照片不上传，2026 全新规格。",
     "metaKeywords": [
       "智能证件照处理",
       "AI 证件照",
@@ -43,7 +53,15 @@
       "在线证件照制作",
       "浏览器证件照工作台",
       "AI 签证照片",
-      "Pixfit"
+      "在线",
+      "免费",
+      "不用下载",
+      "2026",
+      "浏览器内",
+      "Pixfit",
+      "隐私优先",
+      "端侧处理",
+      "不联网"
     ],
     "cta": "立即开始",
     "ctaHint": "免费 · 无需注册 · 完全在浏览器中运行",
@@ -121,18 +139,30 @@
     "openSource": "开源 (MIT)",
     "tagline": "浏览器内的证件照工作台",
     "groups": {
-      "product": "产品",
-      "browse": "浏览",
-      "popular": "热门尺寸",
-      "legal": "法律",
-      "about": "关于"
+      "studio": "工作台",
+      "scanner": "证件扫描",
+      "specs": "规格库",
+      "resources": "资源"
+    },
+    "aria": {
+      "studio": "工作台导航",
+      "scanner": "证件扫描导航",
+      "specs": "规格库导航",
+      "resources": "资源与法律"
     },
     "links": {
       "studio": "工作台",
+      "studioBackground": "AI 换背景",
+      "studioCrop": "智能裁剪",
+      "studioLayout": "拼版打印",
+      "studioExport": "压缩导出",
+      "scanner": "证件扫描",
       "specs": "规格管理",
       "sizes": "照片尺寸",
       "paper": "相纸规格",
       "templates": "排版模板",
+      "compress": "压缩到指定 KB",
+      "blog": "博客",
       "privacy": "隐私政策",
       "terms": "服务条款",
       "github": "GitHub"
@@ -144,8 +174,8 @@
   "Studio": {
     "title": "工作台",
     "subtitle": "上传一张人像，AI 智能抠图、智能裁剪、AI 一键换背景、自动拼版与按 KB 压缩，全程浏览器内完成。",
-    "metaTitle": "Pixfit 工作台 — AI 证件照编辑器（智能抠图 / 智能裁剪 / 一键换背景）",
-    "metaDescription": "Pixfit 工作台：AI 证件照编辑器，支持 AI 一键抠图、智能裁剪到签证 / 护照 / 身份证规格、A4 / 5R / 6R 排版与按 KB 精准压缩。免费、浏览器内运行、不上传。",
+    "metaTitle": "Pixfit 工作台 · 在线裁剪 · 换背景 · 压缩 · 拼版打印 2026 | Pixfit",
+    "metaDescription": "Pixfit 工作台：在线裁剪、AI 一键换背景、按 KB 压缩、A4 / 5R / 6R 拼版打印，免费浏览器内运行，照片不上传。2026 支持 28 种证件规格。",
     "metaKeywords": [
       "AI 证件照编辑器",
       "智能证件照处理",
@@ -154,7 +184,15 @@
       "AI 一键换背景",
       "在线证件照工作台",
       "签证照片编辑器",
-      "Pixfit 工作台"
+      "在线",
+      "免费",
+      "不用下载",
+      "2026",
+      "浏览器内",
+      "Pixfit 工作台",
+      "隐私优先",
+      "端侧处理",
+      "不联网"
     ],
     "seoIntro": {
       "heading": "浏览器内的智能证件照工作台",
@@ -400,15 +438,18 @@
         "dpi": "DPI"
       },
       "cta": "在工作台使用",
-      "metaTitle": "智能证件照排版相纸规格 · Pixfit · 像配",
-      "metaDescription": "七张内置相纸（3R / 4R / 5R / 6R / 8R / A4 / A5），Pixfit 用 AI 自动把证件照拼版到这些相纸上，免费、浏览器内运行、不上传。",
+      "metaTitle": "Pixfit 证件照相纸规格 · 3R 4R 5R 6R 8R A4 A5 在线拼版 2026 | Pixfit",
+      "metaDescription": "七种打印相纸：3R / 4R / 5R / 6R / 8R / A4 / A5。在浏览器内免费把证件照在线拼版到相纸上，下载 PNG / PDF，照片不上传，2026 全新规格。",
       "metaKeywords": [
         "证件照打印相纸",
         "智能照片排版",
         "AI 拼版相纸",
         "3R 4R 5R 6R 8R",
         "A4 证件照拼版",
-        "Pixfit 相纸"
+        "Pixfit 相纸",
+        "隐私优先",
+        "端侧处理",
+        "不联网"
       ]
     }
   },
@@ -475,8 +516,8 @@
     "cta": "在工作台使用",
     "categoryEmpty": "该分类下暂无规格",
     "viewDetail": "查看详情",
-    "metaTitle": "智能证件照尺寸库（签证 · 证件 · 考试报名）· Pixfit",
-    "metaDescription": "28 条智能证件照规格——美国 / 申根 / 英国 / 加拿大 / 澳新 / 日韩 / 东南亚签证、中国 1 寸 / 2 寸 / 身份证、考试报名。AI 智能裁剪、免费、浏览器内运行、不上传。",
+    "metaTitle": "Pixfit 证件照尺寸库 · 28 种规格 在线裁剪 + AI 换背景 2026 | Pixfit",
+    "metaDescription": "28 条证件照规格：美国 / 申根 / 英国 / 日韩签证、中国身份证 / 1 寸 / 2 寸、考试报名。在线裁剪 + AI 换背景，免费浏览器内运行，照片不上传，2026 规格。",
     "metaKeywords": [
       "智能证件照尺寸",
       "AI 证件照规格",
@@ -484,11 +525,14 @@
       "护照照片尺寸",
       "申根签证照片尺寸",
       "美国签证 51x51",
-      "Pixfit 尺寸库"
+      "Pixfit 尺寸库",
+      "隐私优先",
+      "端侧处理",
+      "不联网"
     ],
     "detail": {
-      "metaTitle": "{name}照片尺寸 {w}×{h}mm · AI 证件照在线制作",
-      "metaDescription": "{name}电子证件照：{w}×{h} 毫米（{wpx}×{hpx} 像素 @ {dpi} DPI），背景色 {bgLabel}。Pixfit 智能抠图、AI 一键换背景、智能裁剪、压缩一站完成，免费且不上传。",
+      "metaTitle": "{name} {w}×{h}mm · 在线裁剪 2026 | Pixfit",
+      "metaDescription": "{name} 证件照 {w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推荐背景 {bgLabel}。在线裁剪 + AI 换背景，免费浏览器内运行，照片不上传，2026 规格。",
       "heading": "{name}照片尺寸",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "{name}电子证件照标准规格为 {w} × {h} 毫米（{wpx} × {hpx} 像素，{dpi} DPI），推荐背景色 {bgLabel}。本页提供完整规格说明、拍摄要求与免费在线制作入口。",
@@ -565,7 +609,11 @@
         "primary": "前往工作台制作{name}",
         "secondary": "查看所有尺寸"
       },
-      "backLink": "返回尺寸库"
+      "backLink": "返回尺寸库",
+      "related": {
+        "heading": "你可能还需要",
+        "subtitle": "其他常用的证件照尺寸"
+      }
     }
   },
   "Templates": {
@@ -581,16 +629,126 @@
       "byPaper": "按相纸分组"
     },
     "cta": "在工作台打开",
-    "metaTitle": "AI 证件照打印排版模板 · Pixfit · 像配",
-    "metaDescription": "12 套智能打印模板（8 张 1 寸 / 16 张 1 寸 / 1 寸 + 2 寸混排 / 身份证 / 护照 / 皮夹照），覆盖 5R / 6R / A4 相纸，AI 一键拼版，输出 PNG 或矢量 PDF。",
+    "metaTitle": "Pixfit 证件照拼版模板 · 12 套 · 5R 6R A4 在线生成 PDF 2026 | Pixfit",
+    "metaDescription": "12 套打印模板：8 张 1 寸 / 16 张 1 寸 / 1 寸 + 2 寸混排 / 身份证 / 护照 / 皮夹照，覆盖 5R / 6R / A4。浏览器内生成 PNG 与矢量 PDF，不上传、免费 2026。",
     "metaKeywords": [
       "证件照排版模板",
       "智能照片拼版",
       "AI 打印排版",
       "1 寸 16 张拼版",
       "护照皮夹照",
-      "Pixfit 模板"
+      "Pixfit 模板",
+      "隐私优先",
+      "端侧处理",
+      "不联网"
     ]
+  },
+  "Compress": {
+    "index": {
+      "metaTitle": "在线压缩照片到指定大小 · 50KB/100KB/200KB/500KB/1MB · 免费 2026 | Pixfit",
+      "metaDescription": "在线把 JPG/PNG 照片压缩到 50KB、100KB、200KB、500KB 或 1MB。完全在浏览器内运行，不上传、免费、2026 更新 · Pixfit。",
+      "metaKeywords": [
+        "在线压缩照片",
+        "照片压缩到指定大小",
+        "压缩 jpg",
+        "在线照片压缩",
+        "浏览器内压缩",
+        "免费压缩",
+        "2026 压缩",
+        "Pixfit 压缩",
+        "隐私优先",
+        "端侧处理",
+        "不联网"
+      ],
+      "heading": "把照片压缩到指定 KB 大小",
+      "subtitle": "签证、考试、招生网站要求的体积，Pixfit 在浏览器里直接压缩到 ±1KB 范围内，不上传。",
+      "intro": "很多在线平台对图片体积有严格限制：部分政务系统要求 50KB 以内，签证常见 200KB 上限，招生系统多在 500KB 左右。Pixfit 通过自适应 JPG 质量 + 必要时降采样实现精准压缩，全过程在浏览器本地完成。下面挑一个预设，或直接进入 Studio 自定义。",
+      "targets": {
+        "heading": "选择压缩目标",
+        "cardCta": "压缩到 {label}",
+        "cardSubtitle": "{label} JPG"
+      },
+      "studio": {
+        "heading": "需要自定义大小？",
+        "body": "Studio 的「导出」标签支持从 5 KB 起任意目标值，可同时设最小值，方便部分网站需要的 50–200KB 区间。",
+        "cta": "进入 Studio · 导出标签"
+      }
+    },
+    "detail": {
+      "metaTitle": "在线压缩照片到 {label} · 免费 2026 | Pixfit",
+      "metaDescription": "在线把照片压缩到 {label}。完全在浏览器内运行，不上传、免费，结果落在 ±1KB 范围内。2026 · Pixfit。",
+      "metaKeywords": [
+        "压缩照片到 {label}",
+        "压缩 jpg 到 {label}",
+        "在线照片压缩 {label}",
+        "{label} 压缩",
+        "浏览器内压缩",
+        "Pixfit 压缩",
+        "隐私优先",
+        "端侧处理",
+        "不联网"
+      ],
+      "backLink": "返回压缩主页",
+      "heading": "把照片压缩到 {label}",
+      "tagline": "目标体积：{label}",
+      "intro": "Pixfit 压缩引擎会重新编码 JPG/PNG，让最终文件落在 {label} 的 ±1KB 范围内。整个过程在浏览器内进行，不上传、无账号。",
+      "howTo": {
+        "title": "如何把照片压缩到 {label}",
+        "subtitle": "四步搞定，全程浏览器本地。一张 12MP 照片通常 5 秒以内完成。",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "上传照片",
+            "text": "把 JPG、PNG 或 HEIC 照片拖进 Studio，文件始终留在你的设备上。"
+          },
+          "target": {
+            "name": "选择 {label} 目标",
+            "text": "从本页跳转过来时，导出标签会预设 {label}，你可以随时调整。"
+          },
+          "compress": {
+            "name": "Pixfit 压到 {label}",
+            "text": "自适应质量 + 必要时降采样，通常 3–5 次迭代就能锁定到 ±1KB 范围。"
+          },
+          "download": {
+            "name": "下载结果",
+            "text": "点击导出即可保存 {label} 压缩后的 JPG，原图不会被覆盖。"
+          }
+        }
+      },
+      "faq": {
+        "title": "关于 {label} 压缩的常见问题",
+        "items": {
+          "quality": {
+            "q": "压缩到 {label} 会牺牲画质吗？",
+            "a": "Pixfit 会选择能落在 {label} 范围内的最高 JPG 质量，仅当质量已不足以达到目标时才进行降采样。一般证件照在 {label} 内与 2MB 原图肉眼无差。"
+          },
+          "target": {
+            "q": "输出大小能多接近 {label}？",
+            "a": "Pixfit 使用二分搜索锁定 JPG 质量，结果落在 ±1KB 范围内。如果你需要严格区间（比如 50–{label}），请到 Studio 导出标签同时设上下限。"
+          },
+          "format": {
+            "q": "{label} 压缩支持 PNG 吗？",
+            "a": "支持。输入可以是 PNG / JPG / HEIC，但输出始终是重新编码的 JPG —— 因为照片类内容用 PNG 压到 {label} 几乎无法兼顾画质。"
+          },
+          "batch": {
+            "q": "可以批量压缩多张照片到 {label} 吗？",
+            "a": "Studio 默认单张操作。你可以连续拖入多张照片，{label} 预设会在整个会话期间保持有效。"
+          }
+        }
+      },
+      "cta": {
+        "primary": "用 {label} 预设打开 Studio",
+        "secondary": "完整 Studio 控制",
+        "secondaryHint": "可覆盖预设、加入最小尺寸下限、或批量处理多张。"
+      }
+    },
+    "targetLabel": {
+      "50kb": "50KB",
+      "100kb": "100KB",
+      "200kb": "200KB",
+      "500kb": "500KB",
+      "1mb": "1MB"
+    }
   },
   "Legal": {
     "common": {
@@ -700,7 +858,19 @@
         "home": "回到首页",
         "studio": "打开工作台"
       },
-      "metaTitle": "页面未找到 · Pixfit · 像配"
+      "metaTitle": "页面未找到 · Pixfit · 像配",
+      "metaDescription": "这个 Pixfit 页面已不存在。返回首页、Studio 工作台、Scanner 扫描或完整的证件照尺寸库继续使用。",
+      "helpful": {
+        "heading": "试试这些链接",
+        "subtitle": "Pixfit 完全在浏览器内处理，从下面的入口接着用即可。",
+        "home": "首页",
+        "studio": "Studio 工作台",
+        "scanner": "Scanner 扫描",
+        "sizes": "全部证件照尺寸",
+        "scannerDocs": "全部证件类型"
+      },
+      "didYouMean": "你是不是想找「{name}」？",
+      "didYouMeanCta": "打开 {name}"
     },
     "runtime": {
       "title": "出错了",
@@ -841,8 +1011,8 @@
   "Scanner": {
     "title": "智能证件扫描生成器",
     "subtitle": "上传手机拍的身份证、护照、驾驶证等证件照片，智能扫描自动透视校正、AI 调色与去阴影，一键生成 A4 / Letter / A5 PDF 扫描件 —— 全程在浏览器内完成。",
-    "metaTitle": "智能证件扫描 — AI 身份证 / 护照 / 驾驶证手机照转 PDF",
-    "metaDescription": "免费的智能证件扫描工具：AI 透视校正 + 扫描 / 复印 / 增强三种输出模式，把手机拍的身份证、护照、驾驶证一键变成 A4 PDF。全程浏览器本地处理，照片不上传。",
+    "metaTitle": "Pixfit 智能证件扫描 · 12 种证件浏览器内在线扫描 PDF 2026 | Pixfit Scanner",
+    "metaDescription": "在线扫描 12 种证件成 PDF：身份证、护照、驾驶证、银行卡。AI 透视校正 + 扫描 / 复印 / 增强模式，免费浏览器内运行，照片不上传，2026 更新。",
     "metaKeywords": [
       "智能证件扫描",
       "AI 证件扫描",
@@ -852,7 +1022,15 @@
       "证件照转 A4 PDF",
       "AI 透视校正",
       "智能扫描仪",
-      "Pixfit 扫描"
+      "在线",
+      "免费",
+      "不用下载",
+      "2026",
+      "浏览器内",
+      "Pixfit 扫描",
+      "隐私优先",
+      "端侧处理",
+      "不联网"
     ],
     "shell": {
       "previewTitle": "扫描预览",
@@ -885,6 +1063,13 @@
       }
     },
     "preview": {
+      "trigger": "预览整页",
+      "title": "整页预览",
+      "description": "下载的 {paper} 整页效果——纸张、水印、圆角与导出完全一致。",
+      "loading": "正在生成预览…",
+      "empty": "上传至少一面证件后即可预览整页",
+      "error": "预览生成失败，请调整设置后重试。",
+      "imageAlt": "{paper} 整页排版预览",
       "frontLabel": "正面",
       "backLabel": "背面",
       "processing": "正在校正透视…",
@@ -978,25 +1163,6 @@
       "successPng": "PNG 已下载",
       "errorGeneric": "导出失败：{message}"
     },
-    "preview": {
-      "trigger": "预览整页",
-      "title": "整页预览",
-      "description": "下载的 {paper} 整页效果——纸张、水印、圆角与导出完全一致。",
-      "loading": "正在生成预览…",
-      "empty": "上传至少一面证件后即可预览整页",
-      "error": "预览生成失败，请调整设置后重试。",
-      "imageAlt": "{paper} 整页排版预览",
-      "frontLabel": "正面",
-      "backLabel": "背面",
-      "processing": "正在校正透视…",
-      "rectifyError": "处理失败：{message}",
-      "retry": "重试",
-      "editCorners": "调整 4 角",
-      "rotate": "旋转",
-      "downloadCurrent": "下载当前面",
-      "downloadHint": "单面 PNG · 完整导出（A4 / PDF / 复印件 / 水印）请用右侧导出区",
-      "adjustHint": "首次预览按规格比例从原图中心裁切，请点「调整 4 角」对齐证件实际边缘"
-    },
     "usage": {
       "heading": "扫描前 —— 使用须知",
       "summary": "在上传证件前请阅读：照片不会离开你的浏览器，以下是我们做了什么、不会做什么，以及使用本工具时你需要遵守的约束。",
@@ -1060,8 +1226,8 @@
       }
     },
     "detail": {
-      "metaTitle": "{name} 智能扫描转 A4 PDF · Pixfit",
-      "metaDescription": "为 {name} 优化的智能证件扫描工具：AI 透视校正、扫描 / 复印 / 增强三种模式、可选防滥用水印、A4 / Letter / A5 PDF 导出，全程浏览器本地运行。",
+      "metaTitle": "{name} {w}×{h}mm 在线扫描 PDF 2026 | Pixfit Scanner",
+      "metaDescription": "在浏览器内扫描 {name}（{w}×{h}mm）：AI 透视校正 + 扫描 / 复印 / 增强模式，导出 A4 / Letter / A5 PDF。照片不上传，免费 2026。",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · 可选水印",
       "summarySection": {
         "title": "关于 {name}",
@@ -1123,7 +1289,11 @@
         "primary": "用 {name} 打开扫描器",
         "secondary": "浏览全部证件类型"
       },
-      "backLink": "返回扫描器"
+      "backLink": "返回扫描器",
+      "related": {
+        "heading": "你可能还需要",
+        "subtitle": "其他可在浏览器内扫描的证件类型"
+      }
     },
     "docTypes": {
       "cn-id-card": {
@@ -1177,6 +1347,52 @@
     },
     "footer": {
       "heading": "证件扫描"
+    }
+  },
+  "Blog": {
+    "index": {
+      "metaTitle": "Pixfit 博客 · 证件照与扫描 PDF 指南 2026 | Pixfit",
+      "metaDescription": "围绕在线证件照、文档扫描转 PDF 与 Pixfit 浏览器工具的长文指南。免费、不上传、2026。",
+      "metaKeywords": [
+        "Pixfit 博客",
+        "证件照指南 2026",
+        "扫描转 PDF 教程",
+        "在线证件照",
+        "浏览器内文档扫描",
+        "不上传",
+        "2026",
+        "隐私优先",
+        "端侧处理",
+        "不联网"
+      ],
+      "breadcrumb": "博客",
+      "heading": "Pixfit 博客",
+      "subtitle": "围绕浏览器内证件照与文档扫描的长文指南。免费、不上传、2026。",
+      "readingMinutes": "约 {minutes} 分钟",
+      "publishedOn": "发布于 {date}",
+      "openArticle": "阅读全文"
+    },
+    "posts": {
+      "us-visa-photo-2026": {
+        "card": {
+          "tagline": "尺寸、背景与构图——2026 美签 B1/B2 照片完整指南。"
+        }
+      },
+      "12-doc-scan-pdf-guide": {
+        "card": {
+          "tagline": "Pixfit 扫描仪内置全部预设，包含正确尺寸与拍摄技巧。"
+        }
+      }
+    },
+    "article": {
+      "backLink": "返回博客",
+      "readingMinutes": "约 {minutes} 分钟",
+      "publishedOn": "发布于 {date}",
+      "updatedOn": "更新于 {date}",
+      "ctaHeading": "在浏览器内试用 Pixfit",
+      "ctaBody": "Pixfit 所有工具都在你本地浏览器内运行——不上传、不要账号，免费。",
+      "ctaPrimary": "打开工作室",
+      "ctaSecondary": "打开扫描仪"
     }
   }
 }

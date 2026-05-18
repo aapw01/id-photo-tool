@@ -4,6 +4,7 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
+import { Breadcrumb } from '@/components/breadcrumb'
 import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -14,7 +15,8 @@ import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { localizeText } from '@/lib/i18n-text'
-import { breadcrumbSchema, itemListSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
+import { collectionPageSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
 
 interface TemplatesPageProps {
@@ -48,20 +50,21 @@ export default async function TemplatesPage({ params }: TemplatesPageProps) {
 
   const canonicalUrl = buildCanonical('/templates', locale as Locale)
 
-  const itemList = itemListSchema({
+  const collectionPage = collectionPageSchema({
     url: canonicalUrl,
     name: t('heading'),
     description: t('subtitle'),
+    inLanguage: locale as Locale,
     items: BUILTIN_LAYOUT_TEMPLATES.map((tmpl) => ({
       url: `${canonicalUrl}#${tmpl.id}`,
       name: localizeText(tmpl.name, locale),
     })),
   })
 
-  const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
-    { url: canonicalUrl, name: t('heading') },
-  ])
+  const breadcrumbItems = getBreadcrumbItems('templates', {
+    labels: { home: tNav('home'), templates: t('heading') },
+  })
+  const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
 
   const groupedByPaper = new Map<string, typeof BUILTIN_LAYOUT_TEMPLATES>()
   for (const tmpl of BUILTIN_LAYOUT_TEMPLATES) {
@@ -75,6 +78,7 @@ export default async function TemplatesPage({ params }: TemplatesPageProps) {
       <SiteHeader />
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 pt-10 pb-16">
+          <Breadcrumb items={breadcrumbItems} className="mb-6" />
           <header className="mb-10 max-w-3xl">
             <h1
               className="font-semibold tracking-tight text-balance text-[var(--color-text)]"
@@ -172,7 +176,7 @@ export default async function TemplatesPage({ params }: TemplatesPageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[webApplicationSchema(locale as Locale), itemList, breadcrumbs]} />
+      <JsonLd data={[webApplicationSchema(locale as Locale), collectionPage, breadcrumbs]} />
     </>
   )
 }

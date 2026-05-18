@@ -1,0 +1,1400 @@
+{
+  "Common": {
+    "appName": "Pixfit",
+    "brand": "Pixfit",
+    "tagline": "Fotos de carnet, listas en tu navegador",
+    "openStudio": "Abrir Estudio",
+    "learnMore": "Más información",
+    "languages": {
+      "zh-Hans": "Chino simplificado",
+      "zh-Hant": "Chino tradicional",
+      "en": "Inglés",
+      "ja": "Japonés",
+      "ko": "Coreano",
+      "es": "Español",
+      "pt-BR": "Portugués (Brasil)",
+      "fr": "Francés",
+      "de": "Alemán",
+      "ru": "Ruso",
+      "it": "Italiano",
+      "vi": "Vietnamita",
+      "ar": "Árabe"
+    }
+  },
+  "Nav": {
+    "home": "Inicio",
+    "studio": "Estudio",
+    "scanner": "Escáner de documentos",
+    "sizes": "Tamaños",
+    "paper": "Papel",
+    "templates": "Plantillas",
+    "docs": "Documentación",
+    "menu": {
+      "open": "Abrir menú",
+      "close": "Cerrar menú",
+      "title": "Navegación"
+    },
+    "a11y": {
+      "primary": "Navegación principal",
+      "mobilePrimary": "Navegación principal móvil"
+    }
+  },
+  "Home": {
+    "heroTitle": "Fotos de carnet inteligentes, listas en tu navegador",
+    "heroSubtitle": "Pixfit es un estudio de fotos de carnet y escáner de documentos con IA que recorta al sujeto, cambia el fondo, ajusta al formato oficial, prepara la impresión y comprime al tamaño exigido por los portales — todo en tu navegador, sin subir archivos.",
+    "metaTitle": "Pixfit · Editor gratuito de fotos de carnet · IA quita fondo · sin subir · 2026 | Pixfit",
+    "metaDescription": "Editor gratis de fotos de carnet 100 % en el navegador: IA quita fondo, recorte para visa y pasaporte, escanear a PDF. Sin subir, 2026 actualizado.",
+    "metaKeywords": [
+      "foto carnet IA",
+      "foto pasaporte IA",
+      "foto visa online",
+      "escáner inteligente documentos",
+      "quitar fondo un clic",
+      "editor fotos carnet online",
+      "estudio fotos carnet navegador",
+      "generador foto visa",
+      "online",
+      "gratis",
+      "sin descargas",
+      "sin subir",
+      "en el navegador",
+      "2026",
+      "Pixfit",
+      "privacidad primero",
+      "en el dispositivo",
+      "sin nube"
+    ],
+    "cta": "Comenzar",
+    "ctaHint": "Gratis · Sin registro · 100 % en tu navegador",
+    "features": {
+      "privacy": {
+        "title": "Privacidad primero",
+        "desc": "Cada paso se ejecuta en tu dispositivo. Tus fotos no salen del navegador."
+      },
+      "smart": {
+        "title": "Recorte inteligente",
+        "desc": "Caras y hombros se alinean automáticamente al estándar de cada país."
+      },
+      "layout": {
+        "title": "Diseño con un clic",
+        "desc": "Distribuye en papel 4x6 o 5x7 con marcas de corte listas para imprimir."
+      },
+      "compress": {
+        "title": "Compresión precisa",
+        "desc": "Búsqueda binaria para alcanzar exactamente el rango de KB que pide el portal de visa."
+      }
+    },
+    "uploadDropzone": {
+      "title": "Suelta una foto aquí o haz clic para elegirla",
+      "subtitle": "JPG / PNG / HEIC · hasta 50 MB",
+      "browse": "Elegir archivo",
+      "privacy": "Todo el procesamiento ocurre en tu navegador · nada se sube"
+    },
+    "faq": {
+      "heading": "Preguntas frecuentes",
+      "subtitle": "Sobre crear fotos de carnet online, cambiar fondos y cumplir los límites de tamaño.",
+      "items": {
+        "free": {
+          "q": "¿Pixfit es gratis?",
+          "a": "Sí, totalmente gratis, sin marca de agua y sin muro de pago. Pixfit ejecuta su estudio inteligente de fotos de carnet por completo en tu navegador, sin límites de exportación."
+        },
+        "upload": {
+          "q": "¿Se subirán mis fotos a un servidor?",
+          "a": "No. El recorte por IA, el cambio de fondo, el encuadre inteligente y la compresión ocurren localmente en tu navegador. El archivo original nunca sale de tu dispositivo: no existe ningún canal de subida."
+        },
+        "background": {
+          "q": "¿Cómo cambio el fondo a blanco / azul / rojo?",
+          "a": "Después de subir una foto, abre el panel de fondo. Pixfit usa el modelo MODNet localmente para recortar al sujeto y luego, con un toque, cambia el fondo a blanco estándar, azul para visa, rojo para identidad o cualquier color hexadecimal personalizado."
+        },
+        "sizes": {
+          "q": "¿Qué países y tipos de documento se admiten?",
+          "a": "Pixfit incluye 28 especificaciones de fábrica: documento de identidad chino, formatos 1 y 2 pulgadas y pasaporte, permisos de viaje de Hong Kong / Macao / Taiwán, 14 formatos populares de visa (EE. UU., Schengen, Reino Unido, Canadá, AU/NZ, JP/KR, sudeste asiático, Rusia, India) y tres formatos chinos de registro de exámenes."
+        },
+        "compress": {
+          "q": "¿Puedo comprimir una foto a 30 KB o 50 KB?",
+          "a": "Sí. En Exportar, la opción \"Comprimir al KB objetivo\" hace búsqueda binaria de calidad JPG/WebP y reduce píxeles si es necesario, dejándola dentro del ±5 % de tu meta — útil para portales de exámenes y de visas con tope estricto de tamaño."
+        },
+        "print": {
+          "q": "¿Cómo distribuyo varias fotos en papel A4 o 5R / 6R?",
+          "a": "El panel de diseño te permite elegir tamaño de papel (A4 / 5R / 6R) y plantilla (ocho fotos de 1 pulgada, dieciséis de 1 pulgada, mezclas de 1+2 pulgadas, etc.). Pixfit las distribuye con marcas de corte y exporta como PNG o PDF vectorial, listo para la imprenta."
+        },
+        "mobile": {
+          "q": "¿Se puede usar desde un navegador móvil?",
+          "a": "Sí. Pixfit funciona en Safari móvil y Chrome para Android. El primer recorte descarga unos 6 MB de pesos del modelo de IA — conéctate al Wi-Fi la primera vez y el resto del pipeline se ejecuta en el navegador."
+        }
+      }
+    },
+    "seoIntro": {
+      "heading": "Un estudio inteligente de fotos de carnet que vive en tu navegador",
+      "paragraphs": [
+        "Pixfit es un generador de fotos de carnet y escáner de documentos inteligente, totalmente gratuito y con IA, pensado para quien necesita rápido una foto de pasaporte, visa, DNI o trámite de examen. Sin descargas ni registros: abre la página, sube un retrato y obtienes una foto electrónica conforme en segundos.",
+        "Usamos MODNet, un modelo líder de segmentación de retratos, ejecutándose por completo en tu navegador para hacer recorte inteligente y cambio de fondo con un solo clic. Toda la canalización — recorte, recoloreo, encuadre, compresión y diseño de impresión — ocurre localmente en tu dispositivo. Ninguna foto se sube a un servidor.",
+        "Pixfit incluye 28 de las especificaciones de fotos de carnet más habituales: visa de EE. UU. (51×51 mm), Schengen (35×45 mm), Reino Unido (fondo gris claro), Japón (45×45 mm), DNI chino, pasaportes de la mayoría de los países, permisos de viaje de Hong Kong / Macao / Taiwán y formatos chinos de inscripción a exámenes. Cada preset respeta píxeles, DPI y límite de tamaño oficiales, así que exportas un JPG / PNG / WebP válido con un clic."
+      ]
+    }
+  },
+  "Footer": {
+    "copy": "© {year} Pixfit",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "openSource": "Código abierto (MIT)",
+    "tagline": "Estudio de fotos de carnet dentro del navegador",
+    "groups": {
+      "studio": "Estudio",
+      "scanner": "Escáner",
+      "specs": "Especificaciones",
+      "resources": "Recursos"
+    },
+    "aria": {
+      "studio": "Navegación de Estudio",
+      "scanner": "Navegación del Escáner",
+      "specs": "Navegación del catálogo de especificaciones",
+      "resources": "Recursos y aspectos legales"
+    },
+    "links": {
+      "studio": "Estudio",
+      "studioBackground": "Fondo IA",
+      "studioCrop": "Recorte inteligente",
+      "studioLayout": "Diseño de impresión",
+      "studioExport": "Comprimir · exportar",
+      "scanner": "Escáner",
+      "specs": "Gestor de especificaciones",
+      "sizes": "Tamaños de foto",
+      "paper": "Tamaños de papel",
+      "templates": "Plantillas de diseño",
+      "compress": "Comprimir a KB",
+      "blog": "Blog",
+      "privacy": "Política de privacidad",
+      "terms": "Términos de servicio",
+      "github": "GitHub"
+    }
+  },
+  "LanguageSwitcher": {
+    "label": "Cambiar idioma"
+  },
+  "Studio": {
+    "title": "Estudio",
+    "subtitle": "Sube un retrato — recorte por IA, encuadre inteligente, cambio de fondo con un clic, diseño de impresión y exportación al KB exacto, todo en tu navegador.",
+    "metaTitle": "Pixfit Estudio · Recorte online · Cambiar fondo · Comprimir · Diseño impresión 2026 | Pixfit",
+    "metaDescription": "Estudio Pixfit: recorte online, cambiar fondo con IA, comprimir a KB, diseño A4/5R/6R. Gratis, en el navegador, sin subir. 2026 · 28 formatos.",
+    "metaKeywords": [
+      "editor fotos carnet IA",
+      "foto carnet inteligente",
+      "recorte inteligente carnet",
+      "IA quitar fondo",
+      "cambiar fondo un clic",
+      "estudio fotos carnet online",
+      "editor foto visa",
+      "online",
+      "gratis",
+      "sin descargas",
+      "sin subir",
+      "en el navegador",
+      "2026",
+      "Pixfit Studio",
+      "privacidad primero",
+      "en el dispositivo",
+      "sin nube"
+    ],
+    "seoIntro": {
+      "heading": "Un estudio inteligente de fotos de carnet dentro de tu navegador",
+      "paragraphs": [
+        "El Estudio Pixfit es el editor central impulsado por IA. Sube un retrato y avanza por recorte inteligente, cambio de fondo, encuadre al formato, diseño de impresión, compresión y exportación — cada paso corre localmente en tu navegador, sin que ninguna foto se suba a un servidor.",
+        "Compatible con DNI chino, formatos de 1 y 2 pulgadas, pasaportes, permisos de viaje de Hong Kong / Macao / Taiwán, 14 formatos de visa (EE. UU., Schengen, Reino Unido, Canadá, AU, NZ, JP, KR, Singapur, Malasia, Vietnam, Tailandia, Rusia, India) y tres formatos chinos de inscripción a exámenes. Distribuye en papel 5R / 6R / A4 y exporta como PNG o PDF vectorial."
+      ]
+    },
+    "empty": {
+      "title": "Aún no hay foto",
+      "subtitle": "Sube un retrato para empezar"
+    },
+    "actions": {
+      "replace": "Cambiar foto",
+      "downloadPng": "Descargar PNG transparente",
+      "retry": "Volver a ejecutar"
+    },
+    "stats": {
+      "size": "{w} × {h}",
+      "inference": "{backend} · {ms} ms"
+    },
+    "tabs": {
+      "background": "Fondo",
+      "size": "Tamaño",
+      "layout": "Diseño",
+      "export": "Exportar",
+      "comingSoon": "Próximamente",
+      "flowLabel": "Flujo: Fondo → Tamaño → Diseño → Exportar",
+      "flowHint": "Avanza en orden o salta a cualquier pestaña cuando quieras.",
+      "sectionsA11y": "Secciones del Estudio"
+    },
+    "mobile": {
+      "tabLabel": "Cambiar panel",
+      "openPanel": "Abrir panel de ajustes",
+      "closePanel": "Cerrar panel de ajustes",
+      "panelTitle": "Ajustes de {tab}",
+      "panelSummary": "Ajusta este panel."
+    },
+    "cta": {
+      "export": "Exportar ahora"
+    },
+    "intent": {
+      "title": "¿Qué quieres hacer?",
+      "subtitle": "Elige un punto de partida — puedes cambiar de pestaña cuando quieras.",
+      "dismiss": "Descartar",
+      "choices": {
+        "background": {
+          "label": "Cambiar fondo",
+          "hint": "Recorta y vuelve a colorear el fondo"
+        },
+        "size": {
+          "label": "Recortar al tamaño",
+          "hint": "Visas, pasaportes, personalizado"
+        },
+        "layout": {
+          "label": "Diseño de impresión",
+          "hint": "Distribuir en 4×6 / 5×7 / A4"
+        },
+        "export": {
+          "label": "Comprimir / exportar",
+          "hint": "Acertar al KB exacto"
+        }
+      }
+    },
+    "nextStep": {
+      "toSize": "Siguiente: Tamaño",
+      "toLayout": "Siguiente: Diseño",
+      "toExport": "Siguiente: Exportar"
+    }
+  },
+  "Crop": {
+    "title": "Especificación de foto",
+    "subtitle": "Elige una especificación para fijar la proporción y centrar automáticamente la cabeza.",
+    "search": "Buscar especificaciones (visa EE. UU., Schengen, 2 pulgadas…)",
+    "noMatches": "No hay especificaciones que coincidan",
+    "customSection": "Tamaño personalizado",
+    "customUnit": "Unidad",
+    "customW": "Ancho ({unit})",
+    "customH": "Alto ({unit})",
+    "customDpi": "Resolución de impresión",
+    "customDpiShow": "Ajustar resolución",
+    "customDpiHide": "Ocultar",
+    "customDpiOption": {
+      "low": "Ahorrar espacio (200 DPI)",
+      "standard": "Estándar (300 DPI · recomendado)",
+      "high": "Alta calidad (600 DPI · archivo grande)"
+    },
+    "customDpiPxHint": "Si ingresas píxeles directamente, los DPI quedan fijos.",
+    "customRangeHint": "Rango permitido: {min}–{max} {unit}",
+    "customApply": "Usar este tamaño",
+    "customNamePrefix": "Personalizado",
+    "units": {
+      "mm": "mm",
+      "cm": "cm",
+      "inch": "pulgada",
+      "px": "px"
+    },
+    "manageCustom": "Gestionar tamaños personalizados",
+    "createCustom": "Crear tamaño personalizado",
+    "categories": {
+      "cn-id": "DNI chino",
+      "cn-paper": "Papel chino",
+      "travel-permit": "Permisos de viaje",
+      "visa": "Visas",
+      "exam": "Exámenes",
+      "custom": "Personalizado"
+    },
+    "filters": {
+      "all": "Todos",
+      "hot": "Populares",
+      "recent": "Recientes"
+    },
+    "stats": {
+      "dimensions": "{w} × {h} mm · {wpx} × {hpx} px",
+      "dpi": "{dpi} DPI",
+      "bg": "Fondo recomendado",
+      "kb": "{min}–{max} KB"
+    },
+    "actions": {
+      "resetFrame": "Centrar de nuevo",
+      "showGuides": "Mostrar guías",
+      "hideGuides": "Ocultar guías"
+    },
+    "detect": {
+      "failed": "No se detectó el rostro — mueve el marco manualmente.",
+      "noFace": "Sin rostro detectado — se usa un encuadre central.",
+      "autoCentered": "Centrado automáticamente. Arrastra el marco para ajustar."
+    },
+    "warnings": {
+      "title": "Sugerencias de composición",
+      "head-too-small": "Cabeza pequeña: actual {ratio}% — la especificación pide ~{lo}%–{hi}%",
+      "head-too-large": "Cabeza grande: actual {ratio}% — la especificación pide ~{lo}%–{hi}%",
+      "eye-too-high": "Ojos altos: actual {ratio}% desde arriba — la especificación pide ~{lo}%–{hi}%",
+      "eye-too-low": "Ojos bajos: actual {ratio}% desde arriba — la especificación pide ~{lo}%–{hi}%",
+      "face-not-found": "Sin rostro — no se puede comprobar la composición.",
+      "moreCount": "+{count} más"
+    },
+    "bgSuggested": "{name} recomienda un color de fondo específico",
+    "bgSuggestedAction": "Aplicar"
+  },
+  "Background": {
+    "title": "Color de fondo",
+    "cutout": {
+      "title": "Recorta primero al sujeto",
+      "hint": "Para cambiar el fondo hay que aislar al sujeto. Ejecuta el recorte ahora o elige un color y se aplicará cuando termines.",
+      "start": "Iniciar recorte",
+      "running": "Recortando…"
+    },
+    "presets": "Predefinidos",
+    "custom": "Personalizado",
+    "recent": "Usados recientemente",
+    "recentEmpty": "Aún no hay colores recientes",
+    "compare": "Antes / después",
+    "compareHint": "Arrastra el divisor para comparar fondos",
+    "retry": {
+      "hint": "¿Los bordes no quedaron bien?",
+      "action": "Volver a recortar"
+    },
+    "hexInputLabel": "Color hex",
+    "hexInputPlaceholder": "#FFFFFF",
+    "apply": "Aplicar",
+    "presetNames": {
+      "transparent": "Transparente",
+      "white": "Blanco",
+      "blue": "Azul visa",
+      "red": "Rojo carnet",
+      "lightGray": "Gris claro"
+    }
+  },
+  "Export": {
+    "title": "Exportar",
+    "subtitle": "Elige el formato, ajusta la calidad y descarga.",
+    "noSpec": {
+      "title": "No hay tamaño seleccionado",
+      "body": "Exportaremos la foto tal cual. Elige un tamaño si necesitas ajustarte a una visa o pasaporte.",
+      "cta": "Elegir un tamaño →"
+    },
+    "privacyNote": "La exportación corre en tu navegador · no se sube nada",
+    "compliance": {
+      "okTitle": "Cumple la especificación",
+      "warnTitle": "Fuera de especificación",
+      "detail": "{kb} KB · la especificación pide {range}"
+    },
+    "format": {
+      "label": "Formato",
+      "png-alpha": "PNG · transparente",
+      "png-flat": "PNG · con fondo",
+      "jpg": "JPG",
+      "webp": "WebP"
+    },
+    "quality": "Calidad del codificador",
+    "qualityMax": "Calidad máxima",
+    "qualityMaxHint": "JPG / WebP al 100 % sigue siendo con pérdida — usa PNG para algo realmente sin pérdida.",
+    "estimateLabel": "Tamaño estimado ~{kb} KB",
+    "estimateLabelDetailed": "Tamaño estimado ~{kb} KB · @ {w} × {h}",
+    "dimensionsBySpec": "Píxeles de exportación: {w} × {h} · según la especificación seleccionada",
+    "dimensionsByBitmap": "Píxeles de exportación: {w} × {h} · mapa de bits original",
+    "dimensionsCompared": "Origen {sw} × {sh} → exportación {tw} × {th}",
+    "dimensionsModeSpec": "Tamaño según la especificación elegida (listo para imprimir).",
+    "dimensionsModeSpecWithRatio": "Tamaño según especificación · píxeles reducidos ~{ratio}× (por eso el archivo es pequeño).",
+    "dimensionsModeNative": "Conserva la resolución nativa del recorte (archivo grande, reimprimible a cualquier tamaño).",
+    "keepNativeLabel": "Conservar resolución nativa",
+    "keepNativeHint": "Exporta al tamaño en píxeles original del recorte. El archivo crece bastante, pero el mismo recorte se puede reimprimir a cualquier tamaño.",
+    "qualityLockedByCompress": "La calidad se ajusta automáticamente al comprimir a un tamaño objetivo.",
+    "compressToKB": "Comprimir al tamaño objetivo",
+    "compressUnsupported": "La compresión solo se aplica a JPG / WebP.",
+    "kbHint": "Hacemos búsqueda binaria de la calidad y reducimos píxeles si es necesario para quedar dentro del ±5 % del objetivo.",
+    "compressMiss": "Lo más cercano fue {kb} KB — sube el objetivo o reduce más la escala.",
+    "alphaNeedsCutout": "PNG con transparencia requiere recortar al sujeto primero.",
+    "alphaCutoutHint": "¿Quieres fondo transparente? Recorta primero al sujeto.",
+    "alphaGoToBackground": "Abrir la pestaña Fondo para recortar →",
+    "cropAppliedHint": "Recortado a la especificación seleccionada — ajústalo en la pestaña Tamaño si lo necesitas.",
+    "downloadFailed": "No se pudo generar el archivo — prueba otro formato.",
+    "downloadSuccess": "Guardado {filename}",
+    "filenamePreview": "Nombre del archivo",
+    "fullResHint": "Conserva la resolución original — la exportación puede tardar unos segundos.",
+    "actions": {
+      "download": "Descargar",
+      "downloading": "Preparando…",
+      "copy": "Copiar al portapapeles",
+      "copying": "Copiando…"
+    },
+    "hint": {
+      "alpha": "Los formatos con canal alfa conservan el fondo transparente.",
+      "flat": "Los formatos planos integran el color de fondo actual en la exportación."
+    },
+    "copied": "Copiado al portapapeles",
+    "copyFailed": "Falló la copia — prueba con la descarga",
+    "size": "≈{kb} KB",
+    "wechatHint": "¿Dentro de WeChat? Mantén pulsada la vista previa para guardarla."
+  },
+  "Paper": {
+    "title": "Papel",
+    "subtitle": "Elige el papel de impresión sobre el que se distribuirán las fotos.",
+    "list": {
+      "heading": "Tamaños de papel de impresión",
+      "subtitle": "Tamaños estándar que Pixfit admite para distribuir tus fotos. Elige uno en el Estudio para distribuirlas automáticamente.",
+      "intro": "De 3R a A4, los siete papeles integrados cubren los formatos más habituales en imprentas chinas y para impresoras de oficina. Todos están calibrados a 300 DPI, así que lo que ves es lo que se imprime.",
+      "fields": {
+        "alias": "Alias",
+        "dimensions": "Dimensiones",
+        "pixels": "Píxeles",
+        "dpi": "DPI"
+      },
+      "cta": "Usar en Estudio",
+      "metaTitle": "Papeles de impresión Pixfit · 3R 4R 5R 6R 8R A4 A5 · diseño online 2026 | Pixfit",
+      "metaDescription": "Papeles Pixfit: 3R, 4R, 5R, 6R, 8R, A4, A5 — distribuye fotos de carnet en el navegador, descarga PNG/PDF gratis, sin subir, 2026 actualizado.",
+      "metaKeywords": [
+        "papel impresión carnet",
+        "diseño foto inteligente",
+        "tamaños impresión IA",
+        "papel 3R 4R 5R 6R 8R",
+        "diseño carnet A4",
+        "Pixfit papel",
+        "privacidad primero",
+        "en el dispositivo",
+        "sin nube"
+      ]
+    }
+  },
+  "Layout": {
+    "combos": {
+      "title": "Combinaciones habituales",
+      "subtitle": "Elige un par papel + plantilla con un toque",
+      "count": "{count} fotos"
+    },
+    "templates": {
+      "title": "Diseño",
+      "subtitle": "Elige una distribución integrada compatible con el papel seleccionado.",
+      "empty": "Aún no hay diseños integrados para este papel — usa el modo mixto debajo.",
+      "totalCount": "{count} fotos",
+      "syncedBadge": "Tu tamaño"
+    },
+    "mix": {
+      "title": "Fotos mixtas",
+      "subtitle": "Anula la plantilla con tu propio recuento por especificación.",
+      "customName": "Mezcla personalizada",
+      "add": "Añadir fila",
+      "remove": "Quitar {name}",
+      "decrease": "Menos de esta especificación",
+      "increase": "Más de esta especificación",
+      "selectSpec": "Elige una especificación"
+    },
+    "settings": {
+      "title": "Ajustes de diseño",
+      "subtitle": "Márgenes, separación, líneas y marcas de corte.",
+      "margin": "Margen",
+      "gap": "Separación entre fotos",
+      "showSeparator": "Mostrar separadores",
+      "showCutGuides": "Mostrar marcas de corte",
+      "backgroundColor": "Fondo del papel"
+    },
+    "preview": {
+      "canvasLabel": "Vista previa del diseño",
+      "actualSize": "Tamaño real: {name} · {w}×{h} mm",
+      "overflow": "Algunas fotos no entraron: {list}. Prueba con un papel más grande o menos separación."
+    },
+    "actions": {
+      "title": "Descargar",
+      "subtitle": "PNG en formato raster; PDF vectorial para imprentas.",
+      "png": "Descargar PNG",
+      "pdf": "Descargar PDF",
+      "preparing": "Preparando…",
+      "downloadFailed": "No se pudo generar el diseño — prueba con un papel más pequeño o menos fotos.",
+      "downloadSuccess": "Guardado {filename}",
+      "filenamePreview": "Nombre del archivo"
+    }
+  },
+  "Sizes": {
+    "heading": "Tamaños de foto de carnet",
+    "subtitle": "Cada especificación integrada en Pixfit — DNI chinos, permisos de viaje, visas populares y formatos de inscripción a exámenes.",
+    "intro": "Veintiocho especificaciones que cubren los formatos de 1 y 2 pulgadas chinos, permisos de viaje de Hong Kong / Macao / Taiwán, catorce visas habituales (EE. UU. / Schengen / Reino Unido / CA / AU / NZ / JP / KR / SG / MY / VN / TH / RU) y tres formatos de inscripción a exámenes nacionales. Elige una para fijar la proporción en el Estudio y centrar la cabeza.",
+    "fields": {
+      "dimensions": "Dimensiones",
+      "pixels": "Píxeles",
+      "dpi": "DPI",
+      "background": "Fondo recomendado",
+      "fileSize": "Tamaño de archivo",
+      "region": "Región"
+    },
+    "cta": "Usar en Estudio",
+    "categoryEmpty": "Aún no hay especificaciones en esta categoría",
+    "viewDetail": "Ver detalles",
+    "metaTitle": "Pixfit tamaños de foto · 28 formatos · recorte online + fondo IA 2026 | Pixfit",
+    "metaDescription": "28 tamaños: visa EE. UU. / Schengen / Reino Unido / Japón, DNI chinos, exámenes. Recorte online + fondo IA, gratis en el navegador, sin subir, 2026.",
+    "metaKeywords": [
+      "tamaños foto carnet IA",
+      "especificaciones foto IA",
+      "catálogo tamaños foto visa",
+      "dimensiones foto pasaporte",
+      "tamaño foto visa Schengen",
+      "foto visa EE. UU. 51x51",
+      "Pixfit Sizes",
+      "privacidad primero",
+      "en el dispositivo",
+      "sin nube"
+    ],
+    "detail": {
+      "metaTitle": "{name} {w}×{h}mm · recorte online 2026 | Pixfit",
+      "metaDescription": "Foto {name} {w}×{h}mm ({wpx}×{hpx}px @ {dpi} DPI), fondo {bgLabel}. Recorte online + fondo IA. Gratis, en el navegador, sin subir, especificación 2026.",
+      "heading": "Tamaño de foto {name}",
+      "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
+      "intro": "La foto de carnet estándar {name} mide {w} × {h} mm ({wpx} × {hpx} px a {dpi} DPI) con un fondo recomendado de {bgLabel}. Esta página cubre la especificación completa, los requisitos de fotografía y una herramienta gratuita en el navegador.",
+      "specSection": {
+        "title": "Especificación",
+        "dimensions": "Tamaño físico",
+        "pixels": "Tamaño en píxeles",
+        "dpi": "Resolución",
+        "background": "Fondo recomendado",
+        "fileSize": "Tamaño de archivo",
+        "region": "Región"
+      },
+      "purpose": {
+        "title": "Dónde se usa",
+        "visa": "El formato {name} se requiere para solicitudes de visa de {regionName}, incluidas visas consulares, a la llegada y portales eVisa. Las reglas consulares cambian de vez en cuando — confirma la guía oficial antes de enviar.",
+        "cn-id": "{name} es uno de los formatos más comunes en China continental. Se acepta para el DNI nacional, renovación de pasaporte, licencia de conducir, tarjeta de seguridad social, certificaciones profesionales y la mayoría de procesos de contratación.",
+        "exam": "{name} es el formato de inscripción para los principales exámenes nacionales chinos (función pública, posgrado, NCRE, certificación docente). Estas plataformas imponen píxeles y tamaños estrictos.",
+        "cn-paper": "{name} es un papel habitual en laboratorios fotográficos para imprimir varias fotos de carnet en una sola hoja, económico cuando necesitas varias copias tamaño cartera.",
+        "travel-permit": "{name} se requiere para los permisos de viaje de residentes continentales a Hong Kong, Macao y Taiwán, con especificaciones del Departamento de Salida-Entrada del Ministerio de Seguridad Pública."
+      },
+      "requirements": {
+        "title": "Fotografía y composición",
+        "body": "Toma la foto con iluminación pareja, mirando a la cámara, expresión neutra y sin sombreros. La cabeza debe ocupar entre el 60 y 75 % del encuadre y los hombros no deben llegar al borde inferior. El fondo debe ser liso ({bgLabel}) sin sombras visibles. Si usas selfie, emplea la cámara trasera con el lente a la altura de tu cara.",
+        "fileRules": "Restricción de tamaño: {range}."
+      },
+      "howto": {
+        "title": "Cómo crear una foto {name} en Pixfit",
+        "subtitle": "Tres pasos, todo en tu navegador. La foto no sale de tu dispositivo.",
+        "steps": {
+          "upload": {
+            "name": "Sube un retrato",
+            "text": "Suelta o elige un retrato frontal nítido. JPG / PNG / HEIC de hasta 50 MB."
+          },
+          "cutout": {
+            "name": "Eliminación de fondo con IA",
+            "text": "MODNet corre localmente en tu navegador para recortar al sujeto y cambiar el fondo a {bgLabel}. Cambia el fondo cuando quieras en el panel correspondiente."
+          },
+          "crop": {
+            "name": "Recorte inteligente a {name}",
+            "text": "Elige la plantilla {name}. Pixfit encuentra el rostro y recorta a {w}×{h} mm con la cabeza centrada — arrastra para afinar."
+          },
+          "export": {
+            "name": "Exporta un archivo que cumpla la especificación",
+            "text": "Elige formato y calidad. Usa la opción de tamaño objetivo si el portal pide un rango específico de KB y guarda el archivo localmente."
+          }
+        }
+      },
+      "faq": {
+        "title": "{name} — preguntas frecuentes",
+        "items": {
+          "free": {
+            "q": "¿Crear una foto {name} en Pixfit es gratis?",
+            "a": "Sí, totalmente gratis. Pixfit corre en tu navegador sin marca de agua, sin muro de pago y sin límite de exportaciones."
+          },
+          "upload": {
+            "q": "¿Se subirá mi foto a un servidor?",
+            "a": "No. El recorte, el cambio de fondo, el encuadre y la compresión ocurren localmente en tu navegador. La foto original nunca sale de tu dispositivo."
+          },
+          "background": {
+            "q": "¿Qué color de fondo necesita {name}?",
+            "a": "El fondo recomendado es {bgLabel}. El panel de fondo ofrece presets con un toque (blanco estándar, azul visa, rojo carnet) o cualquier color hexadecimal."
+          },
+          "accuracy": {
+            "q": "¿Estas especificaciones son precisas?",
+            "a": "Las especificaciones se basan en fuentes oficiales públicas. Embajadas, ministerios y tribunales examinadores actualizan sus reglas — verifica la guía oficial vigente antes de enviar."
+          },
+          "phone": {
+            "q": "¿Puedo hacerlo en el móvil?",
+            "a": "Sí. Pixfit funciona en Safari móvil y Chrome. El primer recorte descarga unos 6 MB del modelo de IA — conéctate al Wi-Fi y todo el flujo se ejecuta en el navegador."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Abrir el Estudio con {name}",
+        "secondary": "Ver todos los tamaños"
+      },
+      "backLink": "Volver a tamaños",
+      "related": {
+        "heading": "También te puede servir",
+        "subtitle": "Otros tamaños de foto que quizá necesites"
+      }
+    }
+  },
+  "Templates": {
+    "heading": "Plantillas de diseño",
+    "subtitle": "Distribuciones automáticas que colocan tus fotos en una sola hoja, listas para la imprenta.",
+    "intro": "Doce plantillas integradas cubren los escenarios más habituales: 8× y 16× 1 pulgada, 8× 2 pulgadas, mezclas 1+2 pulgadas, DNI, pasaportes y fotos cartera. Cada plantilla elige el papel, calcula la cuadrícula y exporta como PNG o PDF vectorial limpio.",
+    "fields": {
+      "paper": "Papel",
+      "photos": "Fotos",
+      "total": "{count} en total"
+    },
+    "groups": {
+      "byPaper": "Agrupadas por papel"
+    },
+    "cta": "Abrir en Estudio",
+    "metaTitle": "Pixfit plantillas diseño · 12 · 5R 6R A4 generar PDF online 2026 | Pixfit",
+    "metaDescription": "12 diseños: 8 × 1-pulgada, 16 × 1-pulgada, mezcla 1+2, carnet, pasaporte, cartera, en 5R / 6R / A4. PNG y PDF vectorial en el navegador, sin subir, gratis 2026.",
+    "metaKeywords": [
+      "plantillas diseño carnet",
+      "diseño foto inteligente",
+      "mosaico impresión IA",
+      "diseño 16 fotos 1-pulgada",
+      "foto pasaporte cartera",
+      "Pixfit Templates",
+      "privacidad primero",
+      "en el dispositivo",
+      "sin nube"
+    ]
+  },
+  "Compress": {
+    "index": {
+      "metaTitle": "Comprimir fotos online · 50KB / 100KB / 200KB / 500KB / 1MB · gratis 2026 | Pixfit",
+      "metaDescription": "Comprime fotos JPG y PNG a 50KB, 100KB, 200KB, 500KB o 1MB online. 100 % en el navegador, sin subir, gratis, 2026. Pixfit.",
+      "metaKeywords": [
+        "comprimir foto online",
+        "comprimir jpg a KB",
+        "comprimir foto a 50KB",
+        "compresor foto online",
+        "compresión foto en navegador",
+        "compresión foto gratis",
+        "compresor 2026",
+        "Pixfit Compress",
+        "privacidad primero",
+        "en el dispositivo",
+        "sin nube"
+      ],
+      "heading": "Comprimir fotos a un KB exacto",
+      "subtitle": "Elige el tamaño que requiere tu visa, examen o portal de admisión. Pixfit codifica al ±1KB de tu objetivo — todo en el navegador, sin subir.",
+      "intro": "Los portales online imponen límites estrictos — 50KB para algunos servicios públicos, 200KB para muchas solicitudes de visa, 500KB para admisiones universitarias. Pixfit acierta cada objetivo recodificando la calidad JPG y remuestreando cuando hace falta, todo del lado cliente. Elige un preset o ajusta a fondo en el Estudio.",
+      "targets": {
+        "heading": "Elige un objetivo",
+        "cardCta": "Comprimir a {label}",
+        "cardSubtitle": "JPG {label}"
+      },
+      "studio": {
+        "heading": "¿Necesitas un tamaño personalizado?",
+        "body": "La pestaña Exportar del Estudio permite fijar cualquier KB desde 5 KB en adelante, con mínimo opcional, para portales que exigen una ventana (por ejemplo 50–200 KB).",
+        "cta": "Abrir Estudio · pestaña Exportar"
+      }
+    },
+    "detail": {
+      "metaTitle": "Comprimir fotos a {label} online · gratis 2026 | Pixfit",
+      "metaDescription": "Comprime fotos a {label} online. 100 % en el navegador, sin subir, gratis. Acierta el objetivo {label} con ±1KB. 2026 · Pixfit.",
+      "metaKeywords": [
+        "comprimir foto a {label}",
+        "comprimir jpg a {label}",
+        "compresor fotos {label}",
+        "foto online a {label}",
+        "compresión en navegador",
+        "Pixfit Compress",
+        "privacidad primero",
+        "en el dispositivo",
+        "sin nube"
+      ],
+      "backLink": "Volver a comprimir",
+      "heading": "Comprimir fotos a {label}",
+      "tagline": "Objetivo: {label}",
+      "intro": "El compresor Pixfit recodifica tu foto JPG / PNG para dejar el archivo final dentro de ±1KB de {label}. Todo ocurre en tu navegador — sin subir y sin cuenta.",
+      "howTo": {
+        "title": "Cómo comprimir una foto a {label}",
+        "subtitle": "Cuatro pasos en tu navegador. Una foto de 12MP toma menos de cinco segundos.",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "Sube tu foto",
+            "text": "Suelta una foto JPG, PNG o HEIC en Pixfit Studio. El archivo no sale del dispositivo."
+          },
+          "target": {
+            "name": "Elige {label} como objetivo",
+            "text": "Al llegar desde esta página, la pestaña Exportar viene fija en {label}. Puedes cambiarlo cuando quieras."
+          },
+          "compress": {
+            "name": "Pixfit alcanza {label}",
+            "text": "Calidad adaptativa y remuestreo al vuelo dejan la salida dentro de ±1KB de {label} (normalmente en 3–5 iteraciones)."
+          },
+          "download": {
+            "name": "Descarga el resultado",
+            "text": "Pulsa Exportar para guardar la foto comprimida a {label} como JPG. El original queda intacto."
+          }
+        }
+      },
+      "faq": {
+        "title": "Preguntas frecuentes sobre la compresión a {label}",
+        "items": {
+          "quality": {
+            "q": "¿Comprimir a {label} estropea la foto?",
+            "a": "Pixfit elige la mayor calidad JPG que quepa en {label} y solo remuestrea los píxeles cuando la calidad por sí sola no basta. En la mayoría de retratos, {label} es visualmente indistinguible de un original de 2MB."
+          },
+          "target": {
+            "q": "¿Cuán cerca queda la salida de {label}?",
+            "a": "Pixfit hace búsqueda binaria de la calidad JPG hasta que el resultado entra en ±1KB de {label}. Si necesitas una ventana exacta (por ejemplo 50–{label}), usa la pestaña Exportar del Estudio y fija mínimo y máximo."
+          },
+          "format": {
+            "q": "¿El compresor a {label} acepta PNG?",
+            "a": "Sí — Pixfit decodifica PNG, JPG y HEIC. La salida siempre es JPG recodificado, ya que PNG no puede llegar a {label} con contenido fotográfico sin pérdida inaceptable."
+          },
+          "batch": {
+            "q": "¿Puedo comprimir varias fotos a {label} en lote?",
+            "a": "El Estudio está pensado para una foto por vez. Para un lote, suelta cada foto una tras otra — el preset {label} se mantiene durante la sesión."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Abrir Estudio con preset {label}",
+        "secondary": "Control completo del Estudio",
+        "secondaryHint": "Sobrescribe el preset, añade un mínimo o procesa varias fotos."
+      }
+    },
+    "targetLabel": {
+      "50kb": "50KB",
+      "100kb": "100KB",
+      "200kb": "200KB",
+      "500kb": "500KB",
+      "1mb": "1MB"
+    }
+  },
+  "Legal": {
+    "common": {
+      "lastUpdated": "Última actualización · {date}",
+      "backHome": "Volver al inicio"
+    },
+    "privacy": {
+      "heading": "Política de privacidad",
+      "subtitle": "Pixfit corre por completo en tu navegador. No recopilamos, almacenamos ni transmitimos tus fotos.",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "Política de privacidad · Pixfit",
+      "metaDescription": "Cómo Pixfit gestiona tus datos: cada imagen queda en tu dispositivo, sin cookies de rastreo y solo localStorage para tus especificaciones personalizadas.",
+      "sections": {
+        "summary": {
+          "title": "En resumen",
+          "body": "Pixfit es un estudio de fotos de carnet exclusivo del navegador. Tus fotos no salen del dispositivo. No usamos cuentas, no exigimos registro y no rastreamos con cookies."
+        },
+        "data": {
+          "title": "Qué procesamos",
+          "body": "Al subir una foto, el archivo se decodifica en tu navegador, lo procesa un modelo de IA en el dispositivo (MODNet sobre WebGPU / WebAssembly) y se renderiza en un canvas local. Esos bytes no se envían por la red."
+        },
+        "localStorage": {
+          "title": "Almacenamiento local",
+          "body": "Usamos localStorage solo para recordar las especificaciones de foto / papel / diseño que creas o importas (clave `pixfit:specs:v1`) y una pequeña lista de colores de fondo recientes. Puedes borrarlos cuando quieras desde la configuración del navegador."
+        },
+        "thirdParty": {
+          "title": "Recursos de terceros",
+          "body": "Los pesos del modelo, las fuentes y el runtime de MediaPipe se obtienen de espejos públicos (ModelScope, jsDelivr, el CDN de Hugging Face). Esos servicios solo ven peticiones del archivo del modelo, nunca tus fotos. Tras la primera carga, las visitas siguientes son funcionales sin conexión."
+        },
+        "analytics": {
+          "title": "Analítica",
+          "body": "Cuando lancemos planeamos usar Cloudflare Web Analytics, sin cookies y sin recopilar IP ni huellas. Hasta entonces, no se carga ningún script. No incluimos rastreadores de terceros (Google / Mixpanel / Sentry)."
+        },
+        "rights": {
+          "title": "Tus derechos",
+          "body": "Como no recopilamos datos personales, no hay nada que podamos borrar o exportar en tu nombre. Mantienes el control limpiando los datos del sitio en tu navegador."
+        },
+        "children": {
+          "title": "Menores",
+          "body": "Pixfit es apto para audiencia general, pero no está dirigido a menores de 13 años. Si lo usas para un menor, revisa estos términos con su tutor."
+        },
+        "changes": {
+          "title": "Cambios en esta política",
+          "body": "Si las prácticas de manejo de datos cambian, actualizaremos esta página y la fecha. Los cambios materiales también se resumirán en la página principal o en un banner dentro de la app."
+        },
+        "contact": {
+          "title": "Contacto",
+          "body": "Abre un issue en github.com/aapw01/id-photo-tool o escribe al mantenedor indicado en el README."
+        }
+      }
+    },
+    "terms": {
+      "heading": "Términos de servicio",
+      "subtitle": "Pixfit se ofrece gratuitamente, tal cual y sin garantías. Al usarlo, aceptas estos términos.",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "Términos de servicio · Pixfit",
+      "metaDescription": "Pixfit es gratuito y de código abierto. Aceptas usarlo solo con fotos sobre las que tengas derechos y que el software se entregue tal cual.",
+      "sections": {
+        "scope": {
+          "title": "Alcance",
+          "body": "Estos términos cubren el uso de pix-fit.com y del código abierto Pixfit. Cargar el sitio o ejecutar el código implica aceptar los términos."
+        },
+        "service": {
+          "title": "Qué ofrecemos",
+          "body": "Un estudio de fotos de carnet basado en el navegador. Cada función corre localmente; el servicio que aloja solo sirve archivos estáticos. No prometemos un nivel concreto de disponibilidad o exactitud."
+        },
+        "responsibility": {
+          "title": "Tu responsabilidad",
+          "body": "Debes tener derechos sobre cada foto que proceses. No subas fotos de otras personas sin su consentimiento y no uses Pixfit para violar estándares oficiales, políticas de verificación de identidad o leyes locales."
+        },
+        "compliance": {
+          "title": "Precisión de las especificaciones",
+          "body": "Las especificaciones integradas provienen de fuentes oficiales al momento de redactar. Embajadas y tribunales cambian sus reglas — verifica el requisito vigente antes de enviar tu solicitud."
+        },
+        "ip": {
+          "title": "Propiedad intelectual",
+          "body": "El código fuente de Pixfit se publica bajo licencia MIT. Los iconos, fuentes y modelo de IA integrados tienen sus respectivas licencias (ver README). Tus fotos siguen siendo tuyas."
+        },
+        "warranty": {
+          "title": "Sin garantía",
+          "body": "El servicio se ofrece tal cual y según disponibilidad, sin garantías de ningún tipo, expresas o implícitas. Renunciamos a las garantías de comerciabilidad, idoneidad para un fin particular y no infracción."
+        },
+        "liability": {
+          "title": "Limitación de responsabilidad",
+          "body": "En la medida máxima permitida por la ley, no somos responsables de daños indirectos, incidentales, especiales, consecuentes ni punitivos derivados del uso de Pixfit, incluidos, entre otros, solicitudes rechazadas o costes de impresión."
+        },
+        "changes": {
+          "title": "Cambios en el servicio",
+          "body": "Podemos agregar, cambiar o quitar funciones en cualquier momento. Los cambios relevantes se anunciarán en el changelog del repositorio open source."
+        },
+        "law": {
+          "title": "Ley aplicable",
+          "body": "Las controversias se rigen por la legislación de la jurisdicción donde reside el mantenedor y, si corresponde, la ley local de protección al consumidor."
+        },
+        "contact": {
+          "title": "Contacto",
+          "body": "Abre un issue en github.com/aapw01/id-photo-tool para cualquier consulta sobre los términos."
+        }
+      }
+    }
+  },
+  "Errors": {
+    "notFound": {
+      "title": "Página no encontrada",
+      "body": "La página que buscas se movió o nunca existió. Vuelve al Estudio o a la página principal para continuar.",
+      "actions": {
+        "home": "Volver al inicio",
+        "studio": "Abrir Estudio"
+      },
+      "metaTitle": "No encontrado · Pixfit",
+      "metaDescription": "No se encontró esta página de Pixfit. Salta al inicio, al Estudio, al Escáner o al catálogo completo de tamaños.",
+      "helpful": {
+        "heading": "Prueba con esto",
+        "subtitle": "Pixfit corre en el navegador — sigue donde lo dejaste sin perder contexto.",
+        "home": "Inicio",
+        "studio": "Estudio",
+        "scanner": "Escáner",
+        "sizes": "Todos los tamaños",
+        "scannerDocs": "Todos los tipos de documento"
+      },
+      "didYouMean": "¿Quisiste decir {name}?",
+      "didYouMeanCta": "Abrir {name}"
+    },
+    "runtime": {
+      "title": "Algo salió mal",
+      "body": "Pixfit encontró un error inesperado al mostrar esta página. El problema quedó registrado en la consola del navegador. Intenta de nuevo o recarga; si persiste, abre un issue.",
+      "actions": {
+        "retry": "Reintentar",
+        "home": "Volver al inicio"
+      },
+      "metaTitle": "Error · Pixfit"
+    }
+  },
+  "SpecManager": {
+    "title": "Gestionar especificaciones",
+    "subtitle": "Gestiona tus especificaciones de foto, papel y plantillas de diseño. Las entradas integradas son de solo lectura — duplica una para personalizarla.",
+    "footerLink": "Gestionar especificaciones",
+    "tabs": {
+      "photo": "Especificaciones de foto",
+      "paper": "Especificaciones de papel",
+      "layout": "Plantillas de diseño"
+    },
+    "toolbar": {
+      "import": "Importar JSON",
+      "export": "Exportar JSON",
+      "new": "Nuevo",
+      "duplicate": "Duplicar para personalizar"
+    },
+    "list": {
+      "builtin": "Integrado",
+      "custom": "Personalizado",
+      "empty": "Aún no hay entradas personalizadas",
+      "builtinHint": "Las especificaciones integradas son de solo lectura — duplícalas para crear una copia editable",
+      "edit": "Editar",
+      "delete": "Eliminar"
+    },
+    "form": {
+      "createTitle": "Nueva {kind}",
+      "editTitle": "Editar “{name}”",
+      "fields": {
+        "id": "ID",
+        "idHint": "Minúsculas, números y guiones — no se cambia tras crear",
+        "nameZh": "Nombre (chino simplificado)",
+        "nameZhHant": "Nombre (chino tradicional)",
+        "nameEn": "Nombre (inglés)",
+        "category": "Categoría",
+        "region": "Región (ISO 3166-1 alpha-2)",
+        "widthMm": "Ancho (mm)",
+        "heightMm": "Alto (mm)",
+        "dpi": "DPI",
+        "alias": "Alias",
+        "bgRecommended": "Fondo recomendado (#hex)",
+        "paperId": "ID del papel"
+      },
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "kinds": {
+      "photo": "especificación de foto",
+      "paper": "especificación de papel",
+      "layout": "plantilla de diseño"
+    },
+    "toast": {
+      "created": "“{name}” guardado",
+      "updated": "“{name}” actualizado",
+      "deleted": "“{name}” eliminado",
+      "duplicated": "Copia “{name}” creada a partir de la integrada",
+      "exported": "Exportadas {count} entradas personalizadas",
+      "imported": "Importadas {photo} foto / {paper} papel / {layout} diseño",
+      "validationError": "El formulario tiene campos inválidos — revísalos antes de guardar",
+      "saveFailed": "Error al guardar: {message}",
+      "deleteFailed": "Error al eliminar: {message}",
+      "importFailed": "Error al importar: {message}"
+    },
+    "delete": {
+      "title": "¿Eliminar “{name}”?",
+      "body": "Se quitará la entrada personalizada. Las integradas no se ven afectadas.",
+      "withDependentsBody": "{count} plantilla(s) de diseño hacen referencia a esta especificación. Tras eliminarla pasarán a la integrada equivalente (si existe) o quedarán inválidas.",
+      "dependentsHeading": "Plantillas afectadas",
+      "confirm": "Eliminar",
+      "cancel": "Cancelar"
+    },
+    "import": {
+      "title": "Importar especificaciones",
+      "hint": "Elige un JSON exportado desde Pixfit",
+      "browse": "Elegir archivo",
+      "preview": "Se importarán {photo} foto / {paper} papel / {layout} diseño (reemplaza tus personalizadas)",
+      "confirm": "Reemplazar e importar",
+      "errors": {
+        "empty-input": "El archivo está vacío.",
+        "invalid-json": "JSON no válido: {message}",
+        "invalid-schema": "Falló la validación del esquema ({issues} problemas).",
+        "unsupported-version": "Versión no soportada. Pixfit solo importa la versión 1."
+      }
+    },
+    "layout": {
+      "comingSoon": "El editor de plantillas llega con M6. Por ahora puedes importar / exportar / eliminar plantillas existentes, pero la creación está deshabilitada."
+    },
+    "empty": {
+      "title": "Selecciona una entrada a la izquierda para ver sus detalles",
+      "subtitle": "O pulsa “Nuevo” para crear tu propia especificación"
+    },
+    "categories": {
+      "cn-id": "DNI chino",
+      "cn-paper": "Papel chino",
+      "travel-permit": "Permisos de viaje",
+      "visa": "Visas",
+      "exam": "Exámenes",
+      "custom": "Personalizado"
+    }
+  },
+  "Segmentation": {
+    "states": {
+      "idle": "Listo",
+      "loadingModel": "Cargando el modelo de recorte…",
+      "ready": "Modelo listo",
+      "inferring": "Extrayendo al sujeto…",
+      "error": "Falló el recorte"
+    },
+    "progress": {
+      "download": "Descargando modelo {loaded}/{total}",
+      "init": "Inicializando el motor de inferencia…",
+      "infer": "Procesando imagen…"
+    },
+    "backend": {
+      "webgpu": "Aceleración WebGPU",
+      "wasm": "CPU (WASM)"
+    },
+    "errors": {
+      "title": "No se pudo extraer al sujeto",
+      "network": "Error de red al descargar el modelo. Revisa la conexión y reintenta.",
+      "integrity": "Falló la verificación de integridad del modelo. La conexión pudo manipularse — recarga y prueba de nuevo.",
+      "init": "El motor de inferencia no arrancó. Tu navegador puede no soportar una función necesaria.",
+      "inference": "Falló el procesamiento de la imagen. Prueba con otra foto.",
+      "unknown": "Ocurrió un error desconocido. Recarga la página.",
+      "retry": "Reintentar",
+      "details": "Detalles"
+    }
+  },
+  "Scanner": {
+    "title": "Escáner de documentos inteligente",
+    "subtitle": "Sube una foto desde el móvil de tu DNI, pasaporte o licencia — el escáner inteligente corrige la perspectiva, balancea blancos y exporta un escaneo PDF A4 / Letter / A5, todo en tu navegador.",
+    "metaTitle": "Pixfit Scanner · 12 documentos a PDF en el navegador · gratis 2026 | Pixfit Scanner",
+    "metaDescription": "Escanea 12 documentos a PDF en tu navegador: DNI, pasaporte, licencia, tarjeta. Corrección perspectiva IA + scan/copia/realce. Gratis 2026, sin subir.",
+    "metaKeywords": [
+      "escáner documentos inteligente",
+      "escáner DNI IA",
+      "escáner pasaporte IA",
+      "escáner documentos IA",
+      "móvil a PDF escáner",
+      "DNI a PDF A4",
+      "corrección perspectiva IA",
+      "online",
+      "gratis",
+      "sin descargas",
+      "sin subir",
+      "en el navegador",
+      "2026",
+      "Pixfit Scanner",
+      "privacidad primero",
+      "en el dispositivo",
+      "sin nube"
+    ],
+    "shell": {
+      "previewTitle": "Vista previa del escaneo",
+      "previewEmpty": "Cuando subas una imagen, aquí aparecerá el escaneo corregido",
+      "configTitle": "Ajustes",
+      "configHint": "Tipo de documento, modo de salida, marca de agua, diseño A4",
+      "loadingShell": "Cargando el espacio del escáner"
+    },
+    "upload": {
+      "frontTitle": "Anverso del documento",
+      "frontHint": "JPG / PNG / HEIC / PDF · archivo único ≤ 20 MB",
+      "backTitle": "Reverso del documento",
+      "backHint": "Opcional — déjalo vacío si tu documento no tiene reverso",
+      "browse": "Elegir archivo",
+      "dragHint": "Suelta aquí o haz clic para elegir",
+      "remove": "Quitar",
+      "replace": "Reemplazar",
+      "uploading": "Procesando…",
+      "heicBadge": "HEIC convertido",
+      "pdfBadge": "Página 1 de {count} del PDF",
+      "pdfMultiPageNotice": "PDF de varias páginas detectado — se usa la página 1 de {count}.",
+      "previewAlt": "Vista previa del documento subido",
+      "errors": {
+        "too_large": "{name} supera el límite de 20 MB",
+        "unsupported_type": "{name} no es un formato de imagen admitido (solo JPG / PNG / WebP / HEIC / PDF)",
+        "heic_convert_failed": "Falló la conversión HEIC; prueba con JPG / PNG",
+        "pdf_decode_failed": "No se pudo renderizar el PDF: {name}",
+        "decode_failed": "No se pudo decodificar la imagen: {name}",
+        "unknown": "Error al subir; vuelve a intentarlo"
+      }
+    },
+    "preview": {
+      "trigger": "Vista previa de la hoja",
+      "title": "Vista previa de la hoja",
+      "description": "Idéntica a la hoja {paper} que descargarás — mismo papel, marca de agua y esquinas redondeadas.",
+      "loading": "Generando vista previa…",
+      "empty": "Sube al menos una cara para previsualizar la hoja",
+      "error": "No se pudo generar la vista previa. Ajusta un parámetro y reintenta.",
+      "imageAlt": "Vista previa de hoja {paper}",
+      "frontLabel": "Anverso",
+      "backLabel": "Reverso",
+      "processing": "Corrigiendo perspectiva…",
+      "rectifyError": "Falló: {message}",
+      "retry": "Reintentar",
+      "editCorners": "Ajustar esquinas",
+      "rotate": "Girar",
+      "downloadCurrent": "Descargar este lado",
+      "downloadHint": "PNG de una cara · usa el panel derecho para exportar A4 / PDF / fotocopia / marca de agua",
+      "adjustHint": "La primera vista previa es un recorte central según la especificación — pulsa “Ajustar esquinas” para alinear los manejadores con los bordes reales."
+    },
+    "editor": {
+      "title": "Arrastra los cuatro manejadores a los bordes del documento",
+      "hint": "Lleva los cuatro manejadores a las esquinas reales del documento; pellizca o usa la rueda para acercar y afinar.",
+      "apply": "Aplicar",
+      "cancel": "Cancelar",
+      "reset": "Reiniciar esquinas",
+      "handles": {
+        "topLeft": "Esquina superior izquierda",
+        "topRight": "Esquina superior derecha",
+        "bottomRight": "Esquina inferior derecha",
+        "bottomLeft": "Esquina inferior izquierda"
+      }
+    },
+    "config": {
+      "docSpecLabel": "Tipo de documento",
+      "modeLabel": "Modo de salida"
+    },
+    "docSpecs": {
+      "cn-id-card": "DNI chino",
+      "hk-id-card": "Tarjeta de identidad de Hong Kong",
+      "tw-id-card": "DNI taiwanés",
+      "sg-nric": "NRIC de Singapur",
+      "in-aadhaar": "Aadhaar (India)",
+      "bank-card": "Tarjeta bancaria",
+      "us-driver-license": "Licencia de conducir EE. UU.",
+      "passport-bio": "Página bio del pasaporte",
+      "cn-driver-license": "Licencia de conducir china",
+      "cn-vehicle-license": "Cédula vehicular china",
+      "a4": "Documento A4",
+      "letter": "Documento Letter"
+    },
+    "docSpecGroups": {
+      "id-card": "DNI / tarjeta de residente",
+      "passport": "Pasaporte",
+      "driver-license": "Licencia de conducir",
+      "vehicle-license": "Cédula vehicular",
+      "paper": "Documento en papel"
+    },
+    "paperSizes": {
+      "label": "Tamaño de papel",
+      "a4": "A4",
+      "letter": "Letter (EE. UU.)",
+      "a5": "A5"
+    },
+    "mode": {
+      "scan": "Escanear",
+      "scanDesc": "Color · balance auto",
+      "copy": "Copia",
+      "copyDesc": "Binarizar B/N",
+      "enhance": "Realce",
+      "enhanceDesc": "Más color y contraste"
+    },
+    "cornerRadius": {
+      "label": "Radio de esquina",
+      "off": "Off",
+      "value": "{px}px",
+      "hint": "Apagado por defecto. Súbelo para redondear las cuatro esquinas — vista previa, PNG de una cara y exportación A4 quedan sincronizados."
+    },
+    "watermark": {
+      "label": "Marca de agua",
+      "toggleLabel": "Añadir marca de agua a las exportaciones",
+      "toggleHint": "Apagada por defecto. Actívala para estampar una marca de agua diagonal en la vista previa, el PNG de una cara y la exportación A4.",
+      "textLabel": "Texto de la marca de agua",
+      "textPlaceholder": "Solo para este trámite",
+      "opacityLabel": "Opacidad",
+      "densityLabel": "Densidad",
+      "density": {
+        "sparse": "Escasa",
+        "normal": "Normal",
+        "dense": "Densa"
+      }
+    },
+    "export": {
+      "title": "Exportar",
+      "pdf": "Descargar PDF A4",
+      "png": "Descargar PNG A4",
+      "preparing": "Generando…",
+      "noContent": "Sube al menos una cara para poder exportar",
+      "successPdf": "PDF descargado",
+      "successPng": "PNG descargado",
+      "errorGeneric": "Falló la exportación: {message}"
+    },
+    "usage": {
+      "heading": "Antes de escanear — aviso de uso",
+      "summary": "Léelo antes de subir tu DNI. Tus fotos no salen del navegador — esto explica qué hacemos, qué no y qué aceptas al usar el escáner.",
+      "items": {
+        "local": {
+          "title": "Todo queda en tu dispositivo",
+          "body": "Corrección de perspectiva, modos copia / escaneo / realce, marca de agua y armado del PDF se ejecutan localmente en tu navegador. No alojamos, subimos ni analizamos tus fotos de documentos."
+        },
+        "watermark": {
+          "title": "La marca de agua es opcional",
+          "body": "La marca de agua anti-uso indebido está apagada por defecto. Actívala en Ajustes para estampar una marca diagonal en la vista previa, el PNG de una cara y la exportación A4 — controlas el texto (por ejemplo \"Solo para el onboarding de XYZ\"), la densidad y la opacidad. Mientras esté activa, la opacidad queda fijada entre el 30 % y el 70 % para que sea suficientemente visible y útil."
+        },
+        "lawful": {
+          "title": "Solo uso legal",
+          "body": "Usa Pixfit Scanner solo con documentos sobre los que tengas derechos y para fines permitidos por la ley de tu jurisdicción. Falsificar, alterar o suplantar identidad está prohibido."
+        },
+        "accuracy": {
+          "title": "El envío es tu responsabilidad",
+          "body": "Hacemos lo posible para que la salida se parezca a un escáner plano, pero los portales oficiales pueden exigir DPI, color, tamaño o formato más estrictos. Verifica el requisito del portal antes de enviar y vuelve a exportar si es necesario."
+        }
+      },
+      "termsLink": "Términos completos del servicio"
+    },
+    "seoIntro": {
+      "heading": "Por qué un escáner inteligente de documentos",
+      "paragraphs": {
+        "0": "Solicitudes de empleo, trámites online, visas y firma de contratos exigen un PDF \"escaneado\" en lugar de una foto de móvil. Pero pocos tienen un escáner plano. El escáner inteligente Pixfit aplica corrección de perspectiva con IA, balance de blancos y limpieza de sombras para que la foto de DNI tomada con el móvil parezca un escaneo real y la exporta como PDF A4 / Letter / A5 con un solo clic.",
+        "1": "El modo Copia aplica binarización adaptativa para el aspecto en blanco y negro que esperan registros de exámenes y oficinas públicas. ¿Necesitas más protección? Activa la marca de agua anti-uso indebido — apagada por defecto, con texto personalizable (por ejemplo \"Solo para el onboarding de XYZ\") para que copias posteriores sean más difíciles de redirigir hacia fraude. Toda la canalización corre en tu navegador; nada se sube."
+      }
+    },
+    "supported": {
+      "heading": "Tipos de documento admitidos",
+      "subtitle": "Doce perfiles integrados cubren los escaneos más comunes en China, Hong Kong, Taiwán, Singapur, India y EE. UU., además de tarjetas bancarias, páginas bio de pasaporte y documentos completos A4 / Letter.",
+      "cardCta": "Abrir esta guía",
+      "dimensionTagline": "{w} × {h} mm"
+    },
+    "faq": {
+      "heading": "Preguntas frecuentes",
+      "subtitle": "Sobre escanear documentos en el navegador, marcas de agua y precisión de salida.",
+      "items": {
+        "free": {
+          "q": "¿El escáner de documentos es gratis?",
+          "a": "Sí, completamente gratis, sin registro y sin límite de uso. Todo el flujo corre en tu navegador, así que no hay costes de servidor que repercutir."
+        },
+        "privacy": {
+          "q": "¿Mi foto de documento se subirá a un servidor?",
+          "a": "No. Corrección de perspectiva, balance de blancos, modo copia, marca de agua y armado del PDF ocurren localmente en tu dispositivo. Nada viaja por la red."
+        },
+        "watermark": {
+          "q": "¿Puedo añadir una marca de agua anti-uso indebido?",
+          "a": "Sí — apagada por defecto. Actívala en Ajustes y la vista previa, el PNG de una cara y la exportación A4 llevarán una marca diagonal. Personalizas el texto, la densidad y la opacidad (fijada al 30 %–70 % cuando está activa para mantenerla visible)."
+        },
+        "official": {
+          "q": "¿Aceptan portales oficiales esta salida?",
+          "a": "La mayoría de portales online acepta escaneos corregidos hechos con el móvil y nuestra salida imita de cerca a un escáner plano. Aun así, los requisitos oficiales varían — para trámites de alto riesgo (visas, banca) revisa la especificación exacta del portal antes de enviar."
+        },
+        "accuracy": {
+          "q": "¿Qué tan precisa es la corrección de perspectiva?",
+          "a": "Arrastra los cuatro manejadores a los bordes reales del documento y Pixfit reconstruye el rectángulo plano con una transformación perspectiva bilineal en JS — el resultado es visualmente equivalente a un escáner plano."
+        }
+      }
+    },
+    "detail": {
+      "metaTitle": "{name} {w}×{h}mm escaneo a PDF 2026 | Pixfit Scanner",
+      "metaDescription": "Escanea {name} ({w}×{h}mm) en tu navegador: corrección perspectiva IA + modos escaneo / copia / realce, exporta PDF A4 / Letter / A5. Gratis, sin subir, 2026.",
+      "tagline": "{w} × {h} mm · PDF A4 / Letter / A5 · Marca de agua opcional",
+      "summarySection": {
+        "title": "Sobre {name}",
+        "subtitle": "Qué es y dónde te lo piden"
+      },
+      "specSection": {
+        "title": "Especificación física",
+        "dimensions": "Dimensiones",
+        "pixels": "Píxeles a 300 DPI",
+        "twoSided": "A dos caras",
+        "twoSidedYes": "Sí — anverso y reverso en la misma hoja",
+        "twoSidedNo": "No — documento a una cara"
+      },
+      "howTo": {
+        "title": "Cómo escanear {name} con Pixfit",
+        "subtitle": "Cuatro pasos en tu navegador. La foto no sale de tu dispositivo.",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "Sube la foto de {name} desde el móvil",
+            "text": "Suelta la foto del anverso (y opcionalmente del reverso) en el espacio del escáner. JPG / PNG / HEIC hasta 20 MB por archivo. Aplicamos la orientación EXIF automáticamente."
+          },
+          "detect": {
+            "name": "Arrastra las esquinas a los bordes del documento",
+            "text": "Mueve los cuatro manejadores circulares sobre {name} hasta las esquinas reales y Pixfit endereza la foto inclinada en un rectángulo plano."
+          },
+          "configure": {
+            "name": "Elige modo de salida + marca de agua",
+            "text": "Alterna entre Escanear (color + balance auto), Copia (binarización B/N) o Realce (saturación + contraste). Opcionalmente activa la marca de agua y personaliza texto, opacidad y densidad."
+          },
+          "export": {
+            "name": "Exporta a PDF A4 / Letter / A5",
+            "text": "Coloca ambas caras en una sola hoja con marcas de corte y descarga como PDF o PNG. El archivo se genera localmente — sin subidas."
+          }
+        }
+      },
+      "faq": {
+        "title": "{name} — preguntas frecuentes",
+        "items": {
+          "free": {
+            "q": "¿Escanear {name} en Pixfit es gratis?",
+            "a": "Sí. El escáner de documentos no tiene marca de agua en el espacio de trabajo, no exige registro y no impone cuotas. La marca de agua opcional en la salida está apagada por defecto — tú decides."
+          },
+          "privacy": {
+            "q": "¿La foto de {name} se subirá a un servidor?",
+            "a": "No. Corrección de perspectiva, composición de marca de agua y armado del PDF se hacen localmente en tu navegador. La foto de {name} no sale del dispositivo."
+          },
+          "watermark": {
+            "q": "¿Puedo añadir una marca de agua a {name}?",
+            "a": "Sí, opcional y apagada por defecto. Cuando la activas, texto y opacidad son personalizables (la opacidad queda fijada entre el 30 % y el 70 %) — útil para marcar el escaneo como \"Solo para el onboarding de XYZ\" antes de enviarlo."
+          },
+          "official": {
+            "q": "¿Aceptan los portales oficiales el escaneo de {name}?",
+            "a": "La mayoría de portales online acepta escaneos corregidos hechos con el móvil y la salida imita a un escáner plano. Para trámites delicados, revisa la especificación exacta del portal — tamaño, DPI, color o blanco y negro — y elige el modo de salida adecuado antes de exportar."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Abrir el escáner con {name}",
+        "secondary": "Ver todos los tipos de documento"
+      },
+      "backLink": "Volver al escáner",
+      "related": {
+        "heading": "También te puede servir",
+        "subtitle": "Otros tipos de documento que puedes escanear en el navegador"
+      }
+    },
+    "docTypes": {
+      "cn-id-card": {
+        "summary": "El DNI chino (居民身份证) es la tarjeta CR80 estándar (85.6 × 54 mm) a dos caras que se emite a todos los ciudadanos chinos.",
+        "usage": "Contrataciones, check-in de hoteles, banca, inscripciones a exámenes, verificación de mensajería y trámites online en China continental. La mayoría de formularios pide la cara del retrato y la del emblema nacional en una sola página."
+      },
+      "hk-id-card": {
+        "summary": "La tarjeta de identidad de Hong Kong (香港身分證) es una CR80 estándar (85.6 × 54 mm) emitida a residentes de Hong Kong.",
+        "usage": "Banca, contratos de telecomunicaciones, papeleo de empleo y viajes en los que un residente debe presentar el DNI escaneado. El anverso con chip y el reverso bilingüe suelen escanearse juntos."
+      },
+      "tw-id-card": {
+        "summary": "El DNI nacional de Taiwán (中華民國身分證) es una CR80 estándar (85.6 × 54 mm) a dos caras emitida en la República de China.",
+        "usage": "Banca, trámites gubernamentales, retiro de correo, contratos de telecomunicaciones y registros online en Taiwán. Anverso (emblema + foto) y reverso (datos de los padres) suelen ir juntos."
+      },
+      "sg-nric": {
+        "summary": "La NRIC de Singapur es una CR80 estándar (85.6 × 54 mm) a dos caras emitida a ciudadanos y residentes permanentes.",
+        "usage": "Apertura de cuentas bancarias, contratos de telefonía, solicitudes HDB, registros sanitarios y papeleo corporativo. Anverso (foto + número NRIC) y reverso (dirección) suelen escanearse juntos."
+      },
+      "in-aadhaar": {
+        "summary": "La tarjeta Aadhaar india es una CR80 (85.6 × 54 mm) a dos caras emitida por la UIDAI.",
+        "usage": "KYC bancario, SIM, programas de bienestar, declaraciones fiscales y muchos servicios privados en India. Suele escanearse tanto la cara con la foto como la del QR."
+      },
+      "bank-card": {
+        "summary": "Las tarjetas bancarias, de crédito y de débito siguen ISO/IEC 7810 ID-1 (CR80, 85.6 × 54 mm) con número, titular y vencimiento al frente y banda magnética / CVV / panel de firma al dorso.",
+        "usage": "Reposición de tarjetas perdidas o vencidas, papeleo de recuperación o disputa, KYC para transferencias internacionales y reembolsos corporativos que requieren ambos lados."
+      },
+      "us-driver-license": {
+        "summary": "Las licencias estatales de EE. UU. son CR80 (85.6 × 54 mm) a dos caras emitidas por el DMV de cada estado.",
+        "usage": "Verificación I-9, contratos de alquiler, alquiler de autos, compra de alcohol, control TSA y validación de identidad online. Muchos empleadores y propietarios piden ambas caras en un solo PDF."
+      },
+      "passport-bio": {
+        "summary": "La página bio del pasaporte sigue ISO/IEC 7810 ID-3 (125 × 88 mm) y contiene la foto, la zona legible por máquina y los datos personales.",
+        "usage": "Solicitudes de visa, check-in de hoteles, onboarding corporativo para personal extranjero, KYC bancario y cualquier escenario que requiera prueba de identidad de viajero. Se escanea solo la página bio; el resto queda privado."
+      },
+      "cn-driver-license": {
+        "summary": "La licencia china (机动车驾驶证) es un carnet 88 × 60 mm con foto e información al frente y clases de habilitación al dorso.",
+        "usage": "Alquiler de vehículos, registro como conductor de apps, papeleo judicial de tránsito, reclamos de seguros y verificación por parte del empleador."
+      },
+      "cn-vehicle-license": {
+        "summary": "La cédula vehicular china (行驶证) es un carnet 88 × 60 mm con matrícula, titular, modelo e ID del motor.",
+        "usage": "Renovación de seguro, alta en plataformas de ride-hailing (Didi, etc.), reventa, solicitud de permisos de estacionamiento y cualquier trámite que exija acreditar propiedad."
+      },
+      "a4": {
+        "summary": "A4 (210 × 297 mm) es el papel ISO 216 usado fuera de Norteamérica.",
+        "usage": "Contratos de una página, recibos, certificados, expedientes y cualquier documento que el usuario necesite \"escanear\" en limpio desde la foto del móvil."
+      },
+      "letter": {
+        "summary": "Letter estadounidense (215.9 × 279.4 mm) es el estándar norteamericano — ligeramente más ancho y más corto que A4.",
+        "usage": "Contratos de una página en EE. UU., formularios del IRS, recibos impresos en EE. UU. y cualquier documento norteamericano que requiera un PDF limpio."
+      }
+    },
+    "footer": {
+      "heading": "Escáner"
+    }
+  },
+  "Blog": {
+    "index": {
+      "metaTitle": "Blog Pixfit · guías de fotos de carnet y escaneo de documentos 2026 | Pixfit",
+      "metaDescription": "Guías extensas sobre fotos de carnet online, escaneo a PDF y las herramientas Pixfit en el navegador. Gratis, sin subir, 2026.",
+      "metaKeywords": [
+        "blog Pixfit",
+        "guía fotos carnet 2026",
+        "guía escaneo PDF",
+        "fotos carnet online",
+        "escáner documentos navegador",
+        "sin subir",
+        "2026",
+        "privacidad primero",
+        "en el dispositivo",
+        "sin nube"
+      ],
+      "breadcrumb": "Blog",
+      "heading": "Blog de Pixfit",
+      "subtitle": "Guías extensas sobre fotos de carnet y escaneo de documentos en el navegador. Gratis, sin subir, 2026.",
+      "readingMinutes": "{minutes} min de lectura",
+      "publishedOn": "Publicado {date}",
+      "openArticle": "Leer artículo"
+    },
+    "posts": {
+      "us-visa-photo-2026": {
+        "card": {
+          "tagline": "Tamaños, fondo y composición — guía completa de la foto de visa B1/B2 de EE. UU. 2026."
+        }
+      },
+      "12-doc-scan-pdf-guide": {
+        "card": {
+          "tagline": "Todos los presets integrados de Pixfit Scanner con su tamaño y consejos de toma."
+        }
+      }
+    },
+    "article": {
+      "backLink": "Volver al blog",
+      "readingMinutes": "{minutes} min de lectura",
+      "publishedOn": "Publicado {date}",
+      "updatedOn": "Actualizado {date}",
+      "ctaHeading": "Prueba Pixfit en el navegador",
+      "ctaBody": "Todas las herramientas Pixfit corren en el dispositivo — sin subir, sin cuenta, gratis.",
+      "ctaPrimary": "Abrir Estudio",
+      "ctaSecondary": "Abrir Escáner"
+    }
+  }
+}

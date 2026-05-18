@@ -1,0 +1,1400 @@
+{
+  "Common": {
+    "appName": "Pixfit",
+    "brand": "Pixfit",
+    "tagline": "Ảnh thẻ, làm xong ngay trong trình duyệt",
+    "openStudio": "Mở Studio",
+    "learnMore": "Tìm hiểu thêm",
+    "languages": {
+      "zh-Hans": "Tiếng Trung giản thể",
+      "zh-Hant": "Tiếng Trung phồn thể",
+      "en": "Tiếng Anh",
+      "ja": "Tiếng Nhật",
+      "ko": "Tiếng Hàn",
+      "es": "Tiếng Tây Ban Nha",
+      "pt-BR": "Tiếng Bồ Đào Nha (Brazil)",
+      "fr": "Tiếng Pháp",
+      "de": "Tiếng Đức",
+      "ru": "Tiếng Nga",
+      "it": "Tiếng Ý",
+      "vi": "Tiếng Việt",
+      "ar": "Tiếng Ả Rập"
+    }
+  },
+  "Nav": {
+    "home": "Trang chủ",
+    "studio": "Studio",
+    "scanner": "Máy quét tài liệu",
+    "sizes": "Kích thước",
+    "paper": "Giấy",
+    "templates": "Bố cục",
+    "docs": "Tài liệu",
+    "menu": {
+      "open": "Mở menu",
+      "close": "Đóng menu",
+      "title": "Điều hướng"
+    },
+    "a11y": {
+      "primary": "Điều hướng chính",
+      "mobilePrimary": "Điều hướng chính trên di động"
+    }
+  },
+  "Home": {
+    "heroTitle": "Ảnh thẻ thông minh, làm xong ngay trong trình duyệt",
+    "heroSubtitle": "Pixfit là studio ảnh thẻ và máy quét tài liệu chạy AI: tự động tách nền, đổi nền, cắt theo chuẩn quốc gia, dàn trang in và nén đúng KB — tất cả chạy trong trình duyệt, không tải lên.",
+    "metaTitle": "Pixfit · Công cụ ảnh thẻ AI miễn phí · xoá nền · không tải lên · 2026 | Pixfit",
+    "metaDescription": "Công cụ ảnh thẻ miễn phí 100% trong trình duyệt: AI xoá nền, cắt visa/hộ chiếu, quét PDF. Không upload, cập nhật 2026.",
+    "metaKeywords": [
+      "ảnh thẻ AI",
+      "ảnh hộ chiếu AI",
+      "ảnh visa AI",
+      "máy quét tài liệu thông minh",
+      "xoá nền 1 chạm",
+      "trình chỉnh sửa ảnh thẻ online",
+      "studio ảnh thẻ trên trình duyệt",
+      "tạo ảnh visa",
+      "online",
+      "miễn phí",
+      "không tải về",
+      "không tải lên",
+      "trong trình duyệt",
+      "2026",
+      "Pixfit",
+      "ưu tiên riêng tư",
+      "trên thiết bị",
+      "không cloud"
+    ],
+    "cta": "Bắt đầu",
+    "ctaHint": "Miễn phí · Không đăng ký · 100% trong trình duyệt",
+    "features": {
+      "privacy": {
+        "title": "Ưu tiên riêng tư",
+        "desc": "Mọi bước xử lý chạy trên thiết bị của bạn. Ảnh không rời trình duyệt."
+      },
+      "smart": {
+        "title": "Cắt thông minh",
+        "desc": "Khuôn mặt và vai được tự động căn theo chuẩn của từng quốc gia."
+      },
+      "layout": {
+        "title": "Dàn trang 1 chạm",
+        "desc": "Tự động xếp ảnh trên giấy 4×6 hoặc 5×7 kèm đường cắt, sẵn sàng cho cửa hàng in."
+      },
+      "compress": {
+        "title": "Nén chính xác",
+        "desc": "Dò nhị phân để khớp đúng dải KB mà cổng visa yêu cầu."
+      }
+    },
+    "uploadDropzone": {
+      "title": "Kéo ảnh vào đây hoặc bấm để chọn",
+      "subtitle": "JPG / PNG / HEIC · tới 50 MB",
+      "browse": "Chọn tập tin",
+      "privacy": "Tất cả xử lý chạy trong trình duyệt · không có gì được tải lên"
+    },
+    "faq": {
+      "heading": "Câu hỏi thường gặp",
+      "subtitle": "Về làm ảnh thẻ online, đổi nền và giới hạn dung lượng.",
+      "items": {
+        "free": {
+          "q": "Pixfit có miễn phí không?",
+          "a": "Có, hoàn toàn miễn phí, không watermark, không gói trả phí. Smart Studio của Pixfit chạy hoàn toàn trong trình duyệt và không có giới hạn xuất."
+        },
+        "upload": {
+          "q": "Ảnh của tôi có được tải lên máy chủ không?",
+          "a": "Không. Tách nền AI, đổi nền, cắt thông minh và nén đều chạy cục bộ trong trình duyệt. Tập tin gốc không rời thiết bị — không có pipeline máy chủ."
+        },
+        "background": {
+          "q": "Làm thế nào để đổi nền sang trắng / xanh / đỏ?",
+          "a": "Sau khi tải ảnh, mở bảng Nền. Pixfit dùng mô hình MODNet chạy cục bộ để tách, rồi 1 chạm để chuyển sang trắng chuẩn, xanh visa, đỏ ID hoặc bất kỳ mã hex tuỳ ý."
+        },
+        "sizes": {
+          "q": "Hỗ trợ những quốc gia và loại giấy tờ nào?",
+          "a": "Pixfit có sẵn 28 chuẩn: CMND/CCCD Trung Quốc / 1 và 2 inch / hộ chiếu, giấy thông hành HK / Macao / Đài Loan, 14 chuẩn visa phổ biến (Mỹ, Schengen, Anh, Canada, AU/NZ, JP/KR, Đông Nam Á, Nga, Ấn Độ) và 3 cỡ đăng ký thi Trung Quốc."
+        },
+        "compress": {
+          "q": "Có thể nén ảnh về 30 KB / 50 KB không?",
+          "a": "Được. Trong tab Xuất có «Nén tới dung lượng mục tiêu». Pixfit dò nhị phân chất lượng JPG / WebP và co pixel khi cần để chạm ±5% mục tiêu — phù hợp với cổng thi hay cổng visa khắt khe."
+        },
+        "print": {
+          "q": "Làm sao xếp nhiều ảnh trên A4 hoặc 5R / 6R?",
+          "a": "Bảng Dàn trang cho phép chọn giấy (A4 / 5R / 6R) và mẫu (tám ảnh 1 inch, mười sáu ảnh 1 inch, mix 1+2 inch v.v.). Pixfit tự xếp, kèm đường cắt và xuất PNG hoặc PDF vector sẵn sàng đem in."
+        },
+        "mobile": {
+          "q": "Có chạy trên trình duyệt di động không?",
+          "a": "Có. Pixfit chạy trên Safari di động và Chrome Android. Lần tách nền đầu tiên tải khoảng 6 MB trọng số mô hình AI — lần đầu nên dùng Wi-Fi, sau đó toàn bộ pipeline chạy trong trình duyệt."
+        }
+      }
+    },
+    "seoIntro": {
+      "heading": "Một studio ảnh thẻ thông minh sống trong trình duyệt của bạn",
+      "paragraphs": [
+        "Pixfit là dịch vụ ảnh thẻ và quét tài liệu chạy AI miễn phí hoàn toàn, dành cho ai cần nhanh ảnh hộ chiếu, visa, CMND/CCCD hay đăng ký thi. Không tải về, không đăng ký: mở trang, tải lên chân dung và trong vài giây có ảnh điện tử đúng chuẩn.",
+        "Chúng tôi dùng MODNet, mô hình phân vùng chân dung hàng đầu, chạy hoàn toàn trong trình duyệt để tách nền thông minh và đổi nền 1 chạm. Toàn bộ pipeline — tách, đổi màu, cắt, nén, dàn trang — đều cục bộ. Không có ảnh nào bị tải lên máy chủ.",
+        "Pixfit có 28 chuẩn phổ biến nhất: visa Mỹ (51×51 mm), Schengen (35×45 mm), Anh (nền xám nhạt), Nhật (45×45 mm), CMND/CCCD Trung Quốc, hộ chiếu hầu hết quốc gia, giấy thông hành HK / Macao / Đài Loan, và 3 cỡ đăng ký thi Trung Quốc. Mỗi preset tuân thủ chính xác kích thước pixel, DPI và giới hạn dung lượng chính thức, nên bạn xuất JPG / PNG / WebP đúng chuẩn chỉ với 1 cú nhấp."
+      ]
+    }
+  },
+  "Footer": {
+    "copy": "© {year} Pixfit",
+    "privacy": "Quyền riêng tư",
+    "terms": "Điều khoản",
+    "openSource": "Mã nguồn mở (MIT)",
+    "tagline": "Studio ảnh thẻ trong trình duyệt",
+    "groups": {
+      "studio": "Studio",
+      "scanner": "Scanner",
+      "specs": "Kích thước",
+      "resources": "Tài nguyên"
+    },
+    "aria": {
+      "studio": "Điều hướng Studio",
+      "scanner": "Điều hướng Scanner",
+      "specs": "Điều hướng danh mục kích thước",
+      "resources": "Tài nguyên và pháp lý"
+    },
+    "links": {
+      "studio": "Studio",
+      "studioBackground": "Nền AI",
+      "studioCrop": "Cắt thông minh",
+      "studioLayout": "Dàn trang",
+      "studioExport": "Nén · xuất",
+      "scanner": "Scanner",
+      "specs": "Quản lý kích thước",
+      "sizes": "Kích thước ảnh",
+      "paper": "Kích thước giấy",
+      "templates": "Mẫu dàn trang",
+      "compress": "Nén tới KB",
+      "blog": "Blog",
+      "privacy": "Chính sách riêng tư",
+      "terms": "Điều khoản dịch vụ",
+      "github": "GitHub"
+    }
+  },
+  "LanguageSwitcher": {
+    "label": "Đổi ngôn ngữ"
+  },
+  "Studio": {
+    "title": "Studio",
+    "subtitle": "Tải lên chân dung — tách nền AI, cắt thông minh, đổi nền 1 chạm, dàn trang và xuất đúng KB, tất cả trong trình duyệt.",
+    "metaTitle": "Pixfit Studio · cắt online · đổi nền · nén · dàn A4/5R/6R 2026 | Pixfit",
+    "metaDescription": "Pixfit Studio: cắt online, đổi nền AI, nén theo KB, dàn A4/5R/6R. Miễn phí, trong trình duyệt, không upload. 2026 · 28 chuẩn.",
+    "metaKeywords": [
+      "trình chỉnh sửa ảnh thẻ AI",
+      "ảnh thẻ thông minh",
+      "cắt ảnh thẻ thông minh",
+      "AI xoá nền",
+      "đổi nền 1 chạm",
+      "studio ảnh thẻ online",
+      "trình chỉnh sửa ảnh visa",
+      "online",
+      "miễn phí",
+      "không tải về",
+      "không tải lên",
+      "trong trình duyệt",
+      "2026",
+      "Pixfit Studio",
+      "ưu tiên riêng tư",
+      "trên thiết bị",
+      "không cloud"
+    ],
+    "seoIntro": {
+      "heading": "Studio ảnh thẻ thông minh trong trình duyệt của bạn",
+      "paragraphs": [
+        "Pixfit Studio là trình chỉnh sửa AI ở trung tâm mọi thứ. Tải lên chân dung và đi qua một mạch tách nền thông minh, đổi nền, cắt theo chuẩn, dàn trang, nén và xuất — mỗi bước chạy cục bộ trong trình duyệt, không có ảnh nào bị tải lên máy chủ.",
+        "Hỗ trợ CMND/CCCD Trung Quốc, cỡ chuẩn 1 và 2 inch, hộ chiếu, giấy thông hành HK / Macao / Đài Loan, 14 chuẩn visa (Mỹ, Schengen, Anh, Canada, AU, NZ, JP, KR, Singapore, Malaysia, Việt Nam, Thái Lan, Nga, Ấn Độ) và 3 cỡ đăng ký thi Trung Quốc. Tự động dàn trang trên giấy 5R / 6R / A4 và xuất PNG hoặc PDF vector."
+      ]
+    },
+    "empty": {
+      "title": "Chưa có ảnh",
+      "subtitle": "Tải lên chân dung để bắt đầu"
+    },
+    "actions": {
+      "replace": "Thay ảnh",
+      "downloadPng": "Tải PNG trong suốt",
+      "retry": "Thử lại"
+    },
+    "stats": {
+      "size": "{w} × {h}",
+      "inference": "{backend} · {ms} ms"
+    },
+    "tabs": {
+      "background": "Nền",
+      "size": "Kích thước",
+      "layout": "Dàn trang",
+      "export": "Xuất",
+      "comingSoon": "Sắp ra",
+      "flowLabel": "Quy trình: Nền → Kích thước → Dàn trang → Xuất",
+      "flowHint": "Đi theo thứ tự — hoặc nhảy tab bất cứ lúc nào.",
+      "sectionsA11y": "Các phần của Studio"
+    },
+    "mobile": {
+      "tabLabel": "Đổi bảng",
+      "openPanel": "Mở bảng cài đặt",
+      "closePanel": "Đóng bảng cài đặt",
+      "panelTitle": "Cài đặt {tab}",
+      "panelSummary": "Tinh chỉnh bảng này."
+    },
+    "cta": {
+      "export": "Xuất ngay"
+    },
+    "intent": {
+      "title": "Bạn muốn làm gì?",
+      "subtitle": "Chọn điểm bắt đầu — có thể đổi tab bất cứ lúc nào.",
+      "dismiss": "Ẩn",
+      "choices": {
+        "background": {
+          "label": "Đổi nền",
+          "hint": "Tách và đổi màu nền"
+        },
+        "size": {
+          "label": "Cắt theo chuẩn",
+          "hint": "Visa, hộ chiếu, tuỳ chỉnh"
+        },
+        "layout": {
+          "label": "Dàn trang",
+          "hint": "Xếp trên 4×6 / 5×7 / A4"
+        },
+        "export": {
+          "label": "Nén / xuất",
+          "hint": "Khớp đúng KB cần"
+        }
+      }
+    },
+    "nextStep": {
+      "toSize": "Tiếp: Kích thước",
+      "toLayout": "Tiếp: Dàn trang",
+      "toExport": "Tiếp: Xuất"
+    }
+  },
+  "Crop": {
+    "title": "Kích thước ảnh",
+    "subtitle": "Chọn 1 chuẩn để khoá tỉ lệ và tự căn đầu vào giữa.",
+    "search": "Tìm chuẩn (visa Mỹ, Schengen, 2 inch…)",
+    "noMatches": "Không có chuẩn phù hợp",
+    "customSection": "Kích thước tuỳ chỉnh",
+    "customUnit": "Đơn vị",
+    "customW": "Chiều rộng ({unit})",
+    "customH": "Chiều cao ({unit})",
+    "customDpi": "Độ phân giải in",
+    "customDpiShow": "Chỉnh độ phân giải",
+    "customDpiHide": "Ẩn",
+    "customDpiOption": {
+      "low": "Tiết kiệm (200 DPI)",
+      "standard": "Chuẩn (300 DPI · khuyên dùng)",
+      "high": "Chất lượng cao (600 DPI · tệp lớn hơn)"
+    },
+    "customDpiPxHint": "Nếu nhập pixel trực tiếp, DPI sẽ bị khoá.",
+    "customRangeHint": "Phạm vi cho phép: {min}–{max} {unit}",
+    "customApply": "Dùng kích thước này",
+    "customNamePrefix": "Tuỳ chỉnh",
+    "units": {
+      "mm": "mm",
+      "cm": "cm",
+      "inch": "inch",
+      "px": "px"
+    },
+    "manageCustom": "Quản lý kích thước tuỳ chỉnh",
+    "createCustom": "Tạo kích thước tuỳ chỉnh",
+    "categories": {
+      "cn-id": "ID Trung Quốc",
+      "cn-paper": "Giấy Trung Quốc",
+      "travel-permit": "Giấy thông hành",
+      "visa": "Visa",
+      "exam": "Thi",
+      "custom": "Tuỳ chỉnh"
+    },
+    "filters": {
+      "all": "Tất cả",
+      "hot": "Phổ biến",
+      "recent": "Gần đây"
+    },
+    "stats": {
+      "dimensions": "{w} × {h} mm · {wpx} × {hpx} px",
+      "dpi": "{dpi} DPI",
+      "bg": "Nền khuyên dùng",
+      "kb": "{min}–{max} KB"
+    },
+    "actions": {
+      "resetFrame": "Căn lại giữa",
+      "showGuides": "Hiện đường gợi ý",
+      "hideGuides": "Ẩn đường gợi ý"
+    },
+    "detect": {
+      "failed": "Không nhận diện được khuôn mặt — kéo khung thủ công.",
+      "noFace": "Không tìm thấy khuôn mặt — cắt căn giữa mặc định.",
+      "autoCentered": "Đã căn giữa. Kéo khung để tinh chỉnh."
+    },
+    "warnings": {
+      "title": "Gợi ý bố cục",
+      "head-too-small": "Đầu nhỏ: hiện {ratio}% — chuẩn yêu cầu ~{lo}%–{hi}%",
+      "head-too-large": "Đầu lớn: hiện {ratio}% — chuẩn yêu cầu ~{lo}%–{hi}%",
+      "eye-too-high": "Mắt quá cao: {ratio}% từ trên — chuẩn yêu cầu ~{lo}%–{hi}%",
+      "eye-too-low": "Mắt quá thấp: {ratio}% từ trên — chuẩn yêu cầu ~{lo}%–{hi}%",
+      "face-not-found": "Không có khuôn mặt — không kiểm tra được bố cục.",
+      "moreCount": "+{count} nữa"
+    },
+    "bgSuggested": "{name} khuyên dùng màu nền cụ thể",
+    "bgSuggestedAction": "Áp dụng"
+  },
+  "Background": {
+    "title": "Màu nền",
+    "cutout": {
+      "title": "Tách nhân vật trước",
+      "hint": "Để đổi nền cần tách nhân vật trước. Bấm tách hoặc chọn màu — màu sẽ được áp dụng ngay khi tách xong.",
+      "start": "Bắt đầu tách",
+      "running": "Đang tách…"
+    },
+    "presets": "Mẫu sẵn",
+    "custom": "Tuỳ chỉnh",
+    "recent": "Đã dùng gần đây",
+    "recentEmpty": "Chưa có màu gần đây",
+    "compare": "Trước / sau",
+    "compareHint": "Kéo thanh chia để so sánh",
+    "retry": {
+      "hint": "Viền chưa sạch?",
+      "action": "Tách lại"
+    },
+    "hexInputLabel": "Mã hex",
+    "hexInputPlaceholder": "#FFFFFF",
+    "apply": "Áp dụng",
+    "presetNames": {
+      "transparent": "Trong suốt",
+      "white": "Trắng",
+      "blue": "Xanh visa",
+      "red": "Đỏ ID",
+      "lightGray": "Xám nhạt"
+    }
+  },
+  "Export": {
+    "title": "Xuất",
+    "subtitle": "Chọn định dạng, tinh chỉnh chất lượng và tải xuống.",
+    "noSpec": {
+      "title": "Chưa chọn kích thước",
+      "body": "Sẽ xuất nguyên ảnh. Chọn 1 chuẩn nếu cần đúng quy cách visa hay hộ chiếu.",
+      "cta": "Chọn 1 chuẩn →"
+    },
+    "privacyNote": "Xuất chạy trong trình duyệt · không tải lên",
+    "compliance": {
+      "okTitle": "Đúng chuẩn",
+      "warnTitle": "Ngoài chuẩn",
+      "detail": "{kb} KB · chuẩn yêu cầu {range}"
+    },
+    "format": {
+      "label": "Định dạng",
+      "png-alpha": "PNG · trong suốt",
+      "png-flat": "PNG · có nền",
+      "jpg": "JPG",
+      "webp": "WebP"
+    },
+    "quality": "Chất lượng mã hoá",
+    "qualityMax": "Chất lượng tối đa",
+    "qualityMaxHint": "JPG / WebP ở 100% vẫn có mất mát — chọn PNG nếu cần thực sự không mất mát.",
+    "estimateLabel": "Ước lượng ~{kb} KB",
+    "estimateLabelDetailed": "Ước lượng ~{kb} KB · @ {w} × {h}",
+    "dimensionsBySpec": "Pixel xuất: {w} × {h} · theo chuẩn đã chọn",
+    "dimensionsByBitmap": "Pixel xuất: {w} × {h} · bitmap gốc",
+    "dimensionsCompared": "Nguồn {sw} × {sh} → xuất {tw} × {th}",
+    "dimensionsModeSpec": "Kích thước theo chuẩn đã chọn (sẵn sàng in).",
+    "dimensionsModeSpecWithRatio": "Kích thước theo chuẩn · pixel thu nhỏ ~{ratio}× (vì vậy tệp nhỏ).",
+    "dimensionsModeNative": "Giữ độ phân giải gốc của vùng cắt (tệp lớn hơn, in lại được mọi cỡ).",
+    "keepNativeLabel": "Giữ độ phân giải gốc của vùng cắt",
+    "keepNativeHint": "Xuất ở pixel gốc của vùng cắt. Tệp sẽ lớn hơn nhiều nhưng cùng một vùng cắt có thể in lại ở mọi kích thước.",
+    "qualityLockedByCompress": "Chất lượng được đặt tự động khi nén tới dung lượng mục tiêu.",
+    "compressToKB": "Nén tới dung lượng mục tiêu",
+    "compressUnsupported": "Nén chỉ áp dụng cho JPG / WebP.",
+    "kbHint": "Dò nhị phân chất lượng và co pixel khi cần để chạm ±5% mục tiêu.",
+    "compressMiss": "Gần nhất là {kb} KB — nâng mục tiêu hoặc giảm thêm kích thước.",
+    "alphaNeedsCutout": "PNG trong suốt yêu cầu tách nhân vật trước.",
+    "alphaCutoutHint": "Muốn nền trong suốt? Hãy tách nhân vật trước.",
+    "alphaGoToBackground": "Mở tab Nền để tách →",
+    "cropAppliedHint": "Đã cắt theo chuẩn đã chọn — chỉnh ở tab Kích thước nếu cần.",
+    "downloadFailed": "Không tạo được tệp — thử định dạng khác.",
+    "downloadSuccess": "Đã lưu {filename}",
+    "filenamePreview": "Tên tệp",
+    "fullResHint": "Giữ độ phân giải gốc đầy đủ — có thể mất vài giây.",
+    "actions": {
+      "download": "Tải xuống",
+      "downloading": "Đang chuẩn bị…",
+      "copy": "Sao chép vào clipboard",
+      "copying": "Đang sao chép…"
+    },
+    "hint": {
+      "alpha": "Định dạng có kênh alpha giữ nguyên nền trong suốt.",
+      "flat": "Định dạng phẳng sẽ in màu nền hiện tại khi xuất."
+    },
+    "copied": "Đã sao chép vào clipboard",
+    "copyFailed": "Không sao chép được — hãy thử tải xuống",
+    "size": "≈{kb} KB",
+    "wechatHint": "Đang ở trong WeChat? Nhấn giữ ảnh xem trước để lưu."
+  },
+  "Paper": {
+    "title": "Giấy",
+    "subtitle": "Chọn loại giấy in mà ảnh sẽ được dàn lên.",
+    "list": {
+      "heading": "Kích thước giấy in",
+      "subtitle": "Các cỡ giấy chuẩn mà Pixfit hỗ trợ để dàn trang. Chọn trong Studio để tự sắp ảnh.",
+      "intro": "Từ 3R đến A4, bảy cỡ giấy tích hợp bao quát kích thước phổ biến trong lab ảnh Trung Quốc và máy in văn phòng. Mọi thứ được hiệu chỉnh ở 300 DPI: thấy sao in vậy.",
+      "fields": {
+        "alias": "Bí danh",
+        "dimensions": "Kích thước",
+        "pixels": "Pixel",
+        "dpi": "DPI"
+      },
+      "cta": "Dùng trong Studio",
+      "metaTitle": "Pixfit Giấy · 3R 4R 5R 6R 8R A4 A5 · dàn trang online 2026 | Pixfit",
+      "metaDescription": "Pixfit kích thước giấy: 3R, 4R, 5R, 6R, 8R, A4, A5 — dàn ảnh thẻ trong trình duyệt, tải PNG/PDF miễn phí, không upload, 2026.",
+      "metaKeywords": [
+        "giấy in ảnh thẻ",
+        "dàn ảnh thông minh",
+        "AI cỡ in",
+        "giấy 3R 4R 5R 6R 8R",
+        "dàn ảnh thẻ A4",
+        "Pixfit giấy",
+        "ưu tiên riêng tư",
+        "trên thiết bị",
+        "không cloud"
+      ]
+    }
+  },
+  "Layout": {
+    "combos": {
+      "title": "Kết hợp phổ biến",
+      "subtitle": "Chọn giấy + mẫu chỉ với 1 chạm",
+      "count": "{count} ảnh"
+    },
+    "templates": {
+      "title": "Mẫu dàn trang",
+      "subtitle": "Chọn 1 cách dàn tích hợp tương thích với loại giấy đã chọn.",
+      "empty": "Không có mẫu dàn tích hợp cho giấy này — dùng chế độ mix bên dưới.",
+      "totalCount": "{count} ảnh",
+      "syncedBadge": "Cỡ của bạn"
+    },
+    "mix": {
+      "title": "Mix ảnh",
+      "subtitle": "Ghi đè mẫu bằng số lượng của bạn theo từng kích thước.",
+      "customName": "Mix tuỳ chỉnh",
+      "add": "Thêm hàng",
+      "remove": "Xoá {name}",
+      "decrease": "Bớt cỡ này",
+      "increase": "Thêm cỡ này",
+      "selectSpec": "Chọn kích thước"
+    },
+    "settings": {
+      "title": "Cài đặt dàn trang",
+      "subtitle": "Lề, khoảng cách, phân cách và đường cắt.",
+      "margin": "Lề",
+      "gap": "Khoảng cách giữa ảnh",
+      "showSeparator": "Hiện phân cách",
+      "showCutGuides": "Hiện đường cắt",
+      "backgroundColor": "Nền giấy"
+    },
+    "preview": {
+      "canvasLabel": "Xem trước dàn trang",
+      "actualSize": "Thực tế: {name} · {w}×{h} mm",
+      "overflow": "Một số ảnh không vừa: {list}. Hãy thử giấy lớn hơn hoặc khoảng cách nhỏ hơn."
+    },
+    "actions": {
+      "title": "Tải xuống",
+      "subtitle": "PNG raster; PDF vector cho cửa hàng in.",
+      "png": "Tải PNG",
+      "pdf": "Tải PDF",
+      "preparing": "Đang chuẩn bị…",
+      "downloadFailed": "Không tạo được dàn trang — thử giấy nhỏ hơn hoặc bớt ảnh.",
+      "downloadSuccess": "Đã lưu {filename}",
+      "filenamePreview": "Tên tệp"
+    }
+  },
+  "Sizes": {
+    "heading": "Kích thước ảnh thẻ",
+    "subtitle": "Tất cả các chuẩn ảnh thẻ tích hợp trong Pixfit — ID Trung Quốc, giấy thông hành, visa phổ biến và đăng ký thi.",
+    "intro": "Hai mươi tám chuẩn bao quát ảnh 1 và 2 inch Trung Quốc, giấy thông hành HK / Macao / Đài Loan, mười bốn chuẩn visa (Mỹ / Schengen / Anh / CA / AU / NZ / JP / KR / SG / MY / VN / TH / RU) và 3 cỡ đăng ký thi quốc gia. Chọn 1 để khoá tỉ lệ trong Studio và tự căn đầu.",
+    "fields": {
+      "dimensions": "Kích thước",
+      "pixels": "Pixel",
+      "dpi": "DPI",
+      "background": "Nền khuyên dùng",
+      "fileSize": "Dung lượng",
+      "region": "Khu vực"
+    },
+    "cta": "Dùng trong Studio",
+    "categoryEmpty": "Không có kích thước trong mục này",
+    "viewDetail": "Xem chi tiết",
+    "metaTitle": "Pixfit kích thước ảnh · 28 cỡ · cắt + nền AI 2026 | Pixfit",
+    "metaDescription": "28 kích thước ảnh: visa Mỹ / Schengen / Anh / Nhật, ID Trung Quốc, thi cử. Cắt + nền AI, miễn phí trong trình duyệt, không upload, 2026.",
+    "metaKeywords": [
+      "kích thước ảnh thẻ AI",
+      "thông số ảnh AI",
+      "danh mục cỡ ảnh visa",
+      "kích thước ảnh hộ chiếu",
+      "cỡ ảnh Schengen",
+      "ảnh visa Mỹ 51x51",
+      "Pixfit Sizes",
+      "ưu tiên riêng tư",
+      "trên thiết bị",
+      "không cloud"
+    ],
+    "detail": {
+      "metaTitle": "{name} {w}×{h}mm · cắt online 2026 | Pixfit",
+      "metaDescription": "Ảnh {name} {w}×{h}mm ({wpx}×{hpx}px @ {dpi} DPI), nền {bgLabel}. Cắt + nền AI. Miễn phí, trình duyệt, không upload, định dạng 2026.",
+      "heading": "Kích thước ảnh {name}",
+      "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
+      "intro": "Ảnh thẻ {name} chuẩn có kích thước {w} × {h} mm ({wpx} × {hpx} px ở {dpi} DPI), nền khuyên dùng {bgLabel}. Trang này có đầy đủ thông số, yêu cầu chụp và công cụ miễn phí trong trình duyệt.",
+      "specSection": {
+        "title": "Thông số",
+        "dimensions": "Kích thước vật lý",
+        "pixels": "Kích thước pixel",
+        "dpi": "Độ phân giải",
+        "background": "Nền khuyên dùng",
+        "fileSize": "Dung lượng",
+        "region": "Khu vực"
+      },
+      "purpose": {
+        "title": "Dùng ở đâu",
+        "visa": "Định dạng {name} được yêu cầu cho đơn xin visa tới {regionName}, gồm visa lãnh sự, visa nhập cảnh và cổng eVisa. Yêu cầu có thể thay đổi — hãy kiểm tra hướng dẫn chính thức trước khi nộp.",
+        "cn-id": "{name} là 1 trong các định dạng chuẩn phổ biến nhất ở Trung Quốc đại lục. Được chấp nhận cho CMND/CCCD, gia hạn hộ chiếu, bằng lái, BHXH, chứng chỉ và hầu hết quy trình onboarding.",
+        "exam": "{name} là cỡ đăng ký cho các kỳ thi quốc gia lớn của Trung Quốc (công chức, sau đại học, NCRE, giáo viên). Các nền tảng này áp đặt rất nghiêm về pixel và dung lượng.",
+        "cn-paper": "{name} là giấy thường dùng tại lab ảnh để in nhiều ảnh thẻ hoặc ảnh ví trên cùng một tờ — tiết kiệm khi cần nhiều bản.",
+        "travel-permit": "{name} được yêu cầu cho giấy thông hành tới Hong Kong, Macao và Đài Loan với cư dân đại lục, theo yêu cầu của Sở Di trú."
+      },
+      "requirements": {
+        "title": "Chụp và bố cục",
+        "body": "Hãy chụp dưới ánh sáng đều, đối diện camera, biểu cảm trung tính và không đội mũ. Đầu chiếm khoảng 60–75% khung, vai không chạm cạnh dưới. Nền 1 màu ({bgLabel}) không bóng đổ. Nếu tự chụp, dùng camera sau và đặt ống kính ngang mặt.",
+        "fileRules": "Giới hạn dung lượng: {range}."
+      },
+      "howto": {
+        "title": "Cách tạo ảnh {name} bằng Pixfit",
+        "subtitle": "Ba bước, đều trong trình duyệt. Ảnh không rời thiết bị.",
+        "steps": {
+          "upload": {
+            "name": "Tải lên 1 chân dung",
+            "text": "Kéo thả hoặc chọn 1 chân dung chính diện rõ nét. JPG / PNG / HEIC tới 50 MB mỗi tệp."
+          },
+          "cutout": {
+            "name": "AI xoá nền",
+            "text": "MODNet chạy cục bộ trong trình duyệt, tách nhân vật và đổi nền thành {bgLabel}. Bạn có thể đổi nền bất cứ lúc nào trong bảng Nền."
+          },
+          "crop": {
+            "name": "Cắt thông minh {name}",
+            "text": "Chọn preset {name}. Pixfit nhận khuôn mặt và cắt {w}×{h} mm với đầu căn giữa — kéo khung để tinh chỉnh."
+          },
+          "export": {
+            "name": "Xuất tệp đúng chuẩn",
+            "text": "Chọn định dạng và chất lượng. Dùng tuỳ chọn dung lượng mục tiêu nếu cổng yêu cầu khoảng KB, rồi lưu tệp về máy."
+          }
+        }
+      },
+      "faq": {
+        "title": "{name} — câu hỏi thường gặp",
+        "items": {
+          "free": {
+            "q": "Tạo ảnh {name} trong Pixfit có miễn phí?",
+            "a": "Có, hoàn toàn miễn phí. Pixfit chạy trong trình duyệt — không watermark, không paywall và không giới hạn xuất."
+          },
+          "upload": {
+            "q": "Ảnh có được tải lên máy chủ?",
+            "a": "Không. Tách, cắt, đổi màu và nén đều chạy cục bộ. Ảnh gốc không rời thiết bị."
+          },
+          "background": {
+            "q": "Màu nền cho {name} là gì?",
+            "a": "Nền khuyên dùng là {bgLabel}. Bảng Nền có sẵn các mẫu (trắng chuẩn, xanh visa, đỏ ID) hoặc nhập mã hex tuỳ ý."
+          },
+          "accuracy": {
+            "q": "Thông số có chính xác?",
+            "a": "Chúng tôi tổng hợp từ nguồn chính thức công khai tại thời điểm soạn thảo. Đại sứ quán và hội đồng thi vẫn cập nhật — hãy kiểm tra hướng dẫn chính thức trước khi nộp."
+          },
+          "phone": {
+            "q": "Có làm được trên điện thoại?",
+            "a": "Có. Pixfit chạy trên Safari di động và Chrome. Lần tách đầu tải khoảng 6 MB trọng số mô hình — lần đầu dùng Wi-Fi, sau đó toàn bộ pipeline chạy trong trình duyệt."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Mở Studio với {name}",
+        "secondary": "Xem mọi kích thước"
+      },
+      "backLink": "Quay lại danh sách kích thước",
+      "related": {
+        "heading": "Thử thêm",
+        "subtitle": "Những kích thước khác có thể hữu ích"
+      }
+    }
+  },
+  "Templates": {
+    "heading": "Mẫu dàn trang",
+    "subtitle": "Tự động xếp nhiều ảnh trên một tờ giấy, sẵn sàng đem in.",
+    "intro": "Mười hai mẫu tích hợp bao quát các kịch bản in thường gặp: 8× và 16× 1 inch, 8× 2 inch, mix 1+2 inch, CMND/CCCD, hộ chiếu, ảnh ví. Mỗi mẫu tự chọn giấy, tính lưới và xuất PNG hoặc PDF vector.",
+    "fields": {
+      "paper": "Giấy",
+      "photos": "Ảnh",
+      "total": "Tổng {count}"
+    },
+    "groups": {
+      "byPaper": "Theo giấy"
+    },
+    "cta": "Mở trong Studio",
+    "metaTitle": "Pixfit mẫu · 12 · 5R 6R A4 dàn PDF 2026 | Pixfit",
+    "metaDescription": "12 dàn trang: 8× 1 inch, 16× 1 inch, mix 1+2, CMND/CCCD, hộ chiếu, ví trên 5R / 6R / A4. PNG & PDF vector trong trình duyệt, không upload, miễn phí 2026.",
+    "metaKeywords": [
+      "mẫu dàn ảnh thẻ",
+      "dàn ảnh thông minh",
+      "AI ghép in",
+      "dàn 16 ảnh 1 inch",
+      "ảnh hộ chiếu ví",
+      "Pixfit Templates",
+      "ưu tiên riêng tư",
+      "trên thiết bị",
+      "không cloud"
+    ]
+  },
+  "Compress": {
+    "index": {
+      "metaTitle": "Nén ảnh online · 50KB / 100KB / 200KB / 500KB / 1MB · miễn phí 2026 | Pixfit",
+      "metaDescription": "Nén ảnh JPG và PNG online về 50KB, 100KB, 200KB, 500KB hoặc 1MB. 100% trong trình duyệt, không upload, miễn phí, 2026. Pixfit.",
+      "metaKeywords": [
+        "nén ảnh online",
+        "nén jpg theo KB",
+        "nén ảnh về 50KB",
+        "công cụ nén ảnh online",
+        "nén ảnh trong trình duyệt",
+        "nén ảnh miễn phí",
+        "công cụ nén 2026",
+        "Pixfit Compress",
+        "ưu tiên riêng tư",
+        "trên thiết bị",
+        "không cloud"
+      ],
+      "heading": "Nén ảnh tới đúng KB",
+      "subtitle": "Chọn mục tiêu mà cổng visa, thi hay tuyển sinh yêu cầu. Pixfit nén tới ±1KB mục tiêu — trong trình duyệt, không upload.",
+      "intro": "Cổng online có giới hạn rất nghiêm — 50KB cho 1 số dịch vụ công, 200KB cho nhiều visa, 500KB cho hồ sơ đại học. Pixfit chạm mọi mục tiêu bằng cách điều chỉnh chất lượng JPG và co pixel khi cần, ngay tại phía máy bạn. Chọn 1 preset hoặc tinh chỉnh trong Studio.",
+      "targets": {
+        "heading": "Chọn mục tiêu",
+        "cardCta": "Nén về {label}",
+        "cardSubtitle": "JPG {label}"
+      },
+      "studio": {
+        "heading": "Cần kích thước tuỳ chỉnh?",
+        "body": "Tab Xuất trong Studio cho phép đặt KB bất kỳ từ 5 KB, có tuỳ chọn mức tối thiểu cho các cổng có cửa sổ (ví dụ 50–200 KB).",
+        "cta": "Mở Studio · tab Xuất"
+      }
+    },
+    "detail": {
+      "metaTitle": "Nén ảnh tới {label} online · miễn phí 2026 | Pixfit",
+      "metaDescription": "Nén ảnh về {label} online. 100% trình duyệt, không upload, miễn phí. Chạm {label} với ±1KB. 2026 · Pixfit.",
+      "metaKeywords": [
+        "nén ảnh tới {label}",
+        "nén jpg về {label}",
+        "công cụ nén ảnh {label}",
+        "ảnh online {label}",
+        "nén trong trình duyệt",
+        "Pixfit Compress",
+        "ưu tiên riêng tư",
+        "trên thiết bị",
+        "không cloud"
+      ],
+      "backLink": "Quay lại trang nén",
+      "heading": "Nén ảnh về {label}",
+      "tagline": "Mục tiêu: {label}",
+      "intro": "Trình nén Pixfit mã hoá lại ảnh JPG / PNG để tệp cuối rơi vào ±1KB quanh {label}. Mọi thứ chạy trong trình duyệt — không upload, không tài khoản.",
+      "howTo": {
+        "title": "Cách nén ảnh về {label}",
+        "subtitle": "Bốn bước, đều trong trình duyệt. Ảnh 12MP thường mất dưới 5 giây.",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "Tải ảnh lên",
+            "text": "Kéo thả JPG, PNG hoặc HEIC vào Pixfit Studio. Tệp không rời thiết bị."
+          },
+          "target": {
+            "name": "Chọn {label} làm mục tiêu",
+            "text": "Khi vào từ trang này, tab Xuất đã đặt sẵn ở {label}. Bạn có thể đổi bất cứ lúc nào."
+          },
+          "compress": {
+            "name": "Pixfit chạm {label}",
+            "text": "Chất lượng thích ứng và resample on-the-fly khoá đầu ra ở ±1KB quanh {label} (thường 3–5 vòng)."
+          },
+          "download": {
+            "name": "Tải kết quả",
+            "text": "Bấm Xuất để lưu ảnh đã nén về {label} dưới dạng JPG. Ảnh gốc không bị thay đổi."
+          }
+        }
+      },
+      "faq": {
+        "title": "Nén tới {label} — câu hỏi thường gặp",
+        "items": {
+          "quality": {
+            "q": "Nén tới {label} có làm xấu ảnh?",
+            "a": "Pixfit chọn chất lượng JPG cao nhất vẫn vừa {label} và chỉ resample khi chất lượng đơn lẻ không đủ. Với hầu hết chân dung, {label} trông tương đương ảnh gốc 2 MB."
+          },
+          "target": {
+            "q": "Đầu ra gần {label} đến đâu?",
+            "a": "Chúng tôi dò nhị phân chất lượng JPG đến khi đầu ra nằm trong cửa sổ ±1KB quanh {label}. Cần cửa sổ chính xác (vd 50–{label})? Dùng tab Xuất trong Studio và đặt min/max."
+          },
+          "format": {
+            "q": "Công cụ nén {label} có nhận PNG?",
+            "a": "Có — Pixfit giải mã được PNG, JPG, HEIC. Đầu ra luôn là JPG mã hoá lại: PNG không thể chạm {label} với nội dung ảnh chụp mà không mất mát quá nhiều."
+          },
+          "batch": {
+            "q": "Có thể nén lô nhiều ảnh về {label}?",
+            "a": "Studio thiết kế dùng 1 ảnh. Với nhiều ảnh, thả lần lượt — preset {label} vẫn được giữ trong phiên làm việc."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Mở Studio với preset {label}",
+        "secondary": "Toàn quyền điều khiển Studio",
+        "secondaryHint": "Ghi đè preset, thêm mức tối thiểu hoặc xử lý nhiều ảnh."
+      }
+    },
+    "targetLabel": {
+      "50kb": "50KB",
+      "100kb": "100KB",
+      "200kb": "200KB",
+      "500kb": "500KB",
+      "1mb": "1MB"
+    }
+  },
+  "Legal": {
+    "common": {
+      "lastUpdated": "Cập nhật lần cuối · {date}",
+      "backHome": "Về trang chủ"
+    },
+    "privacy": {
+      "heading": "Chính sách riêng tư",
+      "subtitle": "Pixfit chạy hoàn toàn trong trình duyệt của bạn. Chúng tôi không thu thập, lưu hay truyền ảnh của bạn.",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "Chính sách riêng tư · Pixfit",
+      "metaDescription": "Cách Pixfit xử lý dữ liệu: mỗi ảnh nằm trên thiết bị của bạn, không cookie theo dõi, chỉ localStorage lưu các cỡ tuỳ chỉnh của bạn.",
+      "sections": {
+        "summary": {
+          "title": "Tóm tắt",
+          "body": "Pixfit là studio ảnh thẻ chỉ chạy trong trình duyệt. Ảnh không rời thiết bị. Không tài khoản, đăng ký hay cookie theo dõi."
+        },
+        "data": {
+          "title": "Chúng tôi xử lý gì",
+          "body": "Khi bạn tải ảnh, tệp được giải mã trong trình duyệt, xử lý bằng mô hình AI trên thiết bị (MODNet qua WebGPU / WebAssembly) và vẽ lên canvas cục bộ. Những byte đó không bao giờ ra khỏi mạng."
+        },
+        "localStorage": {
+          "title": "Bộ nhớ cục bộ",
+          "body": "Chúng tôi chỉ dùng localStorage để nhớ các cỡ bạn tạo hoặc nhập (khoá `pixfit:specs:v1`) và 1 danh sách nhỏ màu nền gần đây. Bạn có thể xoá chúng bất cứ lúc nào trong cài đặt trang web của trình duyệt."
+        },
+        "thirdParty": {
+          "title": "Tài nguyên bên thứ ba",
+          "body": "Trọng số mô hình AI, font và runtime MediaPipe được lấy từ các mirror công khai (ModelScope, jsDelivr, Hugging Face CDN). Các dịch vụ này chỉ thấy yêu cầu mô hình — không thấy ảnh của bạn. Sau khi cache, các lần truy cập tiếp theo chạy offline cho luồng chính."
+        },
+        "analytics": {
+          "title": "Phân tích",
+          "body": "Khi ra mắt, chúng tôi dự định dùng Cloudflare Web Analytics — không cookie, không IP, không fingerprint. Trước khi quyết định ra mắt, không tải script phân tích nào. Hôm nay không có tracker bên thứ ba (Google / Mixpanel / Sentry) được nhúng."
+        },
+        "rights": {
+          "title": "Quyền của bạn",
+          "body": "Vì chúng tôi không thu thập dữ liệu cá nhân, không có gì để xoá hay xuất thay bạn. Bạn vẫn kiểm soát hoàn toàn bằng cách xoá dữ liệu trang web trong trình duyệt."
+        },
+        "children": {
+          "title": "Trẻ em",
+          "body": "Pixfit phù hợp với đại chúng nhưng không dành riêng cho trẻ dưới 13 tuổi. Nếu dùng thay cho trẻ vị thành niên, hãy xem điều khoản cùng người giám hộ."
+        },
+        "changes": {
+          "title": "Cập nhật chính sách",
+          "body": "Khi cách làm thay đổi, chúng tôi sẽ cập nhật trang này và ngày tháng. Thay đổi đáng kể sẽ được tóm tắt ở trang chủ hoặc banner trong ứng dụng."
+        },
+        "contact": {
+          "title": "Liên hệ",
+          "body": "Mở 1 issue tại github.com/aapw01/id-photo-tool hoặc email tới người duy trì được nêu trong README."
+        }
+      }
+    },
+    "terms": {
+      "heading": "Điều khoản dịch vụ",
+      "subtitle": "Pixfit được cung cấp miễn phí, «nguyên trạng» và không có bảo đảm. Sử dụng đồng nghĩa với chấp nhận các điều khoản này.",
+      "lastUpdated": "2026-05-12",
+      "metaTitle": "Điều khoản dịch vụ · Pixfit",
+      "metaDescription": "Pixfit miễn phí và mã nguồn mở. Bạn đồng ý chỉ dùng với ảnh thuộc quyền của bạn và chấp nhận phần mềm «nguyên trạng».",
+      "sections": {
+        "scope": {
+          "title": "Phạm vi",
+          "body": "Điều khoản này áp dụng cho mọi sử dụng pix-fit.com và mã nguồn mở Pixfit. Tải trang hoặc chạy mã đồng nghĩa với chấp nhận điều khoản."
+        },
+        "service": {
+          "title": "Chúng tôi cung cấp gì",
+          "body": "1 studio ảnh thẻ chạy trong trình duyệt. Mọi tính năng chạy cục bộ; hosting của chúng tôi chỉ phục vụ tập tin tĩnh. Không cam kết về độ sẵn sàng hay độ chính xác cụ thể."
+        },
+        "responsibility": {
+          "title": "Trách nhiệm của bạn",
+          "body": "Bạn phải có quyền với mọi ảnh xử lý. Đừng tải ảnh người khác mà không có sự đồng ý và không dùng Pixfit để vi phạm chuẩn chính thức, chính sách định danh hay luật địa phương."
+        },
+        "compliance": {
+          "title": "Độ chính xác thông số",
+          "body": "Các thông số tích hợp được tham chiếu chéo từ nguồn chính thức tại thời điểm nghiên cứu. Đại sứ quán và hội đồng thi cập nhật quy định thường xuyên — hãy kiểm tra yêu cầu chính thức trước khi nộp."
+        },
+        "ip": {
+          "title": "Sở hữu trí tuệ",
+          "body": "Mã nguồn Pixfit phát hành theo giấy phép MIT. Biểu tượng, font và mô hình AI đi kèm theo giấy phép riêng (xem README). Ảnh của bạn vẫn là của bạn."
+        },
+        "warranty": {
+          "title": "Không bảo đảm",
+          "body": "Dịch vụ cung cấp «nguyên trạng» và «khi sẵn có», không bảo đảm dưới mọi hình thức, rõ ràng hay ngụ ý. Chúng tôi từ chối bảo đảm về tính thương mại, phù hợp mục đích cụ thể và không vi phạm."
+        },
+        "liability": {
+          "title": "Giới hạn trách nhiệm",
+          "body": "Trong phạm vi pháp luật cho phép, chúng tôi không chịu trách nhiệm thiệt hại gián tiếp, ngẫu nhiên, đặc biệt, hệ quả hay trừng phạt do sử dụng Pixfit, gồm cả hồ sơ bị từ chối hay chi phí in."
+        },
+        "changes": {
+          "title": "Thay đổi dịch vụ",
+          "body": "Chúng tôi có thể thêm, sửa hoặc xoá tính năng bất cứ lúc nào. Thay đổi đáng kể sẽ được công bố trong changelog của kho mã nguồn mở."
+        },
+        "law": {
+          "title": "Luật áp dụng",
+          "body": "Tranh chấp áp dụng theo luật nơi cư trú của người duy trì và, nếu có, luật bảo vệ người tiêu dùng địa phương."
+        },
+        "contact": {
+          "title": "Liên hệ",
+          "body": "Mở issue tại github.com/aapw01/id-photo-tool về điều khoản."
+        }
+      }
+    }
+  },
+  "Errors": {
+    "notFound": {
+      "title": "Không tìm thấy trang",
+      "body": "Trang bạn tìm đã di chuyển hoặc chưa từng tồn tại. Quay lại Studio hoặc trang chủ để tiếp tục.",
+      "actions": {
+        "home": "Về trang chủ",
+        "studio": "Mở Studio"
+      },
+      "metaTitle": "Không tìm thấy · Pixfit",
+      "metaDescription": "Chúng tôi không tìm thấy trang Pixfit này. Hãy vào trang chủ, Studio, Scanner hoặc danh mục đầy đủ các kích thước.",
+      "helpful": {
+        "heading": "Thử cái này thay vào",
+        "subtitle": "Pixfit chạy trong trình duyệt — tiếp tục từ chỗ bạn đang làm mà không mất ngữ cảnh.",
+        "home": "Trang chủ",
+        "studio": "Studio",
+        "scanner": "Scanner",
+        "sizes": "Tất cả kích thước",
+        "scannerDocs": "Mọi loại tài liệu"
+      },
+      "didYouMean": "Có phải bạn cần {name}?",
+      "didYouMeanCta": "Mở {name}"
+    },
+    "runtime": {
+      "title": "Có gì đó không ổn",
+      "body": "Pixfit gặp lỗi bất ngờ khi vẽ trang này. Vấn đề được ghi vào console trình duyệt. Hãy thử lại hoặc tải lại; nếu vẫn xảy ra, hãy mở issue.",
+      "actions": {
+        "retry": "Thử lại",
+        "home": "Về trang chủ"
+      },
+      "metaTitle": "Lỗi · Pixfit"
+    }
+  },
+  "SpecManager": {
+    "title": "Quản lý kích thước",
+    "subtitle": "Quản lý các cỡ ảnh, giấy và dàn trang tuỳ chỉnh. Các mục tích hợp chỉ đọc — nhân bản để tuỳ chỉnh.",
+    "footerLink": "Quản lý kích thước",
+    "tabs": {
+      "photo": "Kích thước ảnh",
+      "paper": "Kích thước giấy",
+      "layout": "Mẫu dàn trang"
+    },
+    "toolbar": {
+      "import": "Nhập JSON",
+      "export": "Xuất JSON",
+      "new": "Mới",
+      "duplicate": "Nhân bản để tuỳ chỉnh"
+    },
+    "list": {
+      "builtin": "Tích hợp",
+      "custom": "Tuỳ chỉnh",
+      "empty": "Chưa có mục tuỳ chỉnh",
+      "builtinHint": "Cỡ tích hợp chỉ đọc — nhân bản để có bản chỉnh sửa được",
+      "edit": "Sửa",
+      "delete": "Xoá"
+    },
+    "form": {
+      "createTitle": "Tạo {kind} mới",
+      "editTitle": "Sửa «{name}»",
+      "fields": {
+        "id": "ID",
+        "idHint": "Chữ thường, số và dấu gạch — không đổi sau khi tạo",
+        "nameZh": "Tên (Trung giản)",
+        "nameZhHant": "Tên (Trung phồn)",
+        "nameEn": "Tên (Anh)",
+        "category": "Phân loại",
+        "region": "Khu vực (ISO 3166-1 alpha-2)",
+        "widthMm": "Rộng (mm)",
+        "heightMm": "Cao (mm)",
+        "dpi": "DPI",
+        "alias": "Bí danh",
+        "bgRecommended": "Nền khuyên dùng (#hex)",
+        "paperId": "ID giấy"
+      },
+      "save": "Lưu",
+      "cancel": "Huỷ"
+    },
+    "kinds": {
+      "photo": "kích thước ảnh",
+      "paper": "kích thước giấy",
+      "layout": "mẫu dàn trang"
+    },
+    "toast": {
+      "created": "Đã lưu «{name}»",
+      "updated": "Đã cập nhật «{name}»",
+      "deleted": "Đã xoá «{name}»",
+      "duplicated": "Đã tạo bản «{name}» từ mục tích hợp",
+      "exported": "Đã xuất {count} mục tuỳ chỉnh",
+      "imported": "Đã nhập {photo} ảnh / {paper} giấy / {layout} dàn trang",
+      "validationError": "Biểu mẫu có trường không hợp lệ — kiểm tra trước khi lưu",
+      "saveFailed": "Lưu thất bại: {message}",
+      "deleteFailed": "Xoá thất bại: {message}",
+      "importFailed": "Nhập thất bại: {message}"
+    },
+    "delete": {
+      "title": "Xoá «{name}»?",
+      "body": "Việc này xoá mục tuỳ chỉnh. Mục tích hợp không bị ảnh hưởng.",
+      "withDependentsBody": "{count} mẫu dàn trang đang tham chiếu mục này. Sau khi xoá, chúng sẽ chuyển sang mục tích hợp tương đương (nếu có) hoặc trở nên không hợp lệ.",
+      "dependentsHeading": "Mẫu bị ảnh hưởng",
+      "confirm": "Xoá",
+      "cancel": "Huỷ"
+    },
+    "import": {
+      "title": "Nhập kích thước",
+      "hint": "Chọn JSON đã xuất từ Pixfit",
+      "browse": "Chọn tập tin",
+      "preview": "Sẽ nhập {photo} ảnh / {paper} giấy / {layout} dàn trang (thay thế bản tuỳ chỉnh của bạn)",
+      "confirm": "Thay thế và nhập",
+      "errors": {
+        "empty-input": "Tệp rỗng.",
+        "invalid-json": "JSON không hợp lệ: {message}",
+        "invalid-schema": "Lỗi kiểm tra schema ({issues} vấn đề).",
+        "unsupported-version": "Phiên bản không hỗ trợ. Pixfit chỉ nhập phiên bản 1."
+      }
+    },
+    "layout": {
+      "comingSoon": "Trình chỉnh sửa mẫu sẽ có ở M6. Hiện tại chỉ có thể nhập / xuất / xoá, tạo mới bị tắt."
+    },
+    "empty": {
+      "title": "Chọn 1 mục bên trái để xem chi tiết",
+      "subtitle": "Hoặc nhấn «Mới» để tạo cỡ riêng"
+    },
+    "categories": {
+      "cn-id": "ID Trung Quốc",
+      "cn-paper": "Giấy Trung Quốc",
+      "travel-permit": "Giấy thông hành",
+      "visa": "Visa",
+      "exam": "Thi",
+      "custom": "Tuỳ chỉnh"
+    }
+  },
+  "Segmentation": {
+    "states": {
+      "idle": "Sẵn sàng",
+      "loadingModel": "Đang tải mô hình tách…",
+      "ready": "Mô hình sẵn sàng",
+      "inferring": "Đang trích xuất chủ thể…",
+      "error": "Tách thất bại"
+    },
+    "progress": {
+      "download": "Đang tải mô hình {loaded}/{total}",
+      "init": "Đang khởi động engine suy luận…",
+      "infer": "Đang xử lý ảnh…"
+    },
+    "backend": {
+      "webgpu": "Tăng tốc WebGPU",
+      "wasm": "CPU (WASM)"
+    },
+    "errors": {
+      "title": "Không trích xuất được chủ thể",
+      "network": "Lỗi mạng khi tải mô hình. Kiểm tra kết nối và thử lại.",
+      "integrity": "Kiểm tra toàn vẹn mô hình thất bại. Kết nối có thể đã bị thay đổi — tải lại và thử lại.",
+      "init": "Engine suy luận không khởi động được. Trình duyệt của bạn có thể không hỗ trợ tính năng cần thiết.",
+      "inference": "Xử lý ảnh thất bại. Thử ảnh khác.",
+      "unknown": "Lỗi không xác định. Tải lại trang.",
+      "retry": "Thử lại",
+      "details": "Chi tiết"
+    }
+  },
+  "Scanner": {
+    "title": "Máy quét tài liệu thông minh",
+    "subtitle": "Tải lên ảnh chụp điện thoại của CMND/CCCD, hộ chiếu hay bằng lái — máy quét thông minh sửa phối cảnh, cân bằng trắng và xuất PDF A4 / Letter / A5, tất cả trong trình duyệt.",
+    "metaTitle": "Pixfit Scanner · 12 tài liệu PDF trong trình duyệt · miễn phí 2026 | Pixfit Scanner",
+    "metaDescription": "Quét 12 loại tài liệu thành PDF từ trình duyệt: ID, hộ chiếu, bằng lái, thẻ. AI sửa phối cảnh + scan/copy/enhance. Miễn phí 2026, không upload.",
+    "metaKeywords": [
+      "máy quét tài liệu thông minh",
+      "máy quét ID AI",
+      "máy quét hộ chiếu AI",
+      "máy quét tài liệu AI",
+      "điện thoại sang PDF",
+      "ID sang PDF A4",
+      "AI sửa phối cảnh",
+      "online",
+      "miễn phí",
+      "không tải về",
+      "không tải lên",
+      "trong trình duyệt",
+      "2026",
+      "Pixfit Scanner",
+      "ưu tiên riêng tư",
+      "trên thiết bị",
+      "không cloud"
+    ],
+    "shell": {
+      "previewTitle": "Xem trước bản quét",
+      "previewEmpty": "Khi bạn tải ảnh lên, bản quét đã chỉnh sẽ xuất hiện ở đây",
+      "configTitle": "Cài đặt",
+      "configHint": "Loại tài liệu, chế độ xuất, hình mờ, dàn A4",
+      "loadingShell": "Đang tải khu vực scanner"
+    },
+    "upload": {
+      "frontTitle": "Mặt trước",
+      "frontHint": "JPG / PNG / HEIC / PDF · tối đa 20 MB mỗi tệp",
+      "backTitle": "Mặt sau",
+      "backHint": "Tuỳ chọn — để trống nếu tài liệu không có mặt sau",
+      "browse": "Chọn tập tin",
+      "dragHint": "Kéo vào đây hoặc bấm để chọn",
+      "remove": "Xoá",
+      "replace": "Thay",
+      "uploading": "Đang xử lý…",
+      "heicBadge": "HEIC đã chuyển đổi",
+      "pdfBadge": "Trang 1 / {count} của PDF",
+      "pdfMultiPageNotice": "Phát hiện PDF nhiều trang — dùng trang 1 / {count}.",
+      "previewAlt": "Xem trước tài liệu đã tải lên",
+      "errors": {
+        "too_large": "{name} vượt quá giới hạn 20 MB",
+        "unsupported_type": "{name} không phải loại được hỗ trợ (chỉ JPG / PNG / WebP / HEIC / PDF)",
+        "heic_convert_failed": "Chuyển đổi HEIC thất bại; hãy thử JPG / PNG",
+        "pdf_decode_failed": "Không vẽ được PDF: {name}",
+        "decode_failed": "Không giải mã được ảnh: {name}",
+        "unknown": "Tải lên thất bại; hãy thử lại"
+      }
+    },
+    "preview": {
+      "trigger": "Xem trước tờ giấy",
+      "title": "Xem trước tờ giấy",
+      "description": "Đây chính xác là tờ {paper} sẽ tải về — cùng giấy, hình mờ và bo góc.",
+      "loading": "Đang tạo bản xem trước…",
+      "empty": "Tải ít nhất 1 mặt để xem trước tờ giấy",
+      "error": "Không tạo được bản xem trước. Chỉnh 1 cài đặt và thử lại.",
+      "imageAlt": "Xem trước tờ {paper}",
+      "frontLabel": "Mặt trước",
+      "backLabel": "Mặt sau",
+      "processing": "Đang sửa phối cảnh…",
+      "rectifyError": "Xử lý thất bại: {message}",
+      "retry": "Thử lại",
+      "editCorners": "Chỉnh góc",
+      "rotate": "Xoay",
+      "downloadCurrent": "Tải mặt này",
+      "downloadHint": "PNG 1 mặt · dùng bảng bên phải để đổi A4 / PDF / photocopy / hình mờ",
+      "adjustHint": "Bản xem trước đầu tiên là một bản cắt căn giữa theo tỉ lệ — bấm «Chỉnh góc» để kéo điểm về đúng cạnh thật."
+    },
+    "editor": {
+      "title": "Kéo 4 điểm về các cạnh thật của tài liệu",
+      "hint": "Đặt 4 điểm vào đúng các góc; phóng to bằng cử chỉ hoặc cuộn để tinh chỉnh.",
+      "apply": "Áp dụng",
+      "cancel": "Huỷ",
+      "reset": "Đặt lại góc",
+      "handles": {
+        "topLeft": "Góc trên trái",
+        "topRight": "Góc trên phải",
+        "bottomRight": "Góc dưới phải",
+        "bottomLeft": "Góc dưới trái"
+      }
+    },
+    "config": {
+      "docSpecLabel": "Loại tài liệu",
+      "modeLabel": "Chế độ xuất"
+    },
+    "docSpecs": {
+      "cn-id-card": "CMND/CCCD Trung Quốc",
+      "hk-id-card": "ID Hong Kong",
+      "tw-id-card": "ID Đài Loan",
+      "sg-nric": "NRIC Singapore",
+      "in-aadhaar": "Aadhaar Ấn Độ",
+      "bank-card": "Thẻ ngân hàng",
+      "us-driver-license": "Bằng lái Mỹ",
+      "passport-bio": "Trang bio hộ chiếu",
+      "cn-driver-license": "Bằng lái Trung Quốc",
+      "cn-vehicle-license": "Đăng ký xe Trung Quốc",
+      "a4": "Tài liệu A4",
+      "letter": "Tài liệu Letter"
+    },
+    "docSpecGroups": {
+      "id-card": "ID / thẻ cư trú",
+      "passport": "Hộ chiếu",
+      "driver-license": "Bằng lái",
+      "vehicle-license": "Đăng ký xe",
+      "paper": "Tài liệu giấy"
+    },
+    "paperSizes": {
+      "label": "Khổ giấy",
+      "a4": "A4",
+      "letter": "Letter (US)",
+      "a5": "A5"
+    },
+    "mode": {
+      "scan": "Quét",
+      "scanDesc": "Màu · WB tự động",
+      "copy": "Sao chép",
+      "copyDesc": "Đen trắng nhị phân",
+      "enhance": "Nâng cao",
+      "enhanceDesc": "Tăng màu và độ tương phản"
+    },
+    "cornerRadius": {
+      "label": "Bo góc",
+      "off": "Tắt",
+      "value": "{px}px",
+      "hint": "Mặc định tắt. Tăng giá trị để bo cả 4 góc — bản xem trước, PNG 1 mặt và bản xuất A4 luôn đồng bộ."
+    },
+    "watermark": {
+      "label": "Hình mờ",
+      "toggleLabel": "Thêm hình mờ vào bản xuất",
+      "toggleHint": "Mặc định tắt. Bật để đóng dấu hình mờ chéo trên bản xem trước, PNG 1 mặt và bản xuất A4.",
+      "textLabel": "Nội dung hình mờ",
+      "textPlaceholder": "Chỉ dùng cho thủ tục này",
+      "opacityLabel": "Độ đậm",
+      "densityLabel": "Mật độ",
+      "density": {
+        "sparse": "Thưa",
+        "normal": "Vừa",
+        "dense": "Dày"
+      }
+    },
+    "export": {
+      "title": "Xuất",
+      "pdf": "Tải PDF A4",
+      "png": "Tải PNG A4",
+      "preparing": "Đang tạo…",
+      "noContent": "Tải ít nhất 1 mặt để bật xuất",
+      "successPdf": "PDF đã tải",
+      "successPng": "PNG đã tải",
+      "errorGeneric": "Xuất thất bại: {message}"
+    },
+    "usage": {
+      "heading": "Trước khi quét — lưu ý sử dụng",
+      "summary": "Đọc trước khi tải lên giấy tờ tuỳ thân. Ảnh không rời trình duyệt — đây là điều chúng tôi làm, không làm và bạn đồng ý.",
+      "items": {
+        "local": {
+          "title": "Mọi thứ ở lại trên thiết bị",
+          "body": "Sửa phối cảnh, các chế độ copy/scan/enhance, đóng dấu hình mờ và lắp PDF đều chạy cục bộ trong trình duyệt. Chúng tôi không host, truyền hay phân tích ảnh tài liệu của bạn."
+        },
+        "watermark": {
+          "title": "Hình mờ là tuỳ chọn",
+          "body": "Hình mờ chống lạm dụng mặc định tắt. Bạn có thể bật trong Cài đặt để đóng dấu chéo trên xem trước, PNG 1 mặt và bản xuất A4 — bạn quyết định nội dung (ví dụ «Chỉ cho onboarding XYZ»), mật độ và độ đậm. Khi bật, độ đậm bị giới hạn 30%–70% để đảm bảo dễ thấy."
+        },
+        "lawful": {
+          "title": "Chỉ dùng hợp pháp",
+          "body": "Chỉ dùng Pixfit Scanner với tài liệu bạn có quyền và cho các mục đích pháp luật của bạn cho phép. Làm giả, sửa đổi hay mạo danh là không cho phép."
+        },
+        "accuracy": {
+          "title": "Việc nộp là trách nhiệm của bạn",
+          "body": "Chúng tôi cố gắng mô phỏng đầu ra máy quét phẳng, nhưng cổng chính thức có thể yêu cầu DPI, màu, kích thước hay định dạng nghiêm hơn. Hãy kiểm tra yêu cầu cổng trước khi nộp và xuất lại nếu cần."
+        }
+      },
+      "termsLink": "Điều khoản đầy đủ"
+    },
+    "seoIntro": {
+      "heading": "Vì sao cần 1 máy quét tài liệu thông minh",
+      "paragraphs": {
+        "0": "Onboarding, dịch vụ công online, hồ sơ visa và ký hợp đồng thường yêu cầu PDF «đã quét» — không phải ảnh chụp điện thoại thô. Tuy nhiên ít người có máy quét phẳng. Pixfit Smart Scanner áp dụng sửa phối cảnh kiểu AI, cân bằng trắng và loại bóng để biến ảnh điện thoại thành đầu ra ngang ngửa máy quét thật, kèm xuất PDF A4 / Letter / A5 chỉ với 1 cú nhấp.",
+        "1": "Chế độ Copy áp dụng nhị phân hoá thích ứng để có vẻ ngoài đen trắng mà các cổng đăng ký thi hay thủ tục hành chính kỳ vọng. Cần bảo vệ hơn? Bật hình mờ chống lạm dụng — mặc định tắt, với nội dung tuỳ chỉnh (ví dụ «Chỉ cho onboarding XYZ») để khó bị tái sử dụng. Toàn bộ pipeline quét chạy trong trình duyệt; không có gì được tải lên."
+      }
+    },
+    "supported": {
+      "heading": "Loại tài liệu được hỗ trợ",
+      "subtitle": "Mười hai profile tích hợp bao quát các mục tiêu chính: Trung Quốc, Hong Kong, Đài Loan, Singapore, Ấn Độ, Hoa Kỳ — cùng thẻ ngân hàng, trang bio hộ chiếu và tài liệu A4 / Letter nguyên trang.",
+      "cardCta": "Mở hướng dẫn",
+      "dimensionTagline": "{w} × {h} mm"
+    },
+    "faq": {
+      "heading": "Câu hỏi thường gặp",
+      "subtitle": "Về quét tài liệu trong trình duyệt, hình mờ chống lạm dụng và độ chính xác đầu ra.",
+      "items": {
+        "free": {
+          "q": "Scanner có miễn phí không?",
+          "a": "Có — hoàn toàn miễn phí, không đăng ký, không hạn ngạch. Mọi thứ chạy trong trình duyệt nên không có chi phí máy chủ để chuyển sang bạn."
+        },
+        "privacy": {
+          "q": "Ảnh tài liệu có được tải lên máy chủ không?",
+          "a": "Không. Sửa phối cảnh, cân bằng trắng, chế độ copy, hình mờ và lắp PDF đều chạy cục bộ. Không có gì gửi qua mạng."
+        },
+        "watermark": {
+          "q": "Có thể thêm hình mờ chống lạm dụng không?",
+          "a": "Có — mặc định tắt. Bật trong Cài đặt và bản xem trước, PNG 1 mặt và bản xuất A4 sẽ có hình mờ chéo. Bạn chọn nội dung, mật độ và độ đậm (30%–70% khi bật)."
+        },
+        "official": {
+          "q": "Cổng chính thức có chấp nhận đầu ra không?",
+          "a": "Đa số cổng online chấp nhận bản quét điện thoại đã chỉnh và đầu ra của chúng tôi mô phỏng sát máy quét phẳng. Với hồ sơ nhạy cảm (visa, ngân hàng), hãy kiểm tra quy cách chính xác trước khi nộp."
+        },
+        "accuracy": {
+          "q": "Sửa phối cảnh chính xác đến đâu?",
+          "a": "Đặt 4 điểm vào đúng các cạnh thật của tài liệu và Pixfit dựng lại hình chữ nhật phẳng bằng phép biến đổi phối cảnh song tuyến trên JS — đầu ra ngang với máy quét phẳng về mặt thị giác."
+        }
+      }
+    },
+    "detail": {
+      "metaTitle": "{name} {w}×{h}mm quét sang PDF 2026 | Pixfit Scanner",
+      "metaDescription": "Quét {name} ({w}×{h}mm) trong trình duyệt: AI phối cảnh + scan/copy/enhance, xuất PDF A4/Letter/A5. Miễn phí, không upload, 2026.",
+      "tagline": "{w} × {h} mm · PDF A4 / Letter / A5 · hình mờ tuỳ chọn",
+      "summarySection": {
+        "title": "Về {name}",
+        "subtitle": "Là gì và khi nào được yêu cầu"
+      },
+      "specSection": {
+        "title": "Thông số vật lý",
+        "dimensions": "Kích thước",
+        "pixels": "Pixel ở 300 DPI",
+        "twoSided": "Hai mặt",
+        "twoSidedYes": "Có — mặt trước + sau trên cùng 1 tờ",
+        "twoSidedNo": "Không — tài liệu 1 mặt"
+      },
+      "howTo": {
+        "title": "Cách quét {name} bằng Pixfit",
+        "subtitle": "Bốn bước, đều trong trình duyệt. Ảnh không rời thiết bị.",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "Tải ảnh điện thoại {name}",
+            "text": "Kéo thả ảnh mặt trước (và mặt sau nếu cần) vào khu vực scanner. JPG / PNG / HEIC tới 20 MB mỗi tệp. Hướng EXIF được áp dụng tự động."
+          },
+          "detect": {
+            "name": "Đặt 4 góc vào cạnh",
+            "text": "Kéo 4 điểm tròn của {name} về các góc thật và Pixfit nắn ảnh nghiêng thành hình chữ nhật phẳng kiểu máy quét."
+          },
+          "configure": {
+            "name": "Chọn chế độ xuất + hình mờ",
+            "text": "Chuyển giữa Quét (màu + WB auto), Copy (B/W nhị phân) hoặc Nâng cao (tăng bão hoà + tương phản). Bật tuỳ chọn hình mờ chống lạm dụng và tinh chỉnh nội dung, độ đậm và mật độ."
+          },
+          "export": {
+            "name": "Xuất ra PDF A4 / Letter / A5",
+            "text": "Xếp cả 2 mặt trên cùng 1 tờ kèm đường cắt và tải PDF hoặc PNG. Tệp được tạo cục bộ — không upload."
+          }
+        }
+      },
+      "faq": {
+        "title": "{name} — câu hỏi thường gặp",
+        "items": {
+          "free": {
+            "q": "Quét {name} trong Pixfit có miễn phí?",
+            "a": "Có. Pixfit Scanner không có hình mờ trong khu vực làm việc, không đăng ký và không có hạn ngạch tháng. Hình mờ tuỳ chọn ở bản xuất mặc định tắt — bạn quyết định."
+          },
+          "privacy": {
+            "q": "Ảnh {name} có được tải lên máy chủ?",
+            "a": "Không. Sửa phối cảnh, đóng dấu hình mờ và lắp PDF đều chạy cục bộ. Ảnh điện thoại của {name} không rời thiết bị."
+          },
+          "watermark": {
+            "q": "Có thể đóng hình mờ lên {name} không?",
+            "a": "Có, tuỳ chọn và mặc định tắt. Khi bật, nội dung và độ đậm (30%–70%) tuỳ chỉnh — tiện để đánh dấu bản quét «Chỉ cho onboarding XYZ» trước khi gửi."
+          },
+          "official": {
+            "q": "Cổng chính thức có chấp nhận bản quét {name}?",
+            "a": "Đa số cổng chấp nhận bản quét điện thoại đã chỉnh và đầu ra mô phỏng máy quét phẳng. Với hồ sơ nhạy cảm, hãy kiểm tra thông số chính xác (kích thước, DPI, màu hay B/W) và chọn chế độ phù hợp trước khi xuất."
+          }
+        }
+      },
+      "cta": {
+        "primary": "Mở scanner với {name}",
+        "secondary": "Mọi loại tài liệu"
+      },
+      "backLink": "Quay lại scanner",
+      "related": {
+        "heading": "Thử thêm",
+        "subtitle": "Các loại tài liệu khác có thể quét trong trình duyệt"
+      }
+    },
+    "docTypes": {
+      "cn-id-card": {
+        "summary": "CMND/CCCD Trung Quốc (居民身份证) là thẻ CR80 chuẩn (85,6 × 54 mm) hai mặt cấp cho công dân CHND Trung Hoa.",
+        "usage": "Onboarding tại nơi làm việc, check-in khách sạn, tài khoản ngân hàng, đăng ký thi, xác minh shipper và đăng ký online tại Trung Quốc đại lục. Đa số biểu mẫu yêu cầu cả 2 mặt trên cùng 1 trang."
+      },
+      "hk-id-card": {
+        "summary": "ID Hong Kong (香港身分證) là thẻ CR80 chuẩn (85,6 × 54 mm) cấp cho cư dân.",
+        "usage": "Ngân hàng, viễn thông, việc làm và du lịch khi cần ID quét. Mặt chip và mặt sau song ngữ thường được quét cùng nhau."
+      },
+      "tw-id-card": {
+        "summary": "Thẻ căn cước quốc gia Đài Loan (中華民國身分證) là thẻ CR80 chuẩn (85,6 × 54 mm) cấp cho công dân Trung Hoa Dân Quốc, có 2 mặt.",
+        "usage": "Ngân hàng, dịch vụ công, nhận thư, viễn thông và đăng ký online tại Đài Loan. Mặt trước (huy hiệu + ảnh) và mặt sau (thông tin cha mẹ) thường được quét cùng nhau."
+      },
+      "sg-nric": {
+        "summary": "NRIC Singapore là thẻ CR80 chuẩn (85,6 × 54 mm) hai mặt cấp cho công dân và thường trú nhân.",
+        "usage": "Mở tài khoản ngân hàng, hợp đồng viễn thông, hồ sơ HDB, hồ sơ y tế và onboarding nhân sự. Mặt trước (ảnh + số NRIC) và mặt sau (địa chỉ) thường được quét cùng nhau."
+      },
+      "in-aadhaar": {
+        "summary": "Thẻ Aadhaar Ấn Độ là thẻ CR80 (85,6 × 54 mm) hai mặt, do UIDAI cấp.",
+        "usage": "KYC ngân hàng, SIM viễn thông, phúc lợi công, khai thuế và nhiều dịch vụ tư tại Ấn Độ. Mặt ảnh và mặt QR thường được quét để nộp."
+      },
+      "bank-card": {
+        "summary": "Thẻ ngân hàng, tín dụng và ghi nợ tuân theo ISO/IEC 7810 ID-1 (CR80, 85,6 × 54 mm). Mặt trước có số, tên chủ thẻ và hạn dùng; mặt sau có vệt từ / CVV / ô chữ ký.",
+        "usage": "Thay thẻ mất hoặc hết hạn, tranh chấp giao dịch hay khôi phục, KYC chuyển tiền quốc tế và hoàn ứng doanh nghiệp cần cả 2 mặt."
+      },
+      "us-driver-license": {
+        "summary": "Bằng lái các bang Mỹ là thẻ nhựa CR80 (85,6 × 54 mm) hai mặt, do DMV mỗi bang cấp.",
+        "usage": "Xác minh I-9 khi tuyển dụng, hồ sơ thuê nhà, thuê xe, mua đồ uống có cồn, kiểm tra TSA tại sân bay và xác minh danh tính online. Nhiều nhà tuyển dụng và chủ nhà yêu cầu cả 2 mặt trong 1 PDF."
+      },
+      "passport-bio": {
+        "summary": "Trang bio hộ chiếu tuân theo ISO/IEC 7810 ID-3 (125 × 88 mm) và chứa ảnh, vùng MRZ và dữ liệu cá nhân.",
+        "usage": "Đơn xin visa, check-in khách sạn, onboarding nhân sự nước ngoài, KYC ngân hàng và mọi tình huống cần chứng minh danh tính ngoài quốc gia cư trú. Chỉ quét trang bio; phần còn lại vẫn riêng tư."
+      },
+      "cn-driver-license": {
+        "summary": "Bằng lái Trung Quốc (机动车驾驶证) là cuốn 88 × 60 mm với ảnh và thông tin cá nhân ở mặt trước và hạng cho phép ở mặt sau.",
+        "usage": "Thuê xe, đăng ký tài xế ứng dụng, hồ sơ tại toà giao thông, hồ sơ bồi thường bảo hiểm và xác minh từ nhà tuyển dụng."
+      },
+      "cn-vehicle-license": {
+        "summary": "Đăng ký xe Trung Quốc (行驶证) là cuốn 88 × 60 mm liệt kê biển số, chủ xe, model và số máy.",
+        "usage": "Gia hạn bảo hiểm, đăng ký dịch vụ gọi xe (Didi v.v.), bán lại xe, xin giấy phép đỗ và mọi quy trình giao thông cần chứng minh quyền sở hữu."
+      },
+      "a4": {
+        "summary": "A4 (210 × 297 mm) là khổ ISO 216 dùng ngoài Bắc Mỹ.",
+        "usage": "Hợp đồng 1 trang, biên lai, chứng chỉ, sao kê và mọi tài liệu kinh doanh cần biến từ ảnh điện thoại thành PDF sạch."
+      },
+      "letter": {
+        "summary": "US Letter (215,9 × 279,4 mm) là khổ chuẩn Bắc Mỹ — rộng hơn và ngắn hơn A4 một chút.",
+        "usage": "Hợp đồng 1 trang ở Mỹ, biểu mẫu IRS, biên lai in tại Mỹ và mọi tài liệu Bắc Mỹ cần biến từ ảnh điện thoại thành PDF sạch."
+      }
+    },
+    "footer": {
+      "heading": "Scanner"
+    }
+  },
+  "Blog": {
+    "index": {
+      "metaTitle": "Pixfit Blog · hướng dẫn ảnh thẻ và quét tài liệu 2026 | Pixfit",
+      "metaDescription": "Bài viết dài về ảnh thẻ online, quét PDF và các công cụ Pixfit trong trình duyệt. Miễn phí, không upload, 2026.",
+      "metaKeywords": [
+        "Pixfit blog",
+        "hướng dẫn ảnh thẻ 2026",
+        "hướng dẫn quét PDF",
+        "ảnh thẻ online",
+        "máy quét tài liệu trình duyệt",
+        "không upload",
+        "2026",
+        "ưu tiên riêng tư",
+        "trên thiết bị",
+        "không cloud"
+      ],
+      "breadcrumb": "Blog",
+      "heading": "Pixfit Blog",
+      "subtitle": "Bài hướng dẫn dài về ảnh thẻ và quét tài liệu trong trình duyệt. Miễn phí, không upload, 2026.",
+      "readingMinutes": "{minutes} phút đọc",
+      "publishedOn": "Đăng ngày {date}",
+      "openArticle": "Mở bài viết"
+    },
+    "posts": {
+      "us-visa-photo-2026": {
+        "card": {
+          "tagline": "Kích thước, nền, bố cục — hướng dẫn toàn diện cho ảnh visa Mỹ B1/B2 2026."
+        }
+      },
+      "12-doc-scan-pdf-guide": {
+        "card": {
+          "tagline": "Mọi preset tích hợp của Pixfit Scanner với kích thước đúng và mẹo chụp ảnh."
+        }
+      }
+    },
+    "article": {
+      "backLink": "Quay lại blog",
+      "readingMinutes": "{minutes} phút đọc",
+      "publishedOn": "Đăng ngày {date}",
+      "updatedOn": "Cập nhật ngày {date}",
+      "ctaHeading": "Thử Pixfit trong trình duyệt",
+      "ctaBody": "Mọi công cụ Pixfit chạy trên thiết bị — không upload, không tài khoản, miễn phí.",
+      "ctaPrimary": "Mở Studio",
+      "ctaSecondary": "Mở Scanner"
+    }
+  }
+}

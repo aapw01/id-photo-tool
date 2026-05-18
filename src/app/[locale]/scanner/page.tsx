@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 
+import { Breadcrumb } from '@/components/breadcrumb'
 import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -13,7 +14,8 @@ import { DOC_SPECS, groupDocSpecs } from '@/features/scanner/lib/doc-specs'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
-import { faqSchema, itemListSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
+import { faqSchema, itemListSchema, webApplicationSchema, webPageSchema } from '@/lib/seo/jsonld'
 import { buildCanonical, buildMetadata, normalizeKeywords } from '@/lib/seo/metadata'
 
 interface ScannerPageProps {
@@ -48,6 +50,12 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
   const tSupported = await getTranslations('Scanner.supported')
   const tFaq = await getTranslations('Scanner.faq')
   const tUsage = await getTranslations('Scanner.usage')
+  const tNav = await getTranslations('Nav')
+
+  const breadcrumbItems = getBreadcrumbItems('scanner', {
+    labels: { home: tNav('home'), scanner: t('title') },
+  })
+  const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
 
   const groups = groupDocSpecs()
 
@@ -65,8 +73,9 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
     keywords: scannerKeywords,
   })
 
+  const scannerUrl = buildCanonical('/scanner', locale as Locale)
   const supportedListJsonLd = itemListSchema({
-    url: buildCanonical('/scanner', locale as Locale),
+    url: scannerUrl,
     name: tSupported('heading'),
     description: tSupported('subtitle'),
     items: DOC_SPECS.map((spec) => ({
@@ -76,11 +85,25 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
     })),
   })
 
+  // `/scanner` is a tool landing page, not a single SoftwareApplication
+  // — emit `WebPage` alongside `WebApplication` so Google can index
+  // it as long-form content (the H2 scanner-seoIntro + the 12-card
+  // catalog + the FAQ + the usage notice). The `WebApplication`
+  // node still anchors the brand product, the `WebPage` node
+  // anchors the article-style copy.
+  const scannerWebPage = webPageSchema({
+    url: scannerUrl,
+    name: t('title'),
+    description: t('metaDescription'),
+    inLanguage: locale as Locale,
+  })
+
   return (
     <>
       <SiteHeader />
       <main className="flex-1">
         <section className="mx-auto w-full max-w-6xl px-6 pt-10 pb-16">
+          <Breadcrumb items={breadcrumbItems} className="mb-6" />
           <header className="mb-8">
             <h1
               className="font-semibold tracking-tight text-[var(--color-text)]"
@@ -269,7 +292,7 @@ export default async function ScannerPage({ params }: ScannerPageProps) {
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[scannerWebApp, supportedListJsonLd, faqJsonLd]} />
+      <JsonLd data={[scannerWebApp, scannerWebPage, supportedListJsonLd, breadcrumbs, faqJsonLd]} />
     </>
   )
 }

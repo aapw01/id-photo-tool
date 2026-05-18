@@ -28,6 +28,43 @@ interface WebApplicationOpts {
   keywords?: readonly string[]
 }
 
+interface OrganizationOpts {
+  /**
+   * Short organisation description — usually the home page's
+   * meta-description text. Optional so callers can omit it on
+   * locales that don't have one yet.
+   */
+  description?: string
+}
+
+/**
+ * Pixfit `Organization` schema injected into the root layout. This is
+ * the brand identity node Google uses to consolidate sitelinks under
+ * a single knowledge graph entity — Wikipedia / Wikidata / GitHub /
+ * social profiles get attached here via `sameAs`.
+ *
+ * `logo` is an absolute URL because Google's strictest knowledge-graph
+ * paths still won't resolve relative logo paths against
+ * `metadataBase`.
+ */
+export function organizationSchema(locale: Locale, opts: OrganizationOpts = {}): JsonLdObject {
+  const out: JsonLdObject = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': `${SITE_URL}/#organization`,
+    name: SITE_NAME,
+    alternateName: '像配',
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.png`,
+    inLanguage: locale,
+    sameAs: ['https://github.com/aapw01/id-photo-tool'],
+  }
+  if (opts.description) {
+    out.description = opts.description
+  }
+  return out
+}
+
 /** Default Pixfit WebApplication schema (injected into the home layout). */
 export function webApplicationSchema(locale: Locale, opts: WebApplicationOpts = {}): JsonLdObject {
   const out: JsonLdObject = {
@@ -103,6 +140,91 @@ interface ItemListOpts {
   name: string
   description?: string
   items: ItemListEntry[]
+}
+
+interface CollectionPageOpts {
+  /** Canonical absolute URL of the page. */
+  url: string
+  /** Page title — usually the H1 of the catalog landing page. */
+  name: string
+  /** Short paragraph describing what's in the collection. */
+  description?: string
+  /**
+   * Optional embedded ItemList. When supplied, the items render as
+   * `mainEntity` of the CollectionPage so a single JSON-LD blob
+   * communicates both "this is a catalog page" and "here are the
+   * items in it" without forcing the caller to emit a sibling
+   * `ItemList` node.
+   */
+  items?: ItemListEntry[]
+  inLanguage?: Locale
+}
+
+/**
+ * schema.org `CollectionPage`. Distinguishes catalog landing pages
+ * (sizes / paper / templates) from generic web pages so Google can
+ * surface them as a list result rather than a single doc. We embed
+ * the `ItemList` as `mainEntity` to keep the per-page JSON-LD count
+ * down — fewer blobs render faster and parse more reliably.
+ */
+export function collectionPageSchema(opts: CollectionPageOpts): JsonLdObject {
+  const out: JsonLdObject = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    url: opts.url,
+    name: opts.name,
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.inLanguage ? { inLanguage: opts.inLanguage } : {}),
+    isPartOf: { '@type': 'WebSite', '@id': `${SITE_URL}/#website` },
+  }
+  if (opts.items && opts.items.length > 0) {
+    out.mainEntity = {
+      '@type': 'ItemList',
+      numberOfItems: opts.items.length,
+      itemListElement: opts.items.map((item, idx) => ({
+        '@type': 'ListItem',
+        position: idx + 1,
+        url: item.url,
+        name: item.name,
+        ...(item.description ? { description: item.description } : {}),
+      })),
+    } as JsonLdObject
+  }
+  return out
+}
+
+interface WebPageOpts {
+  /** Canonical absolute URL of the page. */
+  url: string
+  /** Page title — usually the H1. */
+  name: string
+  description?: string
+  inLanguage?: Locale
+  /** ISO-8601 (YYYY-MM-DD or full instant) of the last copy edit. */
+  dateModified?: string
+  /** ISO-8601 of the first publication, if known. */
+  datePublished?: string
+}
+
+/**
+ * schema.org `WebPage`. Used as a "this is a content page" anchor
+ * for surfaces that don't fit `WebApplication` / `CollectionPage` —
+ * the scanner index (it's not a single SoftwareApplication), legal
+ * pages (Privacy / Terms), and similar long-form copy. `dateModified`
+ * is what Google leans on for legal-page freshness signals.
+ */
+export function webPageSchema(opts: WebPageOpts): JsonLdObject {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    url: opts.url,
+    name: opts.name,
+    ...(opts.description ? { description: opts.description } : {}),
+    ...(opts.inLanguage ? { inLanguage: opts.inLanguage } : {}),
+    ...(opts.datePublished ? { datePublished: opts.datePublished } : {}),
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
+    isPartOf: { '@type': 'WebSite', '@id': `${SITE_URL}/#website` },
+  }
 }
 
 /** schema.org `ItemList` used by the /sizes /paper /templates list pages. */
@@ -201,6 +323,63 @@ export function howToSchema(opts: HowToOpts): JsonLdObject {
       text: step.text,
     })),
   }
+}
+
+interface BlogPostingOpts {
+  /** Canonical absolute URL of the article. */
+  url: string
+  /** Article headline — usually the H1. */
+  headline: string
+  /** Plain-text article description / dek. */
+  description?: string
+  /** ISO-8601 (YYYY-MM-DD) of the first publication. */
+  datePublished: string
+  /**
+   * ISO-8601 of the last meaningful edit. Falls back to
+   * `datePublished` when omitted so Google never sees a missing
+   * field, which can suppress the article rich result.
+   */
+  dateModified?: string
+  /** BCP-47 language tag, e.g. 'en' / 'zh-Hans' / 'zh-Hant'. */
+  inLanguage: Locale
+  /**
+   * Optional absolute URL of a 1200×630 OG image. When supplied,
+   * Google can use it as the article hero in news / discovery
+   * surfaces.
+   */
+  image?: string
+  /** Optional list of keyword tags. */
+  keywords?: readonly string[]
+}
+
+/**
+ * schema.org `BlogPosting`. Used by the `/blog` index cards plus the
+ * per-article detail pages. We attribute every article to the
+ * `Organization` node already injected at the root layout so Google
+ * consolidates the byline under a single brand entity.
+ */
+export function blogPostingSchema(opts: BlogPostingOpts): JsonLdObject {
+  const out: JsonLdObject = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: opts.headline,
+    ...(opts.description ? { description: opts.description } : {}),
+    datePublished: opts.datePublished,
+    dateModified: opts.dateModified ?? opts.datePublished,
+    inLanguage: opts.inLanguage,
+    url: opts.url,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': opts.url },
+    author: { '@id': `${SITE_URL}/#organization` },
+    publisher: { '@id': `${SITE_URL}/#organization` },
+    isPartOf: { '@type': 'WebSite', '@id': `${SITE_URL}/#website` },
+  }
+  if (opts.image) {
+    out.image = opts.image
+  }
+  if (opts.keywords && opts.keywords.length > 0) {
+    out.keywords = opts.keywords.join(', ')
+  }
+  return out
 }
 
 /**

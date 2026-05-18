@@ -44,8 +44,8 @@ describe('buildAlternateLanguages', () => {
     expect(map['x-default']).toBe(`${SITE_URL}/en/studio`)
   })
 
-  it('keys count matches 3 locales + x-default', () => {
-    expect(Object.keys(buildAlternateLanguages('/'))).toHaveLength(4)
+  it('keys count matches every supported locale + x-default', () => {
+    expect(Object.keys(buildAlternateLanguages('/'))).toHaveLength(SUPPORTED_LOCALES.length + 1)
   })
 
   it('covers every locale defined by SUPPORTED_LOCALES + x-default exactly', () => {
@@ -74,7 +74,9 @@ describe('buildMetadata', () => {
       title: 'Pixfit Sizes',
       description: 'Browse ID photo sizes.',
     })
-    expect(meta.title).toBe('Pixfit Sizes')
+    // `buildMetadata` defaults to absolute titles so the root
+    // layout's `template` doesn't double-stamp the brand suffix.
+    expect(meta.title).toEqual({ absolute: 'Pixfit Sizes' })
     expect(meta.description).toBe('Browse ID photo sizes.')
     expect(meta.alternates?.canonical).toBe(`${SITE_URL}/en/sizes`)
     const langs = meta.alternates?.languages as Record<string, string>
@@ -168,10 +170,74 @@ describe('normalizeKeywords', () => {
   })
 })
 
+describe('canonical hygiene (no trailing slash) audit', () => {
+  // Lock in the no-trailing-slash invariant across representative
+  // routes so an accidental flip of `trailingSlash` in next.config or
+  // a regression in `normalizePath` breaks loudly. Picks one route per
+  // tier from the priority table in `sitemap-entries.ts`.
+  const routes = [
+    { path: '/', locale: 'en' as const, expected: `${SITE_URL}/en` },
+    { path: '/', locale: 'zh-Hans' as const, expected: `${SITE_URL}/zh-Hans` },
+    { path: '/studio', locale: 'zh-Hant' as const, expected: `${SITE_URL}/zh-Hant/studio` },
+    { path: '/scanner', locale: 'en' as const, expected: `${SITE_URL}/en/scanner` },
+    {
+      path: '/scanner/cn-id-card',
+      locale: 'en' as const,
+      expected: `${SITE_URL}/en/scanner/cn-id-card`,
+    },
+    { path: '/sizes', locale: 'zh-Hans' as const, expected: `${SITE_URL}/zh-Hans/sizes` },
+    { path: '/sizes/us-visa', locale: 'en' as const, expected: `${SITE_URL}/en/sizes/us-visa` },
+    { path: '/privacy', locale: 'zh-Hant' as const, expected: `${SITE_URL}/zh-Hant/privacy` },
+  ] as const
+
+  it('every representative route resolves to a no-slash canonical', () => {
+    for (const r of routes) {
+      const meta = buildMetadata({
+        locale: r.locale,
+        path: r.path,
+        title: 'placeholder',
+        description: 'placeholder',
+      })
+      expect(meta.alternates?.canonical).toBe(r.expected)
+      expect(String(meta.alternates?.canonical)).not.toMatch(/\/$/)
+    }
+  })
+
+  it('a trailing slash in the source path is stripped before the canonical is built', () => {
+    expect(buildCanonical('/sizes/us-visa/', 'en')).toBe(`${SITE_URL}/en/sizes/us-visa`)
+    expect(buildCanonical('/scanner/cn-id-card///', 'zh-Hans')).toBe(
+      `${SITE_URL}/zh-Hans/scanner/cn-id-card`,
+    )
+  })
+
+  it('hreflang alternates for the same route share the no-slash invariant', () => {
+    const langs = buildAlternateLanguages('/sizes/us-visa/')
+    for (const url of Object.values(langs)) {
+      expect(url).not.toMatch(/\/$/)
+    }
+  })
+})
+
 describe('ogLocaleFor', () => {
   it('maps each locale to its og territory code', () => {
     expect(ogLocaleFor('zh-Hans')).toBe('zh_CN')
     expect(ogLocaleFor('zh-Hant')).toBe('zh_TW')
     expect(ogLocaleFor('en')).toBe('en_US')
+    expect(ogLocaleFor('ja')).toBe('ja_JP')
+    expect(ogLocaleFor('ko')).toBe('ko_KR')
+    expect(ogLocaleFor('es')).toBe('es_ES')
+    expect(ogLocaleFor('pt-BR')).toBe('pt_BR')
+    expect(ogLocaleFor('fr')).toBe('fr_FR')
+    expect(ogLocaleFor('de')).toBe('de_DE')
+    expect(ogLocaleFor('ru')).toBe('ru_RU')
+    expect(ogLocaleFor('it')).toBe('it_IT')
+    expect(ogLocaleFor('vi')).toBe('vi_VN')
+    expect(ogLocaleFor('ar')).toBe('ar_AR')
+  })
+
+  it('returns a non-empty og territory for every supported locale', () => {
+    for (const locale of SUPPORTED_LOCALES) {
+      expect(ogLocaleFor(locale)).toMatch(/^[a-z]{2}_[A-Z]{2}$/)
+    }
   })
 })

@@ -8,7 +8,17 @@
     "languages": {
       "zh-Hans": "简体中文",
       "zh-Hant": "繁體中文",
-      "en": "English"
+      "en": "English",
+      "ja": "日語",
+      "ko": "韓語",
+      "es": "西班牙語",
+      "pt-BR": "葡萄牙語（巴西）",
+      "fr": "法語",
+      "de": "德語",
+      "ru": "俄語",
+      "it": "義大利語",
+      "vi": "越南語",
+      "ar": "阿拉伯語"
     }
   },
   "Nav": {
@@ -32,8 +42,8 @@
   "Home": {
     "heroTitle": "智慧證件照處理，一次搞定",
     "heroSubtitle": "Pixfit 是在瀏覽器內執行的 AI 證件照工具：AI 一鍵去背、智慧換背景、智慧裁切到證件 / 簽證規格、自動排版與壓縮到指定大小——全程本機處理，相片不上傳。",
-    "metaTitle": "Pixfit — 瀏覽器內的智慧證件照處理與 AI 證件掃描工具",
-    "metaDescription": "免費的智慧證件照處理工具：AI 一鍵去背、智慧換背景、智慧裁切到簽證 / 護照 / 身分證規格，含 AI 證件掃描成 A4 PDF。全程瀏覽器內執行，相片不上傳。",
+    "metaTitle": "Pixfit · 免費線上證件照工具 · 瀏覽器內 AI 去背換背景 · 不上傳 2026 | Pixfit",
+    "metaDescription": "免費線上證件照工具，瀏覽器內 AI 一鍵去背、換背景、智慧裁切到簽證 / 護照 / 身分證規格，含 AI 證件掃描成 A4 PDF。相片不上傳，2026 全新規格。",
     "metaKeywords": [
       "智慧證件照處理",
       "AI 證件照",
@@ -43,7 +53,15 @@
       "線上證件照製作",
       "瀏覽器證件照工作台",
       "AI 簽證照片",
-      "Pixfit"
+      "線上",
+      "免費",
+      "不用下載",
+      "2026",
+      "瀏覽器內",
+      "Pixfit",
+      "隱私優先",
+      "端側處理",
+      "不聯網"
     ],
     "cta": "立即開始",
     "ctaHint": "免費 · 無需註冊 · 完全在瀏覽器中執行",
@@ -121,18 +139,30 @@
     "openSource": "開源 (MIT)",
     "tagline": "瀏覽器內的證件照工作台",
     "groups": {
-      "product": "產品",
-      "browse": "瀏覽",
-      "popular": "熱門尺寸",
-      "legal": "法律",
-      "about": "關於"
+      "studio": "工作台",
+      "scanner": "證件掃描",
+      "specs": "規格庫",
+      "resources": "資源"
+    },
+    "aria": {
+      "studio": "工作台導覽",
+      "scanner": "證件掃描導覽",
+      "specs": "規格庫導覽",
+      "resources": "資源與法律"
     },
     "links": {
       "studio": "工作台",
+      "studioBackground": "AI 換背景",
+      "studioCrop": "智慧裁切",
+      "studioLayout": "拼版列印",
+      "studioExport": "壓縮匯出",
+      "scanner": "證件掃描",
       "specs": "規格管理",
       "sizes": "照片尺寸",
       "paper": "相紙規格",
       "templates": "排版模板",
+      "compress": "壓縮到指定 KB",
+      "blog": "部落格",
       "privacy": "隱私政策",
       "terms": "服務條款",
       "github": "GitHub"
@@ -144,8 +174,8 @@
   "Studio": {
     "title": "工作台",
     "subtitle": "上傳一張人像，AI 智慧去背、智慧裁切、AI 一鍵換背景、自動拼版與按 KB 壓縮，全程瀏覽器內完成。",
-    "metaTitle": "Pixfit 工作台 — AI 證件照編輯器（智慧去背 / 智慧裁切 / 一鍵換背景）",
-    "metaDescription": "Pixfit 工作台：AI 證件照編輯器，支援 AI 一鍵去背、智慧裁切到簽證 / 護照 / 身分證規格、A4 / 5R / 6R 排版與按 KB 精準壓縮。免費、瀏覽器內執行、不上傳。",
+    "metaTitle": "Pixfit 工作台 · 線上裁切 · 換背景 · 壓縮 · 拼版列印 2026 | Pixfit",
+    "metaDescription": "Pixfit 工作台：線上裁切、AI 一鍵換背景、按 KB 壓縮、A4 / 5R / 6R 拼版列印，免費瀏覽器內執行，相片不上傳。2026 支援 28 種證件規格。",
     "metaKeywords": [
       "AI 證件照編輯器",
       "智慧證件照處理",
@@ -154,7 +184,15 @@
       "AI 一鍵換背景",
       "線上證件照工作台",
       "簽證照片編輯器",
-      "Pixfit 工作台"
+      "線上",
+      "免費",
+      "不用下載",
+      "2026",
+      "瀏覽器內",
+      "Pixfit 工作台",
+      "隱私優先",
+      "端側處理",
+      "不聯網"
     ],
     "seoIntro": {
       "heading": "瀏覽器內的智慧證件照工作台",
@@ -400,15 +438,18 @@
         "dpi": "DPI"
       },
       "cta": "在工作台使用",
-      "metaTitle": "智慧證件照排版相紙規格 · Pixfit · 像配",
-      "metaDescription": "七張內建相紙（3R / 4R / 5R / 6R / 8R / A4 / A5），Pixfit 用 AI 自動把證件照拼版到這些相紙上，免費、瀏覽器內執行、不上傳。",
+      "metaTitle": "Pixfit 證件照相紙規格 · 3R 4R 5R 6R 8R A4 A5 線上拼版 2026 | Pixfit",
+      "metaDescription": "七種列印相紙：3R / 4R / 5R / 6R / 8R / A4 / A5。在瀏覽器內免費把證件照線上拼版到相紙上，下載 PNG / PDF，相片不上傳，2026 全新規格。",
       "metaKeywords": [
         "證件照列印相紙",
         "智慧照片排版",
         "AI 拼版相紙",
         "3R 4R 5R 6R 8R",
         "A4 證件照拼版",
-        "Pixfit 相紙"
+        "Pixfit 相紙",
+        "隱私優先",
+        "端側處理",
+        "不聯網"
       ]
     }
   },
@@ -475,8 +516,8 @@
     "cta": "在工作台使用",
     "categoryEmpty": "此分類目前沒有規格",
     "viewDetail": "查看詳情",
-    "metaTitle": "智慧證件照尺寸庫（簽證 · 證件 · 考試報名）· Pixfit",
-    "metaDescription": "28 條智慧證件照規格——美國 / 申根 / 英國 / 加拿大 / 澳紐 / 日韓 / 東南亞簽證、中國 1 吋 / 2 吋 / 身分證、考試報名。AI 智慧裁切、免費、瀏覽器內執行、不上傳。",
+    "metaTitle": "Pixfit 證件照尺寸庫 · 28 種規格 線上裁切 + AI 換背景 2026 | Pixfit",
+    "metaDescription": "28 條證件照規格：美國 / 申根 / 英國 / 日韓簽證、中國身分證 / 1 吋 / 2 吋、考試報名。線上裁切 + AI 換背景，免費瀏覽器內執行，相片不上傳，2026 規格。",
     "metaKeywords": [
       "智慧證件照尺寸",
       "AI 證件照規格",
@@ -484,11 +525,14 @@
       "護照照片尺寸",
       "申根簽證照片尺寸",
       "美國簽證 51x51",
-      "Pixfit 尺寸庫"
+      "Pixfit 尺寸庫",
+      "隱私優先",
+      "端側處理",
+      "不聯網"
     ],
     "detail": {
-      "metaTitle": "{name}照片尺寸 {w}×{h}mm · AI 證件照線上製作",
-      "metaDescription": "{name}電子證件照：{w}×{h} 毫米（{wpx}×{hpx} 像素 @ {dpi} DPI），背景色 {bgLabel}。Pixfit 智慧去背、AI 一鍵換背景、智慧裁切、壓縮一站完成，免費且不上傳。",
+      "metaTitle": "{name} {w}×{h}mm · 線上裁切 2026 | Pixfit",
+      "metaDescription": "{name} 證件照 {w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推薦背景 {bgLabel}。線上裁切 + AI 換背景，免費瀏覽器內執行，相片不上傳，2026 規格。",
       "heading": "{name}照片尺寸",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "{name}電子證件照標準規格為 {w} × {h} 毫米（{wpx} × {hpx} 像素，{dpi} DPI），建議背景色 {bgLabel}。本頁提供完整規格說明、拍攝要求與免費線上製作入口。",
@@ -565,7 +609,11 @@
         "primary": "前往工作台製作{name}",
         "secondary": "查看所有尺寸"
       },
-      "backLink": "返回尺寸庫"
+      "backLink": "返回尺寸庫",
+      "related": {
+        "heading": "你可能還需要",
+        "subtitle": "其他常用的證件照尺寸"
+      }
     }
   },
   "Templates": {
@@ -581,16 +629,126 @@
       "byPaper": "依相紙分組"
     },
     "cta": "在工作台開啟",
-    "metaTitle": "AI 證件照列印排版模板 · Pixfit · 像配",
-    "metaDescription": "12 套智慧列印模板（8 張 1 吋 / 16 張 1 吋 / 1 吋 + 2 吋混排 / 身分證 / 護照 / 皮夾照），涵蓋 5R / 6R / A4 相紙，AI 一鍵拼版，輸出 PNG 或向量 PDF。",
+    "metaTitle": "Pixfit 證件照排版模板 · 12 套 · 5R 6R A4 線上生成 PDF 2026 | Pixfit",
+    "metaDescription": "12 套列印模板：8 張 1 吋 / 16 張 1 吋 / 1 吋 + 2 吋混排 / 身分證 / 護照 / 皮夾照，涵蓋 5R / 6R / A4。瀏覽器內生成 PNG 與向量 PDF，不上傳、免費 2026。",
     "metaKeywords": [
       "證件照排版模板",
       "智慧照片拼版",
       "AI 列印排版",
       "1 吋 16 張拼版",
       "護照皮夾照",
-      "Pixfit 模板"
+      "Pixfit 模板",
+      "隱私優先",
+      "端側處理",
+      "不聯網"
     ]
+  },
+  "Compress": {
+    "index": {
+      "metaTitle": "線上壓縮照片到指定大小 · 50KB/100KB/200KB/500KB/1MB · 免費 2026 | Pixfit",
+      "metaDescription": "線上把 JPG/PNG 照片壓縮到 50KB、100KB、200KB、500KB 或 1MB。全程於瀏覽器內運作，不上傳、免費、2026 更新 · Pixfit。",
+      "metaKeywords": [
+        "線上壓縮照片",
+        "照片壓縮到指定大小",
+        "壓縮 jpg",
+        "線上照片壓縮",
+        "瀏覽器內壓縮",
+        "免費壓縮",
+        "2026 壓縮",
+        "Pixfit 壓縮",
+        "隱私優先",
+        "端側處理",
+        "不聯網"
+      ],
+      "heading": "把照片壓縮到指定 KB 大小",
+      "subtitle": "簽證、考試、招生網站要求的檔案大小，Pixfit 在瀏覽器內直接壓到 ±1KB 範圍內，不上傳。",
+      "intro": "許多線上平台對照片有嚴格大小限制：部分政府系統要求 50KB 以內，簽證常見 200KB 上限，招生系統多在 500KB 左右。Pixfit 透過自動調整 JPG 品質 + 必要時降採樣達成精準壓縮，整個過程在瀏覽器本地完成。下方挑一個預設，或直接進入 Studio 自訂。",
+      "targets": {
+        "heading": "選擇壓縮目標",
+        "cardCta": "壓縮到 {label}",
+        "cardSubtitle": "{label} JPG"
+      },
+      "studio": {
+        "heading": "需要自訂大小？",
+        "body": "Studio 的「匯出」分頁支援從 5 KB 起的任意目標值，可同時設下限，便於部分網站需要的 50–200KB 區間。",
+        "cta": "進入 Studio · 匯出分頁"
+      }
+    },
+    "detail": {
+      "metaTitle": "線上壓縮照片到 {label} · 免費 2026 | Pixfit",
+      "metaDescription": "線上把照片壓縮到 {label}。完全於瀏覽器內運作，不上傳、免費，結果落在 ±1KB 範圍內。2026 · Pixfit。",
+      "metaKeywords": [
+        "壓縮照片到 {label}",
+        "壓縮 jpg 到 {label}",
+        "線上照片壓縮 {label}",
+        "{label} 壓縮",
+        "瀏覽器內壓縮",
+        "Pixfit 壓縮",
+        "隱私優先",
+        "端側處理",
+        "不聯網"
+      ],
+      "backLink": "返回壓縮主頁",
+      "heading": "把照片壓縮到 {label}",
+      "tagline": "目標大小：{label}",
+      "intro": "Pixfit 壓縮引擎會重新編碼 JPG/PNG，讓最終檔案落在 {label} 的 ±1KB 範圍內。整個流程在瀏覽器內完成，不上傳、無帳號。",
+      "howTo": {
+        "title": "如何把照片壓縮到 {label}",
+        "subtitle": "四個步驟，全程瀏覽器本地。12MP 照片通常 5 秒內完成。",
+        "totalTimeIso": "PT2M",
+        "steps": {
+          "upload": {
+            "name": "上傳照片",
+            "text": "把 JPG、PNG 或 HEIC 照片拖進 Studio，檔案始終留在你的裝置上。"
+          },
+          "target": {
+            "name": "選擇 {label} 目標",
+            "text": "從本頁跳轉過來時，匯出分頁會預設 {label}，可隨時調整。"
+          },
+          "compress": {
+            "name": "Pixfit 壓到 {label}",
+            "text": "自動調整品質 + 必要時降採樣，通常 3–5 次迭代就能鎖定 ±1KB 範圍。"
+          },
+          "download": {
+            "name": "下載結果",
+            "text": "點擊匯出即可儲存 {label} 壓縮後的 JPG，原檔不會被覆蓋。"
+          }
+        }
+      },
+      "faq": {
+        "title": "關於 {label} 壓縮的常見問題",
+        "items": {
+          "quality": {
+            "q": "壓縮到 {label} 會犧牲畫質嗎？",
+            "a": "Pixfit 會選擇能落在 {label} 範圍內的最高 JPG 品質，僅當品質已不足以達到目標時才會降採樣。一般證件照在 {label} 內與 2MB 原圖肉眼無差。"
+          },
+          "target": {
+            "q": "輸出大小能多接近 {label}？",
+            "a": "Pixfit 使用二分搜尋鎖定 JPG 品質，結果落在 ±1KB 範圍內。如需嚴格區間（例如 50–{label}），請到 Studio 匯出分頁同時設上下限。"
+          },
+          "format": {
+            "q": "{label} 壓縮支援 PNG 嗎？",
+            "a": "支援。輸入可以是 PNG / JPG / HEIC，但輸出一律重新編碼為 JPG —— 因為照片內容用 PNG 壓到 {label} 幾乎無法兼顧畫質。"
+          },
+          "batch": {
+            "q": "可以批次壓縮多張照片到 {label} 嗎？",
+            "a": "Studio 預設為單張操作。可連續拖入多張照片，{label} 預設會在整個 session 中持續套用。"
+          }
+        }
+      },
+      "cta": {
+        "primary": "用 {label} 預設打開 Studio",
+        "secondary": "完整 Studio 控制",
+        "secondaryHint": "可覆寫預設、加入最小尺寸下限、或批次處理多張。"
+      }
+    },
+    "targetLabel": {
+      "50kb": "50KB",
+      "100kb": "100KB",
+      "200kb": "200KB",
+      "500kb": "500KB",
+      "1mb": "1MB"
+    }
   },
   "Legal": {
     "common": {
@@ -700,7 +858,19 @@
         "home": "回首頁",
         "studio": "開啟工作台"
       },
-      "metaTitle": "找不到頁面 · Pixfit · 像配"
+      "metaTitle": "找不到頁面 · Pixfit · 像配",
+      "metaDescription": "這個 Pixfit 頁面已不存在。返回首頁、Studio 工作台、Scanner 掃描，或完整的證件照尺寸庫繼續使用。",
+      "helpful": {
+        "heading": "試試這些連結",
+        "subtitle": "Pixfit 完全在瀏覽器內處理，從下方入口接著用即可。",
+        "home": "首頁",
+        "studio": "Studio 工作台",
+        "scanner": "Scanner 掃描",
+        "sizes": "全部證件照尺寸",
+        "scannerDocs": "全部證件類型"
+      },
+      "didYouMean": "你是不是要找「{name}」？",
+      "didYouMeanCta": "開啟 {name}"
     },
     "runtime": {
       "title": "出錯了",
@@ -841,8 +1011,8 @@
   "Scanner": {
     "title": "智慧證件掃描產生器",
     "subtitle": "上傳手機拍的身分證、護照、駕駛執照等證件照片，智慧掃描自動透視校正、AI 調色與去陰影，一鍵產生 A4 / Letter / A5 PDF 掃描件 —— 全程在瀏覽器中完成。",
-    "metaTitle": "智慧證件掃描 — AI 身分證 / 護照 / 駕駛執照手機照轉 PDF",
-    "metaDescription": "免費的智慧證件掃描工具：AI 透視校正 + 掃描 / 影印 / 增強三種模式，把手機拍的身分證、護照、駕駛執照一鍵轉成 A4 PDF。全程瀏覽器本機處理，相片不上傳。",
+    "metaTitle": "Pixfit 智慧證件掃描 · 12 種證件瀏覽器內線上掃描 PDF 2026 | Pixfit Scanner",
+    "metaDescription": "線上掃描 12 種證件成 PDF：身分證、護照、駕駛執照、銀行卡。AI 透視校正 + 掃描 / 影印 / 增強模式，免費瀏覽器內執行，相片不上傳，2026 更新。",
     "metaKeywords": [
       "智慧證件掃描",
       "AI 證件掃描",
@@ -852,7 +1022,15 @@
       "證件照轉 A4 PDF",
       "AI 透視校正",
       "智慧掃描器",
-      "Pixfit 掃描"
+      "線上",
+      "免費",
+      "不用下載",
+      "2026",
+      "瀏覽器內",
+      "Pixfit 掃描",
+      "隱私優先",
+      "端側處理",
+      "不聯網"
     ],
     "shell": {
       "previewTitle": "掃描預覽",
@@ -885,6 +1063,13 @@
       }
     },
     "preview": {
+      "trigger": "預覽整頁",
+      "title": "整頁預覽",
+      "description": "下載的 {paper} 整頁效果——紙張、浮水印、圓角與匯出完全一致。",
+      "loading": "正在產生預覽…",
+      "empty": "至少上傳一面證件後即可預覽整頁",
+      "error": "預覽產生失敗，請調整設定後再試。",
+      "imageAlt": "{paper} 整頁排版預覽",
       "frontLabel": "正面",
       "backLabel": "背面",
       "processing": "正在校正透視…",
@@ -978,25 +1163,6 @@
       "successPng": "PNG 已下載",
       "errorGeneric": "匯出失敗：{message}"
     },
-    "preview": {
-      "trigger": "預覽整頁",
-      "title": "整頁預覽",
-      "description": "下載的 {paper} 整頁效果——紙張、浮水印、圓角與匯出完全一致。",
-      "loading": "正在產生預覽…",
-      "empty": "至少上傳一面證件後即可預覽整頁",
-      "error": "預覽產生失敗，請調整設定後再試。",
-      "imageAlt": "{paper} 整頁排版預覽",
-      "frontLabel": "正面",
-      "backLabel": "背面",
-      "processing": "正在校正透視…",
-      "rectifyError": "處理失敗：{message}",
-      "retry": "重試",
-      "editCorners": "調整 4 角",
-      "rotate": "旋轉",
-      "downloadCurrent": "下載目前這面",
-      "downloadHint": "單面 PNG · 完整匯出（A4 / PDF / 影印件 / 浮水印）請用右側匯出區",
-      "adjustHint": "首次預覽按規格比例從原圖中心裁切，請點「調整 4 角」對齊證件實際邊緣"
-    },
     "usage": {
       "heading": "掃描前 —— 使用須知",
       "summary": "在上傳證件前請閱讀：照片不會離開你的瀏覽器，以下是我們做了什麼、不會做什麼，以及使用本工具時你需要遵守的約束。",
@@ -1060,8 +1226,8 @@
       }
     },
     "detail": {
-      "metaTitle": "{name} 智慧掃描轉 A4 PDF · Pixfit",
-      "metaDescription": "為 {name} 最佳化的智慧證件掃描工具：AI 透視校正、掃描 / 影印 / 增強三種模式、可選防濫用浮水印、A4 / Letter / A5 PDF 匯出，全程瀏覽器本機執行。",
+      "metaTitle": "{name} {w}×{h}mm 線上掃描 PDF 2026 | Pixfit Scanner",
+      "metaDescription": "在瀏覽器內掃描 {name}（{w}×{h}mm）：AI 透視校正 + 掃描 / 影印 / 增強模式，匯出 A4 / Letter / A5 PDF。相片不上傳，免費 2026。",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · 可選浮水印",
       "summarySection": {
         "title": "關於 {name}",
@@ -1123,7 +1289,11 @@
         "primary": "用 {name} 開啟掃描器",
         "secondary": "瀏覽所有證件類型"
       },
-      "backLink": "返回掃描器"
+      "backLink": "返回掃描器",
+      "related": {
+        "heading": "你可能還需要",
+        "subtitle": "其他可在瀏覽器內掃描的證件類型"
+      }
     },
     "docTypes": {
       "cn-id-card": {
@@ -1177,6 +1347,52 @@
     },
     "footer": {
       "heading": "證件掃描"
+    }
+  },
+  "Blog": {
+    "index": {
+      "metaTitle": "Pixfit 部落格 · 證件照與掃描 PDF 指南 2026 | Pixfit",
+      "metaDescription": "圍繞線上證件照、文件掃描轉 PDF 與 Pixfit 瀏覽器工具的長文指南。免費、不上傳、2026。",
+      "metaKeywords": [
+        "Pixfit 部落格",
+        "證件照指南 2026",
+        "掃描轉 PDF 教學",
+        "線上證件照",
+        "瀏覽器內文件掃描",
+        "不上傳",
+        "2026",
+        "隱私優先",
+        "端側處理",
+        "不聯網"
+      ],
+      "breadcrumb": "部落格",
+      "heading": "Pixfit 部落格",
+      "subtitle": "圍繞瀏覽器內證件照與文件掃描的長文指南。免費、不上傳、2026。",
+      "readingMinutes": "約 {minutes} 分鐘",
+      "publishedOn": "發佈於 {date}",
+      "openArticle": "閱讀全文"
+    },
+    "posts": {
+      "us-visa-photo-2026": {
+        "card": {
+          "tagline": "尺寸、背景與構圖——2026 美簽 B1/B2 照片完整指南。"
+        }
+      },
+      "12-doc-scan-pdf-guide": {
+        "card": {
+          "tagline": "Pixfit 掃描器內建全部預設，包含正確尺寸與拍攝技巧。"
+        }
+      }
+    },
+    "article": {
+      "backLink": "返回部落格",
+      "readingMinutes": "約 {minutes} 分鐘",
+      "publishedOn": "發佈於 {date}",
+      "updatedOn": "更新於 {date}",
+      "ctaHeading": "在瀏覽器內試用 Pixfit",
+      "ctaBody": "Pixfit 所有工具都在你本地瀏覽器內執行——不上傳、不需帳號，免費。",
+      "ctaPrimary": "開啟工作室",
+      "ctaSecondary": "開啟掃描器"
     }
   }
 }

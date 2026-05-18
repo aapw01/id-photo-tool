@@ -4,18 +4,21 @@ import { hasLocale } from 'next-intl'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
+import { Breadcrumb } from '@/components/breadcrumb'
 import { JsonLd } from '@/components/jsonld'
 import { RegionFlag } from '@/components/region-flag'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { BUILTIN_PHOTO_SPECS, getPhotoSpec } from '@/data/photo-specs'
+import { getRelatedSpecs } from '@/features/seo/related-specs'
 import { flagCodeForRegion } from '@/features/seo/spec-region'
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { localizeText } from '@/lib/i18n-text'
-import { breadcrumbSchema, faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
-import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
+import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
+import { faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import { buildMetadata } from '@/lib/seo/metadata'
 import type { PhotoCategory, PhotoSpec } from '@/types/spec'
 
 interface SpecDetailPageProps {
@@ -148,14 +151,11 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
   const fileRulesRange = formatFileRuleRange(spec.fileRules?.minKB, spec.fileRules?.maxKB)
   const flag = flagCodeForRegion(spec.region)
 
-  const canonicalUrl = buildCanonical(`/sizes/${spec.id}`, locale as Locale)
-  const sizesUrl = buildCanonical('/sizes', locale as Locale)
-
-  const breadcrumbs = breadcrumbSchema([
-    { url: buildCanonical('/', locale as Locale), name: tNav('home') },
-    { url: sizesUrl, name: tSizes('heading') },
-    { url: canonicalUrl, name },
-  ])
+  const breadcrumbItems = getBreadcrumbItems('sizes-detail', {
+    labels: { home: tNav('home'), sizes: tSizes('heading') },
+    detail: { itemName: name, itemSlug: spec.id },
+  })
+  const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
 
   const howToSteps = HOWTO_STEP_KEYS.map((key) => ({
     name: t(`howto.steps.${key}.name`, { name }),
@@ -194,6 +194,8 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
       <SiteHeader />
       <main className="flex-1">
         <article className="mx-auto w-full max-w-4xl px-6 pt-10 pb-16">
+          <Breadcrumb items={breadcrumbItems} className="mb-6" />
+
           <nav className="mb-6">
             <Link
               href={{ pathname: '/sizes' }}
@@ -442,10 +444,72 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
               </div>
             </div>
           </section>
+
+          <RelatedSpecsRow specId={spec.id} locale={locale as Locale} t={t} />
         </article>
       </main>
       <SiteFooter />
       <JsonLd data={[webApplicationSchema(locale as Locale), breadcrumbs, howTo, faq]} />
     </>
+  )
+}
+
+interface RelatedSpecsRowProps {
+  specId: string
+  locale: Locale
+  t: Awaited<ReturnType<typeof getTranslations<'Sizes.detail'>>>
+}
+
+/**
+ * "Also try / 你可能还需要" row beneath the per-spec CTA. Renders
+ * 4–6 related specs picked deterministically by `getRelatedSpecs`
+ * (same region first, then same physical size bucket). The row is
+ * a `<nav aria-label>` so screen readers can skip into the
+ * recommendations directly.
+ */
+function RelatedSpecsRow({ specId, locale, t }: RelatedSpecsRowProps) {
+  const related = getRelatedSpecs(specId)
+  if (related.length === 0) return null
+  return (
+    <nav
+      aria-label={t('related.heading')}
+      className="mt-12 border-t border-[var(--color-border)] pt-10"
+    >
+      <header className="mb-6">
+        <h2
+          className="text-[var(--color-text)]"
+          style={{
+            fontSize: 'var(--text-h3)',
+            lineHeight: 'var(--text-h3--line-height)',
+          }}
+        >
+          {t('related.heading')}
+        </h2>
+        <p className="mt-1 text-sm text-[var(--color-text-mute)]">{t('related.subtitle')}</p>
+      </header>
+      <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {related.map((other) => (
+          <li key={other.id}>
+            <Link
+              href={{ pathname: `/sizes/${other.id}` }}
+              className="group flex items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-3 transition-colors hover:border-[var(--color-primary-soft)] hover:bg-[var(--color-primary-soft)]/30"
+            >
+              <span className="flex-1">
+                <span className="block text-sm font-medium text-[var(--color-text)]">
+                  {localizeText(other.name, locale)}
+                </span>
+                <span className="mt-0.5 block font-mono text-xs text-[var(--color-text-weak)]">
+                  {other.width_mm} × {other.height_mm} mm
+                </span>
+              </span>
+              <ArrowRight
+                className="size-4 text-[var(--color-text-weak)] transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
   )
 }
