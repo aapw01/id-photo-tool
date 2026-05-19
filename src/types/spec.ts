@@ -18,10 +18,33 @@ import { z } from 'zod'
 /* i18n payload                                                               */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Localized text payload keyed by the 13 next-intl locales Pixfit ships.
+ *
+ * Only `en` is required — every other locale is optional so we can:
+ *   1. accept legacy user-imported JSON that predates the 10-locale
+ *      expansion (`zh`, `zh-Hant`, `en`) without breaking validation;
+ *   2. roll out translations incrementally per entry without forcing a
+ *      complete row for every spec on day one (`localizeText` falls
+ *      back to `en` whenever the requested locale key is missing).
+ *
+ * Keep `en` required: it's the universal fallback target for every
+ * other locale, so we'd lose the safety net if it were optional.
+ */
 export const I18nTextSchema = z.object({
-  zh: z.string(),
-  'zh-Hant': z.string(),
   en: z.string(),
+  zh: z.string().optional(),
+  'zh-Hant': z.string().optional(),
+  ja: z.string().optional(),
+  ko: z.string().optional(),
+  es: z.string().optional(),
+  'pt-BR': z.string().optional(),
+  fr: z.string().optional(),
+  de: z.string().optional(),
+  ru: z.string().optional(),
+  it: z.string().optional(),
+  vi: z.string().optional(),
+  ar: z.string().optional(),
 })
 export type I18nText = z.infer<typeof I18nTextSchema>
 
