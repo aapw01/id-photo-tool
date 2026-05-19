@@ -6,19 +6,19 @@
     "openStudio": "Mở Studio",
     "learnMore": "Tìm hiểu thêm",
     "languages": {
-      "zh-Hans": "Tiếng Trung giản thể",
-      "zh-Hant": "Tiếng Trung phồn thể",
-      "en": "Tiếng Anh",
-      "ja": "Tiếng Nhật",
-      "ko": "Tiếng Hàn",
-      "es": "Tiếng Tây Ban Nha",
-      "pt-BR": "Tiếng Bồ Đào Nha (Brazil)",
-      "fr": "Tiếng Pháp",
-      "de": "Tiếng Đức",
-      "ru": "Tiếng Nga",
-      "it": "Tiếng Ý",
+      "zh-Hans": "简体中文",
+      "zh-Hant": "繁體中文",
+      "en": "English",
+      "ja": "日本語",
+      "ko": "한국어",
+      "es": "Español",
+      "pt-BR": "Português (Brasil)",
+      "fr": "Français",
+      "de": "Deutsch",
+      "ru": "Русский",
+      "it": "Italiano",
       "vi": "Tiếng Việt",
-      "ar": "Tiếng Ả Rập"
+      "ar": "العربية"
     }
   },
   "Nav": {

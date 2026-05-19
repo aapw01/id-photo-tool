@@ -15,16 +15,42 @@
  * | A5    | —     | 148 × 210   | 1748 × 2480     |
  */
 
-import type { PaperSpec } from '@/types/spec'
+import type { I18nText, PaperSpec } from '@/types/spec'
 
-const i18n = (zh: string, zhHant: string, en: string) => ({ zh, 'zh-Hant': zhHant, en })
+/**
+ * Locales added in the 10-locale expansion. The print-size codes
+ * (3R / 4R / 5R / 6R / 8R, A4 / A5) are international, so the
+ * translation work is just the trailing inch/pulgada/pollice noun
+ * and (for A-series) the language-native word for "paper".
+ */
+type LocaleExtras = Partial<
+  Record<'ja' | 'ko' | 'es' | 'pt-BR' | 'fr' | 'de' | 'ru' | 'it' | 'vi' | 'ar', string>
+>
+
+const i18n = (zh: string, zhHant: string, en: string, more: LocaleExtras = {}): I18nText => ({
+  zh,
+  'zh-Hant': zhHant,
+  en,
+  ...more,
+})
 
 export const BUILTIN_PAPER_SPECS: PaperSpec[] = [
   {
     id: '3R',
     builtin: true,
     alias: '5 寸',
-    name: i18n('5 寸 (3R)', '5 吋 (3R)', '5-inch (3R)'),
+    name: i18n('5 寸 (3R)', '5 吋 (3R)', '5-inch (3R)', {
+      ja: '5インチ (3R)',
+      ko: '5인치 (3R)',
+      es: '5 pulgadas (3R)',
+      'pt-BR': '5 polegadas (3R)',
+      fr: '5 pouces (3R)',
+      de: '5 Zoll (3R)',
+      ru: '5 дюймов (3R)',
+      it: '5 pollici (3R)',
+      vi: '5 inch (3R)',
+      ar: '5 إنش (3R)',
+    }),
     width_mm: 127,
     height_mm: 89,
     dpi: 300,
@@ -35,7 +61,18 @@ export const BUILTIN_PAPER_SPECS: PaperSpec[] = [
     id: '4R',
     builtin: true,
     alias: '6 寸',
-    name: i18n('6 寸 (4R)', '6 吋 (4R)', '6-inch (4R)'),
+    name: i18n('6 寸 (4R)', '6 吋 (4R)', '6-inch (4R)', {
+      ja: '6インチ (4R)',
+      ko: '6인치 (4R)',
+      es: '6 pulgadas (4R)',
+      'pt-BR': '6 polegadas (4R)',
+      fr: '6 pouces (4R)',
+      de: '6 Zoll (4R)',
+      ru: '6 дюймов (4R)',
+      it: '6 pollici (4R)',
+      vi: '6 inch (4R)',
+      ar: '6 إنش (4R)',
+    }),
     width_mm: 152,
     height_mm: 102,
     dpi: 300,
@@ -46,7 +83,18 @@ export const BUILTIN_PAPER_SPECS: PaperSpec[] = [
     id: '5R',
     builtin: true,
     alias: '7 寸',
-    name: i18n('7 寸 (5R)', '7 吋 (5R)', '7-inch (5R)'),
+    name: i18n('7 寸 (5R)', '7 吋 (5R)', '7-inch (5R)', {
+      ja: '7インチ (5R)',
+      ko: '7인치 (5R)',
+      es: '7 pulgadas (5R)',
+      'pt-BR': '7 polegadas (5R)',
+      fr: '7 pouces (5R)',
+      de: '7 Zoll (5R)',
+      ru: '7 дюймов (5R)',
+      it: '7 pollici (5R)',
+      vi: '7 inch (5R)',
+      ar: '7 إنش (5R)',
+    }),
     width_mm: 178,
     height_mm: 127,
     dpi: 300,
@@ -57,7 +105,18 @@ export const BUILTIN_PAPER_SPECS: PaperSpec[] = [
     id: '6R',
     builtin: true,
     alias: '8 寸',
-    name: i18n('8 寸 (6R)', '8 吋 (6R)', '8-inch (6R)'),
+    name: i18n('8 寸 (6R)', '8 吋 (6R)', '8-inch (6R)', {
+      ja: '8インチ (6R)',
+      ko: '8인치 (6R)',
+      es: '8 pulgadas (6R)',
+      'pt-BR': '8 polegadas (6R)',
+      fr: '8 pouces (6R)',
+      de: '8 Zoll (6R)',
+      ru: '8 дюймов (6R)',
+      it: '8 pollici (6R)',
+      vi: '8 inch (6R)',
+      ar: '8 إنش (6R)',
+    }),
     width_mm: 203,
     height_mm: 152,
     dpi: 300,
@@ -68,7 +127,18 @@ export const BUILTIN_PAPER_SPECS: PaperSpec[] = [
     id: '8R',
     builtin: true,
     alias: '10 寸',
-    name: i18n('10 寸 (8R)', '10 吋 (8R)', '10-inch (8R)'),
+    name: i18n('10 寸 (8R)', '10 吋 (8R)', '10-inch (8R)', {
+      ja: '10インチ (8R)',
+      ko: '10인치 (8R)',
+      es: '10 pulgadas (8R)',
+      'pt-BR': '10 polegadas (8R)',
+      fr: '10 pouces (8R)',
+      de: '10 Zoll (8R)',
+      ru: '10 дюймов (8R)',
+      it: '10 pollici (8R)',
+      vi: '10 inch (8R)',
+      ar: '10 إنش (8R)',
+    }),
     width_mm: 254,
     height_mm: 203,
     dpi: 300,
@@ -78,7 +148,18 @@ export const BUILTIN_PAPER_SPECS: PaperSpec[] = [
   {
     id: 'A4',
     builtin: true,
-    name: i18n('A4', 'A4', 'A4'),
+    name: i18n('A4', 'A4', 'A4', {
+      ja: 'A4 用紙',
+      ko: 'A4 용지',
+      es: 'Papel A4',
+      'pt-BR': 'Papel A4',
+      fr: 'Papier A4',
+      de: 'A4-Papier',
+      ru: 'Бумага A4',
+      it: 'Carta A4',
+      vi: 'Giấy A4',
+      ar: 'ورق A4',
+    }),
     width_mm: 210,
     height_mm: 297,
     dpi: 300,
@@ -88,7 +169,18 @@ export const BUILTIN_PAPER_SPECS: PaperSpec[] = [
   {
     id: 'A5',
     builtin: true,
-    name: i18n('A5', 'A5', 'A5'),
+    name: i18n('A5', 'A5', 'A5', {
+      ja: 'A5 用紙',
+      ko: 'A5 용지',
+      es: 'Papel A5',
+      'pt-BR': 'Papel A5',
+      fr: 'Papier A5',
+      de: 'A5-Papier',
+      ru: 'Бумага A5',
+      it: 'Carta A5',
+      vi: 'Giấy A5',
+      ar: 'ورق A5',
+    }),
     width_mm: 148,
     height_mm: 210,
     dpi: 300,
