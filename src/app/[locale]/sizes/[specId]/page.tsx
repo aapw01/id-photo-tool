@@ -85,6 +85,21 @@ function formatFileRuleRange(minKB?: number, maxKB?: number): string | null {
   return null
 }
 
+/**
+ * Lock the route to the predefined (locale × specId) matrix.
+ * Without this, requests for unknown spec ids (typos, stale external
+ * links, GSC ghost URLs) bypass `generateStaticParams` and hit the
+ * App Router's runtime fallback — which on Vercel surfaces as a
+ * **500** instead of a clean 404 because the Edge response chain
+ * around `notFound()` short-circuits before the locale-aware
+ * `not-found.tsx` can render. Pinning `dynamicParams = false` makes
+ * Next.js itself return a framework 404 for any param tuple not in
+ * the matrix, so Google never sees server errors for typoed slugs.
+ *
+ * Tested against `/en/sizes/totally-fake-xyz` → was 500, now 404.
+ */
+export const dynamicParams = false
+
 export function generateStaticParams() {
   const params: Array<{ locale: string; specId: string }> = []
   for (const locale of routing.locales) {

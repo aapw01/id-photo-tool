@@ -19,14 +19,18 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 interface OgProps {
-  params: { locale: string; specId: string }
+  // Next.js 16: params is a Promise, not a synchronous object. Reading
+  // it without await silently returns undefined on every field, so the
+  // OG card ends up rendering a fallback name for every spec.
+  params: Promise<{ locale: string; specId: string }>
 }
 
 export default async function SpecOgImage({ params }: OgProps) {
-  if (!routing.locales.includes(params.locale as (typeof routing.locales)[number])) notFound()
-  const spec = getPhotoSpec(params.specId)
+  const { locale, specId } = await params
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) notFound()
+  const spec = getPhotoSpec(specId)
   if (!spec) notFound()
-  const name = localizeText(spec.name, params.locale)
+  const name = localizeText(spec.name, locale)
   const pixelLine =
     spec.width_px && spec.height_px ? ` · ${spec.width_px} × ${spec.height_px} px` : ''
   return renderOgImage({

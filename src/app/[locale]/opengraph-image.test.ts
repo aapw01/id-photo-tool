@@ -75,7 +75,10 @@ describe('opengraph-image modules', () => {
 
   it('home OG handler returns an ImageResponse-stub instance', async () => {
     const { default: handler } = await import('./opengraph-image')
-    const out = (await handler({ params: { locale: 'en' } })) as unknown as { node: unknown }
+    // Next.js 16 wraps `params` in a Promise; tests mirror runtime.
+    const out = (await handler({ params: Promise.resolve({ locale: 'en' }) })) as unknown as {
+      node: unknown
+    }
     expect(out).toBeDefined()
     expect(out.node).toBeDefined()
   })
@@ -83,7 +86,7 @@ describe('opengraph-image modules', () => {
   it('scanner doc OG handler resolves a known DocSpec', async () => {
     const { default: handler } = await import('./scanner/[docType]/opengraph-image')
     const out = (await handler({
-      params: { locale: 'en', docType: 'cn-id-card' },
+      params: Promise.resolve({ locale: 'en', docType: 'cn-id-card' }),
     })) as unknown as { node: unknown }
     expect(out.node).toBeDefined()
   })

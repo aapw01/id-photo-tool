@@ -20,17 +20,19 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 interface OgProps {
-  params: { locale: string; slug: string }
+  // Next.js 16: params is a Promise, must be awaited.
+  params: Promise<{ locale: string; slug: string }>
 }
 
 export default async function BlogArticleOgImage({ params }: OgProps) {
-  if (!routing.locales.includes(params.locale as Locale)) notFound()
-  const post = getBlogPost(params.slug)
+  const { locale, slug } = await params
+  if (!routing.locales.includes(locale as Locale)) notFound()
+  const post = getBlogPost(slug)
   if (!post) notFound()
-  const body = getArticleBody(params.slug, params.locale as Locale)
+  const body = getArticleBody(slug, locale as Locale)
   if (!body) notFound()
 
-  const dateFormatter = new Intl.DateTimeFormat(params.locale, {
+  const dateFormatter = new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

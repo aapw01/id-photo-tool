@@ -16,12 +16,14 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 interface OgProps {
-  params: { locale: string }
+  // Next.js 16: params is a Promise, must be awaited.
+  params: Promise<{ locale: string }>
 }
 
 export default async function HomeOgImage({ params }: OgProps) {
-  const t = await getTranslations({ locale: params.locale, namespace: 'Home' })
-  const tCommon = await getTranslations({ locale: params.locale, namespace: 'Common' })
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'Home' })
+  const tCommon = await getTranslations({ locale, namespace: 'Common' })
   return renderOgImage({
     headline: t('heroTitle'),
     subtitle: tCommon('tagline'),

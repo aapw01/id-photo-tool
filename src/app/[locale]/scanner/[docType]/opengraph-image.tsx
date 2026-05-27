@@ -19,13 +19,16 @@ export const size = OG_SIZE
 export const contentType = OG_CONTENT_TYPE
 
 interface OgProps {
-  params: { locale: string; docType: string }
+  // Next.js 16: params is a Promise, must be awaited.
+  params: Promise<{ locale: string; docType: string }>
 }
 
 export default async function ScannerDocOgImage({ params }: OgProps) {
-  if (!routing.locales.includes(params.locale as (typeof routing.locales)[number])) notFound()
-  const spec = getDocSpec(params.docType)
-  const t = await getTranslations({ locale: params.locale, namespace: 'Scanner.docSpecs' })
+  const { locale, docType } = await params
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) notFound()
+  const spec = getDocSpec(docType)
+  if (!spec) notFound()
+  const t = await getTranslations({ locale, namespace: 'Scanner.docSpecs' })
   const docName = t(spec.id as Parameters<typeof t>[0])
   return renderOgImage({
     eyebrow: 'Pixfit Scanner',
