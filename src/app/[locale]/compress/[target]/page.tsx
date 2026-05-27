@@ -41,6 +41,12 @@ interface PageProps {
 const HOWTO_STEP_KEYS = ['upload', 'target', 'compress', 'download'] as const
 const FAQ_ITEM_KEYS = ['quality', 'target', 'format', 'batch'] as const
 
+/**
+ * Lock the route to the predefined (locale × target) matrix.
+ * See `src/app/[locale]/sizes/[specId]/page.tsx` for the rationale.
+ */
+export const dynamicParams = false
+
 export function generateStaticParams() {
   const params: Array<{ locale: string; target: string }> = []
   for (const locale of routing.locales) {

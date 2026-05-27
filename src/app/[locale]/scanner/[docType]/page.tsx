@@ -44,6 +44,13 @@ function findDocSpec(id: string): DocSpec | null {
   return DOC_SPECS.find((s) => s.id === id) ?? null
 }
 
+/**
+ * Lock the route to the predefined (locale × docType) matrix.
+ * See `src/app/[locale]/sizes/[specId]/page.tsx` for the full
+ * rationale — short version: unknown doc types must 404, not 500.
+ */
+export const dynamicParams = false
+
 export function generateStaticParams() {
   const params: Array<{ locale: string; docType: string }> = []
   for (const locale of routing.locales) {

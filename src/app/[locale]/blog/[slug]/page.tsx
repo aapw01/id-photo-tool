@@ -31,6 +31,12 @@ interface PageProps {
   params: Promise<{ locale: string; slug: string }>
 }
 
+/**
+ * Lock the route to the predefined (locale × slug) matrix.
+ * See `src/app/[locale]/sizes/[specId]/page.tsx` for the rationale.
+ */
+export const dynamicParams = false
+
 export function generateStaticParams() {
   const params: Array<{ locale: string; slug: string }> = []
   for (const locale of routing.locales) {
