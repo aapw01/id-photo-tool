@@ -167,7 +167,7 @@ Dev-only routes (`/dev/*`) are hidden by default; set `NEXT_PUBLIC_ENABLE_DEV_PA
 
 ## Tech stack
 
-- Next.js 16 (App Router) + React 19 + TypeScript 5.6
+- Next.js 15 (App Router) + React 19 + TypeScript 5.6
 - Tailwind CSS v4 + shadcn/ui (New York) + Lucide / flag-icons
 - next-intl v4 (route-based i18n via the `/[locale]/` segment)
 - State: Zustand

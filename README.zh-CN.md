@@ -167,7 +167,7 @@ dev-only 路由（`/dev/*`）默认隐藏；需 `NEXT_PUBLIC_ENABLE_DEV_PAGES=1`
 
 ## 技术栈
 
-- Next.js 16（App Router）+ React 19 + TypeScript 5.6
+- Next.js 15（App Router）+ React 19 + TypeScript 5.6
 - Tailwind CSS v4 + shadcn/ui (New York) + Lucide / flag-icons
 - next-intl v4（路由型国际化，`/[locale]/` 段）
 - 状态管理：Zustand
