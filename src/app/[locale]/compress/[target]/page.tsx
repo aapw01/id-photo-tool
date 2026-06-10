@@ -23,6 +23,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/breadcrumb'
+import { CrossSurfaceLinks } from '@/components/cross-surface-links'
 import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -235,6 +236,8 @@ export default async function CompressTargetPage({ params }: PageProps) {
             </div>
             <p className="mt-2 text-xs text-[var(--color-text-mute)]">{t('cta.secondaryHint')}</p>
           </section>
+
+          <CrossSurfaceLinks current="compress" />
         </article>
       </main>
       <SiteFooter />

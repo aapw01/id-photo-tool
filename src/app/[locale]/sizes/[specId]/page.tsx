@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/breadcrumb'
+import { CrossSurfaceLinks } from '@/components/cross-surface-links'
 import { JsonLd } from '@/components/jsonld'
 import { RegionFlag } from '@/components/region-flag'
 import { SiteFooter } from '@/components/site-footer'
@@ -467,6 +468,7 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
           </section>
 
           <RelatedSpecsRow specId={spec.id} locale={locale as Locale} t={t} />
+          <CrossSurfaceLinks current="sizes" />
         </article>
       </main>
       <SiteFooter />

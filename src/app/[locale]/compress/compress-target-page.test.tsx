@@ -6,6 +6,10 @@ import { SUPPORTED_LOCALES } from '@/lib/seo/site-config'
 
 vi.mock('next-intl', () => ({
   hasLocale: (locales: readonly string[], locale: string) => locales.includes(locale),
+  // CrossSurfaceLinks (rendered at the foot of the page) is a server
+  // component that reads labels via the synchronous next-intl hooks.
+  useTranslations: (namespace: string) => (key: string) => `${namespace}.${key}`,
+  useLocale: () => 'en',
 }))
 
 vi.mock('next-intl/server', () => ({
