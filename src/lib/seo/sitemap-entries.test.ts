@@ -13,23 +13,22 @@ import {
   scannerDocTypeRoutes,
   specDetailRoutes,
 } from './sitemap-entries'
-import { SITE_URL, SUPPORTED_LOCALES } from './site-config'
+import { INDEX_LOCALES, SITE_URL, SUPPORTED_LOCALES } from './site-config'
 
 const LOCALE_COUNT = SUPPORTED_LOCALES.length
+/** Long-tail detail tier (sizes/scanner/compress) ships in these only. */
+const INDEX_LOCALE_COUNT = INDEX_LOCALES.length
 
 describe('buildSitemapEntries', () => {
   const fixed = new Date('2026-05-12T12:00:00Z')
 
-  it('emits one entry per route × locale, including spec/scanner/compress/blog detail pages', () => {
+  it('emits hubs + blog in every locale, but the detail tier only in INDEX_LOCALES', () => {
     const entries = buildSitemapEntries(fixed)
-    const expected =
-      (SITEMAP_ROUTES.length +
-        BUILTIN_PHOTO_SPECS.length +
-        SCANNER_DOC_SPECS.length +
-        COMPRESS_TARGETS.length +
-        BLOG_POSTS.length) *
-      LOCALE_COUNT
-    expect(entries).toHaveLength(expected)
+    const allLocaleRoutes = (SITEMAP_ROUTES.length + BLOG_POSTS.length) * LOCALE_COUNT
+    const indexTierRoutes =
+      (BUILTIN_PHOTO_SPECS.length + SCANNER_DOC_SPECS.length + COMPRESS_TARGETS.length) *
+      INDEX_LOCALE_COUNT
+    expect(entries).toHaveLength(allLocaleRoutes + indexTierRoutes)
   })
 
   it('emits the /blog index + every article URL per locale', () => {
@@ -52,16 +51,16 @@ describe('buildSitemapEntries', () => {
     }
   })
 
-  it('emits one /compress/[target] URL per target × locale (15 total)', () => {
+  it('emits one /compress/[target] URL per target × INDEX_LOCALE', () => {
     const entries = buildSitemapEntries(fixed)
     const compressDetail = entries.filter(
       (e) => /\/compress\/[^/]+$/.test(e.url) && !e.url.endsWith('/compress'),
     )
-    expect(compressDetail).toHaveLength(COMPRESS_TARGETS.length * LOCALE_COUNT)
+    expect(compressDetail).toHaveLength(COMPRESS_TARGETS.length * INDEX_LOCALE_COUNT)
     expect(compressTargetRoutes().every((r) => r.priority === 0.8)).toBe(true)
   })
 
-  it('emits one scanner DocType URL × locale + one size detail URL × locale', () => {
+  it('emits one scanner DocType URL + one size detail URL per INDEX_LOCALE', () => {
     const entries = buildSitemapEntries(fixed)
     const scannerDetailEntries = entries.filter(
       (e) => /\/scanner\/[^/]+$/.test(e.url) && !e.url.endsWith('/scanner'),
@@ -72,25 +71,36 @@ describe('buildSitemapEntries', () => {
     // Pin against data-derived expectations so this test fails the
     // day the catalog or locale list changes instead of silently
     // drifting.
-    expect(scannerDetailEntries).toHaveLength(SCANNER_DOC_SPECS.length * LOCALE_COUNT)
-    expect(sizeDetailEntries).toHaveLength(BUILTIN_PHOTO_SPECS.length * LOCALE_COUNT)
+    expect(scannerDetailEntries).toHaveLength(SCANNER_DOC_SPECS.length * INDEX_LOCALE_COUNT)
+    expect(sizeDetailEntries).toHaveLength(BUILTIN_PHOTO_SPECS.length * INDEX_LOCALE_COUNT)
   })
 
-  it('emits the per-spec detail URL into the sitemap', () => {
+  it('emits the per-spec detail URL only for indexed locales', () => {
     const entries = buildSitemapEntries(fixed)
     const urls = entries.map((e) => e.url)
     expect(urls).toContain(`${SITE_URL}/en/sizes/us-visa`)
     expect(urls).toContain(`${SITE_URL}/zh-Hans/sizes/cn-id-card`)
-    expect(urls).toContain(`${SITE_URL}/zh-Hant/sizes/schengen`)
+    // zh-Hant is not an indexed locale for the detail tier — the URL
+    // must be absent from the sitemap (the page still renders noindex).
+    expect(urls).not.toContain(`${SITE_URL}/zh-Hant/sizes/schengen`)
+    expect(urls).not.toContain(`${SITE_URL}/ja/sizes/us-visa`)
   })
 
-  it('populates hreflang alternates covering every supported locale + x-default on every entry', () => {
+  it('hub + blog entries carry the full hreflang cluster; detail entries only INDEX_LOCALES', () => {
     const entries = buildSitemapEntries(fixed)
+    const isDetail = (url: string) =>
+      /\/(sizes|scanner|compress)\/[^/]+$/.test(url) && !/\/(sizes|scanner|compress)$/.test(url)
     for (const entry of entries) {
       const langs = entry.alternates?.languages as Record<string, string> | undefined
       expect(langs).toBeDefined()
-      for (const locale of SUPPORTED_LOCALES) {
+      const expectedLocales = isDetail(entry.url) ? INDEX_LOCALES : SUPPORTED_LOCALES
+      for (const locale of expectedLocales) {
         expect(langs?.[locale]).toMatch(`${SITE_URL}/${locale}`)
+      }
+      if (isDetail(entry.url)) {
+        // No alternates to the non-indexed locales.
+        expect(langs?.['zh-Hant']).toBeUndefined()
+        expect(langs?.['ja']).toBeUndefined()
       }
       expect(langs?.['x-default']).toMatch(`${SITE_URL}/en`)
     }
@@ -162,25 +172,26 @@ describe('buildSitemapEntries', () => {
     expect(routes.every((r) => r.path.startsWith('/scanner/'))).toBe(true)
   })
 
-  it('emits every scanner DocType URL into the sitemap', () => {
+  it('emits scanner DocType URLs for indexed locales only', () => {
     const entries = buildSitemapEntries(fixed)
     const urls = new Set(entries.map((e) => e.url))
     expect(urls.has(`${SITE_URL}/zh-Hans/scanner/cn-id-card`)).toBe(true)
-    expect(urls.has(`${SITE_URL}/zh-Hant/scanner/tw-id-card`)).toBe(true)
     expect(urls.has(`${SITE_URL}/en/scanner/us-driver-license`)).toBe(true)
     expect(urls.has(`${SITE_URL}/en/scanner/passport-bio`)).toBe(true)
+    // Non-indexed locale → excluded from the sitemap.
+    expect(urls.has(`${SITE_URL}/zh-Hant/scanner/tw-id-card`)).toBe(false)
   })
 
-  it('every scanner DocType URL carries hreflang alternates', () => {
+  it('every emitted scanner DocType URL carries the INDEX_LOCALES hreflang cluster', () => {
     const entries = buildSitemapEntries(fixed)
     const scannerEntries = entries.filter(
       (e) => e.url.includes('/scanner/') && !e.url.endsWith('/scanner'),
     )
-    expect(scannerEntries.length).toBe(SCANNER_DOC_SPECS.length * LOCALE_COUNT)
+    expect(scannerEntries.length).toBe(SCANNER_DOC_SPECS.length * INDEX_LOCALE_COUNT)
     for (const entry of scannerEntries) {
       const langs = entry.alternates?.languages as Record<string, string> | undefined
       expect(langs).toBeDefined()
-      for (const locale of SUPPORTED_LOCALES) {
+      for (const locale of INDEX_LOCALES) {
         expect(langs?.[locale]).toBeDefined()
       }
       expect(langs?.['x-default']).toBeDefined()

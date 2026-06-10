@@ -38,6 +38,26 @@ export const SUPPORTED_LOCALES: readonly Locale[] = [
 export const DEFAULT_LOCALE: Locale = 'zh-Hans'
 
 /**
+ * Locales the long-tail tool **detail** tier (sizes/scanner/compress
+ * detail pages) is indexed in. The site is young: Google won't index
+ * ~800 URLs from a low-authority domain — it parks most as
+ * "Discovered, currently not indexed" (see GSC). Concentrating the
+ * detail tier on the two highest-value markets lets crawl budget and
+ * link equity land on a focused set, while the hub pages and blog
+ * still ship in all {@link SUPPORTED_LOCALES}. Non-indexed locales of
+ * a detail page still render (so a Korean visitor on
+ * `/ko/sizes/us-visa` sees Korean copy) but are `noindex` and excluded
+ * from the sitemap + hreflang cluster. Widen this list as the domain
+ * earns authority.
+ */
+export const INDEX_LOCALES: readonly Locale[] = ['zh-Hans', 'en']
+
+/** Whether the long-tail detail tier is indexed for `locale`. */
+export function isIndexedLocale(locale: Locale): boolean {
+  return INDEX_LOCALES.includes(locale)
+}
+
+/**
  * Locale used for the `x-default` hreflang entry. We target the global
  * English audience here (rather than the routing default of `zh-Hans`)
  * so that visitors hitting Pixfit without a matched language hint are

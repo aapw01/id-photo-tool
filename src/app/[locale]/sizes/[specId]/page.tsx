@@ -19,6 +19,7 @@ import { localizeText } from '@/lib/i18n-text'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
 import { faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
+import { INDEX_LOCALES, isIndexedLocale } from '@/lib/seo/site-config'
 import type { PhotoCategory, PhotoSpec } from '@/types/spec'
 
 interface SpecDetailPageProps {
@@ -143,6 +144,11 @@ export async function generateMetadata({ params }: SpecDetailPageProps): Promise
       bgLabel: bg.label,
     }),
     keywords,
+    // Long-tail detail tier: only zh-Hans + en are indexed while the
+    // domain is young (see INDEX_LOCALES). Other locales still render
+    // for visitors but are noindex + excluded from the hreflang set.
+    noIndex: !isIndexedLocale(locale as Locale),
+    alternateLocales: INDEX_LOCALES,
   })
 }
 

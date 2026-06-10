@@ -32,6 +32,7 @@ import { routing } from '@/i18n/routing'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
 import { faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
+import { INDEX_LOCALES, isIndexedLocale } from '@/lib/seo/site-config'
 
 interface PageProps {
   params: Promise<{ locale: string; docType: string }>
@@ -82,6 +83,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: t('metaTitle', { name, w: spec.widthMm, h: spec.heightMm }),
     description: t('metaDescription', { name, w: spec.widthMm, h: spec.heightMm }),
     keywords,
+    // See INDEX_LOCALES — detail tier indexed in zh-Hans + en only.
+    noIndex: !isIndexedLocale(locale as Locale),
+    alternateLocales: INDEX_LOCALES,
   })
 }
 
