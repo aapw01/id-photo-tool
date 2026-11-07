@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { useRouter } from '@/i18n/navigation'
 import { useStudioStore } from '@/features/studio/store'
+import { classifyFileType, trackEvent } from '@/lib/analytics'
 
 interface UploadDropzoneProps {
   /**
@@ -17,6 +18,7 @@ interface UploadDropzoneProps {
   onSelect?: (file: File) => void
   accept?: string
   className?: string
+  analyticsSurface?: 'home' | 'studio'
 }
 
 /**
@@ -32,6 +34,7 @@ export function UploadDropzone({
   onSelect,
   accept = 'image/jpeg,image/png,image/webp,image/heic,image/heif',
   className,
+  analyticsSurface = 'studio',
 }: UploadDropzoneProps) {
   const t = useTranslations('Home.uploadDropzone')
   const [isDragging, setIsDragging] = useState(false)
@@ -47,12 +50,16 @@ export function UploadDropzone({
       }
       try {
         await setFile(file)
+        trackEvent('upload_succeeded', {
+          surface: analyticsSurface,
+          file_type: classifyFileType(file),
+        })
         router.push('/studio')
       } catch {
         // Decode failure surfaces in the studio toast; here we just stay put.
       }
     },
-    [onSelect, router, setFile],
+    [analyticsSurface, onSelect, router, setFile],
   )
 
   const onFiles = useCallback(

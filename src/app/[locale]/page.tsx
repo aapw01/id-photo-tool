@@ -99,7 +99,7 @@ export default async function HomePage({ params }: HomePageProps) {
           </div>
 
           <div className="mx-auto mt-12 max-w-2xl">
-            <UploadDropzone />
+            <UploadDropzone analyticsSurface="home" />
             <p className="mt-4 text-center text-sm text-[var(--color-text-weak)]">{t('ctaHint')}</p>
           </div>
         </section>

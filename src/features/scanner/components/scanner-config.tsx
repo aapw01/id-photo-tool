@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl'
 import { Download, FileDown, FilePenLine, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
+import { trackEvent } from '@/lib/analytics'
 import { groupDocSpecs } from '../lib/doc-specs'
 import type { PaperSize } from '../lib/pack-a4'
 import type { OutputMode } from '../lib/render-modes'
@@ -320,6 +321,10 @@ function ExportRow() {
       // Slight delay before revoke so the browser has time to start
       // the download in flaky environments.
       setTimeout(() => URL.revokeObjectURL(url), 1000)
+      trackEvent('scanner_export_succeeded', {
+        format: kind,
+        paper_size: paperSize,
+      })
       toast.success(t(kind === 'pdf' ? 'successPdf' : 'successPng'))
     } catch (err) {
       toast.error(t('errorGeneric', { message: err instanceof Error ? err.message : '' }))
