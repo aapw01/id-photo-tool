@@ -37,6 +37,7 @@ import { LayoutPanel, LayoutPreview } from '@/features/layout'
 import { SegmentationFeedback } from '@/features/segmentation/segmentation-feedback'
 import { useSegmentation } from '@/features/segmentation/use-segmentation'
 import { useSpecManagerStore } from '@/features/spec-manager/store'
+import { trackEvent } from '@/lib/analytics'
 
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
@@ -159,6 +160,7 @@ export function StudioWorkspace() {
       // suppression on the main thread (M5 P2-2).
       const result = await segment(fresh, { withForeground: true })
       setMask(result.mask, result)
+      trackEvent('cutout_succeeded', { backend: result.backend })
     } catch {
       // SegmentationFeedback handles surfacing the error via toast.
     }
@@ -195,7 +197,7 @@ export function StudioWorkspace() {
   if (!bitmap) {
     return (
       <div className="space-y-4">
-        <UploadDropzone />
+        <UploadDropzone analyticsSurface="studio" />
         <p className="text-center text-sm text-[var(--color-text-weak)]">{t('empty.subtitle')}</p>
         <SegmentationFeedback />
       </div>

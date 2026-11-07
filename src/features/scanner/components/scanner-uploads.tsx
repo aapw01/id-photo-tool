@@ -28,6 +28,7 @@ export function ScannerUploads() {
   return (
     <div className="flex flex-col gap-4">
       <ScannerUploadCard
+        side="front"
         slot={front}
         title={t('frontTitle')}
         hint={t('frontHint')}
@@ -35,6 +36,7 @@ export function ScannerUploads() {
         onClear={clearFront}
       />
       <ScannerUploadCard
+        side="back"
         slot={back}
         title={t('backTitle')}
         hint={t('backHint')}

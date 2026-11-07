@@ -39,6 +39,7 @@ import {
 import { packSheet, type PackedSide, type PaperSize } from './lib/pack-a4'
 import { exportPackedSheetToPdf } from './lib/export-pdf'
 import { rotateQuadCW90, type Quad } from './lib/detect-corners'
+import { trackEvent } from '@/lib/analytics'
 
 export type { PaperSize }
 
@@ -538,10 +539,12 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
         spec,
         quad: overrideQuad,
       })
+      let committed = false
       set((state) => {
         const current = state[side]
         // Guard: user replaced the upload while we were warping.
         if (!current || current.bitmap !== sourceBitmap) return state
+        committed = true
         return {
           [side]: {
             ...current,
@@ -561,6 +564,11 @@ export const useScannerStore = create<ScannerState>((set, get) => ({
             renderState: 'idle',
           },
         } as Partial<ScannerState>
+      })
+      if (!committed) return
+      trackEvent('scanner_rectify_succeeded', {
+        side,
+        user_adjusted: overrideQuad !== undefined,
       })
       // Kick off the mode pass with the current setting.
       void get().renderSide(side)

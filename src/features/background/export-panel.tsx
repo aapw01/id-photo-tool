@@ -40,6 +40,7 @@ import {
 import { useStudioTabStore } from '@/features/studio/studio-tab-store'
 import { useIsWeChat } from '@/lib/ua'
 import { cn } from '@/lib/utils'
+import { trackEvent } from '@/lib/analytics'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
 import { scaleFrameForForeground, type BgColor } from './composite'
@@ -227,6 +228,12 @@ export function ExportPanel({
       }
 
       triggerDownload(blob, filename)
+      trackEvent('export_succeeded', {
+        surface: 'studio',
+        destination: 'download',
+        format,
+        compressed: compress && supportsCompress,
+      })
       toast.success(t('downloadSuccess', { filename }))
     } catch {
       toast.error(t('downloadFailed'))
@@ -293,6 +300,12 @@ export function ExportPanel({
       })
       const item = new ClipboardItem({ 'image/png': result.blob })
       await navigator.clipboard.write([item])
+      trackEvent('export_succeeded', {
+        surface: 'studio',
+        destination: 'clipboard',
+        format: copyFormat,
+        compressed: false,
+      })
       toast.success(t('copied'))
     } catch {
       toast.error(t('copyFailed'))

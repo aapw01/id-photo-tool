@@ -11,6 +11,7 @@ import type { Locale } from '@/i18n/routing'
 import { Toaster } from '@/components/ui/sonner'
 import { organizationSchema } from '@/lib/seo/jsonld'
 import { BRAND_PRIMARY_HEX, SITE_NAME_FULL, SITE_URL } from '@/lib/seo/site-config'
+import { GoogleAnalytics } from '@/components/google-analytics'
 
 /**
  * `process.env.VERCEL` is statically inlined to `"1"` at build time on
@@ -99,6 +100,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             <SpeedInsights />
           </>
         )}
+        <GoogleAnalytics measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
       </body>
     </html>
   )

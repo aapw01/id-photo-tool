@@ -25,9 +25,10 @@ import { useTranslations } from 'next-intl'
 import { toast } from 'sonner'
 import { ImageUp, Loader2, X } from 'lucide-react'
 
+import { classifyFileType, trackEvent } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 import { DocumentUploadError, type LoadedDocumentImage } from '../lib/load-document-image'
-import type { ScannerSlot } from '../store'
+import type { ScannerSide, ScannerSlot } from '../store'
 
 /**
  * Accept everything we can read: standard browser image MIMEs, HEIC,
@@ -39,6 +40,7 @@ const ACCEPT =
   'image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf,.heic,.heif,.pdf'
 
 interface ScannerUploadCardProps {
+  side: ScannerSide
   slot: ScannerSlot | null
   title: string
   hint: string
@@ -50,6 +52,7 @@ interface ScannerUploadCardProps {
 }
 
 export function ScannerUploadCard({
+  side,
   slot,
   title,
   hint,
@@ -70,6 +73,12 @@ export function ScannerUploadCard({
       setBusy(true)
       try {
         const loaded = await onPick(file)
+        trackEvent('scanner_upload_succeeded', {
+          side,
+          file_type: classifyFileType(file),
+          converted_from_pdf: loaded.convertedFromPdf,
+          converted_from_heic: loaded.convertedFromHeic,
+        })
         // Multi-page PDFs: V1 only renders page 1, but the user should
         // know we didn't silently drop pages 2+. A single-page PDF
         // (sourcePageCount === 1) flows through without a toast.
@@ -90,7 +99,7 @@ export function ScannerUploadCard({
         setBusy(false)
       }
     },
-    [onPick, t],
+    [onPick, side, t],
   )
 
   const handleFiles = useCallback(
