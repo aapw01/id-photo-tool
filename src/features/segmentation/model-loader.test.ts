@@ -59,6 +59,102 @@ function makeCacheStorage(): {
 }
 
 describe('loadModel', () => {
+  it('reuses the existing same-origin cache after switching to the CDN', async () => {
+    const { buf, sha384 } = makePayload(5)
+    const { caches, seed } = makeCacheStorage()
+    await seed(URL, buf)
+    const fetch = vi.fn()
+
+    const out = await loadModel({
+      url: 'https://www.modelscope.cn/test/model.onnx',
+      fallbackUrl: URL,
+      expectedSha384: sha384,
+      caches,
+      fetch,
+    })
+
+    expect(new Uint8Array(out)).toEqual(new Uint8Array(buf))
+    expect(fetch).not.toHaveBeenCalled()
+  })
+
+  it('uses the verified local cache if the external cache is corrupted', async () => {
+    const { buf, sha384 } = makePayload(5)
+    const { caches, seed } = makeCacheStorage()
+    const primary = 'https://www.modelscope.cn/test/model.onnx'
+    await seed(primary, makePayload(7).buf)
+    await seed(URL, buf)
+    const fetch = vi.fn()
+
+    const out = await loadModel({
+      url: primary,
+      fallbackUrl: URL,
+      expectedSha384: sha384,
+      caches,
+      fetch,
+    })
+
+    expect(new Uint8Array(out)).toEqual(new Uint8Array(buf))
+    expect(fetch).not.toHaveBeenCalled()
+  })
+
+  it('falls back immediately to the same-origin copy if the CDN is unavailable', async () => {
+    const { buf, sha384 } = makePayload(6)
+    const primary = 'https://www.modelscope.cn/test/model.onnx'
+    const fetch = vi.fn(async (url: RequestInfo | URL) => {
+      if (url === primary) throw new TypeError('CDN unavailable')
+      return new Response(buf.slice(0))
+    })
+
+    const out = await loadModel({
+      url: primary,
+      fallbackUrl: URL,
+      expectedSha384: sha384,
+      caches: null,
+      fetch: fetch as typeof globalThis.fetch,
+    })
+
+    expect(new Uint8Array(out)).toEqual(new Uint8Array(buf))
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([primary, URL])
+  })
+
+  it('only accepts a verified same-origin copy if the CDN returns altered bytes', async () => {
+    const { buf, sha384 } = makePayload(9)
+    const altered = makePayload(10).buf
+    const primary = 'https://www.modelscope.cn/test/model.onnx'
+    const fetch = vi.fn(
+      async (url: RequestInfo | URL) => new Response((url === primary ? altered : buf).slice(0)),
+    )
+
+    const out = await loadModel({
+      url: primary,
+      fallbackUrl: URL,
+      expectedSha384: sha384,
+      caches: null,
+      fetch: fetch as typeof globalThis.fetch,
+    })
+
+    expect(new Uint8Array(out)).toEqual(new Uint8Array(buf))
+    expect(fetch.mock.calls.map(([url]) => url)).toEqual([primary, URL])
+  })
+
+  it('does not duplicate retries when the configured URL is already same-origin', async () => {
+    const fetch = vi.fn(async () => {
+      throw new TypeError('offline')
+    })
+
+    await expect(
+      loadModel({
+        url: URL,
+        fallbackUrl: URL,
+        expectedSha384: 'sha384-anything',
+        caches: null,
+        fetch,
+      }),
+    ).rejects.toBeInstanceOf(ModelNetworkError)
+
+    expect(fetch).toHaveBeenCalledTimes(3)
+  })
+
   it('returns the buffer from cache without hitting the network', async () => {
     const { buf, sha384 } = makePayload(7)
     const { caches, seed } = makeCacheStorage()

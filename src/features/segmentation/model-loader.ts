@@ -9,15 +9,16 @@
  * Behavior:
  *   1. Lookup `caches.open(CACHE_NAME)` — hit returns instantly.
  *   2. Miss: `fetch(MODEL_URL)`, stream the response while reporting
- *      `loaded / total` bytes via the progress callback.
+ *      `loaded / total` bytes via the progress callback. If the external
+ *      host fails, retry from the same-origin model copy.
  *   3. Verify SHA-384 against the constant in integrity.ts.
  *   4. On success, write a fresh `Response` into the cache for next time.
- *   5. Retry up to MAX_ATTEMPTS times with exponential backoff on network
- *      errors. Integrity failures fail fast (no retry).
+ *   5. Try the external host once, then retry the local copy up to
+ *      MAX_ATTEMPTS times. Integrity failures never retry the same URL.
  */
 
 import { IntegrityError, MODEL_SHA384, verifyModel } from './integrity'
-import { MODEL_URL } from './runtime-config'
+import { MODEL_FALLBACK_URL, MODEL_URL } from './runtime-config'
 import type { ProgressPhase } from './worker-protocol'
 
 export const CACHE_NAME = 'pixfit-models-v1'
@@ -36,6 +37,7 @@ export interface LoaderEnv {
 
 export interface LoadModelOptions extends LoaderEnv {
   url?: string
+  fallbackUrl?: string
   expectedSha384?: string
   signal?: AbortSignal
   onProgress?: (phase: ProgressPhase, loaded?: number, total?: number) => void
@@ -60,30 +62,43 @@ export async function loadModel(opts: LoadModelOptions = {}): Promise<ArrayBuffe
         ? ((globalThis as { caches?: CacheStorage }).caches ?? null)
         : null
   const url = opts.url ?? MODEL_URL
+  const fallbackUrl = opts.fallbackUrl ?? (opts.url === undefined ? MODEL_FALLBACK_URL : undefined)
+  const candidates = fallbackUrl && fallbackUrl !== url ? [url, fallbackUrl] : [url]
   const expected = opts.expectedSha384 ?? MODEL_SHA384
 
-  const cached = await tryReadCache(cachesImpl, url, opts.onProgress)
-  if (cached) {
-    return verifyOrThrow(cached, expected, opts.allowEmptyIntegrity)
+  for (const candidate of candidates) {
+    const cached = await tryReadCache(cachesImpl, candidate, opts.onProgress)
+    if (!cached) continue
+    try {
+      return await verifyOrThrow(cached, expected, opts.allowEmptyIntegrity)
+    } catch (err) {
+      if (!(err instanceof IntegrityError) || candidate === candidates.at(-1)) throw err
+    }
   }
 
   let lastErr: unknown
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    try {
-      const buf = await fetchWithProgress(fetchImpl, url, opts.signal, opts.onProgress)
-      const verified = await verifyOrThrow(buf, expected, opts.allowEmptyIntegrity)
-      // Best-effort cache write. Failures here are not fatal — we still
-      // return the verified buffer; next visit just won't have a hit.
-      void tryWriteCache(cachesImpl, url, verified).catch(() => {})
-      return verified
-    } catch (err) {
-      lastErr = err
-      // Integrity failures are not transient; bail immediately so callers
-      // can surface a clear error class.
-      if (err instanceof IntegrityError) throw err
-      if (attempt < MAX_ATTEMPTS) {
-        const wait = 250 * 2 ** (attempt - 1) // 250ms, 500ms
-        await sleep(wait, opts.signal)
+  for (const candidate of candidates) {
+    const attempts = candidates.length > 1 && candidate === url ? 1 : MAX_ATTEMPTS
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        const buf = await fetchWithProgress(fetchImpl, candidate, opts.signal, opts.onProgress)
+        const verified = await verifyOrThrow(buf, expected, opts.allowEmptyIntegrity)
+        // Best-effort cache write. Failures here are not fatal — we still
+        // return the verified buffer; next visit just won't have a hit.
+        void tryWriteCache(cachesImpl, candidate, verified).catch(() => {})
+        return verified
+      } catch (err) {
+        lastErr = err
+        if (opts.signal?.aborted) throw err
+        // A bad external copy can still fall back to the verified local one.
+        if (err instanceof IntegrityError) {
+          if (candidate === candidates.at(-1)) throw err
+          break
+        }
+        if (attempt < attempts) {
+          const wait = 250 * 2 ** (attempt - 1) // 250ms, 500ms
+          await sleep(wait, opts.signal)
+        }
       }
     }
   }
