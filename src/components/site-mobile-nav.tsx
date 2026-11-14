@@ -14,10 +14,11 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 
-const NAV_KEYS = ['studio', 'scanner', 'sizes', 'paper', 'templates'] as const
+const NAV_KEYS = ['studio', 'quickTools', 'scanner', 'sizes', 'paper', 'templates'] as const
 
 const NAV_HREFS: Record<(typeof NAV_KEYS)[number], string> = {
   studio: '/studio',
+  quickTools: '/quick-tools',
   scanner: '/scanner',
   sizes: '/sizes',
   paper: '/paper',

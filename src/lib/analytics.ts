@@ -18,6 +18,8 @@ export type AnalyticsEventName =
   | 'scanner_upload_succeeded'
   | 'scanner_rectify_succeeded'
   | 'scanner_export_succeeded'
+  | 'quick_tool_upload_succeeded'
+  | 'quick_tool_export_succeeded'
 
 type Gtag = (
   command: 'config' | 'event' | 'js',

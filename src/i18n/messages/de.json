@@ -22,6 +22,7 @@
   "Nav": {
     "home": "Start",
     "studio": "Studio",
+    "quickTools": "Zuschnitt / Format / Komprimierung",
     "scanner": "Dokumentenscanner",
     "sizes": "Formate",
     "paper": "Papier",
@@ -1134,7 +1135,7 @@
     "docSpecs": {
       "cn-id-card": "Chinesischer Personalausweis",
       "hk-id-card": "Hongkong-Ausweis",
-      "tw-id-card": "Taiwan-Personalausweis",
+      "tw-id-card": "Einwohnerausweis — Taiwan, China",
       "sg-nric": "Singapur NRIC",
       "in-aadhaar": "Indien Aadhaar",
       "bank-card": "Bankkarte",
@@ -1338,8 +1339,8 @@
         "usage": "Banken, Telekom, Beschäftigungs- und Reise-Workflows, in denen ein Einwohner einen gescannten Ausweis vorlegen muss. Die Chipseite und die zweisprachige Rückseite werden oft gemeinsam gescannt."
       },
       "tw-id-card": {
-        "summary": "Der nationale Personalausweis Taiwans (中華民國身分證) ist eine standardmäßige CR80-Karte (85,6 × 54 mm) für Bürger der Republik China mit Vorder- und Rückseite.",
-        "usage": "Banken, Behörden, Postzustellung, Telekom und Online-Anmeldungen in Taiwan. Vorderseite (Emblem + Foto) und Rückseite (Elterndaten) werden meist gemeinsam gescannt."
+        "summary": "Einwohnerausweis der Region Taiwan, China (85,6 × 54 mm, CR80), mit Scan und Anordnung von Vorder- und Rückseite.",
+        "usage": "Für Bank-, Behörden-, Post- und Telekommunikationsvorgänge, die eine Ausweiskopie erfordern. Beide Seiten auf einer Seite anordnen und die Vorgaben der empfangenden Stelle beachten."
       },
       "sg-nric": {
         "summary": "Die NRIC Singapurs ist eine standardmäßige CR80-Karte (85,6 × 54 mm) mit Vorder- und Rückseite für Bürger und Daueraufenthaltler.",
@@ -1427,5 +1428,72 @@
       "ctaPrimary": "Studio öffnen",
       "ctaSecondary": "Scanner öffnen"
     }
+  },
+  "QuickTools": {
+    "title": "Schnelle Fotowerkzeuge",
+    "subtitle": "Größe, Format und Dateigröße ändern, ohne den vollständigen Workflow zu öffnen. Alles läuft im Browser.",
+    "metaTitle": "Schnelle Fotowerkzeuge: Größe, Format und Komprimierung | Pixfit",
+    "metaDescription": "Fotos im Browser skalieren, JPG/PNG/WebP konvertieren und auf eine gewünschte KB-Größe komprimieren. Kein Upload.",
+    "metaKeywords": [
+      "Foto Größe ändern",
+      "Bildformat konvertieren",
+      "Bild komprimieren",
+      "Passfoto komprimieren",
+      "Online-Fotobearbeitung"
+    ],
+    "replace": "Foto ersetzen",
+    "cropHint": "Verschiebe den Rahmen und ziehe an den Ecken, um den Ausschnitt anzupassen. Mit den Pfeiltasten kannst du den fokussierten Rahmen fein bewegen.",
+    "download": "Bearbeitetes Foto herunterladen",
+    "processing": "Verarbeitung…",
+    "privacy": "Das Foto wird auf diesem Gerät verarbeitet und nicht auf einen Server hochgeladen.",
+    "result": "Erstellt: {width}×{height} px · {kb} KB",
+    "upload": "Foto hochladen",
+    "uploadHint": "JPG / PNG / WebP · bis zu 50 MB pro Datei",
+    "settings": {
+      "title": "Verarbeitungseinstellungen",
+      "size": "Größe zuschneiden",
+      "preset": "Häufige Voreinstellungen",
+      "custom": "Benutzerdefiniert",
+      "presets": {
+        "original": "Originalgröße beibehalten",
+        "oneInch": "1 Zoll · 295×413",
+        "twoInch": "2 Zoll · 413×579",
+        "passport": "Passfoto · 390×567",
+        "square": "Quadrat · 600×600",
+        "smallOneInch": "Klein 1 Zoll · 260×378",
+        "largeOneInch": "Groß 1 Zoll · 390×567",
+        "smallTwoInch": "Klein 2 Zoll · 413×531",
+        "largeTwoInch": "Groß 2 Zoll · 413×626"
+      },
+      "width": "Breite ({unit})",
+      "height": "Höhe ({unit})",
+      "sizeHint": "Die Ausgabe wird auf die gewählten Pixelmaße zugeschnitten.",
+      "format": "Ausgabeformat",
+      "fileSize": "Ziel-Dateigröße",
+      "noLimit": "Keine Begrenzung",
+      "customKB": "Benutzerdefinierte Größe (KB)",
+      "pngHint": "PNG eignet sich nicht für eine exakte KB-Komprimierung und wird in den gewählten Maßen ausgegeben.",
+      "unit": "Maßeinheit",
+      "dpi": "Auflösung (DPI)",
+      "units": {
+        "px": "Pixel (px)",
+        "mm": "Millimeter (mm)",
+        "cm": "Zentimeter (cm)",
+        "in": "Zoll (in)"
+      },
+      "outputPixels": "Ausgabegröße: {width} × {height} px",
+      "invalidSize": "Gültige Maße eingeben: umgerechnet 1–10000 px je Seite und 1–1200 DPI.",
+      "dpiHint": "DPI dient der Umrechnung in Pixel; die Druckauflösung wird nicht in den Dateimetadaten gespeichert."
+    },
+    "note": {
+      "title": "Für schnelle Änderungen an einem Foto",
+      "body": "Nutze dieses Werkzeug, wenn du nur Maße, Format oder Dateigröße ändern möchtest. Für KI-Freistellung, Hintergrund oder Drucklayouts öffne den Studio-Bereich."
+    },
+    "errors": {
+      "imageOnly": "Bitte wähle eine Bilddatei.",
+      "decode": "Dieses Bild konnte nicht gelesen werden. Versuche JPG, PNG oder WebP.",
+      "export": "Verarbeitung fehlgeschlagen. Bitte erneut versuchen."
+    },
+    "belowTarget": "Bei diesen Abmessungen liegt die Datei selbst mit höchster Qualität unter der Zielgröße. Qualität und gewählte Abmessungen wurden beibehalten."
   }
 }

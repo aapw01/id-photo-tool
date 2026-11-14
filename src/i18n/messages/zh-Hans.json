@@ -22,6 +22,7 @@
   "Nav": {
     "home": "首页",
     "studio": "工作台",
+    "quickTools": "裁剪 / 转格式 / 压缩",
     "scanner": "证件扫描生成器",
     "sizes": "尺寸库",
     "paper": "相纸",
@@ -1132,7 +1133,7 @@
     "docSpecs": {
       "cn-id-card": "中国身份证",
       "hk-id-card": "香港身份证",
-      "tw-id-card": "台湾身份证",
+      "tw-id-card": "中国台湾地区居民身份证",
       "sg-nric": "新加坡 NRIC",
       "in-aadhaar": "印度 Aadhaar",
       "bank-card": "银行卡",
@@ -1336,8 +1337,8 @@
         "usage": "银行开户、电讯合约、聘任手续，以及香港居民出行场景常需提交完整正反面扫描件。"
       },
       "tw-id-card": {
-        "summary": "中华民国身分证（85.6 × 54 mm，CR80）—— 由台湾内政部户政司发行。",
-        "usage": "银行开户、政府机关业务、邮局领件、电讯合约、台湾在线服务注册常需正反面（国徽 / 父母资料）同步扫描。"
+        "summary": "中国台湾地区居民身份证（85.6 × 54 mm，CR80），支持正反面扫描与排版。",
+        "usage": "适用于银行、公共服务、邮政及通信业务等需要身份证件副本的场景。可将证件正反面合并排版，具体提交要求以接收机构为准。"
       },
       "sg-nric": {
         "summary": "新加坡国民登记身份证 NRIC（85.6 × 54 mm，CR80）—— 由 ICA 发行，是新加坡公民及永久居民的法定身份证件。",
@@ -1425,5 +1426,73 @@
       "ctaPrimary": "打开工作室",
       "ctaSecondary": "打开扫描仪"
     }
+  },
+  "QuickTools": {
+    "title": "照片快速处理",
+    "subtitle": "只改尺寸、格式和文件大小，不进入复杂工作流。图片始终在浏览器本地处理。",
+    "metaTitle": "照片快速处理：裁剪尺寸、转换格式、压缩大小 | Pixfit",
+    "metaDescription": "免费在线快速调整照片尺寸、裁剪比例、转换 JPG/PNG/WebP 格式，并压缩到指定 KB。浏览器本地处理，不上传照片。",
+    "metaKeywords": [
+      "照片裁剪",
+      "调整照片尺寸",
+      "图片格式转换",
+      "图片压缩",
+      "证件照压缩",
+      "在线改照片大小"
+    ],
+    "replace": "更换照片",
+    "cropHint": "拖动裁剪框选择位置，拖动四角调整范围；选中框后可用方向键微调。",
+    "download": "下载处理后的照片",
+    "processing": "处理中…",
+    "privacy": "照片不会上传服务器，所有处理都在当前设备完成。",
+    "result": "已生成 {width}×{height} px · {kb} KB",
+    "upload": "上传照片",
+    "uploadHint": "支持 JPG / PNG / WebP · 单张 ≤ 50 MB",
+    "settings": {
+      "title": "处理设置",
+      "size": "尺寸裁切",
+      "preset": "常用预设",
+      "custom": "自定义",
+      "presets": {
+        "original": "保持原尺寸",
+        "oneInch": "一寸照 · 295×413",
+        "twoInch": "二寸照 · 413×579",
+        "passport": "护照常用 · 390×567",
+        "square": "正方形 · 600×600",
+        "smallOneInch": "小一寸 · 260×378",
+        "largeOneInch": "大一寸 · 390×567",
+        "smallTwoInch": "小两寸 · 413×531",
+        "largeTwoInch": "大两寸 · 413×626"
+      },
+      "width": "宽度（{unit}）",
+      "height": "高度（{unit}）",
+      "sizeHint": "输出会裁切到指定像素尺寸。",
+      "format": "输出格式",
+      "fileSize": "目标体积",
+      "noLimit": "不限制",
+      "customKB": "自定义大小（KB）",
+      "pngHint": "PNG 不适合精确压缩到指定 KB，将按选定尺寸导出。",
+      "unit": "尺寸单位",
+      "dpi": "分辨率（DPI）",
+      "units": {
+        "px": "像素（px）",
+        "mm": "毫米（mm）",
+        "cm": "厘米（cm）",
+        "in": "英寸（in）"
+      },
+      "outputPixels": "输出尺寸：{width} × {height} px",
+      "invalidSize": "请输入有效尺寸，换算后每边须为 1–10000 px；DPI 须为 1–1200。",
+      "dpiHint": "DPI 用于将物理尺寸换算为像素，不写入文件打印分辨率。"
+    },
+    "note": {
+      "title": "适合快速处理单张照片",
+      "body": "这个工具适合只需要调整尺寸、格式或文件大小的场景。如果你还需要 AI 抠图、换背景、证件照排版，可以进入工作台。"
+    },
+    "errors": {
+      "imageOnly": "请选择图片文件。",
+      "decode": "图片无法读取，请换一张 JPG、PNG 或 WebP 图片。",
+      "export": "处理失败，请重试。"
+    },
+    "belowTarget": "当前尺寸下，最高质量的文件仍小于目标体积，已保留最高质量和所选尺寸。"
   }
 }

@@ -22,6 +22,7 @@
   "Nav": {
     "home": "Trang chủ",
     "studio": "Studio",
+    "quickTools": "Cắt / Đổi định dạng / Nén",
     "scanner": "Máy quét tài liệu",
     "sizes": "Kích thước",
     "paper": "Giấy",
@@ -1134,7 +1135,7 @@
     "docSpecs": {
       "cn-id-card": "CMND/CCCD Trung Quốc",
       "hk-id-card": "ID Hong Kong",
-      "tw-id-card": "ID Đài Loan",
+      "tw-id-card": "Thẻ căn cước cư dân — Đài Loan, Trung Quốc",
       "sg-nric": "NRIC Singapore",
       "in-aadhaar": "Aadhaar Ấn Độ",
       "bank-card": "Thẻ ngân hàng",
@@ -1338,8 +1339,8 @@
         "usage": "Ngân hàng, viễn thông, việc làm và du lịch khi cần ID quét. Mặt chip và mặt sau song ngữ thường được quét cùng nhau."
       },
       "tw-id-card": {
-        "summary": "Thẻ căn cước quốc gia Đài Loan (中華民國身分證) là thẻ CR80 chuẩn (85,6 × 54 mm) cấp cho công dân Trung Hoa Dân Quốc, có 2 mặt.",
-        "usage": "Ngân hàng, dịch vụ công, nhận thư, viễn thông và đăng ký online tại Đài Loan. Mặt trước (huy hiệu + ảnh) và mặt sau (thông tin cha mẹ) thường được quét cùng nhau."
+        "summary": "Thẻ căn cước cư dân khu vực Đài Loan, Trung Quốc (85,6 × 54 mm, CR80), hỗ trợ quét và bố trí hai mặt.",
+        "usage": "Dùng cho các thủ tục ngân hàng, dịch vụ công, bưu chính và viễn thông cần bản sao giấy tờ tùy thân. Ghép hai mặt trên một trang và tuân theo yêu cầu của đơn vị tiếp nhận."
       },
       "sg-nric": {
         "summary": "NRIC Singapore là thẻ CR80 chuẩn (85,6 × 54 mm) hai mặt cấp cho công dân và thường trú nhân.",
@@ -1427,5 +1428,72 @@
       "ctaPrimary": "Mở Studio",
       "ctaSecondary": "Mở Scanner"
     }
+  },
+  "QuickTools": {
+    "title": "Công cụ xử lý ảnh nhanh",
+    "subtitle": "Đổi kích thước, định dạng và dung lượng mà không cần mở quy trình đầy đủ. Mọi thao tác chạy trong trình duyệt.",
+    "metaTitle": "Công cụ ảnh nhanh: đổi kích thước, định dạng và nén | Pixfit",
+    "metaDescription": "Đổi kích thước ảnh, chuyển JPG/PNG/WebP và nén về dung lượng KB mong muốn ngay trong trình duyệt. Không tải ảnh lên.",
+    "metaKeywords": [
+      "đổi kích thước ảnh",
+      "đổi định dạng ảnh",
+      "nén ảnh",
+      "nén ảnh thẻ",
+      "chỉnh sửa ảnh online"
+    ],
+    "replace": "Đổi ảnh",
+    "cropHint": "Kéo khung cắt để chọn vị trí, kéo các góc để đổi kích thước. Dùng phím mũi tên để tinh chỉnh khi khung được chọn.",
+    "download": "Tải ảnh đã xử lý",
+    "processing": "Đang xử lý…",
+    "privacy": "Ảnh được xử lý trên thiết bị và không được tải lên máy chủ.",
+    "result": "Đã tạo {width}×{height} px · {kb} KB",
+    "upload": "Tải ảnh lên",
+    "uploadHint": "JPG / PNG / WebP · tối đa 50 MB mỗi tệp",
+    "settings": {
+      "title": "Cài đặt xử lý",
+      "size": "Cắt theo kích thước",
+      "preset": "Thiết lập phổ biến",
+      "custom": "Tùy chỉnh",
+      "presets": {
+        "original": "Giữ kích thước gốc",
+        "oneInch": "1 inch · 295×413",
+        "twoInch": "2 inch · 413×579",
+        "passport": "Hộ chiếu · 390×567",
+        "square": "Hình vuông · 600×600",
+        "smallOneInch": "1 inch nhỏ · 260×378",
+        "largeOneInch": "1 inch lớn · 390×567",
+        "smallTwoInch": "2 inch nhỏ · 413×531",
+        "largeTwoInch": "2 inch lớn · 413×626"
+      },
+      "width": "Chiều rộng ({unit})",
+      "height": "Chiều cao ({unit})",
+      "sizeHint": "Ảnh đầu ra được cắt về kích thước pixel đã chọn.",
+      "format": "Định dạng đầu ra",
+      "fileSize": "Dung lượng mục tiêu",
+      "noLimit": "Không giới hạn",
+      "customKB": "Dung lượng tùy chỉnh (KB)",
+      "pngHint": "PNG không phù hợp để nén chính xác theo KB; ảnh sẽ xuất theo kích thước đã chọn.",
+      "unit": "Đơn vị kích thước",
+      "dpi": "Độ phân giải (DPI)",
+      "units": {
+        "px": "Pixel (px)",
+        "mm": "Milimét (mm)",
+        "cm": "Centimét (cm)",
+        "in": "Inch (in)"
+      },
+      "outputPixels": "Kích thước đầu ra: {width} × {height} px",
+      "invalidSize": "Nhập kích thước hợp lệ: mỗi cạnh 1–10000 px sau khi quy đổi và DPI từ 1 đến 1200.",
+      "dpiHint": "DPI dùng để quy đổi kích thước vật lý sang pixel; không ghi độ phân giải in vào siêu dữ liệu của tệp."
+    },
+    "note": {
+      "title": "Xử lý nhanh một ảnh",
+      "body": "Dùng khi bạn chỉ cần đổi kích thước, định dạng hoặc dung lượng. Mở Studio nếu cần tách nền AI, đổi nền hoặc dàn ảnh in."
+    },
+    "errors": {
+      "imageOnly": "Vui lòng chọn tệp ảnh.",
+      "decode": "Không thể đọc ảnh này. Hãy thử JPG, PNG hoặc WebP.",
+      "export": "Xử lý thất bại. Vui lòng thử lại."
+    },
+    "belowTarget": "Ở kích thước này, tệp có chất lượng cao nhất vẫn nhỏ hơn dung lượng mục tiêu. Đã giữ chất lượng cao nhất và kích thước đã chọn."
   }
 }

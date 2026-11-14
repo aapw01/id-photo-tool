@@ -22,6 +22,7 @@
   "Nav": {
     "home": "Inicio",
     "studio": "Estudio",
+    "quickTools": "Recortar / Convertir / Comprimir",
     "scanner": "Escáner de documentos",
     "sizes": "Tamaños",
     "paper": "Papel",
@@ -1134,7 +1135,7 @@
     "docSpecs": {
       "cn-id-card": "DNI chino",
       "hk-id-card": "Tarjeta de identidad de Hong Kong",
-      "tw-id-card": "DNI taiwanés",
+      "tw-id-card": "Documento de identidad de residentes — Taiwán, China",
       "sg-nric": "NRIC de Singapur",
       "in-aadhaar": "Aadhaar (India)",
       "bank-card": "Tarjeta bancaria",
@@ -1338,8 +1339,8 @@
         "usage": "Banca, contratos de telecomunicaciones, papeleo de empleo y viajes en los que un residente debe presentar el DNI escaneado. El anverso con chip y el reverso bilingüe suelen escanearse juntos."
       },
       "tw-id-card": {
-        "summary": "El DNI nacional de Taiwán (中華民國身分證) es una CR80 estándar (85.6 × 54 mm) a dos caras emitida en la República de China.",
-        "usage": "Banca, trámites gubernamentales, retiro de correo, contratos de telecomunicaciones y registros online en Taiwán. Anverso (emblema + foto) y reverso (datos de los padres) suelen ir juntos."
+        "summary": "Documento de identidad de residentes de la región de Taiwán, China (85,6 × 54 mm, CR80), con escaneo y composición de ambas caras.",
+        "usage": "Para trámites bancarios, servicios públicos, correo y telecomunicaciones que requieren una copia del documento. Combina ambas caras en una página y sigue los requisitos de la entidad receptora."
       },
       "sg-nric": {
         "summary": "La NRIC de Singapur es una CR80 estándar (85.6 × 54 mm) a dos caras emitida a ciudadanos y residentes permanentes.",
@@ -1427,5 +1428,72 @@
       "ctaPrimary": "Abrir Estudio",
       "ctaSecondary": "Abrir Escáner"
     }
+  },
+  "QuickTools": {
+    "title": "Herramientas rápidas para fotos",
+    "subtitle": "Cambia el tamaño, el formato y el peso de una foto sin abrir el flujo completo. Todo se procesa en el navegador.",
+    "metaTitle": "Herramientas rápidas: cambiar tamaño, formato y comprimir | Pixfit",
+    "metaDescription": "Cambia el tamaño de una foto, convierte JPG/PNG/WebP y comprímela a los KB indicados directamente en el navegador. Sin subir fotos.",
+    "metaKeywords": [
+      "cambiar tamaño foto",
+      "convertir formato imagen",
+      "comprimir imagen",
+      "comprimir foto carnet",
+      "editor de fotos online"
+    ],
+    "replace": "Cambiar foto",
+    "cropHint": "Arrastra el marco para mover el recorte y sus esquinas para cambiar el tamaño. Usa las flechas para ajustar el marco seleccionado.",
+    "download": "Descargar foto procesada",
+    "processing": "Procesando…",
+    "privacy": "La foto se procesa en este dispositivo y no se sube a ningún servidor.",
+    "result": "Creado {width}×{height} px · {kb} KB",
+    "upload": "Subir una foto",
+    "uploadHint": "JPG / PNG / WebP · hasta 50 MB por archivo",
+    "settings": {
+      "title": "Ajustes de procesamiento",
+      "size": "Recortar tamaño",
+      "preset": "Preajustes comunes",
+      "custom": "Personalizado",
+      "presets": {
+        "original": "Mantener tamaño original",
+        "oneInch": "1 pulgada · 295×413",
+        "twoInch": "2 pulgadas · 413×579",
+        "passport": "Pasaporte · 390×567",
+        "square": "Cuadrado · 600×600",
+        "smallOneInch": "1 pulgada pequeña · 260×378",
+        "largeOneInch": "1 pulgada grande · 390×567",
+        "smallTwoInch": "2 pulgadas pequeña · 413×531",
+        "largeTwoInch": "2 pulgadas grande · 413×626"
+      },
+      "width": "Ancho ({unit})",
+      "height": "Alto ({unit})",
+      "sizeHint": "La salida se recorta a las dimensiones indicadas.",
+      "format": "Formato de salida",
+      "fileSize": "Tamaño del archivo",
+      "noLimit": "Sin límite",
+      "customKB": "Tamaño personalizado (KB)",
+      "pngHint": "PNG no está pensado para una compresión exacta en KB; se exportará con las dimensiones elegidas.",
+      "unit": "Unidad de tamaño",
+      "dpi": "Resolución (DPI)",
+      "units": {
+        "px": "Píxeles (px)",
+        "mm": "Milímetros (mm)",
+        "cm": "Centímetros (cm)",
+        "in": "Pulgadas (in)"
+      },
+      "outputPixels": "Tamaño de salida: {width} × {height} px",
+      "invalidSize": "Introduce medidas válidas: 1–10000 px por lado tras la conversión y 1–1200 DPI.",
+      "dpiHint": "Los DPI convierten las medidas físicas en píxeles; no se guardan como resolución de impresión del archivo."
+    },
+    "note": {
+      "title": "Para editar una foto rápidamente",
+      "body": "Úsalo cuando solo necesites cambiar dimensiones, formato o peso. Abre Studio para recortar con IA, cambiar el fondo o crear diseños para imprimir."
+    },
+    "errors": {
+      "imageOnly": "Elige un archivo de imagen.",
+      "decode": "No se pudo leer la imagen. Prueba con JPG, PNG o WebP.",
+      "export": "No se pudo procesar. Inténtalo de nuevo."
+    },
+    "belowTarget": "Con estas dimensiones, incluso el archivo de máxima calidad es menor que el tamaño objetivo. Se han conservado la máxima calidad y las dimensiones elegidas."
   }
 }
