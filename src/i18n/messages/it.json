@@ -792,13 +792,13 @@
     "privacy": {
       "heading": "Informativa sulla privacy",
       "subtitle": "Pixfit gira interamente nel tuo browser. Non raccogliamo, conserviamo né trasmettiamo le tue foto.",
-      "lastUpdated": "2026-05-12",
+      "lastUpdated": "2026-11-14",
       "metaTitle": "Informativa privacy · Pixfit",
-      "metaDescription": "Come Pixfit tratta i dati: ogni immagine resta sul tuo dispositivo, niente cookie di tracciamento, solo il tuo localStorage conserva i formati personalizzati.",
+      "metaDescription": "Come Pixfit elabora le foto localmente, usa lo spazio di archiviazione del browser e le statistiche di visita e come gestire i dati correlati.",
       "sections": {
         "summary": {
           "title": "In breve",
-          "body": "Pixfit è uno studio fototessera solo nel browser. Le foto non lasciano il dispositivo. Niente account, registrazione o cookie di tracciamento."
+          "body": "Pixfit elabora le foto nel browser senza richiedere un account. Le foto non vengono caricate su un server; usiamo statistiche sulle visite e sull’uso delle funzioni per migliorare il servizio."
         },
         "data": {
           "title": "Cosa elaboriamo",
@@ -806,19 +806,19 @@
         },
         "localStorage": {
           "title": "Memorizzazione locale",
-          "body": "Usiamo localStorage solo per ricordare i formati che crei o importi (chiave `pixfit:specs:v1`) e una piccola lista di colori di sfondo recenti. Puoi cancellarli in qualunque momento dalle impostazioni del sito nel browser."
+          "body": "Usiamo lo spazio di archiviazione del browser per ricordare formati personalizzati, colori di sfondo recenti e alcune preferenze. Puoi cancellare questi dati nelle impostazioni del sito del browser."
         },
         "thirdParty": {
           "title": "Risorse di terze parti",
-          "body": "Pesi del modello IA, font e runtime MediaPipe vengono recuperati da mirror pubblici (ModelScope, jsDelivr, CDN Hugging Face). Questi servizi vedono solo le richieste del modello — mai le tue foto. Dopo la cache le visite successive funzionano offline per il flusso principale."
+          "body": "Il sito può caricare risorse necessarie al funzionamento da servizi di terze parti. Queste richieste possono includere dati tecnici, come l’indirizzo IP e informazioni sul browser, ma non il contenuto delle foto che elabori."
         },
         "analytics": {
           "title": "Analytics",
-          "body": "Al lancio prevediamo Cloudflare Web Analytics — senza cookie, senza IP, senza fingerprint. Nessuno script analytics viene caricato prima di quella decisione. Oggi non è integrato nessun tracker di terze parti (Google / Mixpanel / Sentry)."
+          "body": "Usiamo servizi di analisi e misurazione delle prestazioni per comprendere visite, uso delle funzioni e prestazioni e migliorare il sito. Questi servizi possono usare cookie o tecnologie simili per trattare informazioni su visite e dispositivi. Il contenuto delle foto non viene inviato come dato di analisi."
         },
         "rights": {
           "title": "I tuoi diritti",
-          "body": "Poiché non raccogliamo dati personali, non c’è nulla da cancellare o esportare per tuo conto. Mantieni il pieno controllo cancellando i dati del sito dal tuo browser."
+          "body": "Puoi gestire o cancellare cookie e dati locali nelle impostazioni del browser. La cancellazione dei dati locali non elimina automaticamente i dati di analisi già inviati. Per richieste sulla privacy o sui dati, contattaci con le modalità indicate sotto."
         },
         "children": {
           "title": "Minori",
@@ -826,7 +826,7 @@
         },
         "changes": {
           "title": "Aggiornamenti dell’informativa",
-          "body": "Se le nostre pratiche cambiano, aggiorneremo questa pagina e la data. Le modifiche significative verranno riassunte nella home o con un banner in-app."
+          "body": "Questa informativa può essere aggiornata quando cambiano i nostri servizi e le pratiche di trattamento dei dati. Consulta la data dell’ultimo aggiornamento su questa pagina."
         },
         "contact": {
           "title": "Contatti",

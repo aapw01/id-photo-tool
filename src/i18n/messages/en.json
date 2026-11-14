@@ -792,13 +792,13 @@
     "privacy": {
       "heading": "Privacy policy",
       "subtitle": "Pixfit runs entirely in your browser. We do not collect, store, or transmit your photos.",
-      "lastUpdated": "2026-05-12",
+      "lastUpdated": "2026-11-14",
       "metaTitle": "Privacy policy · Pixfit",
-      "metaDescription": "How Pixfit handles your data: every image stays on your device, no cookies for tracking, and the only persistent storage is your own customised specs in localStorage.",
+      "metaDescription": "How Pixfit processes photos locally, uses browser storage and visitor analytics, and how you can manage related data.",
       "sections": {
         "summary": {
           "title": "In short",
-          "body": "Pixfit is a browser-only ID photo studio. Your photos never leave your device. We do not run accounts, do not require sign-up, and do not track you with cookies."
+          "body": "Pixfit processes photos in your browser without requiring an account. Photos are not uploaded to a server; we use visitor and feature usage statistics to improve the service."
         },
         "data": {
           "title": "What we process",
@@ -806,19 +806,19 @@
         },
         "localStorage": {
           "title": "Local storage",
-          "body": "We use your browser's localStorage only to remember the photo / paper / layout specs you create or import (key `pixfit:specs:v1`) plus a small list of recently-used background colours. You can clear them at any time from your browser's site-settings panel."
+          "body": "We use browser storage to remember custom specifications, recently used background colours and some preferences. You can clear this data in your browser’s site settings."
         },
         "thirdParty": {
           "title": "Third-party resources",
-          "body": "The AI model weights, fonts, and the MediaPipe runtime are fetched from public mirrors (ModelScope, jsDelivr, the Hugging Face CDN). These services see only the model file requests — never your photos. Once cached your subsequent visits are fully offline-capable for the core flow."
+          "body": "The site may load resources needed to operate from third-party services. These requests may include technical data such as your IP address and browser information, but not the contents of the photos you process."
         },
         "analytics": {
           "title": "Analytics",
-          "body": "Once we go live we plan to use Cloudflare Web Analytics, which is cookie-less and does not collect IP addresses or device fingerprints. No script is loaded until that decision ships. No third-party analytics tracker (Google / Mixpanel / Sentry) is bundled today."
+          "body": "We use analytics and performance services to understand page visits, feature usage and performance, and to improve the site. These services may use cookies or similar technologies to process visit and device information. Photo contents are not sent as analytics data."
         },
         "rights": {
           "title": "Your rights",
-          "body": "Because we do not collect personal data, there is nothing for us to delete or export on your behalf. You retain full control by clearing local site data inside your browser."
+          "body": "You can manage or clear cookies and local data through your browser settings. Clearing local data does not automatically delete analytics records already sent. For privacy or data requests, contact us using the details below."
         },
         "children": {
           "title": "Children",
@@ -826,7 +826,7 @@
         },
         "changes": {
           "title": "Updates to this policy",
-          "body": "If our data-handling practices ever change we will update this page and bump the last-updated date. Material changes will also be summarised on the home page or via the in-app notification banner."
+          "body": "This policy may be updated as our services and data practices change. Please check the last-updated date on this page."
         },
         "contact": {
           "title": "Contact",

@@ -792,13 +792,13 @@
     "privacy": {
       "heading": "Política de privacidad",
       "subtitle": "Pixfit corre por completo en tu navegador. No recopilamos, almacenamos ni transmitimos tus fotos.",
-      "lastUpdated": "2026-05-12",
+      "lastUpdated": "2026-11-14",
       "metaTitle": "Política de privacidad · Pixfit",
-      "metaDescription": "Cómo Pixfit gestiona tus datos: cada imagen queda en tu dispositivo, sin cookies de rastreo y solo localStorage para tus especificaciones personalizadas.",
+      "metaDescription": "Cómo Pixfit procesa fotos localmente, utiliza el almacenamiento del navegador y las estadísticas de visitas, y cómo gestionar los datos relacionados.",
       "sections": {
         "summary": {
           "title": "En resumen",
-          "body": "Pixfit es un estudio de fotos de carnet exclusivo del navegador. Tus fotos no salen del dispositivo. No usamos cuentas, no exigimos registro y no rastreamos con cookies."
+          "body": "Pixfit procesa fotos en tu navegador sin exigir una cuenta. Las fotos no se suben a un servidor; usamos estadísticas de visitas y de uso de funciones para mejorar el servicio."
         },
         "data": {
           "title": "Qué procesamos",
@@ -806,19 +806,19 @@
         },
         "localStorage": {
           "title": "Almacenamiento local",
-          "body": "Usamos localStorage solo para recordar las especificaciones de foto / papel / diseño que creas o importas (clave `pixfit:specs:v1`) y una pequeña lista de colores de fondo recientes. Puedes borrarlos cuando quieras desde la configuración del navegador."
+          "body": "Usamos el almacenamiento del navegador para recordar formatos personalizados, colores de fondo recientes y algunas preferencias. Puedes borrar estos datos en la configuración del sitio de tu navegador."
         },
         "thirdParty": {
           "title": "Recursos de terceros",
-          "body": "Los pesos del modelo, las fuentes y el runtime de MediaPipe se obtienen de espejos públicos (ModelScope, jsDelivr, el CDN de Hugging Face). Esos servicios solo ven peticiones del archivo del modelo, nunca tus fotos. Tras la primera carga, las visitas siguientes son funcionales sin conexión."
+          "body": "El sitio puede cargar recursos necesarios para funcionar desde servicios de terceros. Estas solicitudes pueden incluir datos técnicos, como tu dirección IP e información del navegador, pero no el contenido de las fotos que procesas."
         },
         "analytics": {
           "title": "Analítica",
-          "body": "Cuando lancemos planeamos usar Cloudflare Web Analytics, sin cookies y sin recopilar IP ni huellas. Hasta entonces, no se carga ningún script. No incluimos rastreadores de terceros (Google / Mixpanel / Sentry)."
+          "body": "Usamos servicios de analítica y rendimiento para conocer las visitas, el uso de funciones y el rendimiento, y mejorar el sitio. Estos servicios pueden usar cookies o tecnologías similares para procesar información de visitas y dispositivos. El contenido de las fotos no se envía como datos de analítica."
         },
         "rights": {
           "title": "Tus derechos",
-          "body": "Como no recopilamos datos personales, no hay nada que podamos borrar o exportar en tu nombre. Mantienes el control limpiando los datos del sitio en tu navegador."
+          "body": "Puedes gestionar o borrar las cookies y los datos locales en la configuración del navegador. Borrar datos locales no elimina automáticamente los registros de analítica ya enviados. Para solicitudes sobre privacidad o datos, contáctanos por los medios indicados abajo."
         },
         "children": {
           "title": "Menores",
@@ -826,7 +826,7 @@
         },
         "changes": {
           "title": "Cambios en esta política",
-          "body": "Si las prácticas de manejo de datos cambian, actualizaremos esta página y la fecha. Los cambios materiales también se resumirán en la página principal o en un banner dentro de la app."
+          "body": "Esta política puede actualizarse cuando cambien nuestros servicios y prácticas de tratamiento de datos. Consulta la fecha de última actualización de esta página."
         },
         "contact": {
           "title": "Contacto",

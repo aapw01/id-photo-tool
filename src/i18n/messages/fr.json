@@ -792,13 +792,13 @@
     "privacy": {
       "heading": "Politique de confidentialité",
       "subtitle": "Pixfit tourne entièrement dans ton navigateur. Nous ne collectons, ne stockons ni ne transmettons tes photos.",
-      "lastUpdated": "2026-05-12",
+      "lastUpdated": "2026-11-14",
       "metaTitle": "Politique de confidentialité · Pixfit",
-      "metaDescription": "Comment Pixfit traite tes données : chaque image reste sur ton appareil, pas de cookies de suivi, seul ton localStorage stocke tes formats personnalisés.",
+      "metaDescription": "Comment Pixfit traite les photos localement, utilise le stockage du navigateur et les statistiques de visite, et comment gérer les données associées.",
       "sections": {
         "summary": {
           "title": "En bref",
-          "body": "Pixfit est un studio photo d’identité dans le navigateur uniquement. Tes photos ne quittent pas l’appareil. Pas de comptes, pas d’inscription, pas de cookies de suivi."
+          "body": "Pixfit traite les photos dans votre navigateur sans demander de compte. Les photos ne sont pas envoyées à un serveur ; nous utilisons des statistiques de visite et d’utilisation des fonctionnalités pour améliorer le service."
         },
         "data": {
           "title": "Ce que nous traitons",
@@ -806,19 +806,19 @@
         },
         "localStorage": {
           "title": "Stockage local",
-          "body": "On n’utilise le localStorage que pour mémoriser les formats que tu crées ou importes (clé `pixfit:specs:v1`) et une petite liste de couleurs de fond récentes. Tu peux les vider à tout moment depuis les réglages du site dans ton navigateur."
+          "body": "Nous utilisons le stockage du navigateur pour mémoriser les formats personnalisés, les couleurs de fond récentes et certaines préférences. Vous pouvez effacer ces données dans les paramètres du site de votre navigateur."
         },
         "thirdParty": {
           "title": "Ressources tierces",
-          "body": "Les poids du modèle, les polices et le runtime MediaPipe sont récupérés sur des miroirs publics (ModelScope, jsDelivr, CDN Hugging Face). Ces services ne voient que les requêtes du modèle — jamais tes photos. Une fois mis en cache, les visites suivantes tournent hors ligne pour le flux principal."
+          "body": "Le site peut charger des ressources nécessaires à son fonctionnement auprès de services tiers. Ces requêtes peuvent contenir des données techniques, comme votre adresse IP et des informations sur le navigateur, mais pas le contenu des photos que vous traitez."
         },
         "analytics": {
           "title": "Analytique",
-          "body": "Au lancement, on prévoit Cloudflare Web Analytics : sans cookies, sans IP ni empreinte. Aucun script n’est chargé tant que cette décision n’est pas en ligne. Pas de tracker tiers (Google / Mixpanel / Sentry) embarqué aujourd’hui."
+          "body": "Nous utilisons des services de statistiques et de mesure des performances pour comprendre les visites, l’utilisation des fonctionnalités et les performances, afin d’améliorer le site. Ces services peuvent utiliser des cookies ou des technologies similaires pour traiter les informations de visite et d’appareil. Le contenu des photos n’est pas envoyé comme donnée statistique."
         },
         "rights": {
           "title": "Tes droits",
-          "body": "Comme on ne collecte pas de données personnelles, il n’y a rien à supprimer ou exporter en ton nom. Tu gardes le contrôle en vidant les données du site dans ton navigateur."
+          "body": "Vous pouvez gérer ou effacer les cookies et les données locales dans les paramètres du navigateur. Leur suppression n’efface pas automatiquement les données statistiques déjà envoyées. Pour toute demande relative à la confidentialité ou aux données, contactez-nous par les moyens ci-dessous."
         },
         "children": {
           "title": "Enfants",
@@ -826,7 +826,7 @@
         },
         "changes": {
           "title": "Mises à jour de cette politique",
-          "body": "Si nos pratiques évoluent, on met à jour cette page et la date. Les changements majeurs seront résumés sur la page d’accueil ou via une bannière dans l’app."
+          "body": "Cette politique peut être mise à jour lorsque nos services et nos pratiques de traitement des données évoluent. Consultez la date de dernière mise à jour sur cette page."
         },
         "contact": {
           "title": "Contact",

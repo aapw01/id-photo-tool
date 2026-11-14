@@ -792,13 +792,13 @@
     "privacy": {
       "heading": "Datenschutzerklärung",
       "subtitle": "Pixfit läuft vollständig in deinem Browser. Wir sammeln, speichern oder übertragen keine Fotos.",
-      "lastUpdated": "2026-05-12",
+      "lastUpdated": "2026-11-14",
       "metaTitle": "Datenschutzerklärung · Pixfit",
-      "metaDescription": "Wie Pixfit mit Daten umgeht: jedes Bild bleibt auf deinem Gerät, keine Tracking-Cookies, nur dein localStorage hält eigene Formate vor.",
+      "metaDescription": "Wie Pixfit Fotos lokal verarbeitet, Browserspeicher und Nutzungsstatistiken verwendet und wie du zugehörige Daten verwalten kannst.",
       "sections": {
         "summary": {
           "title": "Kurz und knapp",
-          "body": "Pixfit ist ein reines Browser-Studio für Passfotos. Deine Fotos verlassen dein Gerät nicht. Keine Konten, keine Anmeldung, keine Tracking-Cookies."
+          "body": "Pixfit verarbeitet Fotos in deinem Browser, ohne ein Konto zu verlangen. Fotos werden nicht auf einen Server hochgeladen. Besuchs- und Nutzungsstatistiken helfen uns, den Dienst zu verbessern."
         },
         "data": {
           "title": "Was wir verarbeiten",
@@ -806,19 +806,19 @@
         },
         "localStorage": {
           "title": "Lokaler Speicher",
-          "body": "Wir nutzen localStorage nur, um deine eigenen Formate zu merken (Schlüssel `pixfit:specs:v1`) und eine kleine Liste zuletzt verwendeter Hintergrundfarben. Du kannst beides jederzeit über die Browser-Einstellungen leeren."
+          "body": "Wir speichern eigene Formate, zuletzt verwendete Hintergrundfarben und einige Einstellungen im Browser. Du kannst diese Daten in den Website-Einstellungen deines Browsers löschen."
         },
         "thirdParty": {
           "title": "Drittanbieter-Ressourcen",
-          "body": "KI-Modellgewichte, Schriften und das MediaPipe-Runtime werden von öffentlichen Spiegeln (ModelScope, jsDelivr, Hugging-Face-CDN) geladen. Diese Dienste sehen nur Modell-Anfragen – nie deine Fotos. Nach dem Cachen läuft der Hauptablauf bei Folgebesuchen offline."
+          "body": "Die Website kann für den Betrieb benötigte Ressourcen von Drittanbietern laden. Diese Anfragen können technische Daten wie deine IP-Adresse und Browserinformationen enthalten, jedoch nicht den Inhalt der von dir bearbeiteten Fotos."
         },
         "analytics": {
           "title": "Analyse",
-          "body": "Zum Launch planen wir Cloudflare Web Analytics – cookie-, IP- und fingerprintfrei. Vor dieser Entscheidung werden keine Analytics-Skripte geladen. Es ist heute kein Drittanbieter-Tracker (Google / Mixpanel / Sentry) eingebettet."
+          "body": "Wir nutzen Analyse- und Leistungsdienste, um Seitenaufrufe, die Nutzung von Funktionen und die Leistung zu verstehen und die Website zu verbessern. Diese Dienste können Cookies oder ähnliche Technologien zur Verarbeitung von Besuchs- und Geräteinformationen verwenden. Fotoinhalte werden nicht als Analysedaten gesendet."
         },
         "rights": {
           "title": "Deine Rechte",
-          "body": "Da wir keine personenbezogenen Daten sammeln, gibt es nichts, was wir in deinem Namen löschen oder exportieren könnten. Du behältst die volle Kontrolle, indem du die Website-Daten in deinem Browser leerst."
+          "body": "Du kannst Cookies und lokale Daten über deine Browsereinstellungen verwalten oder löschen. Das Löschen lokaler Daten entfernt nicht automatisch bereits gesendete Analysedaten. Bei Datenschutz- oder Datenanfragen kannst du uns über die unten genannten Wege kontaktieren."
         },
         "children": {
           "title": "Kinder",
@@ -826,7 +826,7 @@
         },
         "changes": {
           "title": "Aktualisierungen dieser Richtlinie",
-          "body": "Wenn sich unsere Praktiken ändern, aktualisieren wir diese Seite und das Datum. Wesentliche Änderungen werden auf der Startseite oder per In-App-Banner zusammengefasst."
+          "body": "Diese Erklärung kann bei Änderungen unserer Dienste und Datenverarbeitung aktualisiert werden. Beachte das Aktualisierungsdatum auf dieser Seite."
         },
         "contact": {
           "title": "Kontakt",
