@@ -229,10 +229,8 @@ describe('ogLocaleFor', () => {
     expect(ogLocaleFor('pt-BR')).toBe('pt_BR')
     expect(ogLocaleFor('fr')).toBe('fr_FR')
     expect(ogLocaleFor('de')).toBe('de_DE')
-    expect(ogLocaleFor('ru')).toBe('ru_RU')
     expect(ogLocaleFor('it')).toBe('it_IT')
     expect(ogLocaleFor('vi')).toBe('vi_VN')
-    expect(ogLocaleFor('ar')).toBe('ar_AR')
   })
 
   it('returns a non-empty og territory for every supported locale', () => {

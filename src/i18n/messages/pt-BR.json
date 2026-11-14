@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -42,7 +40,7 @@
   "Home": {
     "heroTitle": "Fotos de documento inteligentes, direto do seu navegador",
     "heroSubtitle": "O Pixfit é um estúdio de fotos de documento e scanner inteligente que recorta a pessoa, troca o fundo, ajusta ao padrão, prepara para impressão e comprime para o limite do portal — tudo no navegador, sem upload.",
-    "metaTitle": "Pixfit · Editor gratuito de foto de documento · IA remove fundo · sem upload · 2026 | Pixfit",
+    "metaTitle": "Pixfit · Foto de documento grátis com IA · sem upload 2026 | Pixfit",
     "metaDescription": "Ferramenta gratuita de foto de documento 100 % no navegador: IA remove fundo, recorte para visto e passaporte, scan para PDF. Sem upload, 2026 atualizado.",
     "metaKeywords": [
       "foto documento IA",
@@ -175,7 +173,7 @@
   "Studio": {
     "title": "Studio",
     "subtitle": "Envie um retrato — recorte por IA, ajuste inteligente, troca de fundo com um clique, layout de impressão e exportação no KB exato, tudo no navegador.",
-    "metaTitle": "Pixfit Studio · Recorte online · Trocar fundo · Comprimir · Layout impressão 2026 | Pixfit",
+    "metaTitle": "Pixfit Studio · Recorte, fundo e compressão online 2026 | Pixfit",
     "metaDescription": "Pixfit Studio: recorte online, trocar fundo com IA, comprimir para KB, layout A4/5R/6R. Grátis, no navegador, sem upload. 2026 · 28 padrões.",
     "metaKeywords": [
       "editor fotos documento IA",
@@ -518,7 +516,7 @@
     "cta": "Usar no Studio",
     "categoryEmpty": "Sem padrões nesta categoria",
     "viewDetail": "Ver detalhes",
-    "metaTitle": "Pixfit tamanhos de foto · 28 padrões · recorte online + fundo IA 2026 | Pixfit",
+    "metaTitle": "Pixfit tamanhos de foto · 28 padrões com fundo IA 2026 | Pixfit",
     "metaDescription": "28 padrões: vistos EUA / Schengen / Reino Unido / Japão, documentos chineses, provas. Recorte online + fundo IA, grátis no navegador, sem upload, 2026.",
     "metaKeywords": [
       "tamanhos foto documento IA",
@@ -631,7 +629,7 @@
       "byPaper": "Agrupado por papel"
     },
     "cta": "Abrir no Studio",
-    "metaTitle": "Pixfit modelos de layout · 12 · 5R 6R A4 online gerar PDF 2026 | Pixfit",
+    "metaTitle": "Pixfit modelos · 12 layouts para 5R, 6R e A4 2026 | Pixfit",
     "metaDescription": "12 layouts: 8 × 1-polegada, 16 × 1-polegada, mistura 1+2, RG, passaporte, carteira, em 5R / 6R / A4. PNG e PDF vetorial no navegador, sem upload, grátis 2026.",
     "metaKeywords": [
       "modelos layout foto documento",
@@ -647,7 +645,7 @@
   },
   "Compress": {
     "index": {
-      "metaTitle": "Comprimir fotos online · 50KB / 100KB / 200KB / 500KB / 1MB · grátis 2026 | Pixfit",
+      "metaTitle": "Comprimir fotos para 50KB–1MB online · grátis 2026 | Pixfit",
       "metaDescription": "Comprima fotos JPG e PNG para 50KB, 100KB, 200KB, 500KB ou 1MB online. 100% no navegador, sem upload, grátis, 2026. Pixfit.",
       "metaKeywords": [
         "comprimir foto online",
@@ -1013,7 +1011,7 @@
   "Scanner": {
     "title": "Scanner inteligente de documentos",
     "subtitle": "Envie a foto que você tirou no celular do RG, passaporte ou CNH — o scanner inteligente corrige perspectiva, equilibra branco e exporta um PDF A4 / Letter / A5, tudo no navegador.",
-    "metaTitle": "Pixfit Scanner · 12 documentos PDF no navegador · grátis 2026 | Pixfit Scanner",
+    "metaTitle": "Pixfit Scanner · 12 documentos em PDF 2026 | Pixfit Scanner",
     "metaDescription": "Escaneie 12 documentos em PDF no navegador: RG, passaporte, CNH, cartão bancário. IA corrige perspectiva + scan/cópia/realce. Grátis 2026, sem upload.",
     "metaKeywords": [
       "scanner documentos inteligente",

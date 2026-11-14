@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -43,7 +41,7 @@
     "heroTitle": "ブラウザで完結する、AI証明写真スタジオ",
     "heroSubtitle": "PixfitはAIを活用した証明写真とドキュメントスキャナーです。被写体の自動切り抜き、背景差し替え、規格に合わせたトリミング、印刷レイアウト、申請ポータルのサイズに合わせた圧縮まで、すべてブラウザ内で完結しアップロードは不要です。",
     "metaTitle": "Pixfit · 無料のブラウザ証明写真ツール · AI背景除去 · アップロード不要 · 2026 | Pixfit",
-    "metaDescription": "完全ブラウザで動く無料証明写真ツール：AI背景除去、ビザ・パスポート規格への自動トリミング、PDFスキャン。アップロード不要、2026最新版。",
+    "metaDescription": "ブラウザで無料の証明写真を作成：AI背景除去・背景変更・ビザ/パスポート規格の自動トリミング、証明書類のPDFスキャンに対応。写真はアップロード不要、PNG/JPG出力、2026年更新。",
     "metaKeywords": [
       "AI証明写真",
       "AI証明写真処理",
@@ -176,7 +174,7 @@
     "title": "スタジオ",
     "subtitle": "人物写真をアップロード — AI切り抜き、スマートクロップ、ワンクリック背景差し替え、印刷レイアウト、指定KBエクスポートをすべてブラウザ内で。",
     "metaTitle": "Pixfit スタジオ · オンラインクロップ · 背景変更 · 圧縮 · 印刷レイアウト 2026 | Pixfit",
-    "metaDescription": "Pixfit スタジオ：オンラインクロップ、AI背景変更、指定KB圧縮、A4/5R/6R 印刷レイアウト。無料、ブラウザ内、アップロード不要、2026 · 28規格対応。",
+    "metaDescription": "証明写真をオンライン編集：トリミング、AI背景変更、指定KB圧縮、A4/5R/6R印刷レイアウト。ブラウザ内で無料、写真のアップロード不要、28規格対応。",
     "metaKeywords": [
       "AI証明写真エディタ",
       "AI証明写真",
@@ -441,7 +439,7 @@
       },
       "cta": "スタジオで使う",
       "metaTitle": "Pixfit 印刷用紙 · 3R 4R 5R 6R 8R A4 A5 · オンライン配置 2026 | Pixfit",
-      "metaDescription": "Pixfit 印刷用紙：3R / 4R / 5R / 6R / 8R / A4 / A5 — 証明写真をブラウザで自動配置、PNG/PDF を無料ダウンロード、アップロード不要、2026更新。",
+      "metaDescription": "証明写真の印刷レイアウトに対応：3R / 4R / 5R / 6R / 8R / A4 / A5へ自動配置し、PNG/PDFをダウンロード。ブラウザ内で無料、アップロード不要。",
       "metaKeywords": [
         "証明写真印刷用紙",
         "スマート写真レイアウト",
@@ -519,7 +517,7 @@
     "categoryEmpty": "このカテゴリにはまだ規格がありません",
     "viewDetail": "詳細を見る",
     "metaTitle": "Pixfit 証明写真サイズ · 28規格 · オンラインクロップ + AI 背景 2026 | Pixfit",
-    "metaDescription": "28種の証明写真規格：米国 / シェンゲン / 英国 / 日本ビザ、中国ID、試験用。オンラインクロップ + AI 背景、無料ブラウザ、アップロード不要、2026更新。",
+    "metaDescription": "証明写真サイズ一覧：1インチ、2インチ、ビザ、パスポート、試験用の規格を確認し、mm/pxサイズを表示。オンラインクロップとAI背景変更、28規格、アップロード不要。",
     "metaKeywords": [
       "AI 証明写真サイズ",
       "AI 証明写真規格",
@@ -534,7 +532,7 @@
     ],
     "detail": {
       "metaTitle": "{name} {w}×{h}mm · オンラインクロップ 2026 | Pixfit",
-      "metaDescription": "{name} 証明写真 {w}×{h}mm ({wpx}×{hpx}px @ {dpi} DPI)、背景 {bgLabel}。オンラインクロップ + AI 背景。無料、ブラウザ、アップロード不要、2026規格。",
+      "metaDescription": "{name} 証明写真規格：{w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI）、推奨背景{bgLabel}。規格に合わせてクロップとAI背景変更、ブラウザで無料、アップロード不要。",
       "heading": "{name} 写真サイズ",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "標準の {name} 証明写真は {w} × {h} mm ({wpx} × {hpx} px @ {dpi} DPI) で、推奨背景は {bgLabel} です。このページではフル仕様、撮影要件、無料ブラウザツールでの作成方法を解説します。",
@@ -632,7 +630,7 @@
     },
     "cta": "スタジオで開く",
     "metaTitle": "Pixfit レイアウトテンプレート · 12種 · 5R 6R A4 オンライン配置 PDF生成 2026 | Pixfit",
-    "metaDescription": "12種の印刷レイアウト：8面・16面1インチ、1+2インチ混合、ID、パスポート、ウォレット。5R / 6R / A4 対応。ブラウザ内 PNG・ベクターPDF、アップロード不要、無料 2026。",
+    "metaDescription": "証明写真の印刷テンプレート：1インチ、2インチ、ID、パスポート、ウォレットを5R / 6R / A4に配置。ブラウザ内でPNGとベクターPDFを生成、アップロード不要、無料。",
     "metaKeywords": [
       "証明写真レイアウトテンプレート",
       "スマート写真配置",
@@ -648,7 +646,7 @@
   "Compress": {
     "index": {
       "metaTitle": "オンライン写真圧縮 · 50KB / 100KB / 200KB / 500KB / 1MB · 無料 2026 | Pixfit",
-      "metaDescription": "JPG・PNG 写真を 50KB、100KB、200KB、500KB、1MB にオンライン圧縮。100% ブラウザ内、アップロード不要、無料、2026。Pixfit。",
+      "metaDescription": "JPG/PNG写真を50KB、100KB、200KB、500KB、1MBへオンライン圧縮。ブラウザ内で処理し、写真のアップロード不要。試験・ビザ申請に無料で使えます。",
       "metaKeywords": [
         "オンライン写真圧縮",
         "JPG を KB に圧縮",
@@ -678,7 +676,7 @@
     },
     "detail": {
       "metaTitle": "写真を {label} にオンライン圧縮 · 無料 2026 | Pixfit",
-      "metaDescription": "写真を {label} にオンライン圧縮。100% ブラウザ内、アップロード不要、無料。{label} ターゲットを ±1KB 以内で達成。2026 · Pixfit。",
+      "metaDescription": "写真を{label}にオンライン圧縮：JPG/PNGをブラウザ内で処理し、目標値の±1KB以内に調整。証明写真の試験・ビザ申請に使え、アップロード不要、無料。",
       "metaKeywords": [
         "写真を {label} に圧縮",
         "JPG を {label} に圧縮",
@@ -1014,7 +1012,7 @@
     "title": "インテリジェント書類スキャナー",
     "subtitle": "身分証、パスポート、運転免許のスマホ撮影写真をアップロード — スキャナーが台形補正、ホワイトバランス、A4 / Letter / A5 PDF 書き出しをすべてブラウザ内で実行します。",
     "metaTitle": "Pixfit Scanner · 12種書類をブラウザ内でPDFスキャン · 無料 2026 | Pixfit Scanner",
-    "metaDescription": "ブラウザ内で12種書類をPDFにスキャン：ID、パスポート、運転免許、銀行カード。AI 台形補正＋スキャン/コピー/強調。無料 2026、アップロード不要。",
+    "metaDescription": "ID、パスポート、運転免許証、銀行カードをブラウザでPDF化：AI台形補正、スキャン/コピー/強調モード、A4/Letter/A5出力に対応。アップロード不要、無料、2026年更新。",
     "metaKeywords": [
       "スマート書類スキャナー",
       "AI 書類スキャナー",
@@ -1229,7 +1227,7 @@
     },
     "detail": {
       "metaTitle": "{name} {w}×{h}mm をPDFスキャン 2026 | Pixfit Scanner",
-      "metaDescription": "{name} ({w}×{h}mm) をブラウザでスキャン：AI 台形補正＋スキャン/コピー/強調モード、A4/Letter/A5 PDF 書き出し。無料、アップロード不要、2026。",
+      "metaDescription": "{name}（{w}×{h}mm）をブラウザでスキャン：AI台形補正、スキャン/コピー/強調、A4/Letter/A5 PDF出力。写真のアップロード不要、無料、2026年更新。",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · ウォーターマーク任意",
       "summarySection": {
         "title": "{name} について",
@@ -1354,7 +1352,7 @@
   "Blog": {
     "index": {
       "metaTitle": "Pixfit ブログ · 証明写真と書類スキャンガイド 2026 | Pixfit",
-      "metaDescription": "オンライン証明写真、書類 PDF スキャン、Pixfit のブラウザ内ツールに関する長文ガイド。無料、アップロード不要、2026。",
+      "metaDescription": "証明写真のサイズ、背景変更、書類のPDFスキャン、Pixfitの使い方を紹介するガイド。試験やビザ申請の準備に役立ちます。無料、ブラウザ内処理、アップロード不要。",
       "metaKeywords": [
         "Pixfit ブログ",
         "証明写真ガイド 2026",

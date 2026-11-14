@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -43,7 +41,7 @@
     "heroTitle": "브라우저에서 끝내는 AI 증명사진",
     "heroSubtitle": "Pixfit은 AI 기반 증명사진 및 문서 스캐너로 피사체 자동 분리, 배경 교체, 규격에 맞춘 크롭, 인쇄 레이아웃, 신청 포털 용량에 맞춘 압축까지 모두 브라우저 안에서 처리하며 업로드가 필요 없습니다.",
     "metaTitle": "Pixfit · 무료 브라우저 증명사진 도구 · AI 배경 제거 · 업로드 없음 · 2026 | Pixfit",
-    "metaDescription": "완전히 브라우저에서 동작하는 무료 증명사진 도구: AI 배경 제거, 비자·여권 규격 자동 크롭, PDF 스캔. 업로드 없음, 2026 최신.",
+    "metaDescription": "브라우저에서 무료로 증명사진을 만들 수 있습니다. AI 배경 제거와 교체, 비자·여권 규격 자동 크롭, 문서 PDF 스캔을 지원하며 PNG/JPG로 내보냅니다. 업로드 없음, 2026 최신.",
     "metaKeywords": [
       "AI 증명사진",
       "스마트 증명사진",
@@ -176,7 +174,7 @@
     "title": "스튜디오",
     "subtitle": "인물 사진을 업로드하세요 — AI 분리, 스마트 크롭, 원클릭 배경 교체, 인쇄 레이아웃, KB 정밀 내보내기를 브라우저에서 모두 처리합니다.",
     "metaTitle": "Pixfit 스튜디오 · 온라인 크롭 · 배경 교체 · 압축 · 인쇄 레이아웃 2026 | Pixfit",
-    "metaDescription": "Pixfit 스튜디오: 온라인 크롭, AI 배경 교체, KB 압축, A4/5R/6R 인쇄 레이아웃. 무료, 브라우저 내, 업로드 없음. 2026 · 28개 규격 지원.",
+    "metaDescription": "온라인 증명사진 작업실: 사진 크롭, AI 배경 교체, 지정 KB 압축, A4/5R/6R 인쇄 레이아웃을 지원합니다. 브라우저에서 무료로 처리하며 업로드 없음, 28개 규격과 PNG/JPG 내보내기를 지원합니다.",
     "metaKeywords": [
       "AI 증명사진 편집기",
       "스마트 증명사진",
@@ -441,7 +439,7 @@
       },
       "cta": "스튜디오에서 사용",
       "metaTitle": "Pixfit 인쇄 용지 · 3R 4R 5R 6R 8R A4 A5 · 온라인 자동 배치 2026 | Pixfit",
-      "metaDescription": "Pixfit 인쇄 용지: 3R, 4R, 5R, 6R, 8R, A4, A5 — 브라우저에서 증명사진을 자동 배치, 무료 PNG/PDF 다운로드, 업로드 없음, 2026 최신.",
+      "metaDescription": "증명사진 인쇄 배치 지원: 3R, 4R, 5R, 6R, 8R, A4, A5 용지에 사진을 자동 배치하고 PNG/PDF로 다운로드합니다. 브라우저에서 무료, 업로드 없음.",
       "metaKeywords": [
         "증명사진 인쇄 용지",
         "스마트 사진 레이아웃",
@@ -519,7 +517,7 @@
     "categoryEmpty": "이 카테고리에 규격이 없습니다",
     "viewDetail": "자세히 보기",
     "metaTitle": "Pixfit 증명사진 규격 · 28종 · 온라인 크롭 + AI 배경 2026 | Pixfit",
-    "metaDescription": "28가지 증명사진 규격: 미국 / 솅겐 / 영국 / 일본 비자, 중국 신분증, 시험. 온라인 크롭 + AI 배경, 무료 브라우저, 업로드 없음, 2026 최신.",
+    "metaDescription": "증명사진 규격 모음: 1인치, 2인치, 비자, 여권, 시험용 규격의 mm·px 크기를 확인하고 온라인 크롭과 AI 배경을 사용하세요. 28개 규격, 무료 브라우저 처리, 업로드 없음.",
     "metaKeywords": [
       "AI 증명사진 규격",
       "AI 증명사진 사양",
@@ -534,7 +532,7 @@
     ],
     "detail": {
       "metaTitle": "{name} {w}×{h}mm · 온라인 크롭 2026 | Pixfit",
-      "metaDescription": "{name} 증명사진 {w}×{h}mm ({wpx}×{hpx}px @ {dpi} DPI), 배경 {bgLabel}. 온라인 크롭 + AI 배경. 무료, 브라우저, 업로드 없음, 2026 규격.",
+      "metaDescription": "{name} 증명사진 규격: {w}×{h}mm ({wpx}×{hpx}px @ {dpi} DPI), 권장 배경 {bgLabel}. 규격에 맞게 크롭하고 AI 배경을 적용하며, 브라우저에서 무료 처리하고 업로드하지 않습니다.",
       "heading": "{name} 사진 규격",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "표준 {name} 증명사진은 {w} × {h} mm ({wpx} × {hpx} px @ {dpi} DPI)이며 권장 배경은 {bgLabel}입니다. 이 페이지에서 전체 사양, 촬영 요건, 무료 브라우저 도구로 만드는 방법을 다룹니다.",
@@ -632,7 +630,7 @@
     },
     "cta": "스튜디오에서 열기",
     "metaTitle": "Pixfit 레이아웃 템플릿 · 12종 · 5R 6R A4 온라인 배치 PDF 생성 2026 | Pixfit",
-    "metaDescription": "12가지 인쇄 레이아웃: 1인치 8매·16매, 1+2인치 혼합, 신분증, 여권, 지갑. 5R / 6R / A4 지원. 브라우저 내 PNG · 벡터 PDF, 업로드 없음, 무료 2026.",
+    "metaDescription": "증명사진 인쇄 템플릿: 1인치·2인치, 신분증, 여권, 지갑 사진을 5R/6R/A4에 배치합니다. 브라우저에서 PNG와 벡터 PDF를 생성하며 업로드 없음, 무료입니다.",
     "metaKeywords": [
       "증명사진 레이아웃 템플릿",
       "스마트 사진 레이아웃",
@@ -648,7 +646,7 @@
   "Compress": {
     "index": {
       "metaTitle": "온라인 사진 압축 · 50KB / 100KB / 200KB / 500KB / 1MB · 무료 2026 | Pixfit",
-      "metaDescription": "JPG, PNG 사진을 50KB, 100KB, 200KB, 500KB, 1MB로 온라인 압축. 100% 브라우저, 업로드 없음, 무료, 2026. Pixfit.",
+      "metaDescription": "JPG/PNG 증명사진을 50KB, 100KB, 200KB, 500KB 또는 1MB로 온라인 압축합니다. 브라우저에서 파일 크기를 조정하고 업로드하지 않으며, 시험·비자·지원서 제출에 무료로 사용할 수 있습니다.",
       "metaKeywords": [
         "온라인 사진 압축",
         "JPG를 KB로 압축",
@@ -678,7 +676,7 @@
     },
     "detail": {
       "metaTitle": "사진을 {label}로 온라인 압축 · 무료 2026 | Pixfit",
-      "metaDescription": "사진을 {label}로 온라인 압축. 100% 브라우저, 업로드 없음, 무료. {label} 목표를 ±1KB 이내로 맞춤. 2026 · Pixfit.",
+      "metaDescription": "사진을 {label}로 압축: 브라우저에서 JPG/PNG를 처리하고 목표값 ±1KB 이내로 조정합니다. 시험·비자·지원서용 증명사진에 적합하며 업로드 없음, 무료입니다.",
       "metaKeywords": [
         "사진을 {label}로 압축",
         "JPG를 {label}로 압축",
@@ -1014,7 +1012,7 @@
     "title": "스마트 신분증 스캐너",
     "subtitle": "신분증, 여권, 운전면허의 폰 사진을 업로드하면 스마트 스캐너가 원근을 보정하고 화이트 밸런스를 맞춰 A4 / Letter / A5 PDF로 내보냅니다 — 모두 브라우저에서.",
     "metaTitle": "Pixfit Scanner · 12종 문서 브라우저 PDF 스캔 · 무료 2026 | Pixfit Scanner",
-    "metaDescription": "브라우저에서 12종 문서를 PDF로 스캔: 신분증, 여권, 운전면허, 은행 카드. AI 원근 보정 + 스캔/복사/강조. 무료 2026, 업로드 없음.",
+    "metaDescription": "신분증, 여권, 운전면허증, 은행 카드를 브라우저에서 PDF로 스캔합니다. AI 원근 보정과 스캔/복사/강조 모드, A4·Letter·A5 출력 지원. 업로드 없음, 무료, 2026 최신.",
     "metaKeywords": [
       "스마트 문서 스캐너",
       "AI 문서 스캐너",
@@ -1229,7 +1227,7 @@
     },
     "detail": {
       "metaTitle": "{name} {w}×{h}mm PDF 스캔 2026 | Pixfit Scanner",
-      "metaDescription": "브라우저에서 {name}({w}×{h}mm) 스캔: AI 원근 보정 + 스캔/복사/강조 모드, A4/Letter/A5 PDF 내보내기. 무료, 업로드 없음, 2026.",
+      "metaDescription": "브라우저에서 {name}({w}×{h}mm)를 스캔합니다. AI 원근 보정, 스캔/복사/강조와 A4·Letter·A5 PDF 내보내기를 지원하며 업로드 없음, 무료, 2026 최신입니다.",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · 워터마크 선택",
       "summarySection": {
         "title": "{name} 소개",
@@ -1354,7 +1352,7 @@
   "Blog": {
     "index": {
       "metaTitle": "Pixfit 블로그 · 증명사진 및 문서 스캔 가이드 2026 | Pixfit",
-      "metaDescription": "온라인 증명사진, 문서 PDF 스캔, Pixfit 브라우저 도구를 다루는 장문 가이드. 무료, 업로드 없음, 2026.",
+      "metaDescription": "증명사진 규격, 배경 변경, 문서 PDF 스캔과 Pixfit 사용법을 소개하는 가이드입니다. 시험·비자 신청 사진 준비에 활용할 수 있으며 브라우저에서 무료로 처리하고 업로드하지 않습니다.",
       "metaKeywords": [
         "Pixfit 블로그",
         "증명사진 가이드 2026",

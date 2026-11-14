@@ -30,10 +30,8 @@ export const SUPPORTED_LOCALES: readonly Locale[] = [
   'pt-BR',
   'fr',
   'de',
-  'ru',
   'it',
   'vi',
-  'ar',
 ] as const
 export const DEFAULT_LOCALE: Locale = 'zh-Hans'
 
@@ -59,8 +57,6 @@ export const HREFLANG_BY_LOCALE: Record<Locale, string> = {
   'pt-BR': 'pt-BR',
   fr: 'fr',
   de: 'de',
-  ru: 'ru',
   it: 'it',
   vi: 'vi',
-  ar: 'ar',
 }

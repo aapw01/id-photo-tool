@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -43,7 +41,7 @@
     "heroTitle": "智能证件照处理，一次搞定",
     "heroSubtitle": "Pixfit 是浏览器内运行的 AI 证件照工具：AI 一键抠图、智能换背景、智能裁剪到证件 / 签证规格、自动排版与压缩到指定大小——全程本地处理，照片不上传。",
     "metaTitle": "Pixfit · 免费在线证件照工具 · 浏览器内 AI 抠图换背景 · 不上传 2026 | Pixfit",
-    "metaDescription": "免费在线证件照工具，浏览器内 AI 一键抠图、换背景、智能裁剪到签证 / 护照 / 身份证规格，含 AI 证件扫描成 A4 PDF。照片不上传，2026 全新规格。",
+    "metaDescription": "免费在线制作证件照：浏览器内完成 AI 抠图、换背景，并按一寸、二寸、签证和护照规格裁剪；还可扫描证件生成 A4 PDF，导出 PNG 或 JPG。照片不上传，2026 更新。",
     "metaKeywords": [
       "智能证件照处理",
       "AI 证件照",
@@ -175,7 +173,7 @@
     "title": "工作台",
     "subtitle": "上传一张人像，AI 智能抠图、智能裁剪、AI 一键换背景、自动拼版与按 KB 压缩，全程浏览器内完成。",
     "metaTitle": "Pixfit 工作台 · 在线裁剪 · 换背景 · 压缩 · 拼版打印 2026 | Pixfit",
-    "metaDescription": "Pixfit 工作台：在线裁剪、AI 一键换背景、按 KB 压缩、A4 / 5R / 6R 拼版打印，免费浏览器内运行，照片不上传。2026 支持 28 种证件规格。",
+    "metaDescription": "在线证件照工作台：裁剪照片、AI 换背景、压缩到指定 KB，并按 A4 / 5R / 6R 拼版打印。浏览器内免费完成，照片不上传，支持 28 种规格和 PNG/JPG 导出。",
     "metaKeywords": [
       "AI 证件照编辑器",
       "智能证件照处理",
@@ -439,7 +437,7 @@
       },
       "cta": "在工作台使用",
       "metaTitle": "Pixfit 证件照相纸规格 · 3R 4R 5R 6R 8R A4 A5 在线拼版 2026 | Pixfit",
-      "metaDescription": "七种打印相纸：3R / 4R / 5R / 6R / 8R / A4 / A5。在浏览器内免费把证件照在线拼版到相纸上，下载 PNG / PDF，照片不上传，2026 全新规格。",
+      "metaDescription": "证件照打印拼版支持 3R、4R、5R、6R、8R、A4、A5：在浏览器内自动排版多张照片，下载 PNG / PDF，适合打印和冲印。照片不上传，免费使用。",
       "metaKeywords": [
         "证件照打印相纸",
         "智能照片排版",
@@ -517,7 +515,7 @@
     "categoryEmpty": "该分类下暂无规格",
     "viewDetail": "查看详情",
     "metaTitle": "Pixfit 证件照尺寸库 · 28 种规格 在线裁剪 + AI 换背景 2026 | Pixfit",
-    "metaDescription": "28 条证件照规格：美国 / 申根 / 英国 / 日韩签证、中国身份证 / 1 寸 / 2 寸、考试报名。在线裁剪 + AI 换背景，免费浏览器内运行，照片不上传，2026 规格。",
+    "metaDescription": "证件照尺寸库：查询一寸、二寸、签证、护照和考试报名规格，查看毫米与像素尺寸，在线裁剪并 AI 换背景。支持 28 种常用规格，浏览器内免费使用，照片不上传。",
     "metaKeywords": [
       "智能证件照尺寸",
       "AI 证件照规格",
@@ -532,7 +530,7 @@
     ],
     "detail": {
       "metaTitle": "{name} {w}×{h}mm · 在线裁剪 2026 | Pixfit",
-      "metaDescription": "{name} 证件照 {w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推荐背景 {bgLabel}。在线裁剪 + AI 换背景，免费浏览器内运行，照片不上传，2026 规格。",
+      "metaDescription": "{name} 证件照规格：{w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推荐{bgLabel}。在线按规格裁剪并 AI 换背景，浏览器内免费完成，可导出符合要求的照片，照片不上传。",
       "heading": "{name}照片尺寸",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "{name}电子证件照标准规格为 {w} × {h} 毫米（{wpx} × {hpx} 像素，{dpi} DPI），推荐背景色 {bgLabel}。本页提供完整规格说明、拍摄要求与免费在线制作入口。",
@@ -630,7 +628,7 @@
     },
     "cta": "在工作台打开",
     "metaTitle": "Pixfit 证件照拼版模板 · 12 套 · 5R 6R A4 在线生成 PDF 2026 | Pixfit",
-    "metaDescription": "12 套打印模板：8 张 1 寸 / 16 张 1 寸 / 1 寸 + 2 寸混排 / 身份证 / 护照 / 皮夹照，覆盖 5R / 6R / A4。浏览器内生成 PNG 与矢量 PDF，不上传、免费 2026。",
+    "metaDescription": "证件照打印模板：支持 1 寸、2 寸、身份证、护照和皮夹照混排，适配 5R / 6R / A4。浏览器内生成 PNG 与矢量 PDF，适合打印报名照片，照片不上传，免费使用。",
     "metaKeywords": [
       "证件照排版模板",
       "智能照片拼版",
@@ -646,7 +644,7 @@
   "Compress": {
     "index": {
       "metaTitle": "在线压缩照片到指定大小 · 50KB/100KB/200KB/500KB/1MB · 免费 2026 | Pixfit",
-      "metaDescription": "在线把 JPG/PNG 照片压缩到 50KB、100KB、200KB、500KB 或 1MB。完全在浏览器内运行，不上传、免费、2026 更新 · Pixfit。",
+      "metaDescription": "在线压缩 JPG/PNG 证件照到 50KB、100KB、200KB、500KB 或 1MB：浏览器内处理并控制文件大小，不上传照片，适合考试、签证和报名提交，免费使用。",
       "metaKeywords": [
         "在线压缩照片",
         "照片压缩到指定大小",
@@ -676,7 +674,7 @@
     },
     "detail": {
       "metaTitle": "在线压缩照片到 {label} · 免费 2026 | Pixfit",
-      "metaDescription": "在线把照片压缩到 {label}。完全在浏览器内运行，不上传、免费，结果落在 ±1KB 范围内。2026 · Pixfit。",
+      "metaDescription": "在线把照片压缩到 {label}：浏览器内处理 JPG/PNG，结果控制在目标附近 ±1KB，适合证件照考试、签证和报名提交。照片不上传，免费使用 · Pixfit。",
       "metaKeywords": [
         "压缩照片到 {label}",
         "压缩 jpg 到 {label}",
@@ -1012,7 +1010,7 @@
     "title": "智能证件扫描生成器",
     "subtitle": "上传手机拍的身份证、护照、驾驶证等证件照片，智能扫描自动透视校正、AI 调色与去阴影，一键生成 A4 / Letter / A5 PDF 扫描件 —— 全程在浏览器内完成。",
     "metaTitle": "Pixfit 智能证件扫描 · 12 种证件浏览器内在线扫描 PDF 2026 | Pixfit Scanner",
-    "metaDescription": "在线扫描 12 种证件成 PDF：身份证、护照、驾驶证、银行卡。AI 透视校正 + 扫描 / 复印 / 增强模式，免费浏览器内运行，照片不上传，2026 更新。",
+    "metaDescription": "在线把身份证、护照、驾驶证和银行卡扫描成 PDF：AI 透视校正、扫描/复印/增强模式均在浏览器内完成，可导出 A4、Letter 或 A5。照片不上传，免费使用，2026 更新。",
     "metaKeywords": [
       "智能证件扫描",
       "AI 证件扫描",
@@ -1227,7 +1225,7 @@
     },
     "detail": {
       "metaTitle": "{name} {w}×{h}mm 在线扫描 PDF 2026 | Pixfit Scanner",
-      "metaDescription": "在浏览器内扫描 {name}（{w}×{h}mm）：AI 透视校正 + 扫描 / 复印 / 增强模式，导出 A4 / Letter / A5 PDF。照片不上传，免费 2026。",
+      "metaDescription": "在浏览器内扫描 {name}（{w}×{h}mm）：AI 透视校正、扫描/复印/增强和 A4 / Letter / A5 PDF 导出。照片不上传，免费使用，2026 更新。",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · 可选水印",
       "summarySection": {
         "title": "关于 {name}",
@@ -1352,7 +1350,7 @@
   "Blog": {
     "index": {
       "metaTitle": "Pixfit 博客 · 证件照与扫描 PDF 指南 2026 | Pixfit",
-      "metaDescription": "围绕在线证件照、文档扫描转 PDF 与 Pixfit 浏览器工具的长文指南。免费、不上传、2026。",
+      "metaDescription": "证件照尺寸、换底色、文档扫描转 PDF 与 Pixfit 工具使用指南，帮助你按考试、报名和签证要求准备照片。免费阅读，浏览器内处理，照片不上传。",
       "metaKeywords": [
         "Pixfit 博客",
         "证件照指南 2026",

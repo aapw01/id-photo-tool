@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -42,7 +40,7 @@
   "Home": {
     "heroTitle": "Smarte Passfotos – fertig im Browser",
     "heroSubtitle": "Pixfit ist ein KI-gestütztes Passfoto-Studio und Dokumentenscanner: automatisches Freistellen, Hintergrundwechsel, behördengerechter Zuschnitt, Druck-Layout und Komprimieren auf eine exakte KB-Größe – alles im Browser, ohne Upload.",
-    "metaTitle": "Pixfit · Kostenloses KI-Passfoto · Hintergrund freistellen · ohne Upload · 2026 | Pixfit",
+    "metaTitle": "Pixfit · Kostenloses Passfoto mit KI · ohne Upload 2026 | Pixfit",
     "metaDescription": "Kostenloses Passfoto-Tool im Browser: KI entfernt Hintergrund, Visa-/Passzuschnitt, PDF-Scan. Ohne Upload, Stand 2026.",
     "metaKeywords": [
       "KI Passfoto",
@@ -175,7 +173,7 @@
   "Studio": {
     "title": "Studio",
     "subtitle": "Portrait hochladen – KI-Freistellung, intelligenter Zuschnitt, Hintergrundwechsel per Klick, Layout und exakter KB-Export, alles im Browser.",
-    "metaTitle": "Pixfit Studio · Online-Zuschnitt · Hintergrund · Komprimieren · A4/5R/6R 2026 | Pixfit",
+    "metaTitle": "Pixfit Studio · Zuschnitt, Hintergrund, Komprimierung 2026 | Pixfit",
     "metaDescription": "Pixfit Studio: Online-Zuschnitt, KI-Hintergrundwechsel, KB-Komprimierung, A4/5R/6R-Layout. Kostenlos, im Browser, ohne Upload. 2026 · 28 Formate.",
     "metaKeywords": [
       "KI Passfoto-Editor",
@@ -518,7 +516,7 @@
     "cta": "Im Studio nutzen",
     "categoryEmpty": "Keine Formate in dieser Kategorie",
     "viewDetail": "Details ansehen",
-    "metaTitle": "Pixfit Foto-Formate · 28 Größen · Online-Zuschnitt + KI-Hintergrund 2026 | Pixfit",
+    "metaTitle": "Pixfit Fotoformate · 28 Größen mit KI-Hintergrund 2026 | Pixfit",
     "metaDescription": "28 Foto-Formate: USA / Schengen / UK / Japan Visa, China-ID, Prüfungen. Online-Zuschnitt + KI-Hintergrund, gratis im Browser, ohne Upload, 2026.",
     "metaKeywords": [
       "KI Passfoto-Größen",
@@ -647,7 +645,7 @@
   },
   "Compress": {
     "index": {
-      "metaTitle": "Foto online komprimieren · 50KB / 100KB / 200KB / 500KB / 1MB · gratis 2026 | Pixfit",
+      "metaTitle": "Fotos online auf 50KB–1MB komprimieren · gratis 2026 | Pixfit",
       "metaDescription": "Komprimiere JPG- und PNG-Fotos online auf 50KB, 100KB, 200KB, 500KB oder 1MB. 100 % im Browser, ohne Upload, kostenlos, 2026. Pixfit.",
       "metaKeywords": [
         "Foto online komprimieren",
@@ -1013,7 +1011,7 @@
   "Scanner": {
     "title": "Smarter Dokumentenscanner",
     "subtitle": "Lade ein Smartphone-Foto von Ausweis, Reisepass oder Führerschein hoch – der smarte Scanner korrigiert Perspektive, gleicht Weiß ab und exportiert PDF in A4 / Letter / A5, alles im Browser.",
-    "metaTitle": "Pixfit Scanner · 12 Dokumente PDF im Browser · gratis 2026 | Pixfit Scanner",
+    "metaTitle": "Pixfit Scanner · 12 Dokumente als PDF im Browser 2026 | Pixfit Scanner",
     "metaDescription": "12 Dokumenttypen im Browser zu PDF scannen: ID, Pass, Führerschein, Karten. KI-Perspektive + Scan/Kopie/Verbessern. Gratis 2026, ohne Upload.",
     "metaKeywords": [
       "smarter Dokumentenscanner",

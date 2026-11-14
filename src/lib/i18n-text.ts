@@ -14,10 +14,8 @@
  *   pt-BR     →   pt-BR
  *   fr        →   fr
  *   de        →   de
- *   ru        →   ru
  *   it        →   it
  *   vi        →   vi
- *   ar        →   ar
  *
  * `en` is the universal fallback whenever the requested locale's
  * translation is missing (built-in data is being rolled out
@@ -45,10 +43,8 @@ export const LOCALE_TO_I18N: Record<AppLocale, keyof I18nText> = {
   'pt-BR': 'pt-BR',
   fr: 'fr',
   de: 'de',
-  ru: 'ru',
   it: 'it',
   vi: 'vi',
-  ar: 'ar',
 }
 
 /**

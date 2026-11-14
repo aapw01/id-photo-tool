@@ -18,7 +18,7 @@
 - **构图智能对齐** — 基于 MediaPipe 关键点 + MODNet mask 的头部位置自动校准，眼线 / 头部占比落入规格区间。
 - **多格式导出** — PNG（透明 / 实底）、JPG、WebP；可压缩到指定 KB（二分搜索 + 像素降采样）；可一键复制到剪贴板。
 - **打印排版** — 7 种相纸 × 12 套排版模板，一次冲洗多张照片。
-- **13 语 SEO** — `zh-Hans` / `zh-Hant` / `en` / `ja` / `ko` / `es` / `pt-BR` / `fr` / `de` / `ru` / `it` / `vi` / `ar`（RTL），hreflang × canonical × JSON-LD（`WebApplication` / `WebSite` / `HowTo` / `FAQPage` / `BreadcrumbList`）齐全；28 条规格各有独立 SSG 落地页。
+- **11 语 SEO** — `zh-Hans` / `zh-Hant` / `en` / `ja` / `ko` / `es` / `pt-BR` / `fr` / `de` / `it` / `vi`，hreflang × canonical × JSON-LD（`WebApplication` / `WebSite` / `HowTo` / `FAQPage` / `BreadcrumbList`）齐全；28 条规格各有独立 SSG 落地页。
 
 ## Pixfit Scanner · 证件扫描生成器
 
@@ -31,7 +31,7 @@
 - **整页预览对话框** — 导出按钮旁的「预览整页」按钮会打开 Radix 对话框，渲染你下载下来一模一样的 A4 / Letter / A5 整页（纸张、水印、圆角、输出模式都同步）。
 - **12 条 DocSpec、3 种纸张** — 中 / 港 / 台 / 新加坡 / 印度身份证、银行卡、美国驾照、中国驾驶证 / 行驶证小本、护照资料页、整页 A4 / Letter。可排版到 A4 / Letter / A5。
 - **PDF / HEIC / EXIF / 大文件预压缩** — 支持上传 `.pdf`（首页通过 `pdfjs-dist` 懒加载渲染）；HEIC 自动用 `heic2any` 转 JPG；EXIF 旋转自动应用；长边 > 4000 px 自动降采样。
-- **SEO 落地页** — 12 条 DocSpec × 13 语 = 156 个 SSG 页面（`/[locale]/scanner/[docType]`），每页带 `HowTo` / `FAQPage` / `BreadcrumbList` JSON-LD；所有 URL 全部进 sitemap，hreflang alternates 完整。
+- **SEO 落地页** — 12 条 DocSpec × 11 语 = 132 个 SSG 页面（`/[locale]/scanner/[docType]`），每页带 `HowTo` / `FAQPage` / `BreadcrumbList` JSON-LD；所有 URL 全部进 sitemap，hreflang alternates 完整。
 - **隐私与合规说明** — 首页说明本地处理、合法用途；服务条款明确禁止伪造 / 冒用。
 - **完整 a11y** — 所有 form 控件带 label、所有按钮带 aria-label，整页预览对话框用 Radix Dialog（焦点陷阱、ESC 关闭、点击外部关闭）。
 
@@ -68,7 +68,7 @@ pnpm lint           # ESLint 检查
 pnpm typecheck      # tsc --noEmit
 pnpm format         # Prettier 写盘
 pnpm test           # vitest run
-pnpm i18n:check     # 13 个语言 bundle 的 key 一致性
+pnpm i18n:check     # 11 个语言 bundle 的 key 一致性
 pnpm models:fetch   # 拉取 MODNet ONNX 模型到 public/_models/
 pnpm cf:build       # 用 OpenNext 打包为 Cloudflare Worker
 pnpm cf:deploy      # 构建并部署到 Cloudflare Workers
@@ -127,32 +127,30 @@ pnpm models:fetch
 
 ## 页面
 
-所有正式路由都按 `/[locale]/...` 在 13 个语言下静态出页（默认 `zh-Hans`）：
+所有正式路由都按 `/[locale]/...` 在 11 个语言下静态出页（默认 `zh-Hans`）：
 
-| Locale  | 母语名称       | 备注                             |
-| ------- | -------------- | -------------------------------- |
-| zh-Hans | 简体中文       | 默认 locale，大陆地区 canonical  |
-| zh-Hant | 繁體中文       | 港 / 澳 / 台                     |
-| en      | English        | `x-default` hreflang 锚点        |
-| ja      | 日本語         | AI 翻译初稿                      |
-| ko      | 한국어         | AI 翻译初稿                      |
-| es      | Español        | AI 翻译初稿（中性拉丁西通用）    |
-| pt-BR   | Português (BR) | AI 翻译初稿（巴西葡）            |
-| fr      | Français       | AI 翻译初稿                      |
-| de      | Deutsch        | AI 翻译初稿                      |
-| ru      | Русский        | AI 翻译初稿                      |
-| it      | Italiano       | AI 翻译初稿                      |
-| vi      | Tiếng Việt     | AI 翻译初稿                      |
-| ar      | العربية        | AI 翻译初稿 · RTL（`dir="rtl"`） |
+| Locale  | 母语名称       | 备注                            |
+| ------- | -------------- | ------------------------------- |
+| zh-Hans | 简体中文       | 默认 locale，大陆地区 canonical |
+| zh-Hant | 繁體中文       | 港 / 澳 / 台                    |
+| en      | English        | `x-default` hreflang 锚点       |
+| ja      | 日本語         | AI 翻译初稿                     |
+| ko      | 한국어         | AI 翻译初稿                     |
+| es      | Español        | AI 翻译初稿（中性拉丁西通用）   |
+| pt-BR   | Português (BR) | AI 翻译初稿（巴西葡）           |
+| fr      | Français       | AI 翻译初稿                     |
+| de      | Deutsch        | AI 翻译初稿                     |
+| it      | Italiano       | AI 翻译初稿                     |
+| vi      | Tiếng Việt     | AI 翻译初稿                     |
 
-> `zh-Hans` / `zh-Hant` / `en` 之外的 10 个 locale 当前为 AI 翻译初稿，欢迎母语贡献者通过 Pull Request 润色。
+> `zh-Hans` / `zh-Hant` / `en` 之外的 8 个 locale 当前为 AI 翻译初稿，欢迎母语贡献者通过 Pull Request 润色。
 
 | 路由                 | 内容                                                         |
 | -------------------- | ------------------------------------------------------------ |
 | `/`                  | 首页 · 落地 + 上传                                           |
 | `/studio`            | 工作台 · 抠图 / 换底 / 裁剪 / 排版 / 导出（支持 `?tab=`）    |
 | `/scanner`           | **子产品** · 证件扫描生成器                                  |
-| `/scanner/[docType]` | 单条 DocSpec SEO 落地页（12 × 13 = 156 个 SSG 页）           |
+| `/scanner/[docType]` | 单条 DocSpec SEO 落地页（12 × 11 = 132 个 SSG 页）           |
 | `/sizes`             | 28 条内置照片规格列表（SEO 着陆页）                          |
 | `/sizes/[specId]`    | 单条规格详情（含 HowTo / FAQ JSON-LD）                       |
 | `/paper`             | 7 条内置相纸规格列表                                         |
@@ -160,7 +158,7 @@ pnpm models:fetch
 | `/specs`             | 规格管理 · 自定义 PhotoSpec / PaperSpec / LayoutTemplate     |
 | `/privacy`           | 隐私政策                                                     |
 | `/terms`             | 服务条款                                                     |
-| `/sitemap.xml`       | 自动收录全部上述路由 × 13 locale（hreflang alternates 齐全） |
+| `/sitemap.xml`       | 自动收录全部上述路由 × 11 locale（hreflang alternates 齐全） |
 | `/robots.txt`        | 公开抓取规则                                                 |
 
 dev-only 路由（`/dev/*`）默认隐藏；需 `NEXT_PUBLIC_ENABLE_DEV_PAGES=1` 才会编译。
@@ -181,7 +179,7 @@ dev-only 路由（`/dev/*`）默认隐藏；需 `NEXT_PUBLIC_ENABLE_DEV_PAGES=1`
 
 - Conventional Commits（`feat:` / `fix:` / `chore:` …），`commitlint` 会在 `commit-msg` hook 校验。
 - 提交前自动跑 `eslint --fix` + `prettier --write`（`lint-staged`）。
-- 新增 i18n key 时务必同步所有 13 个 locale 文件（`src/i18n/messages/*.json`），否则 `pnpm i18n:check` 会失败。`zh-Hans` / `zh-Hant` / `en` 以外的 10 个 bundle 当前为 AI 翻译初稿，欢迎母语贡献者通过 PR 润色。
+- 新增 i18n key 时务必同步所有 11 个 locale 文件（`src/i18n/messages/*.json`），否则 `pnpm i18n:check` 会失败。`zh-Hans` / `zh-Hant` / `en` 以外的 8 个 bundle 当前为 AI 翻译初稿，欢迎母语贡献者通过 PR 润色。
 
 ## License
 

@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -43,7 +41,7 @@
     "heroTitle": "智慧證件照處理，一次搞定",
     "heroSubtitle": "Pixfit 是在瀏覽器內執行的 AI 證件照工具：AI 一鍵去背、智慧換背景、智慧裁切到證件 / 簽證規格、自動排版與壓縮到指定大小——全程本機處理，相片不上傳。",
     "metaTitle": "Pixfit · 免費線上證件照工具 · 瀏覽器內 AI 去背換背景 · 不上傳 2026 | Pixfit",
-    "metaDescription": "免費線上證件照工具，瀏覽器內 AI 一鍵去背、換背景、智慧裁切到簽證 / 護照 / 身分證規格，含 AI 證件掃描成 A4 PDF。相片不上傳，2026 全新規格。",
+    "metaDescription": "免費線上製作證件照：瀏覽器內完成 AI 去背、換背景，並按一吋、二吋、簽證和護照規格裁切；也可掃描證件生成 A4 PDF，匯出 PNG 或 JPG。相片不上傳，2026 更新。",
     "metaKeywords": [
       "智慧證件照處理",
       "AI 證件照",
@@ -175,7 +173,7 @@
     "title": "工作台",
     "subtitle": "上傳一張人像，AI 智慧去背、智慧裁切、AI 一鍵換背景、自動拼版與按 KB 壓縮，全程瀏覽器內完成。",
     "metaTitle": "Pixfit 工作台 · 線上裁切 · 換背景 · 壓縮 · 拼版列印 2026 | Pixfit",
-    "metaDescription": "Pixfit 工作台：線上裁切、AI 一鍵換背景、按 KB 壓縮、A4 / 5R / 6R 拼版列印，免費瀏覽器內執行，相片不上傳。2026 支援 28 種證件規格。",
+    "metaDescription": "線上證件照工作台：裁切照片、AI 換背景、壓縮到指定 KB，並按 A4 / 5R / 6R 拼版列印。瀏覽器內免費完成，相片不上傳，支援 28 種規格和 PNG/JPG 匯出。",
     "metaKeywords": [
       "AI 證件照編輯器",
       "智慧證件照處理",
@@ -439,7 +437,7 @@
       },
       "cta": "在工作台使用",
       "metaTitle": "Pixfit 證件照相紙規格 · 3R 4R 5R 6R 8R A4 A5 線上拼版 2026 | Pixfit",
-      "metaDescription": "七種列印相紙：3R / 4R / 5R / 6R / 8R / A4 / A5。在瀏覽器內免費把證件照線上拼版到相紙上，下載 PNG / PDF，相片不上傳，2026 全新規格。",
+      "metaDescription": "證件照列印拼版支援 3R、4R、5R、6R、8R、A4、A5：在瀏覽器內自動排版多張照片，下載 PNG / PDF，適合列印和沖印。相片不上傳，免費使用。",
       "metaKeywords": [
         "證件照列印相紙",
         "智慧照片排版",
@@ -517,7 +515,7 @@
     "categoryEmpty": "此分類目前沒有規格",
     "viewDetail": "查看詳情",
     "metaTitle": "Pixfit 證件照尺寸庫 · 28 種規格 線上裁切 + AI 換背景 2026 | Pixfit",
-    "metaDescription": "28 條證件照規格：美國 / 申根 / 英國 / 日韓簽證、中國身分證 / 1 吋 / 2 吋、考試報名。線上裁切 + AI 換背景，免費瀏覽器內執行，相片不上傳，2026 規格。",
+    "metaDescription": "證件照尺寸庫：查詢一吋、二吋、簽證、護照和考試報名規格，查看毫米與像素尺寸，線上裁切並 AI 換背景。支援 28 種常用規格，瀏覽器內免費使用，相片不上傳。",
     "metaKeywords": [
       "智慧證件照尺寸",
       "AI 證件照規格",
@@ -532,7 +530,7 @@
     ],
     "detail": {
       "metaTitle": "{name} {w}×{h}mm · 線上裁切 2026 | Pixfit",
-      "metaDescription": "{name} 證件照 {w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推薦背景 {bgLabel}。線上裁切 + AI 換背景，免費瀏覽器內執行，相片不上傳，2026 規格。",
+      "metaDescription": "{name} 證件照規格：{w}×{h}mm（{wpx}×{hpx}px @ {dpi} DPI），推薦{bgLabel}。線上按規格裁切並 AI 換背景，瀏覽器內免費完成，可匯出符合要求的照片，相片不上傳。",
       "heading": "{name}照片尺寸",
       "tagline": "{w} × {h} mm · {wpx} × {hpx} px @ {dpi} DPI",
       "intro": "{name}電子證件照標準規格為 {w} × {h} 毫米（{wpx} × {hpx} 像素，{dpi} DPI），建議背景色 {bgLabel}。本頁提供完整規格說明、拍攝要求與免費線上製作入口。",
@@ -630,7 +628,7 @@
     },
     "cta": "在工作台開啟",
     "metaTitle": "Pixfit 證件照排版模板 · 12 套 · 5R 6R A4 線上生成 PDF 2026 | Pixfit",
-    "metaDescription": "12 套列印模板：8 張 1 吋 / 16 張 1 吋 / 1 吋 + 2 吋混排 / 身分證 / 護照 / 皮夾照，涵蓋 5R / 6R / A4。瀏覽器內生成 PNG 與向量 PDF，不上傳、免費 2026。",
+    "metaDescription": "證件照列印模板：支援 1 吋、2 吋、身分證、護照和皮夾照混排，適配 5R / 6R / A4。瀏覽器內生成 PNG 與向量 PDF，適合列印報名照片，相片不上傳，免費使用。",
     "metaKeywords": [
       "證件照排版模板",
       "智慧照片拼版",
@@ -646,7 +644,7 @@
   "Compress": {
     "index": {
       "metaTitle": "線上壓縮照片到指定大小 · 50KB/100KB/200KB/500KB/1MB · 免費 2026 | Pixfit",
-      "metaDescription": "線上把 JPG/PNG 照片壓縮到 50KB、100KB、200KB、500KB 或 1MB。全程於瀏覽器內運作，不上傳、免費、2026 更新 · Pixfit。",
+      "metaDescription": "線上壓縮 JPG/PNG 證件照到 50KB、100KB、200KB、500KB 或 1MB：瀏覽器內處理並控制檔案大小，不上傳相片，適合考試、簽證和報名提交，免費使用。",
       "metaKeywords": [
         "線上壓縮照片",
         "照片壓縮到指定大小",
@@ -676,7 +674,7 @@
     },
     "detail": {
       "metaTitle": "線上壓縮照片到 {label} · 免費 2026 | Pixfit",
-      "metaDescription": "線上把照片壓縮到 {label}。完全於瀏覽器內運作，不上傳、免費，結果落在 ±1KB 範圍內。2026 · Pixfit。",
+      "metaDescription": "線上把照片壓縮到 {label}：瀏覽器內處理 JPG/PNG，結果控制在目標附近 ±1KB，適合證件照考試、簽證和報名提交。相片不上傳，免費使用 · Pixfit。",
       "metaKeywords": [
         "壓縮照片到 {label}",
         "壓縮 jpg 到 {label}",
@@ -1012,7 +1010,7 @@
     "title": "智慧證件掃描產生器",
     "subtitle": "上傳手機拍的身分證、護照、駕駛執照等證件照片，智慧掃描自動透視校正、AI 調色與去陰影，一鍵產生 A4 / Letter / A5 PDF 掃描件 —— 全程在瀏覽器中完成。",
     "metaTitle": "Pixfit 智慧證件掃描 · 12 種證件瀏覽器內線上掃描 PDF 2026 | Pixfit Scanner",
-    "metaDescription": "線上掃描 12 種證件成 PDF：身分證、護照、駕駛執照、銀行卡。AI 透視校正 + 掃描 / 影印 / 增強模式，免費瀏覽器內執行，相片不上傳，2026 更新。",
+    "metaDescription": "線上把身分證、護照、駕駛執照和銀行卡掃描成 PDF：AI 透視校正、掃描/影印/增強模式均在瀏覽器內完成，可匯出 A4、Letter 或 A5。相片不上傳，免費使用，2026 更新。",
     "metaKeywords": [
       "智慧證件掃描",
       "AI 證件掃描",
@@ -1227,7 +1225,7 @@
     },
     "detail": {
       "metaTitle": "{name} {w}×{h}mm 線上掃描 PDF 2026 | Pixfit Scanner",
-      "metaDescription": "在瀏覽器內掃描 {name}（{w}×{h}mm）：AI 透視校正 + 掃描 / 影印 / 增強模式，匯出 A4 / Letter / A5 PDF。相片不上傳，免費 2026。",
+      "metaDescription": "在瀏覽器內掃描 {name}（{w}×{h}mm）：AI 透視校正、掃描/影印/增強和 A4 / Letter / A5 PDF 匯出。相片不上傳，免費使用，2026 更新。",
       "tagline": "{w} × {h} mm · A4 / Letter / A5 PDF · 可選浮水印",
       "summarySection": {
         "title": "關於 {name}",
@@ -1352,7 +1350,7 @@
   "Blog": {
     "index": {
       "metaTitle": "Pixfit 部落格 · 證件照與掃描 PDF 指南 2026 | Pixfit",
-      "metaDescription": "圍繞線上證件照、文件掃描轉 PDF 與 Pixfit 瀏覽器工具的長文指南。免費、不上傳、2026。",
+      "metaDescription": "證件照尺寸、換底色、文件掃描轉 PDF 與 Pixfit 工具使用指南，幫助你按考試、報名和簽證要求準備照片。免費閱讀，瀏覽器內處理，相片不上傳。",
       "metaKeywords": [
         "Pixfit 部落格",
         "證件照指南 2026",

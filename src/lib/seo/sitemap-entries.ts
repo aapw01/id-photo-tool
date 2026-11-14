@@ -49,7 +49,7 @@ interface RouteSpec {
  * meaningful copy / data changes (new specs, new doc types,
  * rewritten landing-page intros). Daily noise doesn't need a bump.
  */
-export const SEO_LASTMOD = new Date('2026-05-17T00:00:00Z')
+export const SEO_LASTMOD = new Date('2026-11-14T00:00:00Z')
 
 /**
  * Static routes that should be indexed across every locale.

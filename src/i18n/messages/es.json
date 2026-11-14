@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -42,7 +40,7 @@
   "Home": {
     "heroTitle": "Fotos de carnet inteligentes, listas en tu navegador",
     "heroSubtitle": "Pixfit es un estudio de fotos de carnet y escáner de documentos con IA que recorta al sujeto, cambia el fondo, ajusta al formato oficial, prepara la impresión y comprime al tamaño exigido por los portales — todo en tu navegador, sin subir archivos.",
-    "metaTitle": "Pixfit · Editor gratuito de fotos de carnet · IA quita fondo · sin subir · 2026 | Pixfit",
+    "metaTitle": "Pixfit · Foto de carnet gratis con IA · sin subir 2026 | Pixfit",
     "metaDescription": "Editor gratis de fotos de carnet 100 % en el navegador: IA quita fondo, recorte para visa y pasaporte, escanear a PDF. Sin subir, 2026 actualizado.",
     "metaKeywords": [
       "foto carnet IA",
@@ -175,7 +173,7 @@
   "Studio": {
     "title": "Estudio",
     "subtitle": "Sube un retrato — recorte por IA, encuadre inteligente, cambio de fondo con un clic, diseño de impresión y exportación al KB exacto, todo en tu navegador.",
-    "metaTitle": "Pixfit Estudio · Recorte online · Cambiar fondo · Comprimir · Diseño impresión 2026 | Pixfit",
+    "metaTitle": "Pixfit Estudio · Recorte, fondo y compresión online 2026 | Pixfit",
     "metaDescription": "Estudio Pixfit: recorte online, cambiar fondo con IA, comprimir a KB, diseño A4/5R/6R. Gratis, en el navegador, sin subir. 2026 · 28 formatos.",
     "metaKeywords": [
       "editor fotos carnet IA",
@@ -440,7 +438,7 @@
         "dpi": "DPI"
       },
       "cta": "Usar en Estudio",
-      "metaTitle": "Papeles de impresión Pixfit · 3R 4R 5R 6R 8R A4 A5 · diseño online 2026 | Pixfit",
+      "metaTitle": "Papeles Pixfit · Diseños 3R 4R 5R 6R 8R A4 A5 2026 | Pixfit",
       "metaDescription": "Papeles Pixfit: 3R, 4R, 5R, 6R, 8R, A4, A5 — distribuye fotos de carnet en el navegador, descarga PNG/PDF gratis, sin subir, 2026 actualizado.",
       "metaKeywords": [
         "papel impresión carnet",
@@ -518,7 +516,7 @@
     "cta": "Usar en Estudio",
     "categoryEmpty": "Aún no hay especificaciones en esta categoría",
     "viewDetail": "Ver detalles",
-    "metaTitle": "Pixfit tamaños de foto · 28 formatos · recorte online + fondo IA 2026 | Pixfit",
+    "metaTitle": "Pixfit tamaños de foto · 28 formatos con fondo IA 2026 | Pixfit",
     "metaDescription": "28 tamaños: visa EE. UU. / Schengen / Reino Unido / Japón, DNI chinos, exámenes. Recorte online + fondo IA, gratis en el navegador, sin subir, 2026.",
     "metaKeywords": [
       "tamaños foto carnet IA",
@@ -631,7 +629,7 @@
       "byPaper": "Agrupadas por papel"
     },
     "cta": "Abrir en Estudio",
-    "metaTitle": "Pixfit plantillas diseño · 12 · 5R 6R A4 generar PDF online 2026 | Pixfit",
+    "metaTitle": "Pixfit plantillas · 12 diseños para 5R, 6R y A4 2026 | Pixfit",
     "metaDescription": "12 diseños: 8 × 1-pulgada, 16 × 1-pulgada, mezcla 1+2, carnet, pasaporte, cartera, en 5R / 6R / A4. PNG y PDF vectorial en el navegador, sin subir, gratis 2026.",
     "metaKeywords": [
       "plantillas diseño carnet",
@@ -647,7 +645,7 @@
   },
   "Compress": {
     "index": {
-      "metaTitle": "Comprimir fotos online · 50KB / 100KB / 200KB / 500KB / 1MB · gratis 2026 | Pixfit",
+      "metaTitle": "Comprimir fotos a 50KB–1MB online · gratis 2026 | Pixfit",
       "metaDescription": "Comprime fotos JPG y PNG a 50KB, 100KB, 200KB, 500KB o 1MB online. 100 % en el navegador, sin subir, gratis, 2026. Pixfit.",
       "metaKeywords": [
         "comprimir foto online",
@@ -1013,7 +1011,7 @@
   "Scanner": {
     "title": "Escáner de documentos inteligente",
     "subtitle": "Sube una foto desde el móvil de tu DNI, pasaporte o licencia — el escáner inteligente corrige la perspectiva, balancea blancos y exporta un escaneo PDF A4 / Letter / A5, todo en tu navegador.",
-    "metaTitle": "Pixfit Scanner · 12 documentos a PDF en el navegador · gratis 2026 | Pixfit Scanner",
+    "metaTitle": "Pixfit Scanner · 12 documentos a PDF 2026 | Pixfit Scanner",
     "metaDescription": "Escanea 12 documentos a PDF en tu navegador: DNI, pasaporte, licencia, tarjeta. Corrección perspectiva IA + scan/copia/realce. Gratis 2026, sin subir.",
     "metaKeywords": [
       "escáner documentos inteligente",
@@ -1353,7 +1351,7 @@
   },
   "Blog": {
     "index": {
-      "metaTitle": "Blog Pixfit · guías de fotos de carnet y escaneo de documentos 2026 | Pixfit",
+      "metaTitle": "Blog Pixfit · Guías de fotos y escaneo 2026 | Pixfit",
       "metaDescription": "Guías extensas sobre fotos de carnet online, escaneo a PDF y las herramientas Pixfit en el navegador. Gratis, sin subir, 2026.",
       "metaKeywords": [
         "blog Pixfit",
