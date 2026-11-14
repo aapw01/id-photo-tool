@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { ArrowRight } from 'lucide-react'
-import { getLocale, getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
@@ -46,8 +46,13 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function LocaleNotFound() {
   // `not-found.tsx` doesn't receive params; pull the locale from
-  // next-intl's request context.
+  // next-intl's request context. `setRequestLocale` is required by
+  // next-intl v4 to opt this server component into static rendering —
+  // without it, `getTranslations` can silently fall back to
+  // `defaultLocale` on routes that aren't covered by `setRequestLocale`
+  // upstream.
   const locale = (await getLocale()) as Locale
+  setRequestLocale(locale)
   const t = await getTranslations('Errors.notFound')
 
   // Pre-fetch the catalog name lookups server-side so the client

@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/breadcrumb'
+import { CrossSurfaceLinks } from '@/components/cross-surface-links'
 import { JsonLd } from '@/components/jsonld'
 import { RegionFlag } from '@/components/region-flag'
 import { SiteFooter } from '@/components/site-footer'
@@ -19,6 +20,7 @@ import { localizeText } from '@/lib/i18n-text'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
 import { faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
+import { INDEX_LOCALES, isIndexedLocale } from '@/lib/seo/site-config'
 import type { PhotoCategory, PhotoSpec } from '@/types/spec'
 
 interface SpecDetailPageProps {
@@ -55,6 +57,33 @@ interface BackgroundLabel {
   label: string
 }
 
+/** Trilingual label payload — `en` is the fallback for the other 10 locales. */
+interface TriLabel {
+  zh: string
+  'zh-Hant': string
+  en: string
+}
+
+/** Pick the locale-appropriate string from a {@link TriLabel}. */
+function tri(label: TriLabel, locale: Locale): string {
+  return locale === 'zh-Hans' ? label.zh : locale === 'zh-Hant' ? label['zh-Hant'] : label.en
+}
+
+/** Known background hex → human label. Shared by recommended + allowed colours. */
+const BG_LABELS: Record<string, TriLabel> = {
+  '#FFFFFF': { zh: '标准白底', 'zh-Hant': '標準白底', en: 'standard white' },
+  '#DCDCDC': { zh: '浅灰底', 'zh-Hant': '淺灰底', en: 'light grey' },
+  '#438EDB': { zh: '证件蓝', 'zh-Hant': '證件藍', en: 'visa blue' },
+  '#D9342B': { zh: '证件红', 'zh-Hant': '證件紅', en: 'ID red' },
+}
+
+/** Resolve any background hex to `{ hex, label }`, falling back to the raw hex. */
+function bgLabelFor(hex: string, locale: Locale): BackgroundLabel {
+  const normalised = hex.toUpperCase()
+  const entry = BG_LABELS[normalised]
+  return { hex: normalised, label: entry ? tri(entry, locale) : normalised }
+}
+
 function backgroundLabel(spec: PhotoSpec, locale: Locale): BackgroundLabel {
   const hex = spec.background?.recommended ?? null
   if (!hex) {
@@ -63,19 +92,44 @@ function backgroundLabel(spec: PhotoSpec, locale: Locale): BackgroundLabel {
       label: locale === 'en' ? 'transparent' : '透明',
     }
   }
-  const normalised = hex.toUpperCase()
-  const dict: Record<string, { zh: string; 'zh-Hant': string; en: string }> = {
-    '#FFFFFF': { zh: '标准白底', 'zh-Hant': '標準白底', en: 'standard white' },
-    '#DCDCDC': { zh: '浅灰底', 'zh-Hant': '淺灰底', en: 'light grey' },
-    '#438EDB': { zh: '证件蓝', 'zh-Hant': '證件藍', en: 'visa blue' },
-    '#D9342B': { zh: '证件红', 'zh-Hant': '證件紅', en: 'ID red' },
+  return bgLabelFor(hex, locale)
+}
+
+/** Labels for the extra spec attributes surfaced in P2 (E-E-A-T depth). */
+const SPEC_FIELD_LABELS = {
+  headHeight: { zh: '头部高度占比', 'zh-Hant': '頭部高度佔比', en: 'Head height' },
+  eyeLine: { zh: '眼睛位置（距顶部）', 'zh-Hant': '眼睛位置（距頂部）', en: 'Eye line (from top)' },
+  formats: { zh: '可接受格式', 'zh-Hant': '可接受格式', en: 'Accepted formats' },
+  otherBackgrounds: {
+    zh: '其他可接受底色',
+    'zh-Hant': '其他可接受底色',
+    en: 'Other accepted backgrounds',
+  },
+  officialSource: { zh: '官方依据', 'zh-Hant': '官方依據', en: 'Official source' },
+} as const satisfies Record<string, TriLabel>
+
+/** Format a `[0.5, 0.69]` ratio tuple as a `50%–69%` percentage range. */
+function formatRatioRange(range: readonly [number, number] | undefined): string | null {
+  if (!range) return null
+  const pct = (n: number) => `${Math.round(n * 100)}%`
+  return `${pct(range[0])}–${pct(range[1])}`
+}
+
+/**
+ * Alternate accepted background colours beyond the recommended one,
+ * upper-cased + deduped + with the recommended colour removed.
+ */
+function otherBackgroundColors(spec: PhotoSpec): string[] {
+  const recommended = spec.background?.recommended?.toUpperCase()
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const raw of spec.background?.allowed ?? []) {
+    const hex = raw.toUpperCase()
+    if (hex === recommended || seen.has(hex)) continue
+    seen.add(hex)
+    out.push(hex)
   }
-  const entry = dict[normalised]
-  if (!entry) {
-    return { hex: normalised, label: normalised }
-  }
-  const label = locale === 'zh-Hans' ? entry.zh : locale === 'zh-Hant' ? entry['zh-Hant'] : entry.en
-  return { hex: normalised, label }
+  return out
 }
 
 function formatFileRuleRange(minKB?: number, maxKB?: number): string | null {
@@ -143,6 +197,11 @@ export async function generateMetadata({ params }: SpecDetailPageProps): Promise
       bgLabel: bg.label,
     }),
     keywords,
+    // Long-tail detail tier: only zh-Hans + en are indexed while the
+    // domain is young (see INDEX_LOCALES). Other locales still render
+    // for visitors but are noindex + excluded from the hreflang set.
+    noIndex: !isIndexedLocale(locale as Locale),
+    alternateLocales: INDEX_LOCALES,
   })
 }
 
@@ -165,6 +224,18 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
   const regionName = regionDisplayName(spec.region, locale as Locale)
   const fileRulesRange = formatFileRuleRange(spec.fileRules?.minKB, spec.fileRules?.maxKB)
   const flag = flagCodeForRegion(spec.region)
+  // Surface the spec's composition + format + alternate-background +
+  // official-source data (carried in the catalog but never rendered)
+  // so each /sizes/[id] page ships genuinely unique, verifiable facts
+  // instead of the same templated prose — the thin-content risk flagged
+  // in the SEO review.
+  const headHeight = formatRatioRange(spec.composition?.headHeightRatio)
+  const eyeLine = formatRatioRange(spec.composition?.eyeLineFromTop)
+  const formats = spec.fileRules?.formats?.map((f) => f.toUpperCase()).join(' / ') ?? null
+  const otherBackgrounds = otherBackgroundColors(spec).map((hex) =>
+    bgLabelFor(hex, locale as Locale),
+  )
+  const officialHost = spec.reference ? new URL(spec.reference).host.replace(/^www\./, '') : null
 
   const breadcrumbItems = getBreadcrumbItems('sizes-detail', {
     labels: { home: tNav('home'), sizes: tSizes('heading') },
@@ -333,7 +404,63 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
                   <dd className="mt-1 text-[var(--color-text)]">{regionName}</dd>
                 </div>
               ) : null}
+              {headHeight ? (
+                <div>
+                  <dt className="text-xs text-[var(--color-text-weak)]">
+                    {tri(SPEC_FIELD_LABELS.headHeight, locale as Locale)}
+                  </dt>
+                  <dd className="mt-1 font-mono text-[var(--color-text)]">{headHeight}</dd>
+                </div>
+              ) : null}
+              {eyeLine ? (
+                <div>
+                  <dt className="text-xs text-[var(--color-text-weak)]">
+                    {tri(SPEC_FIELD_LABELS.eyeLine, locale as Locale)}
+                  </dt>
+                  <dd className="mt-1 font-mono text-[var(--color-text)]">{eyeLine}</dd>
+                </div>
+              ) : null}
+              {formats ? (
+                <div>
+                  <dt className="text-xs text-[var(--color-text-weak)]">
+                    {tri(SPEC_FIELD_LABELS.formats, locale as Locale)}
+                  </dt>
+                  <dd className="mt-1 font-mono text-[var(--color-text)]">{formats}</dd>
+                </div>
+              ) : null}
+              {otherBackgrounds.length > 0 ? (
+                <div>
+                  <dt className="text-xs text-[var(--color-text-weak)]">
+                    {tri(SPEC_FIELD_LABELS.otherBackgrounds, locale as Locale)}
+                  </dt>
+                  <dd className="mt-1 flex flex-wrap items-center gap-2 text-[var(--color-text)]">
+                    {otherBackgrounds.map((b) => (
+                      <span key={b.hex} className="inline-flex items-center gap-1.5">
+                        <span
+                          aria-hidden="true"
+                          className="inline-block size-4 rounded-sm border border-[var(--color-border)]"
+                          style={{ backgroundColor: b.hex ?? undefined }}
+                        />
+                        <span className="text-sm">{b.label}</span>
+                      </span>
+                    ))}
+                  </dd>
+                </div>
+              ) : null}
             </dl>
+            {spec.reference && officialHost ? (
+              <p className="mt-6 border-t border-[var(--color-border)] pt-4 text-xs text-[var(--color-text-weak)]">
+                {tri(SPEC_FIELD_LABELS.officialSource, locale as Locale)}:{' '}
+                <a
+                  href={spec.reference}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-[var(--color-primary-dk)] underline-offset-2 hover:underline"
+                >
+                  {officialHost}
+                </a>
+              </p>
+            ) : null}
           </section>
 
           {purposeBody ? (
@@ -461,6 +588,7 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
           </section>
 
           <RelatedSpecsRow specId={spec.id} locale={locale as Locale} t={t} />
+          <CrossSurfaceLinks current="sizes" />
         </article>
       </main>
       <SiteFooter />

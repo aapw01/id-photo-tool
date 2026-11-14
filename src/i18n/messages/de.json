@@ -673,6 +673,39 @@
         "heading": "Eigene Zielgröße?",
         "body": "Im Export-Tab des Studios kannst du beliebige KB-Werte ab 5 KB festlegen, optional mit Mindestgröße für Portale mit Fensterbereich (z. B. 50–200 KB).",
         "cta": "Studio öffnen · Export-Tab"
+      },
+      "seoIntro": {
+        "heading": "Wie KB-Limits beim Hochladen funktionieren – und wie Pixfit sie trifft",
+        "paragraphs": {
+          "0": "Behördengänge, Visa-Portale und Universitätsbewerbungen begrenzen fast immer die Dateigröße, die du hochladen kannst – oft auf 50 KB, 100 KB, 200 KB, 500 KB oder 1 MB. Ein Foto direkt vom Handy hat meist mehrere MB und wird daher abgelehnt, bevor du es überhaupt absenden kannst. Genau bis ans Limit zu komprimieren entscheidet darüber, ob ein Formular durchgeht oder abprallt.",
+          "1": "Pixfit erreicht dein Ziel, indem es die JPG-Qualität adaptiv senkt und, wenn das Foto bei akzeptabler Qualität noch zu groß ist, seine Pixelmaße neu abtastet – und dann feinjustiert, bis das Ergebnis etwa 1 KB unter dem Limit liegt. Alles läuft in deinem Browser: Das Foto wird nie hochgeladen, es gibt keine Warteschlange und kein Wasserzeichen. Wähle oben eine Vorgabe oder öffne den Export-Tab in Studio, um einen beliebigen KB-Bereich festzulegen."
+        }
+      },
+      "faq": {
+        "heading": "Häufige Fragen",
+        "subtitle": "Über das Komprimieren von Fotos im Browser, die Größengenauigkeit und die Qualität.",
+        "items": {
+          "free": {
+            "q": "Ist der Foto-Kompressor kostenlos?",
+            "a": "Ja – völlig kostenlos, ohne Anmeldung und ohne Begrenzung der Fotoanzahl. Das gesamte Tool läuft in deinem Browser, daher entstehen keine Serverkosten, die wir weitergeben müssten."
+          },
+          "privacy": {
+            "q": "Wird mein Foto auf einen Server hochgeladen?",
+            "a": "Nein. Die Komprimierung erfolgt vollständig auf deinem Gerät; das Bild verlässt deinen Browser nie. Damit ist es auch für Passfotos und andere sensible Dokumente sicher."
+          },
+          "quality": {
+            "q": "Ruiniert das Komprimieren auf eine kleine Größe die Qualität?",
+            "a": "Pixfit senkt die Qualität nur so weit, wie das Ziel es erfordert, und behält die größtmöglichen Maße bei, sodass das Foto so scharf bleibt, wie das Limit es zulässt. Bei sehr kleinen Zielen wie 50 KB ist ein gewisser Verlust unvermeidlich, aber Gesichter bleiben klar erkennbar."
+          },
+          "target": {
+            "q": "Wie genau ist das KB-Ziel?",
+            "a": "Pixfit kodiert iterativ neu und landet etwa ±1 KB um die gewählte Größe, sodass Portale mit hartem Limit erfüllt werden, ohne unnötig klein zu werden."
+          },
+          "format": {
+            "q": "Welche Formate kann ich komprimieren?",
+            "a": "JPG- und PNG-Fotos werden unterstützt. Die Ausgabe ist JPG, das bei gleicher Qualität die kleinste Datei liefert – die richtige Wahl für fast jedes Formular mit KB-Limit."
+          }
+        }
       }
     },
     "detail": {

@@ -36,12 +36,22 @@ import { COMPRESS_TARGETS } from '@/features/compress/targets'
 import { DOC_SPECS as SCANNER_DOC_SPECS } from '@/features/scanner/lib/doc-specs'
 import type { Locale } from '@/i18n/routing'
 import { buildAlternateLanguages, buildCanonical } from './metadata'
-import { SUPPORTED_LOCALES } from './site-config'
+import { INDEX_LOCALES, SUPPORTED_LOCALES } from './site-config'
 
 interface RouteSpec {
   path: string
   changeFrequency: NonNullable<MetadataRoute.Sitemap[number]['changeFrequency']>
   priority: number
+  /**
+   * Which locales this route is emitted (and indexed) in.
+   *   - `'all'` (default) — every {@link SUPPORTED_LOCALES}: home, the
+   *     tool surfaces, the landing hubs, and blog articles.
+   *   - `'index'` — {@link INDEX_LOCALES} only: the long-tail detail
+   *     tier (sizes/scanner/compress detail pages). Keeps the sitemap
+   *     and hreflang clusters aligned with the per-page `noindex`
+   *     policy while the domain is young.
+   */
+  localeScope?: 'all' | 'index'
 }
 
 /**
@@ -86,6 +96,7 @@ export function specDetailRoutes(): RouteSpec[] {
     path: `/sizes/${spec.id}`,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
+    localeScope: 'index' as const,
   }))
 }
 
@@ -101,6 +112,7 @@ export function scannerDocTypeRoutes(): RouteSpec[] {
     path: `/scanner/${spec.id}`,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
+    localeScope: 'index' as const,
   }))
 }
 
@@ -115,6 +127,7 @@ export function compressTargetRoutes(): RouteSpec[] {
     path: `/compress/${target.slug}`,
     changeFrequency: 'weekly' as const,
     priority: 0.8,
+    localeScope: 'index' as const,
   }))
 }
 
@@ -148,10 +161,15 @@ export function buildSitemapEntries(
   ],
   locales: readonly Locale[] = SUPPORTED_LOCALES,
 ): MetadataRoute.Sitemap {
+  const indexLocales = locales.filter((l) => INDEX_LOCALES.includes(l))
   const entries: MetadataRoute.Sitemap = []
   for (const route of routes) {
-    const languages = buildAlternateLanguages(route.path)
-    for (const locale of locales) {
+    // Index-scoped routes (the long-tail detail tier) are emitted only
+    // for INDEX_LOCALES, and their hreflang cluster is restricted to
+    // the same set so the sitemap never advertises `noindex` URLs.
+    const routeLocales = route.localeScope === 'index' ? indexLocales : locales
+    const languages = buildAlternateLanguages(route.path, routeLocales)
+    for (const locale of routeLocales) {
       entries.push({
         url: buildCanonical(route.path, locale),
         lastModified: now,

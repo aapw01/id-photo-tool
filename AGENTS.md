@@ -1,7 +1,12 @@
 <!-- BEGIN:nextjs-agent-rules -->
 
-# This is NOT the Next.js you know
+# Next.js 15 (App Router)
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This project uses Next.js 15.5.18 with the App Router, React 19, and TypeScript 5.6 in strict mode. Conventions to follow:
+
+- `params` is `Promise<...>` — always `await` it. Same goes for `searchParams`.
+- For static `[locale]` pages, call `setRequestLocale(locale)` after validating the locale; required by next-intl v4 to opt into static rendering.
+- Set `export const dynamicParams = false` on dynamic routes whose params come from a closed enum (`generateStaticParams`); otherwise unknown params return 500 on Vercel instead of a clean 404.
+- Server components by default. Add `'use client'` only when you actually need browser-only APIs.
 
 <!-- END:nextjs-agent-rules -->

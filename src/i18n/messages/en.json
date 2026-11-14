@@ -673,6 +673,39 @@
         "heading": "Need a custom size?",
         "body": "Studio's Export tab lets you set any KB target from 5 KB upward, paired with an optional minimum so portals that enforce a window (e.g. 50–200 KB) still pass.",
         "cta": "Open Studio · Export tab"
+      },
+      "seoIntro": {
+        "heading": "How online KB limits work — and how Pixfit hits them",
+        "paragraphs": {
+          "0": "Government services, visa portals, and university admissions each cap the file size you can upload — often 50KB, 100KB, 200KB, 500KB, or 1MB. A photo straight from a phone is usually several megabytes, so it gets rejected before you can even submit. Compressing to the exact ceiling is the difference between a form that goes through and one that bounces.",
+          "1": "Pixfit reaches your target by adaptively lowering JPG quality and, when a photo is still too large at acceptable quality, resampling its pixel dimensions — then fine-tuning until the result lands within about 1KB of the limit. Everything runs in your browser: your photo is never uploaded, there is no queue, and there is no watermark. Pick a preset above, or open Studio's Export tab to set any custom KB window."
+        }
+      },
+      "faq": {
+        "heading": "Frequently asked questions",
+        "subtitle": "About compressing photos in your browser, size accuracy, and quality.",
+        "items": {
+          "free": {
+            "q": "Is the photo compressor free?",
+            "a": "Yes — completely free, no signup and no limit on how many photos you compress. The whole tool runs in your browser, so there is no server cost to pass on."
+          },
+          "privacy": {
+            "q": "Is my photo uploaded to a server?",
+            "a": "No. Compression happens entirely on your device; the image never leaves your browser. That makes it safe for ID photos and other sensitive documents."
+          },
+          "quality": {
+            "q": "Will compressing to a small size ruin the quality?",
+            "a": "Pixfit lowers quality only as much as the target requires and keeps the largest dimensions it can, so the photo stays as sharp as the limit allows. For very small targets like 50KB some softening is unavoidable, but faces stay clearly recognisable."
+          },
+          "target": {
+            "q": "How exact is the KB target?",
+            "a": "Pixfit re-encodes iteratively and lands within about ±1KB of the size you pick, so the result satisfies portals that enforce a hard ceiling without going needlessly small."
+          },
+          "format": {
+            "q": "Which formats can I compress?",
+            "a": "JPG and PNG photos are supported. Output is JPG, which gives the smallest file at a given quality — the right choice for almost every upload form that enforces a KB limit."
+          }
+        }
       }
     },
     "detail": {

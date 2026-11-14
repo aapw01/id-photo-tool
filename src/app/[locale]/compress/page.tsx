@@ -19,12 +19,20 @@ import { Link } from '@/i18n/navigation'
 import type { Locale } from '@/i18n/routing'
 import { routing } from '@/i18n/routing'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
-import { collectionPageSchema, webApplicationSchema } from '@/lib/seo/jsonld'
+import {
+  collectionPageSchema,
+  faqSchema,
+  webApplicationSchema,
+  webPageSchema,
+} from '@/lib/seo/jsonld'
 import { buildCanonical, buildMetadata } from '@/lib/seo/metadata'
 
 interface PageProps {
   params: Promise<{ locale: string }>
 }
+
+const FAQ_ITEM_KEYS = ['free', 'privacy', 'quality', 'target', 'format'] as const
+const SEO_INTRO_PARAGRAPH_INDICES = [0, 1] as const
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -57,6 +65,23 @@ export default async function CompressIndexPage({ params }: PageProps) {
     labels: { home: tNav('home'), compress: t('heading') },
   })
   const breadcrumbs = breadcrumbItemsToJsonLd(breadcrumbItems, locale as Locale)
+
+  const faqEntries = FAQ_ITEM_KEYS.map((key) => ({
+    question: t(`faq.items.${key}.q` as Parameters<typeof t>[0]),
+    answer: t(`faq.items.${key}.a` as Parameters<typeof t>[0]),
+  }))
+  const faqJsonLd = faqSchema(faqEntries)
+
+  // `/compress` is a tool landing page, not a single SoftwareApplication —
+  // emit `WebPage` alongside `WebApplication` so Google can index the
+  // long-form copy (the seo-intro + the target catalog + the FAQ), matching
+  // the `/scanner` hub. The `WebApplication` node anchors the brand product.
+  const compressWebPage = webPageSchema({
+    url: canonicalUrl,
+    name: t('heading'),
+    description: t('metaDescription'),
+    inLanguage: locale as Locale,
+  })
 
   const collectionPage = collectionPageSchema({
     url: canonicalUrl,
@@ -150,10 +175,66 @@ export default async function CompressIndexPage({ params }: PageProps) {
               <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </section>
+
+          {/* SSR-rendered SEO long-form — gives the hub real content depth
+              (matching /scanner) instead of just a card grid, and targets
+              the "how online KB limits work" informational cluster. */}
+          <section className="mt-12 max-w-3xl" aria-labelledby="compress-seo-intro">
+            <h2
+              id="compress-seo-intro"
+              className="mb-4 text-[var(--color-text)]"
+              style={{ fontSize: 'var(--text-h2)', lineHeight: 'var(--text-h2--line-height)' }}
+            >
+              {t('seoIntro.heading')}
+            </h2>
+            <div className="space-y-4 text-sm leading-relaxed text-[var(--color-text-mute)]">
+              {SEO_INTRO_PARAGRAPH_INDICES.map((idx) => (
+                <p key={idx}>{t(`seoIntro.paragraphs.${idx}` as Parameters<typeof t>[0])}</p>
+              ))}
+            </div>
+          </section>
+
+          {/* Compress-scoped FAQ — FAQPage JSON-LD + visible accordion,
+              same pattern as the home page and /scanner. */}
+          <section className="mt-12 max-w-3xl" aria-labelledby="compress-faq">
+            <header className="mb-6">
+              <h2
+                id="compress-faq"
+                className="text-[var(--color-text)]"
+                style={{ fontSize: 'var(--text-h2)', lineHeight: 'var(--text-h2--line-height)' }}
+              >
+                {t('faq.heading')}
+              </h2>
+              <p className="mt-2 text-sm text-[var(--color-text-mute)]">{t('faq.subtitle')}</p>
+            </header>
+            <div className="space-y-3">
+              {faqEntries.map((entry, idx) => (
+                <details
+                  key={FAQ_ITEM_KEYS[idx]}
+                  className="group rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-4 open:shadow-[var(--shadow-sm)]"
+                >
+                  <summary className="cursor-pointer list-none text-sm font-medium text-[var(--color-text)] marker:hidden">
+                    {entry.question}
+                  </summary>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-mute)]">
+                    {entry.answer}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </section>
         </section>
       </main>
       <SiteFooter />
-      <JsonLd data={[webApplicationSchema(locale as Locale), collectionPage, breadcrumbs]} />
+      <JsonLd
+        data={[
+          webApplicationSchema(locale as Locale),
+          compressWebPage,
+          collectionPage,
+          breadcrumbs,
+          faqJsonLd,
+        ]}
+      />
     </>
   )
 }
