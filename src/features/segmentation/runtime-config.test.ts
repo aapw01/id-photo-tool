@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   DEFAULT_SEG_MODEL,
+  MODEL_FALLBACK_URL,
   MODEL_SHA384,
   MODEL_URL,
   MODEL_VARIANT,
@@ -9,12 +10,9 @@ import {
 } from '@/features/segmentation/runtime-config'
 
 describe('runtime-config', () => {
-  it('MODEL_URL points at the active variant under /_models/', () => {
-    expect(MODEL_URL).toMatch(/^\/?_models\/modnet\.(?:fp16|q)\.onnx$/)
-  })
-
-  it('MODEL_URL matches the active variant path', () => {
-    expect(MODEL_URL).toMatch(new RegExp(`${MODEL_VARIANT.path}$`))
+  it('uses the active variant from ModelScope, with a same-origin fallback', () => {
+    expect(MODEL_URL).toBe(MODEL_VARIANT.sources[0])
+    expect(MODEL_FALLBACK_URL).toBe(`/_models/${MODEL_VARIANT.path}`)
   })
 
   it('MODEL_SHA384 mirrors the active variant', () => {

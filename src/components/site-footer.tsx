@@ -110,7 +110,9 @@ export function SiteFooter() {
           </div>
 
           <FooterColumn heading={t('groups.studio')} ariaLabel={t('aria.studio')}>
-            <FooterLink href="/studio">{t('links.studio')}</FooterLink>
+            <FooterLink href="/studio" prefetch={null}>
+              {t('links.studio')}
+            </FooterLink>
             {STUDIO_TAB_LINKS.map((item) => (
               <FooterLink key={item.key} href={{ pathname: '/studio', query: { tab: item.tab } }}>
                 {t(`links.${item.key}`)}
@@ -125,7 +127,9 @@ export function SiteFooter() {
           </FooterColumn>
 
           <FooterColumn heading={t('groups.scanner')} ariaLabel={t('aria.scanner')}>
-            <FooterLink href="/scanner">{t('links.scanner')}</FooterLink>
+            <FooterLink href="/scanner" prefetch={null}>
+              {t('links.scanner')}
+            </FooterLink>
             <FooterDivider />
             {orderedDocSpecs.map((spec) => (
               <FooterLink key={spec.id} href={`/scanner/${spec.id}`}>
@@ -136,7 +140,11 @@ export function SiteFooter() {
 
           <FooterColumn heading={t('groups.specs')} ariaLabel={t('aria.specs')}>
             {SPECS_LINKS.map((item) => (
-              <FooterLink key={item.key} href={item.href}>
+              <FooterLink
+                key={item.key}
+                href={item.href}
+                prefetch={['/sizes', '/paper', '/templates'].includes(item.href) ? null : false}
+              >
                 {t(`links.${item.key}`)}
               </FooterLink>
             ))}
@@ -194,11 +202,20 @@ function FooterColumn({
 
 type FooterLinkHref = React.ComponentProps<typeof Link>['href']
 
-function FooterLink({ href, children }: { href: FooterLinkHref; children: React.ReactNode }) {
+function FooterLink({
+  href,
+  children,
+  prefetch = false,
+}: {
+  href: FooterLinkHref
+  children: React.ReactNode
+  prefetch?: boolean | null
+}) {
   return (
     <li>
       <Link
         href={href}
+        prefetch={prefetch}
         className="text-[var(--color-text-mute)] transition-colors hover:text-[var(--color-text)]"
       >
         {children}

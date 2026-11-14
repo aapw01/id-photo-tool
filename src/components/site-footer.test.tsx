@@ -40,8 +40,12 @@ vi.mock('@/i18n/navigation', () => ({
   Link: ({
     href,
     children,
+    prefetch,
     ...rest
-  }: { href: unknown; children: React.ReactNode } & Record<string, unknown>) => {
+  }: { href: unknown; children: React.ReactNode; prefetch?: boolean | null } & Record<
+    string,
+    unknown
+  >) => {
     const locale = 'en'
     let resolved: string
     if (typeof href === 'string') {
@@ -56,7 +60,7 @@ vi.mock('@/i18n/navigation', () => ({
       resolved = '#'
     }
     return (
-      <a href={resolved} {...rest}>
+      <a href={resolved} data-prefetch={prefetch === false ? 'false' : undefined} {...rest}>
         {children}
       </a>
     )
@@ -158,6 +162,16 @@ describe('SiteFooter', () => {
         .getAllByRole('link')
         .filter((a) => a.getAttribute('href')?.includes(`tab=${tab}`))
       expect(found.length, `Studio tab=${tab} deeplink missing`).toBeGreaterThanOrEqual(1)
+    }
+  })
+
+  it('only prefetches the primary footer routes', () => {
+    render(<SiteFooter />)
+    const primary = ['/en/studio', '/en/scanner', '/en/sizes', '/en/paper', '/en/templates']
+    for (const link of screen.getAllByRole('link')) {
+      const href = link.getAttribute('href') ?? ''
+      if (!href.startsWith('/en/')) continue
+      expect(link.getAttribute('data-prefetch'), href).toBe(primary.includes(href) ? null : 'false')
     }
   })
 })

@@ -27,9 +27,8 @@
  * - `NEXT_PUBLIC_SEG_MODEL` — variant id (`modnet-fp16` | `modnet-int8`),
  *   defaults to `modnet-fp16`. Used to roll back to INT8 without
  *   redeploy.
- * - `NEXT_PUBLIC_MODEL_URL` — fully qualified URL that bypasses the
- *   registry's `path` (e.g. when serving from cdn.pix-fit.com). The
- *   matching SHA-384 from the chosen variant is still enforced.
+ * - `NEXT_PUBLIC_MODEL_URL` — overrides the default ModelScope URL.
+ *   The matching SHA-384 from the chosen variant is still enforced.
  * - `NEXT_PUBLIC_ORT_BASE_URL` — alternative base for the
  *   onnxruntime-web wasm side files.
  */
@@ -74,12 +73,10 @@ export interface SegModelVariant {
    */
   readonly path: string
   /**
-   * Where `pnpm models:fetch` pulls the binary from. ModelScope first
-   * (works inside mainland China), Hugging Face as a fallback. The
-   * runtime fetch always goes through `path` — these URLs are only
-   * consumed by scripts/fetch-model.mjs.
+   * Where `pnpm models:fetch` pulls the binary from. The first URL is
+   * also the default runtime URL; Hugging Face is a build-time fallback.
    */
-  readonly sources: readonly string[]
+  readonly sources: readonly [string, ...string[]]
   /** Expected SHA-384 of the on-disk binary, for SRI verification. */
   readonly sha384: string
   /** Approximate uncompressed size (used by docs / progress UI). */
@@ -134,12 +131,12 @@ export const MODEL_VARIANT: SegModelVariant = resolveVariant(process.env.NEXT_PU
 /**
  * Where the active MODNet ONNX file lives at runtime.
  *
- * Default: `/_models/<path>` — served as a Next.js static asset from
- * `public/_models/` (or its Cloudflare equivalent in production).
- * Override with NEXT_PUBLIC_MODEL_URL=https://cdn.pix-fit.com/models/...
- * once R2 is wired up.
+ * Default: ModelScope's stable resolve URL, which redirects to its CDN.
+ * The local copy remains available as a network fallback and for users
+ * who already have it in their browser cache.
  */
-export const MODEL_URL = process.env.NEXT_PUBLIC_MODEL_URL ?? `/_models/${MODEL_VARIANT.path}`
+export const MODEL_URL = process.env.NEXT_PUBLIC_MODEL_URL ?? MODEL_VARIANT.sources[0]
+export const MODEL_FALLBACK_URL = `/_models/${MODEL_VARIANT.path}`
 
 /**
  * SHA-384 expected for the currently active variant. Re-exported from
