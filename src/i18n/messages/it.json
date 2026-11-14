@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -42,7 +40,7 @@
   "Home": {
     "heroTitle": "Foto tessera intelligenti, pronte nel browser",
     "heroSubtitle": "Pixfit è uno studio fototessera e scanner documenti basato su IA: ritaglio automatico, cambio sfondo, taglio a norma del paese, layout di stampa e compressione al KB esatto — tutto nel browser, senza upload.",
-    "metaTitle": "Pixfit · Strumento gratis fototessera · IA toglie sfondo · senza upload · 2026 | Pixfit",
+    "metaTitle": "Pixfit · Fototessera gratis con IA · senza upload 2026 | Pixfit",
     "metaDescription": "Strumento gratuito fototessera al 100% nel browser: IA rimuove sfondo, ritaglio visto/passaporto, scansione PDF. Senza upload, aggiornato 2026.",
     "metaKeywords": [
       "fototessera IA",
@@ -175,7 +173,7 @@
   "Studio": {
     "title": "Studio",
     "subtitle": "Carica un ritratto — ritaglio IA, taglio intelligente, cambio sfondo con un click, layout ed esportazione al KB esatto, tutto nel browser.",
-    "metaTitle": "Pixfit Studio · ritaglio online · cambia sfondo · comprimi · layout A4/5R/6R 2026 | Pixfit",
+    "metaTitle": "Pixfit Studio · Ritaglio, sfondo e compressione online 2026 | Pixfit",
     "metaDescription": "Pixfit Studio: ritaglio online, cambio sfondo IA, compressione in KB, layout A4/5R/6R. Gratis, nel browser, senza upload. 2026 · 28 formati.",
     "metaKeywords": [
       "editor fototessera IA",
@@ -647,7 +645,7 @@
   },
   "Compress": {
     "index": {
-      "metaTitle": "Comprimi foto online · 50KB / 100KB / 200KB / 500KB / 1MB · gratis 2026 | Pixfit",
+      "metaTitle": "Comprimi foto a 50KB–1MB online · gratis 2026 | Pixfit",
       "metaDescription": "Comprimi foto JPG e PNG online a 50KB, 100KB, 200KB, 500KB o 1MB. 100% nel browser, senza upload, gratis, 2026. Pixfit.",
       "metaKeywords": [
         "comprimi foto online",
@@ -1046,7 +1044,7 @@
   "Scanner": {
     "title": "Scanner documenti intelligente",
     "subtitle": "Carica la foto scattata col telefono di carta d’identità, passaporto o patente — lo scanner intelligente raddrizza la prospettiva, bilancia il bianco ed esporta un PDF A4 / Letter / A5, tutto nel browser.",
-    "metaTitle": "Pixfit Scanner · 12 documenti PDF nel browser · gratis 2026 | Pixfit Scanner",
+    "metaTitle": "Pixfit Scanner · 12 documenti in PDF nel browser 2026 | Pixfit Scanner",
     "metaDescription": "Scansiona 12 tipi di documento in PDF dal browser: ID, passaporto, patente, carta. Prospettiva IA + scan/copia/migliora. Gratis 2026, senza upload.",
     "metaKeywords": [
       "scanner documenti intelligente",

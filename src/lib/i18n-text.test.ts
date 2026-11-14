@@ -15,10 +15,8 @@ const FULL_TEXT: I18nText = {
   'pt-BR': 'Português (BR)',
   fr: 'Français',
   de: 'Deutsch',
-  ru: 'Русский',
   it: 'Italiano',
   vi: 'Tiếng Việt',
-  ar: 'العربية',
 }
 
 describe('localizeText', () => {

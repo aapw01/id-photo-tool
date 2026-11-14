@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -42,7 +40,7 @@
   "Home": {
     "heroTitle": "Photos d’identité intelligentes, prêtes dans ton navigateur",
     "heroSubtitle": "Pixfit est un studio photo d’identité et un scanner de documents alimenté par l’IA : détourage automatique, changement de fond, recadrage au format officiel, mise en page d’impression et compression au KB demandé — le tout dans ton navigateur, sans téléverser.",
-    "metaTitle": "Pixfit · Outil gratuit de photo d’identité · IA détoure fond · sans envoi · 2026 | Pixfit",
+    "metaTitle": "Pixfit · Photo d’identité gratuite avec IA · sans envoi 2026 | Pixfit",
     "metaDescription": "Outil gratuit de photo d’identité 100 % dans le navigateur : IA enlève fond, recadrage visa/passeport, scan PDF. Sans envoi, mis à jour 2026.",
     "metaKeywords": [
       "photo identité IA",
@@ -175,7 +173,7 @@
   "Studio": {
     "title": "Studio",
     "subtitle": "Importe un portrait — détourage IA, recadrage intelligent, changement de fond en un clic, mise en page et export au KB précis, tout dans ton navigateur.",
-    "metaTitle": "Pixfit Studio · Recadrage en ligne · Changer fond · Compresser · Mise en page 2026 | Pixfit",
+    "metaTitle": "Pixfit Studio · Recadrage, fond et compression en ligne 2026 | Pixfit",
     "metaDescription": "Pixfit Studio : recadrage en ligne, changer fond IA, compresser en KB, mise en page A4/5R/6R. Gratuit, navigateur, sans envoi. 2026 · 28 formats.",
     "metaKeywords": [
       "éditeur photo identité IA",
@@ -440,7 +438,7 @@
         "dpi": "DPI"
       },
       "cta": "Utiliser dans le Studio",
-      "metaTitle": "Papiers Pixfit · 3R 4R 5R 6R 8R A4 A5 · mise en page en ligne 2026 | Pixfit",
+      "metaTitle": "Papiers Pixfit · Formats 3R 4R 5R 6R 8R A4 A5 2026 | Pixfit",
       "metaDescription": "Papiers Pixfit : 3R, 4R, 5R, 6R, 8R, A4, A5 — dispose tes photos d’identité dans le navigateur, télécharge PNG/PDF gratuitement, sans envoi, 2026.",
       "metaKeywords": [
         "papier impression identité",
@@ -518,7 +516,7 @@
     "cta": "Utiliser dans le Studio",
     "categoryEmpty": "Aucun format dans cette catégorie",
     "viewDetail": "Voir les détails",
-    "metaTitle": "Pixfit formats photo · 28 formats · recadrage en ligne + fond IA 2026 | Pixfit",
+    "metaTitle": "Pixfit formats photo · 28 formats avec fond IA 2026 | Pixfit",
     "metaDescription": "28 formats photo : visas US / Schengen / RU / Japon, ID chinoise, examens. Recadrage en ligne + fond IA, gratuit dans le navigateur, sans envoi, 2026.",
     "metaKeywords": [
       "tailles photo identité IA",
@@ -647,7 +645,7 @@
   },
   "Compress": {
     "index": {
-      "metaTitle": "Compresser photos en ligne · 50KB / 100KB / 200KB / 500KB / 1MB · gratuit 2026 | Pixfit",
+      "metaTitle": "Compresser des photos à 50KB–1MB · gratuit 2026 | Pixfit",
       "metaDescription": "Compresse des photos JPG et PNG à 50KB, 100KB, 200KB, 500KB ou 1MB en ligne. 100 % dans le navigateur, sans envoi, gratuit, 2026. Pixfit.",
       "metaKeywords": [
         "compresser photo en ligne",
@@ -1046,7 +1044,7 @@
   "Scanner": {
     "title": "Scanner intelligent de documents",
     "subtitle": "Importe une photo prise au téléphone de ta pièce d’identité, ton passeport ou ton permis — le scanner intelligent corrige la perspective, équilibre les blancs et exporte un PDF A4 / Letter / A5, dans ton navigateur.",
-    "metaTitle": "Pixfit Scanner · 12 documents PDF dans le navigateur · gratuit 2026 | Pixfit Scanner",
+    "metaTitle": "Pixfit Scanner · 12 documents en PDF 2026 | Pixfit Scanner",
     "metaDescription": "Scanne 12 types de documents en PDF dans le navigateur : ID, passeport, permis. Correction perspective IA + scan/copie/rehausse. Gratuit 2026, sans envoi.",
     "metaKeywords": [
       "scanner documents intelligent",

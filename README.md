@@ -18,7 +18,7 @@ Live demo: <https://pix-fit.com>
 - **Composition-aware alignment** — Head position is auto-calibrated from MediaPipe landmarks + MODNet mask so the eye line and head-to-frame ratio fall within each spec's window.
 - **Multi-format export** — PNG (transparent / flat), JPG, WebP; compress to a target KB (binary search + pixel downsample); one-click copy to clipboard.
 - **Print layout** — 7 paper stocks × 12 layout templates so you can print multiple photos in a single sheet.
-- **13-locale SEO** — `zh-Hans` / `zh-Hant` / `en` / `ja` / `ko` / `es` / `pt-BR` / `fr` / `de` / `ru` / `it` / `vi` / `ar` (RTL) with full hreflang × canonical × JSON-LD (`WebApplication` / `WebSite` / `HowTo` / `FAQPage` / `BreadcrumbList`); each of the 28 specs has its own SSG landing page.
+- **11-locale SEO** — `zh-Hans` / `zh-Hant` / `en` / `ja` / `ko` / `es` / `pt-BR` / `fr` / `de` / `it` / `vi` with full hreflang × canonical × JSON-LD (`WebApplication` / `WebSite` / `HowTo` / `FAQPage` / `BreadcrumbList`); each of the 28 specs has its own SSG landing page.
 
 ## Pixfit Scanner · Document Scan Generator
 
@@ -31,7 +31,7 @@ Sub-product at `/[locale]/scanner`. Turns phone snapshots of documents into "rea
 - **Sheet preview dialog** — A "Preview sheet" button next to the export buttons opens a Radix dialog that renders the packed A4 / Letter / A5 sheet with the exact bytes you'd download (same paper, watermark, corner radius, output mode).
 - **12 DocSpecs, 3 paper sizes** — China / HK / TW / SG / IN ID cards, bank card, US driver license, China driver / vehicle license booklets, passport bio page, plus full-size A4 / Letter. Pack to A4 / Letter / A5.
 - **PDF / HEIC / EXIF / large-file pre-compression** — `.pdf` uploads render the first page lazily via `pdfjs-dist`; HEIC auto-converts via `heic2any`; EXIF orientation is auto-applied; images > 4000 px on the long edge are pre-downsampled to keep things snappy.
-- **SEO landing pages** — 12 DocSpecs × 13 locales = 156 SSG pages (`/[locale]/scanner/[docType]`), each with `HowTo` / `FAQPage` / `BreadcrumbList` JSON-LD; all URLs in the sitemap with full hreflang alternates.
+- **SEO landing pages** — 12 DocSpecs × 11 locales = 132 SSG pages (`/[locale]/scanner/[docType]`), each with `HowTo` / `FAQPage` / `BreadcrumbList` JSON-LD; all URLs in the sitemap with full hreflang alternates.
 - **Privacy & legal copy** — The home page explains local-only processing and lawful use; the Terms page forbids forgery / impersonation.
 - **a11y** — All form controls have labels, all buttons have aria-labels, and the sheet-preview dialog uses Radix Dialog for focus trap, ESC-to-close, and click-outside-to-close.
 
@@ -68,7 +68,7 @@ pnpm lint           # ESLint
 pnpm typecheck      # tsc --noEmit
 pnpm format         # Prettier write
 pnpm test           # vitest run
-pnpm i18n:check     # verify locale-bundle key parity (13 locales)
+pnpm i18n:check     # verify locale-bundle key parity (11 locales)
 pnpm models:fetch   # fetch the MODNet ONNX model into public/_models/
 pnpm cf:build       # bundle for Cloudflare Workers via OpenNext
 pnpm cf:deploy      # build + deploy to Cloudflare Workers
@@ -127,23 +127,21 @@ If the default download fails (corporate proxy / restricted network), three opti
 
 ## Routes
 
-Every public route is statically generated under `/[locale]/...` for all 13 locales (default `zh-Hans`):
+Every public route is statically generated under `/[locale]/...` for all 11 locales (default `zh-Hans`):
 
-| Locale  | Native name    | Notes                                   |
-| ------- | -------------- | --------------------------------------- |
-| zh-Hans | 简体中文       | default; canonical for Mainland China   |
-| zh-Hant | 繁體中文       | Hong Kong / Taiwan / Macau              |
-| en      | English        | `x-default` hreflang anchor             |
-| ja      | 日本語         | AI-translated draft                     |
-| ko      | 한국어         | AI-translated draft                     |
-| es      | Español        | AI-translated draft (neutral Latin OK)  |
-| pt-BR   | Português (BR) | AI-translated draft (Brazilian)         |
-| fr      | Français       | AI-translated draft                     |
-| de      | Deutsch        | AI-translated draft                     |
-| ru      | Русский        | AI-translated draft                     |
-| it      | Italiano       | AI-translated draft                     |
-| vi      | Tiếng Việt     | AI-translated draft                     |
-| ar      | العربية        | AI-translated draft · RTL (`dir="rtl"`) |
+| Locale  | Native name    | Notes                                  |
+| ------- | -------------- | -------------------------------------- |
+| zh-Hans | 简体中文       | default; canonical for Mainland China  |
+| zh-Hant | 繁體中文       | Hong Kong / Taiwan / Macau             |
+| en      | English        | `x-default` hreflang anchor            |
+| ja      | 日本語         | AI-translated draft                    |
+| ko      | 한국어         | AI-translated draft                    |
+| es      | Español        | AI-translated draft (neutral Latin OK) |
+| pt-BR   | Português (BR) | AI-translated draft (Brazilian)        |
+| fr      | Français       | AI-translated draft                    |
+| de      | Deutsch        | AI-translated draft                    |
+| it      | Italiano       | AI-translated draft                    |
+| vi      | Tiếng Việt     | AI-translated draft                    |
 
 > Locales other than `zh-Hans` / `zh-Hant` / `en` are AI-translated initial drafts — community proofreading is welcome via Pull Request.
 
@@ -152,7 +150,7 @@ Every public route is statically generated under `/[locale]/...` for all 13 loca
 | `/`                  | Home · landing + upload                                                  |
 | `/studio`            | Studio · cutout / background / crop / layout / export (supports `?tab=`) |
 | `/scanner`           | **Sub-product** · Document Scan Generator                                |
-| `/scanner/[docType]` | DocSpec SEO landing page (12 × 13 = 156 SSG pages)                       |
+| `/scanner/[docType]` | DocSpec SEO landing page (12 × 11 = 132 SSG pages)                       |
 | `/sizes`             | All 28 built-in photo specs (SEO index)                                  |
 | `/sizes/[specId]`    | Per-spec detail (with HowTo / FAQ JSON-LD)                               |
 | `/paper`             | 7 built-in paper stocks                                                  |
@@ -160,7 +158,7 @@ Every public route is statically generated under `/[locale]/...` for all 13 loca
 | `/specs`             | Spec manager · custom PhotoSpec / PaperSpec / LayoutTemplate             |
 | `/privacy`           | Privacy policy                                                           |
 | `/terms`             | Terms of service                                                         |
-| `/sitemap.xml`       | All routes × 13 locales (hreflang alternates included)                   |
+| `/sitemap.xml`       | All routes × 11 locales (hreflang alternates included)                   |
 | `/robots.txt`        | Public crawl rules                                                       |
 
 Dev-only routes (`/dev/*`) are hidden by default; set `NEXT_PUBLIC_ENABLE_DEV_PAGES=1` to enable them.
@@ -181,7 +179,7 @@ Issues and PRs welcome. Please follow:
 
 - Conventional Commits (`feat:` / `fix:` / `chore:` …) — `commitlint` enforces this on the `commit-msg` hook.
 - Pre-commit `lint-staged` runs `eslint --fix` + `prettier --write` automatically.
-- New i18n keys must land in **every** locale file (`src/i18n/messages/*.json`, 13 bundles) or `pnpm i18n:check` will fail. The non-`zh-Hans`/`zh-Hant`/`en` bundles ship as AI-translated drafts — native-speaker fixes via PR are highly welcome.
+- New i18n keys must land in **every** locale file (`src/i18n/messages/*.json`, 11 bundles) or `pnpm i18n:check` will fail. The non-`zh-Hans`/`zh-Hant`/`en` bundles ship as AI-translated drafts — native-speaker fixes via PR are highly welcome.
 
 ## License
 

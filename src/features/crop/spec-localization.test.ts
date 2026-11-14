@@ -10,7 +10,7 @@ import { LOCALE_TO_I18N, localizeText } from '@/lib/i18n-text'
  * while `I18nText` keys it as `zh`. Without `localizeText` the
  * zh-Hans UI silently fell back to English, which is exactly what
  * the user reported. This test pins the contract so the bug can't
- * sneak back — and now exercises all 13 supported locales.
+ * sneak back — and now exercises all 11 supported locales.
  */
 describe('SpecPicker localisation via localizeText', () => {
   it('renders the zh-Hans (zh) name for a built-in spec', () => {

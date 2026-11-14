@@ -15,10 +15,8 @@
       "pt-BR": "Português (Brasil)",
       "fr": "Français",
       "de": "Deutsch",
-      "ru": "Русский",
       "it": "Italiano",
-      "vi": "Tiếng Việt",
-      "ar": "العربية"
+      "vi": "Tiếng Việt"
     }
   },
   "Nav": {
@@ -42,7 +40,7 @@
   "Home": {
     "heroTitle": "Ảnh thẻ thông minh, làm xong ngay trong trình duyệt",
     "heroSubtitle": "Pixfit là studio ảnh thẻ và máy quét tài liệu chạy AI: tự động tách nền, đổi nền, cắt theo chuẩn quốc gia, dàn trang in và nén đúng KB — tất cả chạy trong trình duyệt, không tải lên.",
-    "metaTitle": "Pixfit · Công cụ ảnh thẻ AI miễn phí · xoá nền · không tải lên · 2026 | Pixfit",
+    "metaTitle": "Pixfit · Ảnh thẻ AI miễn phí · không tải lên 2026 | Pixfit",
     "metaDescription": "Công cụ ảnh thẻ miễn phí 100% trong trình duyệt: AI xoá nền, cắt visa/hộ chiếu, quét PDF. Không upload, cập nhật 2026.",
     "metaKeywords": [
       "ảnh thẻ AI",
@@ -175,7 +173,7 @@
   "Studio": {
     "title": "Studio",
     "subtitle": "Tải lên chân dung — tách nền AI, cắt thông minh, đổi nền 1 chạm, dàn trang và xuất đúng KB, tất cả trong trình duyệt.",
-    "metaTitle": "Pixfit Studio · cắt online · đổi nền · nén · dàn A4/5R/6R 2026 | Pixfit",
+    "metaTitle": "Pixfit Studio · Cắt, đổi nền và nén ảnh online 2026 | Pixfit",
     "metaDescription": "Pixfit Studio: cắt online, đổi nền AI, nén theo KB, dàn A4/5R/6R. Miễn phí, trong trình duyệt, không upload. 2026 · 28 chuẩn.",
     "metaKeywords": [
       "trình chỉnh sửa ảnh thẻ AI",
@@ -647,7 +645,7 @@
   },
   "Compress": {
     "index": {
-      "metaTitle": "Nén ảnh online · 50KB / 100KB / 200KB / 500KB / 1MB · miễn phí 2026 | Pixfit",
+      "metaTitle": "Nén ảnh xuống 50KB–1MB online · miễn phí 2026 | Pixfit",
       "metaDescription": "Nén ảnh JPG và PNG online về 50KB, 100KB, 200KB, 500KB hoặc 1MB. 100% trong trình duyệt, không upload, miễn phí, 2026. Pixfit.",
       "metaKeywords": [
         "nén ảnh online",
@@ -1046,7 +1044,7 @@
   "Scanner": {
     "title": "Máy quét tài liệu thông minh",
     "subtitle": "Tải lên ảnh chụp điện thoại của CMND/CCCD, hộ chiếu hay bằng lái — máy quét thông minh sửa phối cảnh, cân bằng trắng và xuất PDF A4 / Letter / A5, tất cả trong trình duyệt.",
-    "metaTitle": "Pixfit Scanner · 12 tài liệu PDF trong trình duyệt · miễn phí 2026 | Pixfit Scanner",
+    "metaTitle": "Pixfit Scanner · 12 tài liệu thành PDF 2026 | Pixfit Scanner",
     "metaDescription": "Quét 12 loại tài liệu thành PDF từ trình duyệt: ID, hộ chiếu, bằng lái, thẻ. AI sửa phối cảnh + scan/copy/enhance. Miễn phí 2026, không upload.",
     "metaKeywords": [
       "máy quét tài liệu thông minh",

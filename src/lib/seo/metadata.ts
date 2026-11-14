@@ -204,14 +204,10 @@ export function ogLocaleFor(locale: Locale): string {
       return 'fr_FR'
     case 'de':
       return 'de_DE'
-    case 'ru':
-      return 'ru_RU'
     case 'it':
       return 'it_IT'
     case 'vi':
       return 'vi_VN'
-    case 'ar':
-      return 'ar_AR'
     case 'en':
     default:
       return 'en_US'

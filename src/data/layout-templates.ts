@@ -27,13 +27,13 @@
 import type { I18nText, LayoutTemplate } from '@/types/spec'
 
 /**
- * Locales added in the 10-locale expansion. Template names are short
+ * Locales added in the 8-locale expansion. Template names are short
  * formulas like `5R · 8 × 1-inch` — the only translatable bits are
  * the unit noun ("1-inch" → "1 pollice" / "1 인치") and the document
  * surface keywords ("Passport", "ID card", "wallet").
  */
 type LocaleExtras = Partial<
-  Record<'ja' | 'ko' | 'es' | 'pt-BR' | 'fr' | 'de' | 'ru' | 'it' | 'vi' | 'ar', string>
+  Record<'ja' | 'ko' | 'es' | 'pt-BR' | 'fr' | 'de' | 'it' | 'vi', string>
 >
 
 const i18n = (zh: string, zhHant: string, en: string, more: LocaleExtras = {}): I18nText => ({
@@ -56,10 +56,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '5R · 8 × 1 polegada',
       fr: '5R · 8 × 1 pouce',
       de: '5R · 8 × 1 Zoll',
-      ru: '5R · 8 × 1 дюйм',
       it: '5R · 8 × 1 pollice',
       vi: '5R · 8 × 1 inch',
-      ar: '5R · 8 × 1 إنش',
     }),
     items: [{ photoSpecId: 'cn-1inch', count: 8 }],
     arrangement: { kind: 'auto-grid' },
@@ -76,10 +74,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '5R · 9 × RG chinês',
       fr: "5R · 9 × Carte d'identité chinoise",
       de: '5R · 9 × CN-Personalausweis',
-      ru: '5R · 9 × удостоверение КНР',
       it: "5R · 9 × Carta d'identità cinese",
       vi: '5R · 9 × CMND Trung Quốc',
-      ar: '5R · 9 × بطاقة هوية صينية',
     }),
     items: [{ photoSpecId: 'cn-id-card', count: 9 }],
     arrangement: { kind: 'auto-grid' },
@@ -96,10 +92,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '5R · 4 × Passaporte',
       fr: '5R · 4 × Passeport',
       de: '5R · 4 × Reisepass',
-      ru: '5R · 4 × паспорт',
       it: '5R · 4 × Passaporto',
       vi: '5R · 4 × Hộ chiếu',
-      ar: '5R · 4 × جواز سفر',
     }),
     items: [{ photoSpecId: 'cn-passport', count: 4 }],
     arrangement: { kind: 'auto-grid' },
@@ -116,10 +110,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '5R · 4 × 2 polegadas grande',
       fr: '5R · 4 × Grand 2 pouces',
       de: '5R · 4 × Groß 2 Zoll',
-      ru: '5R · 4 × большие 2 дюйма',
       it: '5R · 4 × 2 pollici grande',
       vi: '5R · 4 × 2 inch lớn',
-      ar: '5R · 4 × 2 إنش كبير',
     }),
     items: [{ photoSpecId: 'cn-2inch-large', count: 4 }],
     arrangement: { kind: 'auto-grid' },
@@ -140,10 +132,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
         'pt-BR': '5R · 1 polegada + 2 polegadas (Mix A)',
         fr: '5R · 1 pouce + 2 pouces (Mix A)',
         de: '5R · 1 Zoll + 2 Zoll (Mix A)',
-        ru: '5R · 1 дюйм + 2 дюйма (микс A)',
         it: '5R · 1 pollice + 2 pollici (Mix A)',
         vi: '5R · 1 inch + 2 inch (Mix A)',
-        ar: '5R · 1 إنش + 2 إنش (مزيج A)',
       },
     ),
     items: [
@@ -164,10 +154,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '5R · 2 × Carteira pequena',
       fr: '5R · 2 × Petit portefeuille',
       de: '5R · 2 × Brieftasche klein',
-      ru: '5R · 2 × малое кошельковое',
       it: '5R · 2 × Portafoglio piccolo',
       vi: '5R · 2 × Ảnh ví nhỏ',
-      ar: '5R · 2 × محفظة صغيرة',
     }),
     items: [{ photoSpecId: 'cn-wallet-small', count: 2 }],
     arrangement: { kind: 'auto-grid' },
@@ -186,10 +174,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '6R · 16 × 1 polegada',
       fr: '6R · 16 × 1 pouce',
       de: '6R · 16 × 1 Zoll',
-      ru: '6R · 16 × 1 дюйм',
       it: '6R · 16 × 1 pollice',
       vi: '6R · 16 × 1 inch',
-      ar: '6R · 16 × 1 إنش',
     }),
     items: [{ photoSpecId: 'cn-1inch', count: 16 }],
     arrangement: { kind: 'auto-grid' },
@@ -206,10 +192,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '6R · 8 × 2 polegadas',
       fr: '6R · 8 × 2 pouces',
       de: '6R · 8 × 2 Zoll',
-      ru: '6R · 8 × 2 дюйма',
       it: '6R · 8 × 2 pollici',
       vi: '6R · 8 × 2 inch',
-      ar: '6R · 8 × 2 إنش',
     }),
     items: [{ photoSpecId: 'cn-2inch', count: 8 }],
     arrangement: { kind: 'auto-grid' },
@@ -230,10 +214,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
         'pt-BR': '6R · 1 polegada + 2 polegadas (Mix B)',
         fr: '6R · 1 pouce + 2 pouces (Mix B)',
         de: '6R · 1 Zoll + 2 Zoll (Mix B)',
-        ru: '6R · 1 дюйм + 2 дюйма (микс B)',
         it: '6R · 1 pollice + 2 pollici (Mix B)',
         vi: '6R · 1 inch + 2 inch (Mix B)',
-        ar: '6R · 1 إنش + 2 إنش (مزيج B)',
       },
     ),
     items: [
@@ -258,10 +240,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
         'pt-BR': '6R · 1 polegada + 2 polegadas (Mix C)',
         fr: '6R · 1 pouce + 2 pouces (Mix C)',
         de: '6R · 1 Zoll + 2 Zoll (Mix C)',
-        ru: '6R · 1 дюйм + 2 дюйма (микс C)',
         it: '6R · 1 pollice + 2 pollici (Mix C)',
         vi: '6R · 1 inch + 2 inch (Mix C)',
-        ar: '6R · 1 إنش + 2 إنش (مزيج C)',
       },
     ),
     items: [
@@ -282,10 +262,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': '6R · 2 × Carteira grande',
       fr: '6R · 2 × Grand portefeuille',
       de: '6R · 2 × Brieftasche groß',
-      ru: '6R · 2 × большое кошельковое',
       it: '6R · 2 × Portafoglio grande',
       vi: '6R · 2 × Ảnh ví lớn',
-      ar: '6R · 2 × محفظة كبيرة',
     }),
     items: [{ photoSpecId: 'cn-wallet-large', count: 2 }],
     arrangement: { kind: 'auto-grid' },
@@ -304,10 +282,8 @@ export const BUILTIN_LAYOUT_TEMPLATES: LayoutTemplate[] = [
       'pt-BR': 'A4 · 1 polegada máx.',
       fr: 'A4 · 1 pouce max.',
       de: 'A4 · 1 Zoll Max',
-      ru: 'A4 · 1 дюйм максимум',
       it: 'A4 · 1 pollice max.',
       vi: 'A4 · 1 inch tối đa',
-      ar: 'A4 · 1 إنش حد أقصى',
     }),
     // Generous count; the auto-grid packer caps at what physically fits.
     items: [{ photoSpecId: 'cn-1inch', count: 100 }],
