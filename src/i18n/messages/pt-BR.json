@@ -792,13 +792,13 @@
     "privacy": {
       "heading": "Política de privacidade",
       "subtitle": "O Pixfit roda inteiramente no seu navegador. Não coletamos, armazenamos nem transmitimos suas fotos.",
-      "lastUpdated": "2026-05-12",
+      "lastUpdated": "2026-11-14",
       "metaTitle": "Política de privacidade · Pixfit",
-      "metaDescription": "Como o Pixfit lida com seus dados: cada imagem fica no seu dispositivo, sem cookies de rastreio; a única persistência é o localStorage dos seus padrões.",
+      "metaDescription": "Como o Pixfit processa fotos localmente, usa o armazenamento do navegador e estatísticas de visitas, e como gerenciar os dados relacionados.",
       "sections": {
         "summary": {
           "title": "Em resumo",
-          "body": "O Pixfit é um estúdio de fotos de documento só no navegador. Suas fotos não saem do dispositivo. Não temos contas, não exigimos cadastro e não rastreamos com cookies."
+          "body": "O Pixfit processa fotos no navegador sem exigir uma conta. As fotos não são enviadas a um servidor; usamos estatísticas de visitas e de uso dos recursos para melhorar o serviço."
         },
         "data": {
           "title": "O que processamos",
@@ -806,19 +806,19 @@
         },
         "localStorage": {
           "title": "Armazenamento local",
-          "body": "Usamos o localStorage do navegador só para lembrar dos padrões de foto / papel / layout que você cria ou importa (chave `pixfit:specs:v1`) e de uma pequena lista de cores de fundo recentes. Você pode limpar quando quiser nas configurações do site."
+          "body": "Usamos o armazenamento do navegador para lembrar formatos personalizados, cores de fundo recentes e algumas preferências. Você pode apagar esses dados nas configurações do site no navegador."
         },
         "thirdParty": {
           "title": "Recursos de terceiros",
-          "body": "Os pesos do modelo, as fontes e o runtime do MediaPipe são buscados em espelhos públicos (ModelScope, jsDelivr, CDN do Hugging Face). Esses serviços veem apenas pedidos do arquivo do modelo — nunca suas fotos. Depois do cache, as visitas seguintes funcionam offline para o fluxo principal."
+          "body": "O site pode carregar recursos necessários ao funcionamento de serviços de terceiros. Essas solicitações podem incluir dados técnicos, como seu endereço IP e informações do navegador, mas não o conteúdo das fotos que você processa."
         },
         "analytics": {
           "title": "Analytics",
-          "body": "Quando entrarmos no ar planejamos usar Cloudflare Web Analytics, que é sem cookies e não coleta IP nem fingerprint. Nenhum script é carregado até essa decisão. Hoje não há rastreador de terceiros (Google / Mixpanel / Sentry) no bundle."
+          "body": "Usamos serviços de análise e desempenho para entender visitas, uso dos recursos e desempenho e melhorar o site. Esses serviços podem usar cookies ou tecnologias semelhantes para processar informações de visitas e dispositivos. O conteúdo das fotos não é enviado como dado de análise."
         },
         "rights": {
           "title": "Seus direitos",
-          "body": "Como não coletamos dados pessoais, não há nada que possamos apagar ou exportar em seu nome. Você mantém o controle limpando os dados do site no seu navegador."
+          "body": "Você pode gerenciar ou apagar cookies e dados locais nas configurações do navegador. Apagar dados locais não exclui automaticamente os registros de análise já enviados. Para solicitações sobre privacidade ou dados, entre em contato pelos meios abaixo."
         },
         "children": {
           "title": "Crianças",
@@ -826,7 +826,7 @@
         },
         "changes": {
           "title": "Atualizações desta política",
-          "body": "Se mudarmos práticas de manejo de dados, atualizaremos esta página e a data. Mudanças relevantes serão resumidas na home ou em banner dentro do app."
+          "body": "Esta política pode ser atualizada conforme nossos serviços e práticas de tratamento de dados mudem. Consulte a data da última atualização nesta página."
         },
         "contact": {
           "title": "Contato",

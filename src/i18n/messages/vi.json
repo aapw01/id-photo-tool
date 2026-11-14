@@ -792,13 +792,13 @@
     "privacy": {
       "heading": "Chính sách riêng tư",
       "subtitle": "Pixfit chạy hoàn toàn trong trình duyệt của bạn. Chúng tôi không thu thập, lưu hay truyền ảnh của bạn.",
-      "lastUpdated": "2026-05-12",
+      "lastUpdated": "2026-11-14",
       "metaTitle": "Chính sách riêng tư · Pixfit",
-      "metaDescription": "Cách Pixfit xử lý dữ liệu: mỗi ảnh nằm trên thiết bị của bạn, không cookie theo dõi, chỉ localStorage lưu các cỡ tuỳ chỉnh của bạn.",
+      "metaDescription": "Cách Pixfit xử lý ảnh trên thiết bị, sử dụng bộ nhớ trình duyệt và thống kê truy cập, cùng cách quản lý dữ liệu liên quan.",
       "sections": {
         "summary": {
           "title": "Tóm tắt",
-          "body": "Pixfit là studio ảnh thẻ chỉ chạy trong trình duyệt. Ảnh không rời thiết bị. Không tài khoản, đăng ký hay cookie theo dõi."
+          "body": "Pixfit xử lý ảnh trong trình duyệt mà không yêu cầu tài khoản. Ảnh không được tải lên máy chủ; chúng tôi sử dụng thống kê truy cập và sử dụng tính năng để cải thiện dịch vụ."
         },
         "data": {
           "title": "Chúng tôi xử lý gì",
@@ -806,19 +806,19 @@
         },
         "localStorage": {
           "title": "Bộ nhớ cục bộ",
-          "body": "Chúng tôi chỉ dùng localStorage để nhớ các cỡ bạn tạo hoặc nhập (khoá `pixfit:specs:v1`) và 1 danh sách nhỏ màu nền gần đây. Bạn có thể xoá chúng bất cứ lúc nào trong cài đặt trang web của trình duyệt."
+          "body": "Chúng tôi sử dụng bộ nhớ trình duyệt để ghi nhớ quy cách tùy chỉnh, màu nền dùng gần đây và một số tùy chọn. Bạn có thể xóa dữ liệu này trong phần cài đặt trang web của trình duyệt."
         },
         "thirdParty": {
           "title": "Tài nguyên bên thứ ba",
-          "body": "Trọng số mô hình AI, font và runtime MediaPipe được lấy từ các mirror công khai (ModelScope, jsDelivr, Hugging Face CDN). Các dịch vụ này chỉ thấy yêu cầu mô hình — không thấy ảnh của bạn. Sau khi cache, các lần truy cập tiếp theo chạy offline cho luồng chính."
+          "body": "Trang web có thể tải tài nguyên cần thiết để hoạt động từ dịch vụ bên thứ ba. Các yêu cầu này có thể chứa dữ liệu kỹ thuật như địa chỉ IP và thông tin trình duyệt, nhưng không chứa nội dung ảnh bạn xử lý."
         },
         "analytics": {
           "title": "Phân tích",
-          "body": "Khi ra mắt, chúng tôi dự định dùng Cloudflare Web Analytics — không cookie, không IP, không fingerprint. Trước khi quyết định ra mắt, không tải script phân tích nào. Hôm nay không có tracker bên thứ ba (Google / Mixpanel / Sentry) được nhúng."
+          "body": "Chúng tôi sử dụng dịch vụ phân tích và đo hiệu suất để tìm hiểu lượt truy cập, việc sử dụng tính năng và hiệu suất nhằm cải thiện trang web. Các dịch vụ này có thể dùng cookie hoặc công nghệ tương tự để xử lý thông tin truy cập và thiết bị. Nội dung ảnh không được gửi làm dữ liệu phân tích."
         },
         "rights": {
           "title": "Quyền của bạn",
-          "body": "Vì chúng tôi không thu thập dữ liệu cá nhân, không có gì để xoá hay xuất thay bạn. Bạn vẫn kiểm soát hoàn toàn bằng cách xoá dữ liệu trang web trong trình duyệt."
+          "body": "Bạn có thể quản lý hoặc xóa cookie và dữ liệu cục bộ trong cài đặt trình duyệt. Việc xóa dữ liệu cục bộ không tự động xóa các bản ghi phân tích đã gửi. Nếu có yêu cầu về quyền riêng tư hoặc dữ liệu, hãy liên hệ qua thông tin bên dưới."
         },
         "children": {
           "title": "Trẻ em",
@@ -826,7 +826,7 @@
         },
         "changes": {
           "title": "Cập nhật chính sách",
-          "body": "Khi cách làm thay đổi, chúng tôi sẽ cập nhật trang này và ngày tháng. Thay đổi đáng kể sẽ được tóm tắt ở trang chủ hoặc banner trong ứng dụng."
+          "body": "Chính sách này có thể được cập nhật khi dịch vụ và cách xử lý dữ liệu thay đổi. Vui lòng xem ngày cập nhật gần nhất trên trang này."
         },
         "contact": {
           "title": "Liên hệ",
