@@ -22,6 +22,7 @@
   "Nav": {
     "home": "Start",
     "studio": "Studio",
+    "quickTools": "Schnellwerkzeuge",
     "scanner": "Dokumentenscanner",
     "sizes": "Formate",
     "paper": "Papier",
@@ -1393,6 +1394,57 @@
       "ctaBody": "Alle Pixfit-Tools laufen auf dem Gerät – ohne Upload, ohne Konto, kostenlos.",
       "ctaPrimary": "Studio öffnen",
       "ctaSecondary": "Scanner öffnen"
+    }
+  },
+  "QuickTools": {
+    "title": "Schnelle Fotowerkzeuge",
+    "subtitle": "Größe, Format und Dateigröße ändern, ohne den vollständigen Workflow zu öffnen. Alles läuft im Browser.",
+    "metaTitle": "Schnelle Fotowerkzeuge: Größe, Format und Komprimierung | Pixfit",
+    "metaDescription": "Fotos im Browser skalieren, JPG/PNG/WebP konvertieren und auf eine gewünschte KB-Größe komprimieren. Kein Upload.",
+    "metaKeywords": [
+      "Foto Größe ändern",
+      "Bildformat konvertieren",
+      "Bild komprimieren",
+      "Passfoto komprimieren",
+      "Online-Fotobearbeitung"
+    ],
+    "replace": "Foto ersetzen",
+    "cropHint": "Die Ausgabe wird aus der Mitte auf das gewünschte Seitenverhältnis zugeschnitten.",
+    "download": "Bearbeitetes Foto herunterladen",
+    "processing": "Verarbeitung…",
+    "privacy": "Das Foto wird auf diesem Gerät verarbeitet und nicht auf einen Server hochgeladen.",
+    "result": "Erstellt: {width}×{height} px · {kb} KB",
+    "upload": "Foto hochladen",
+    "uploadHint": "JPG / PNG / WebP · bis zu 50 MB pro Datei",
+    "settings": {
+      "title": "Verarbeitungseinstellungen",
+      "size": "Größe zuschneiden",
+      "preset": "Häufige Voreinstellungen",
+      "custom": "Benutzerdefiniert",
+      "presets": {
+        "original": "Originalgröße beibehalten",
+        "oneInch": "1 Zoll · 295×413",
+        "twoInch": "2 Zoll · 413×579",
+        "passport": "Passfoto · 390×567",
+        "square": "Quadrat · 600×600"
+      },
+      "width": "Breite (px)",
+      "height": "Höhe (px)",
+      "sizeHint": "Die Ausgabe wird auf die gewählten Pixelmaße zugeschnitten.",
+      "format": "Ausgabeformat",
+      "fileSize": "Ziel-Dateigröße",
+      "noLimit": "Keine Begrenzung",
+      "customKB": "Benutzerdefinierte Größe (KB)",
+      "pngHint": "PNG eignet sich nicht für eine exakte KB-Komprimierung und wird in den gewählten Maßen ausgegeben."
+    },
+    "note": {
+      "title": "Für schnelle Änderungen an einem Foto",
+      "body": "Nutze dieses Werkzeug, wenn du nur Maße, Format oder Dateigröße ändern möchtest. Für KI-Freistellung, Hintergrund oder Drucklayouts öffne den Studio-Bereich."
+    },
+    "errors": {
+      "imageOnly": "Bitte wähle eine Bilddatei.",
+      "decode": "Dieses Bild konnte nicht gelesen werden. Versuche JPG, PNG oder WebP.",
+      "export": "Verarbeitung fehlgeschlagen. Bitte erneut versuchen."
     }
   }
 }

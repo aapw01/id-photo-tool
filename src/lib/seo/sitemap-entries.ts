@@ -62,6 +62,7 @@ export const SEO_LASTMOD = new Date('2026-11-14T00:00:00Z')
 export const SITEMAP_ROUTES: RouteSpec[] = [
   { path: '/', changeFrequency: 'weekly', priority: 1 },
   { path: '/studio', changeFrequency: 'weekly', priority: 0.9 },
+  { path: '/quick-tools', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/scanner', changeFrequency: 'weekly', priority: 0.9 },
   { path: '/sizes', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/paper', changeFrequency: 'monthly', priority: 0.7 },

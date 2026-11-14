@@ -22,6 +22,7 @@
   "Nav": {
     "home": "首頁",
     "studio": "工作台",
+    "quickTools": "快速工具",
     "scanner": "證件掃描產生器",
     "sizes": "尺寸庫",
     "paper": "相紙",
@@ -1391,6 +1392,58 @@
       "ctaBody": "Pixfit 所有工具都在你本地瀏覽器內執行——不上傳、不需帳號，免費。",
       "ctaPrimary": "開啟工作室",
       "ctaSecondary": "開啟掃描器"
+    }
+  },
+  "QuickTools": {
+    "title": "照片快速處理",
+    "subtitle": "只改尺寸、格式和檔案大小，不進入複雜工作流程。圖片始終在瀏覽器本機處理。",
+    "metaTitle": "照片快速處理：裁切尺寸、轉換格式、壓縮大小 | Pixfit",
+    "metaDescription": "免費線上快速調整照片尺寸、裁切比例、轉換 JPG/PNG/WebP 格式，並壓縮到指定 KB。瀏覽器本機處理，不上傳照片。",
+    "metaKeywords": [
+      "照片裁切",
+      "調整照片尺寸",
+      "圖片格式轉換",
+      "圖片壓縮",
+      "證件照壓縮",
+      "線上改照片大小"
+    ],
+    "replace": "更換照片",
+    "cropHint": "輸出會依目標比例從中心裁切，保持主體清晰。",
+    "download": "下載處理後的照片",
+    "processing": "處理中…",
+    "privacy": "照片不會上傳伺服器，所有處理都在目前裝置完成。",
+    "result": "已產生 {width}×{height} px · {kb} KB",
+    "upload": "上傳照片",
+    "uploadHint": "支援 JPG / PNG / WebP · 單張 ≤ 50 MB",
+    "settings": {
+      "title": "處理設定",
+      "size": "尺寸裁切",
+      "preset": "常用預設",
+      "custom": "自訂",
+      "presets": {
+        "original": "維持原尺寸",
+        "oneInch": "一吋照 · 295×413",
+        "twoInch": "二吋照 · 413×579",
+        "passport": "護照常用 · 390×567",
+        "square": "正方形 · 600×600"
+      },
+      "width": "寬度（px）",
+      "height": "高度（px）",
+      "sizeHint": "輸出會裁切到指定像素尺寸。",
+      "format": "輸出格式",
+      "fileSize": "目標體積",
+      "noLimit": "不限制",
+      "customKB": "自訂大小（KB）",
+      "pngHint": "PNG 不適合精確壓縮到指定 KB，會依選定尺寸輸出。"
+    },
+    "note": {
+      "title": "適合快速處理單張照片",
+      "body": "這個工具適合只需要調整尺寸、格式或檔案大小的情境。如果還需要 AI 去背、換背景、證件照排版，可以進入工作台。"
+    },
+    "errors": {
+      "imageOnly": "請選擇圖片檔案。",
+      "decode": "圖片無法讀取，請換一張 JPG、PNG 或 WebP 圖片。",
+      "export": "處理失敗，請重試。"
     }
   }
 }

@@ -22,6 +22,7 @@
   "Nav": {
     "home": "Inicio",
     "studio": "Estudio",
+    "quickTools": "Herramientas rápidas",
     "scanner": "Escáner de documentos",
     "sizes": "Tamaños",
     "paper": "Papel",
@@ -1393,6 +1394,57 @@
       "ctaBody": "Todas las herramientas Pixfit corren en el dispositivo — sin subir, sin cuenta, gratis.",
       "ctaPrimary": "Abrir Estudio",
       "ctaSecondary": "Abrir Escáner"
+    }
+  },
+  "QuickTools": {
+    "title": "Herramientas rápidas para fotos",
+    "subtitle": "Cambia el tamaño, el formato y el peso de una foto sin abrir el flujo completo. Todo se procesa en el navegador.",
+    "metaTitle": "Herramientas rápidas: cambiar tamaño, formato y comprimir | Pixfit",
+    "metaDescription": "Cambia el tamaño de una foto, convierte JPG/PNG/WebP y comprímela a los KB indicados directamente en el navegador. Sin subir fotos.",
+    "metaKeywords": [
+      "cambiar tamaño foto",
+      "convertir formato imagen",
+      "comprimir imagen",
+      "comprimir foto carnet",
+      "editor de fotos online"
+    ],
+    "replace": "Cambiar foto",
+    "cropHint": "La salida se recorta desde el centro para ajustarse a la proporción elegida.",
+    "download": "Descargar foto procesada",
+    "processing": "Procesando…",
+    "privacy": "La foto se procesa en este dispositivo y no se sube a ningún servidor.",
+    "result": "Creado {width}×{height} px · {kb} KB",
+    "upload": "Subir una foto",
+    "uploadHint": "JPG / PNG / WebP · hasta 50 MB por archivo",
+    "settings": {
+      "title": "Ajustes de procesamiento",
+      "size": "Recortar tamaño",
+      "preset": "Preajustes comunes",
+      "custom": "Personalizado",
+      "presets": {
+        "original": "Mantener tamaño original",
+        "oneInch": "1 pulgada · 295×413",
+        "twoInch": "2 pulgadas · 413×579",
+        "passport": "Pasaporte · 390×567",
+        "square": "Cuadrado · 600×600"
+      },
+      "width": "Ancho (px)",
+      "height": "Alto (px)",
+      "sizeHint": "La salida se recorta a las dimensiones indicadas.",
+      "format": "Formato de salida",
+      "fileSize": "Tamaño del archivo",
+      "noLimit": "Sin límite",
+      "customKB": "Tamaño personalizado (KB)",
+      "pngHint": "PNG no está pensado para una compresión exacta en KB; se exportará con las dimensiones elegidas."
+    },
+    "note": {
+      "title": "Para editar una foto rápidamente",
+      "body": "Úsalo cuando solo necesites cambiar dimensiones, formato o peso. Abre Studio para recortar con IA, cambiar el fondo o crear diseños para imprimir."
+    },
+    "errors": {
+      "imageOnly": "Elige un archivo de imagen.",
+      "decode": "No se pudo leer la imagen. Prueba con JPG, PNG o WebP.",
+      "export": "No se pudo procesar. Inténtalo de nuevo."
     }
   }
 }

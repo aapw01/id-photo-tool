@@ -32,6 +32,7 @@ export type BreadcrumbRouteKey =
   | 'specs'
   | 'compress'
   | 'compress-detail'
+  | 'quick-tools'
   | 'blog'
   | 'blog-detail'
   | 'privacy'
@@ -45,6 +46,7 @@ export interface BreadcrumbLabels {
   templates?: string
   specs?: string
   compress?: string
+  quickTools?: string
   blog?: string
   privacy?: string
   terms?: string
@@ -106,6 +108,8 @@ export function getBreadcrumbItems(
       return [home, { path: '/specs', name: labels.specs ?? 'Specs' }]
     case 'compress':
       return [home, { path: '/compress', name: labels.compress ?? 'Compress' }]
+    case 'quick-tools':
+      return [home, { path: '/quick-tools', name: labels.quickTools ?? 'Quick tools' }]
     case 'compress-detail': {
       if (!detail) throw new Error('compress-detail requires `detail` options')
       return [

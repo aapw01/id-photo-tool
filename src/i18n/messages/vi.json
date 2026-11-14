@@ -22,6 +22,7 @@
   "Nav": {
     "home": "Trang chủ",
     "studio": "Studio",
+    "quickTools": "Công cụ nhanh",
     "scanner": "Máy quét tài liệu",
     "sizes": "Kích thước",
     "paper": "Giấy",
@@ -1393,6 +1394,57 @@
       "ctaBody": "Mọi công cụ Pixfit chạy trên thiết bị — không upload, không tài khoản, miễn phí.",
       "ctaPrimary": "Mở Studio",
       "ctaSecondary": "Mở Scanner"
+    }
+  },
+  "QuickTools": {
+    "title": "Công cụ xử lý ảnh nhanh",
+    "subtitle": "Đổi kích thước, định dạng và dung lượng mà không cần mở quy trình đầy đủ. Mọi thao tác chạy trong trình duyệt.",
+    "metaTitle": "Công cụ ảnh nhanh: đổi kích thước, định dạng và nén | Pixfit",
+    "metaDescription": "Đổi kích thước ảnh, chuyển JPG/PNG/WebP và nén về dung lượng KB mong muốn ngay trong trình duyệt. Không tải ảnh lên.",
+    "metaKeywords": [
+      "đổi kích thước ảnh",
+      "đổi định dạng ảnh",
+      "nén ảnh",
+      "nén ảnh thẻ",
+      "chỉnh sửa ảnh online"
+    ],
+    "replace": "Đổi ảnh",
+    "cropHint": "Ảnh đầu ra được cắt từ giữa theo tỷ lệ đã chọn.",
+    "download": "Tải ảnh đã xử lý",
+    "processing": "Đang xử lý…",
+    "privacy": "Ảnh được xử lý trên thiết bị và không được tải lên máy chủ.",
+    "result": "Đã tạo {width}×{height} px · {kb} KB",
+    "upload": "Tải ảnh lên",
+    "uploadHint": "JPG / PNG / WebP · tối đa 50 MB mỗi tệp",
+    "settings": {
+      "title": "Cài đặt xử lý",
+      "size": "Cắt theo kích thước",
+      "preset": "Thiết lập phổ biến",
+      "custom": "Tùy chỉnh",
+      "presets": {
+        "original": "Giữ kích thước gốc",
+        "oneInch": "1 inch · 295×413",
+        "twoInch": "2 inch · 413×579",
+        "passport": "Hộ chiếu · 390×567",
+        "square": "Hình vuông · 600×600"
+      },
+      "width": "Chiều rộng (px)",
+      "height": "Chiều cao (px)",
+      "sizeHint": "Ảnh đầu ra được cắt về kích thước pixel đã chọn.",
+      "format": "Định dạng đầu ra",
+      "fileSize": "Dung lượng mục tiêu",
+      "noLimit": "Không giới hạn",
+      "customKB": "Dung lượng tùy chỉnh (KB)",
+      "pngHint": "PNG không phù hợp để nén chính xác theo KB; ảnh sẽ xuất theo kích thước đã chọn."
+    },
+    "note": {
+      "title": "Xử lý nhanh một ảnh",
+      "body": "Dùng khi bạn chỉ cần đổi kích thước, định dạng hoặc dung lượng. Mở Studio nếu cần tách nền AI, đổi nền hoặc dàn ảnh in."
+    },
+    "errors": {
+      "imageOnly": "Vui lòng chọn tệp ảnh.",
+      "decode": "Không thể đọc ảnh này. Hãy thử JPG, PNG hoặc WebP.",
+      "export": "Xử lý thất bại. Vui lòng thử lại."
     }
   }
 }

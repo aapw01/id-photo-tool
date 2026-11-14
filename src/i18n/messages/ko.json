@@ -22,6 +22,7 @@
   "Nav": {
     "home": "홈",
     "studio": "스튜디오",
+    "quickTools": "빠른 도구",
     "scanner": "신분증 스캐너",
     "sizes": "규격",
     "paper": "용지",
@@ -1393,6 +1394,57 @@
       "ctaBody": "모든 Pixfit 도구가 기기에서 동작합니다 — 업로드 없음, 계정 없음, 무료.",
       "ctaPrimary": "스튜디오 열기",
       "ctaSecondary": "스캐너 열기"
+    }
+  },
+  "QuickTools": {
+    "title": "사진 빠른 도구",
+    "subtitle": "복잡한 작업대 없이 사진 크기, 형식, 파일 용량만 빠르게 변경하세요. 모든 처리는 브라우저에서 진행됩니다.",
+    "metaTitle": "사진 빠른 도구: 크기 변경, 형식 변환, 압축 | Pixfit",
+    "metaDescription": "사진 크기 조정, JPG/PNG/WebP 변환, 지정 KB 압축을 브라우저에서 무료로 처리합니다. 사진을 업로드하지 않습니다.",
+    "metaKeywords": [
+      "사진 크기 조정",
+      "이미지 형식 변환",
+      "이미지 압축",
+      "증명사진 압축",
+      "온라인 사진 편집"
+    ],
+    "replace": "사진 변경",
+    "cropHint": "목표 비율에 맞춰 중앙을 기준으로 잘라냅니다.",
+    "download": "처리한 사진 다운로드",
+    "processing": "처리 중…",
+    "privacy": "사진은 기기에서만 처리되며 서버로 업로드되지 않습니다.",
+    "result": "생성 완료 {width}×{height} px · {kb} KB",
+    "upload": "사진 업로드",
+    "uploadHint": "JPG / PNG / WebP · 파일당 최대 50MB",
+    "settings": {
+      "title": "처리 설정",
+      "size": "크기 자르기",
+      "preset": "자주 쓰는 설정",
+      "custom": "사용자 지정",
+      "presets": {
+        "original": "원본 크기 유지",
+        "oneInch": "1인치 · 295×413",
+        "twoInch": "2인치 · 413×579",
+        "passport": "여권용 · 390×567",
+        "square": "정사각형 · 600×600"
+      },
+      "width": "너비 (px)",
+      "height": "높이 (px)",
+      "sizeHint": "선택한 픽셀 크기로 잘라냅니다.",
+      "format": "출력 형식",
+      "fileSize": "목표 파일 크기",
+      "noLimit": "제한 없음",
+      "customKB": "사용자 지정 용량 (KB)",
+      "pngHint": "PNG는 지정 KB로 정확히 압축하기 어려워 선택한 크기로 출력합니다."
+    },
+    "note": {
+      "title": "사진 한 장을 빠르게 처리",
+      "body": "크기, 형식, 파일 용량만 바꿀 때 사용하세요. AI 누끼, 배경 변경, 인쇄 레이아웃은 작업대를 이용하세요."
+    },
+    "errors": {
+      "imageOnly": "이미지 파일을 선택하세요.",
+      "decode": "이미지를 읽을 수 없습니다. JPG, PNG 또는 WebP를 사용해 보세요.",
+      "export": "처리에 실패했습니다. 다시 시도해 주세요."
     }
   }
 }

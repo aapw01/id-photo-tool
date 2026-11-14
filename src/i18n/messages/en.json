@@ -22,6 +22,7 @@
   "Nav": {
     "home": "Home",
     "studio": "Studio",
+    "quickTools": "Quick tools",
     "scanner": "ID Document Scanner",
     "sizes": "Sizes",
     "paper": "Paper",
@@ -1394,6 +1395,58 @@
       "ctaBody": "All Pixfit tools run on-device — no upload, no account, free.",
       "ctaPrimary": "Open Studio",
       "ctaSecondary": "Open Scanner"
+    }
+  },
+  "QuickTools": {
+    "title": "Quick photo tools",
+    "subtitle": "Resize, convert, and compress one photo without opening the full studio. Everything runs in your browser.",
+    "metaTitle": "Quick photo tools: resize, convert, and compress | Pixfit",
+    "metaDescription": "Quickly resize and crop a photo, convert JPG/PNG/WebP formats, and compress to a target KB size. Local browser processing with no upload.",
+    "metaKeywords": [
+      "resize photo",
+      "crop image size",
+      "convert image format",
+      "compress image",
+      "compress ID photo",
+      "online photo resizer"
+    ],
+    "replace": "Replace photo",
+    "cropHint": "The output is center-cropped to the target ratio while keeping the subject sharp.",
+    "download": "Download processed photo",
+    "processing": "Processing…",
+    "privacy": "Your photo stays on this device. Nothing is uploaded to a server.",
+    "result": "Created {width}×{height} px · {kb} KB",
+    "upload": "Upload a photo",
+    "uploadHint": "JPG / PNG / WebP · up to 50 MB per file",
+    "settings": {
+      "title": "Processing settings",
+      "size": "Crop size",
+      "preset": "Common presets",
+      "custom": "Custom",
+      "presets": {
+        "original": "Keep original size",
+        "oneInch": "1-inch · 295×413",
+        "twoInch": "2-inch · 413×579",
+        "passport": "Common passport · 390×567",
+        "square": "Square · 600×600"
+      },
+      "width": "Width (px)",
+      "height": "Height (px)",
+      "sizeHint": "The output is cropped to the selected pixel dimensions.",
+      "format": "Output format",
+      "fileSize": "Target file size",
+      "noLimit": "No limit",
+      "customKB": "Custom size (KB)",
+      "pngHint": "PNG is not designed for exact KB compression, so it will export at the selected dimensions."
+    },
+    "note": {
+      "title": "For fast one-photo edits",
+      "body": "Use this tool when you only need to change dimensions, format, or file size. Open Studio when you also need AI cutout, background replacement, or print layouts."
+    },
+    "errors": {
+      "imageOnly": "Please choose an image file.",
+      "decode": "This image could not be read. Try a JPG, PNG, or WebP file.",
+      "export": "Processing failed. Please try again."
     }
   }
 }
