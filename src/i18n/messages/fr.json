@@ -672,6 +672,39 @@
         "heading": "Besoin d’une taille personnalisée ?",
         "body": "L’onglet Exporter du Studio permet de fixer n’importe quel KB à partir de 5 KB, avec un minimum optionnel pour les portails à fenêtre (par ex. 50–200 KB).",
         "cta": "Ouvrir Studio · onglet Exporter"
+      },
+      "seoIntro": {
+        "heading": "Comment fonctionnent les limites de Ko à l'envoi, et comment Pixfit les respecte",
+        "paragraphs": {
+          "0": "Les démarches administratives, les portails de visa et les admissions universitaires plafonnent presque toujours la taille du fichier que vous pouvez téléverser — souvent 50 Ko, 100 Ko, 200 Ko, 500 Ko ou 1 Mo. Une photo prise au téléphone pèse généralement plusieurs Mo : elle est donc refusée avant même l’envoi. Compresser pile sous la limite fait toute la différence entre un formulaire accepté et un formulaire rejeté.",
+          "1": "Pixfit atteint votre cible en réduisant de façon adaptative la qualité du JPG puis, lorsque la photo reste trop lourde à qualité acceptable, en rééchantillonnant ses dimensions en pixels ; il affine ensuite jusqu’à ce que le résultat tombe à environ 1 Ko de la limite. Tout s’exécute dans votre navigateur : la photo n’est jamais téléversée, sans file d’attente ni filigrane. Choisissez un préréglage ci-dessus, ou ouvrez l’onglet Exporter de Studio pour définir n’importe quelle plage de Ko."
+        }
+      },
+      "faq": {
+        "heading": "Questions fréquentes",
+        "subtitle": "À propos de la compression de photos dans le navigateur, de la précision de la taille et de la qualité.",
+        "items": {
+          "free": {
+            "q": "Le compresseur de photos est-il gratuit ?",
+            "a": "Oui, entièrement gratuit, sans inscription et sans limite de photos. Tout l'outil fonctionne dans votre navigateur, il n'y a donc aucun coût de serveur à répercuter."
+          },
+          "privacy": {
+            "q": "Ma photo est-elle envoyée à un serveur ?",
+            "a": "Non. La compression se fait entièrement sur votre appareil ; l’image ne quitte jamais votre navigateur. C’est donc sûr pour les photos d’identité et autres documents sensibles."
+          },
+          "quality": {
+            "q": "Compresser à une petite taille détruit-il la qualité ?",
+            "a": "Pixfit ne réduit la qualité que dans la mesure exigée par la cible et conserve les plus grandes dimensions possibles, afin que la photo reste aussi nette que la limite le permet. Pour des cibles très petites comme 50 Ko, une légère perte est inévitable, mais les visages restent clairement reconnaissables."
+          },
+          "target": {
+            "q": "Quelle est la précision de la cible en Ko ?",
+            "a": "Pixfit ré-encode de manière itérative et se situe à environ ±1 Ko de la taille choisie, ce qui satisfait les portails à limite stricte sans réduire inutilement."
+          },
+          "format": {
+            "q": "Quels formats puis-je compresser ?",
+            "a": "Les photos JPG et PNG sont prises en charge. La sortie est en JPG, qui donne le plus petit fichier à qualité égale — le bon choix pour presque tous les formulaires imposant une limite en Ko."
+          }
+        }
       }
     },
     "detail": {

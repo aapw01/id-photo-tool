@@ -672,6 +672,39 @@
         "heading": "Precisa de um tamanho personalizado?",
         "body": "A aba Exportar do Studio permite definir qualquer alvo em KB a partir de 5 KB, com mínimo opcional para portais que exigem janela (ex.: 50–200 KB).",
         "cta": "Abrir Studio · aba Exportar"
+      },
+      "seoIntro": {
+        "heading": "Como funcionam os limites de KB no envio e como o Pixfit os atinge",
+        "paragraphs": {
+          "0": "Serviços públicos, portais de visto e admissões universitárias geralmente limitam o tamanho do arquivo que você pode enviar — normalmente 50KB, 100KB, 200KB, 500KB ou 1MB. Uma foto direto do celular costuma ter vários MB, então é rejeitada antes mesmo do envio. Comprimir exatamente até o limite é o que decide se o formulário passa ou volta.",
+          "1": "O Pixfit atinge seu alvo reduzindo de forma adaptativa a qualidade do JPG e, quando a foto ainda fica grande demais com qualidade aceitável, reamostra suas dimensões em pixels; depois ajusta até o resultado ficar a cerca de 1KB do limite. Tudo roda no seu navegador: a foto nunca é enviada, não há fila nem marca d’água. Escolha uma predefinição acima ou abra a aba Exportar do Studio para definir qualquer faixa de KB."
+        }
+      },
+      "faq": {
+        "heading": "Perguntas frequentes",
+        "subtitle": "Sobre comprimir fotos no navegador, a precisão do tamanho e a qualidade.",
+        "items": {
+          "free": {
+            "q": "O compressor de fotos é gratuito?",
+            "a": "Sim, totalmente gratuito, sem cadastro e sem limite de fotos. A ferramenta inteira roda no seu navegador, então não há custo de servidor a repassar."
+          },
+          "privacy": {
+            "q": "Minha foto é enviada para um servidor?",
+            "a": "Não. A compressão acontece inteiramente no seu dispositivo; a imagem nunca sai do navegador. Por isso é segura para fotos de identidade e outros documentos sensíveis."
+          },
+          "quality": {
+            "q": "Comprimir para um tamanho pequeno estraga a qualidade?",
+            "a": "O Pixfit reduz a qualidade apenas o quanto o alvo exige e mantém as maiores dimensões possíveis, então a foto fica tão nítida quanto o limite permite. Para alvos muito pequenos, como 50KB, alguma perda é inevitável, mas os rostos continuam claramente reconhecíveis."
+          },
+          "target": {
+            "q": "Qual a precisão do alvo de KB?",
+            "a": "O Pixfit recodifica de forma iterativa e fica dentro de cerca de ±1KB do tamanho escolhido, atendendo portais com limite rígido sem ficar pequeno demais."
+          },
+          "format": {
+            "q": "Quais formatos posso comprimir?",
+            "a": "Fotos JPG e PNG são aceitas. A saída é JPG, que gera o menor arquivo para uma dada qualidade — a escolha certa para quase todo formulário com limite de KB."
+          }
+        }
       }
     },
     "detail": {

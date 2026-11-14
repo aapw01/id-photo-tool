@@ -35,10 +35,21 @@ export function buildCanonical(path: string, locale: Locale): string {
   return `${SITE_URL}/${locale}${suffix}`
 }
 
-/** `{ 'zh-Hans': URL, 'zh-Hant': URL, en: URL, 'x-default': URL }`. */
-export function buildAlternateLanguages(path: string): Record<string, string> {
+/**
+ * `{ 'zh-Hans': URL, 'zh-Hant': URL, en: URL, 'x-default': URL }`.
+ *
+ * Pass `locales` to restrict the cluster to a subset — the long-tail
+ * detail tier advertises only its indexed locales (see
+ * `INDEX_LOCALES`) so hreflang never points at `noindex` URLs, which
+ * Google treats as a conflicting signal. `x-default` is always `en`
+ * (a member of every subset we use).
+ */
+export function buildAlternateLanguages(
+  path: string,
+  locales: readonly Locale[] = SUPPORTED_LOCALES,
+): Record<string, string> {
   const out: Record<string, string> = {}
-  for (const locale of SUPPORTED_LOCALES) {
+  for (const locale of locales) {
     out[HREFLANG_BY_LOCALE[locale]] = buildCanonical(path, locale)
   }
   out['x-default'] = buildCanonical(path, X_DEFAULT_LOCALE)
@@ -79,6 +90,13 @@ interface BuildMetadataOptions {
   image?: string
   /** When true, instructs robots to skip indexing (404 / error / dev). */
   noIndex?: boolean
+  /**
+   * Restrict the hreflang cluster to this locale subset. Used by the
+   * long-tail detail tier so the alternates only list indexed locales
+   * (see `INDEX_LOCALES`) instead of all 13. Defaults to every
+   * supported locale.
+   */
+  alternateLocales?: readonly Locale[]
 }
 
 /**
@@ -129,7 +147,7 @@ export function buildMetadata(opts: BuildMetadataOptions): Metadata {
     ...(keywords ? { keywords } : {}),
     alternates: {
       canonical,
-      languages: buildAlternateLanguages(opts.path),
+      languages: buildAlternateLanguages(opts.path, opts.alternateLocales),
     },
     openGraph,
     twitter,

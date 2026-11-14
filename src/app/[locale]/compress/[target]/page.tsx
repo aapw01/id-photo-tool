@@ -23,6 +23,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/breadcrumb'
+import { CrossSurfaceLinks } from '@/components/cross-surface-links'
 import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -33,6 +34,7 @@ import { routing } from '@/i18n/routing'
 import { breadcrumbItemsToJsonLd, getBreadcrumbItems } from '@/lib/seo/breadcrumbs'
 import { faqSchema, howToSchema, webApplicationSchema } from '@/lib/seo/jsonld'
 import { buildMetadata } from '@/lib/seo/metadata'
+import { INDEX_LOCALES, isIndexedLocale } from '@/lib/seo/site-config'
 
 interface PageProps {
   params: Promise<{ locale: string; target: string }>
@@ -73,6 +75,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: t('metaTitle', { label: target.label }),
     description: t('metaDescription', { label: target.label }),
     keywords,
+    // See INDEX_LOCALES — detail tier indexed in zh-Hans + en only.
+    noIndex: !isIndexedLocale(locale as Locale),
+    alternateLocales: INDEX_LOCALES,
   })
 }
 
@@ -231,6 +236,8 @@ export default async function CompressTargetPage({ params }: PageProps) {
             </div>
             <p className="mt-2 text-xs text-[var(--color-text-mute)]">{t('cta.secondaryHint')}</p>
           </section>
+
+          <CrossSurfaceLinks current="compress" />
         </article>
       </main>
       <SiteFooter />

@@ -672,6 +672,39 @@
         "heading": "Cần kích thước tuỳ chỉnh?",
         "body": "Tab Xuất trong Studio cho phép đặt KB bất kỳ từ 5 KB, có tuỳ chọn mức tối thiểu cho các cổng có cửa sổ (ví dụ 50–200 KB).",
         "cta": "Mở Studio · tab Xuất"
+      },
+      "seoIntro": {
+        "heading": "Giới hạn KB khi tải lên hoạt động thế nào — và cách Pixfit đạt đúng mức",
+        "paragraphs": {
+          "0": "Các dịch vụ công, cổng xin thị thực và tuyển sinh đại học hầu như đều giới hạn dung lượng tệp bạn có thể tải lên — thường là 50KB, 100KB, 200KB, 500KB hoặc 1MB. Ảnh chụp trực tiếp từ điện thoại thường nặng vài MB, nên bị từ chối trước cả khi bạn kịp gửi. Nén vừa đúng dưới giới hạn chính là khác biệt giữa một biểu mẫu được chấp nhận và một biểu mẫu bị trả lại.",
+          "1": "Pixfit đạt mục tiêu bằng cách giảm chất lượng JPG một cách thích ứng, và khi ảnh vẫn quá lớn ở mức chất lượng chấp nhận được thì lấy mẫu lại kích thước pixel, sau đó tinh chỉnh cho đến khi kết quả nằm trong khoảng 1KB so với giới hạn. Mọi thứ chạy trong trình duyệt của bạn: ảnh không bao giờ được tải lên, không xếp hàng và không hình mờ. Chọn một mức cài sẵn ở trên, hoặc mở tab Xuất trong Studio để đặt bất kỳ khoảng KB nào."
+        }
+      },
+      "faq": {
+        "heading": "Câu hỏi thường gặp",
+        "subtitle": "Về việc nén ảnh trong trình duyệt, độ chính xác dung lượng và chất lượng.",
+        "items": {
+          "free": {
+            "q": "Công cụ nén ảnh có miễn phí không?",
+            "a": "Có — hoàn toàn miễn phí, không cần đăng ký và không giới hạn số ảnh. Toàn bộ công cụ chạy trong trình duyệt của bạn nên không có chi phí máy chủ nào để tính thêm."
+          },
+          "privacy": {
+            "q": "Ảnh của tôi có bị tải lên máy chủ không?",
+            "a": "Không. Việc nén diễn ra hoàn toàn trên thiết bị của bạn; hình ảnh không bao giờ rời khỏi trình duyệt. Vì vậy nó an toàn cho ảnh thẻ và các tài liệu nhạy cảm khác."
+          },
+          "quality": {
+            "q": "Nén xuống kích thước nhỏ có làm hỏng chất lượng không?",
+            "a": "Pixfit chỉ giảm chất lượng đúng mức mục tiêu yêu cầu và giữ kích thước lớn nhất có thể, nên ảnh vẫn sắc nét trong phạm vi giới hạn cho phép. Với mục tiêu rất nhỏ như 50KB, một chút mờ là khó tránh, nhưng khuôn mặt vẫn rõ và dễ nhận ra."
+          },
+          "target": {
+            "q": "Mục tiêu KB chính xác đến mức nào?",
+            "a": "Pixfit mã hóa lại lặp đi lặp lại và đạt trong khoảng ±1KB so với kích thước bạn chọn, đáp ứng các cổng có giới hạn nghiêm ngặt mà không thu nhỏ quá mức cần thiết."
+          },
+          "format": {
+            "q": "Tôi có thể nén những định dạng nào?",
+            "a": "Hỗ trợ ảnh JPG và PNG. Đầu ra là JPG, cho tệp nhỏ nhất ở cùng mức chất lượng — lựa chọn phù hợp cho hầu hết mọi biểu mẫu có giới hạn KB."
+          }
+        }
       }
     },
     "detail": {
