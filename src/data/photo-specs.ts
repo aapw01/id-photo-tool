@@ -16,7 +16,7 @@
  *
  * Hex values for `background.recommended`:
  *   - White       #FFFFFF   the de-facto visa standard
- *   - Light gray  #DCDCDC   UK visa per gov.uk
+ *   - Light gray  #DCDCDC   UK visa digital photo (light-coloured background)
  *   - Visa blue   #438EDB   for the few specs that ask for blue
  *
  * Pixel dimensions come from the official spec when given; otherwise
@@ -75,6 +75,11 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 295,
     height_px: 413,
     background: { recommended: WHITE, allowed: ['#438EDB', '#D9342B'] },
+    description: i18n(
+      '常用冲印规格，具体用途和底色以接收单位要求为准',
+      '常用沖印規格，具體用途和底色以接收單位要求為準',
+      'Common print preset; confirm the required use and background with the receiving organization',
+    ),
     composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.42] },
   },
   {
@@ -98,6 +103,11 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 260,
     height_px: 378,
     background: { recommended: WHITE, allowed: ['#438EDB'] },
+    description: i18n(
+      '常用冲印规格，具体用途和底色以接收单位要求为准',
+      '常用沖印規格，具體用途和底色以接收單位要求為準',
+      'Common print preset; confirm the required use and background with the receiving organization',
+    ),
     composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.42] },
   },
   {
@@ -121,6 +131,11 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 390,
     height_px: 567,
     background: { recommended: WHITE, allowed: ['#438EDB'] },
+    description: i18n(
+      '常用冲印规格，具体用途和底色以接收单位要求为准',
+      '常用沖印規格，具體用途和底色以接收單位要求為準',
+      'Common print preset; confirm the required use and background with the receiving organization',
+    ),
     composition: { headHeightRatio: [0.6, 0.75], eyeLineFromTop: [0.3, 0.42] },
   },
   {
@@ -144,6 +159,11 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 413,
     height_px: 579,
     background: { recommended: WHITE, allowed: ['#438EDB', '#D9342B'] },
+    description: i18n(
+      '常用冲印规格，具体用途和底色以接收单位要求为准',
+      '常用沖印規格，具體用途和底色以接收單位要求為準',
+      'Common print preset; confirm the required use and background with the receiving organization',
+    ),
     composition: { headHeightRatio: [0.6, 0.72], eyeLineFromTop: [0.3, 0.42] },
   },
   {
@@ -167,6 +187,11 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 413,
     height_px: 626,
     background: { recommended: WHITE, allowed: ['#438EDB'] },
+    description: i18n(
+      '常用冲印规格，具体用途和底色以接收单位要求为准',
+      '常用沖印規格，具體用途和底色以接收單位要求為準',
+      'Common print preset; confirm the required use and background with the receiving organization',
+    ),
     composition: { headHeightRatio: [0.58, 0.7], eyeLineFromTop: [0.3, 0.42] },
   },
   {
@@ -254,6 +279,11 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 748,
     height_px: 1050,
     background: { recommended: WHITE },
+    description: i18n(
+      '常用冲印规格，具体用途以接收单位要求为准',
+      '常用沖印規格，具體用途以接收單位要求為準',
+      'Common print preset; confirm the required use with the receiving organization',
+    ),
   },
   {
     id: 'cn-wallet-large',
@@ -276,6 +306,11 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 898,
     height_px: 1200,
     background: { recommended: WHITE },
+    description: i18n(
+      '常用冲印规格，具体用途以接收单位要求为准',
+      '常用沖印規格，具體用途以接收單位要求為準',
+      'Common print preset; confirm the required use with the receiving organization',
+    ),
   },
 
   /* ----------------------------------------------------------------------- */
@@ -411,16 +446,26 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
       it: 'Foto visto Regno Unito',
       vi: 'Ảnh visa Anh',
     }),
-    description: i18n('gov.uk 标准（浅灰底）', 'gov.uk 標準（淺灰底）', 'gov.uk standard'),
-    width_mm: 35,
-    height_mm: 45,
+    description: i18n(
+      'gov.uk 签证数字照片：至少 600×750 像素、50 KB–6 MB、浅色背景',
+      'gov.uk 簽證數位照片：至少 600×750 像素、50 KB–6 MB、淺色背景',
+      'gov.uk digital visa photo: at least 600×750 px, 50 KB–6 MB, light-coloured background',
+    ),
+    // GOV.UK defines this visa photo digitally (minimum 600×750 px), not as
+    // the 35×45 mm printed passport-photo format.
+    width_mm: 50.8,
+    height_mm: 63.5,
     dpi: 300,
-    width_px: 413,
-    height_px: 531,
-    // gov.uk: "plain cream or light grey background"
+    width_px: 600,
+    height_px: 750,
     background: { recommended: LIGHT_GRAY, allowed: [WHITE, CREAM] },
-    composition: { headHeightRatio: [0.65, 0.8], eyeLineFromTop: [0.3, 0.4] },
-    reference: 'https://www.gov.uk/photos-for-passports/photo-requirements',
+    fileRules: {
+      minKB: 50,
+      maxKB: 6144,
+      formats: ['jpg'],
+    },
+    reference:
+      'https://www.gov.uk/guidance/how-to-take-a-photo-for-a-visa-application-or-permission',
   },
   {
     id: 'ca-visa',
@@ -443,7 +488,7 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
     width_px: 413,
     height_px: 531,
     background: { recommended: WHITE },
-    composition: { headHeightRatio: [0.65, 0.8], eyeLineFromTop: [0.3, 0.4] },
+    composition: { headHeightRatio: [0.69, 0.8], eyeLineFromTop: [0.3, 0.4] },
   },
   {
     id: 'au-visa',
@@ -721,9 +766,9 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
       vi: 'Thi công chức quốc gia TQ',
     }),
     description: i18n(
-      '20–100 KB · ≥295×413 · 白 / 蓝底',
-      '20–100 KB · ≥295×413 · 白 / 藍底',
-      '20–100 KB · ≥295×413 · white or blue background',
+      '20–100 KB · ≥295×413 · 白 / 蓝底 · 以当年报名系统为准',
+      '20–100 KB · ≥295×413 · 白 / 藍底 · 以當年報名系統為準',
+      '20–100 KB · ≥295×413 · white or blue background · confirm the current application system',
     ),
     width_mm: 25,
     height_mm: 35,
@@ -758,9 +803,9 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
       vi: 'NCRE (Tin học TQ)',
     }),
     description: i18n(
-      '20–200 KB · ≥144×192 · 白 / 浅蓝底',
-      '20–200 KB · ≥144×192 · 白 / 淺藍底',
-      '20–200 KB · ≥144×192 · white or light blue background',
+      '20–200 KB · ≥144×192 · 白 / 浅蓝底 · 以当年报名系统为准',
+      '20–200 KB · ≥144×192 · 白 / 淺藍底 · 以當年報名系統為準',
+      '20–200 KB · ≥144×192 · white or light blue background · confirm the current application system',
     ),
     // 上海市教育考试院 2024 NCRE 报名公告明文："成像区大小为 48mm×33mm
     // (高×宽)"，即印片实际尺寸 33×48mm；旧值 12.2×16.3mm 是从最小像素
@@ -798,9 +843,9 @@ export const BUILTIN_PHOTO_SPECS: PhotoSpec[] = [
       vi: 'Thi cao học TQ',
     }),
     description: i18n(
-      '20–100 KB · 3:4 · 白 / 蓝 / 红底',
-      '20–100 KB · 3:4 · 白 / 藍 / 紅底',
-      '20–100 KB · 3:4 · white / blue / red background',
+      '20–100 KB · 3:4 · 白 / 蓝 / 红底 · 以当年报名系统为准',
+      '20–100 KB · 3:4 · 白 / 藍 / 紅底 · 以當年報名系統為準',
+      '20–100 KB · 3:4 · white / blue / red background · confirm the current application system',
     ),
     width_mm: 12.7,
     height_mm: 17.8,
