@@ -22,7 +22,7 @@
   "Nav": {
     "home": "Accueil",
     "studio": "Studio",
-    "quickTools": "Outils rapides",
+    "quickTools": "Recadrer / Convertir / Compresser",
     "scanner": "Scanner de documents",
     "sizes": "Formats",
     "paper": "Papier",
@@ -1102,7 +1102,7 @@
     "docSpecs": {
       "cn-id-card": "Carte d’identité chinoise",
       "hk-id-card": "Carte d’identité Hong Kong",
-      "tw-id-card": "Carte nationale Taïwan",
+      "tw-id-card": "Carte d’identité de résident — Taïwan, Chine",
       "sg-nric": "NRIC Singapour",
       "in-aadhaar": "Aadhaar Inde",
       "bank-card": "Carte bancaire",
@@ -1306,8 +1306,8 @@
         "usage": "Banque, télécom, dossiers d’emploi et voyages où un résident doit fournir une carte d’identité scannée. Le recto à puce et le verso bilingue sont souvent scannés ensemble."
       },
       "tw-id-card": {
-        "summary": "La carte nationale de Taïwan (中華民國身分證) est une CR80 standard (85,6 × 54 mm) recto-verso délivrée en République de Chine.",
-        "usage": "Banque, services publics, retrait postal, télécom et inscriptions en ligne à Taïwan. Recto (emblème + photo) et verso (informations parentales) sont généralement scannés ensemble."
+        "summary": "Carte d’identité des résidents de la région de Taïwan, Chine (85,6 × 54 mm, CR80), avec numérisation et mise en page recto-verso.",
+        "usage": "Pour les démarches bancaires, les services publics, la poste et les télécommunications nécessitant une copie du document. Regroupez les deux faces sur une page et respectez les exigences du destinataire."
       },
       "sg-nric": {
         "summary": "La NRIC de Singapour est une CR80 standard (85,6 × 54 mm) recto-verso délivrée aux citoyens et résidents permanents.",
@@ -1409,7 +1409,7 @@
       "éditeur photo en ligne"
     ],
     "replace": "Changer de photo",
-    "cropHint": "La sortie est recadrée depuis le centre selon le ratio choisi.",
+    "cropHint": "Faites glisser le cadre pour déplacer le recadrage et ses coins pour le redimensionner. Utilisez les flèches pour ajuster le cadre sélectionné.",
     "download": "Télécharger la photo traitée",
     "processing": "Traitement…",
     "privacy": "La photo est traitée sur cet appareil et n’est pas envoyée à un serveur.",
@@ -1426,16 +1426,31 @@
         "oneInch": "1 pouce · 295×413",
         "twoInch": "2 pouces · 413×579",
         "passport": "Passeport · 390×567",
-        "square": "Carré · 600×600"
+        "square": "Carré · 600×600",
+        "smallOneInch": "Petit 1 pouce · 260×378",
+        "largeOneInch": "Grand 1 pouce · 390×567",
+        "smallTwoInch": "Petit 2 pouces · 413×531",
+        "largeTwoInch": "Grand 2 pouces · 413×626"
       },
-      "width": "Largeur (px)",
-      "height": "Hauteur (px)",
+      "width": "Largeur ({unit})",
+      "height": "Hauteur ({unit})",
       "sizeHint": "La sortie est recadrée aux dimensions choisies.",
       "format": "Format de sortie",
       "fileSize": "Taille du fichier",
       "noLimit": "Sans limite",
       "customKB": "Taille personnalisée (KB)",
-      "pngHint": "Le PNG ne convient pas à une compression exacte en KB ; il sera exporté aux dimensions choisies."
+      "pngHint": "Le PNG ne convient pas à une compression exacte en KB ; il sera exporté aux dimensions choisies.",
+      "unit": "Unité de taille",
+      "dpi": "Résolution (DPI)",
+      "units": {
+        "px": "Pixels (px)",
+        "mm": "Millimètres (mm)",
+        "cm": "Centimètres (cm)",
+        "in": "Pouces (in)"
+      },
+      "outputPixels": "Dimensions de sortie : {width} × {height} px",
+      "invalidSize": "Saisissez des dimensions valides : 1–10000 px par côté après conversion et 1–1200 DPI.",
+      "dpiHint": "Les DPI servent à convertir les dimensions en pixels ; ils ne définissent pas la résolution d’impression dans les métadonnées."
     },
     "note": {
       "title": "Pour modifier rapidement une photo",
@@ -1445,6 +1460,7 @@
       "imageOnly": "Choisissez un fichier image.",
       "decode": "Impossible de lire cette image. Essayez un fichier JPG, PNG ou WebP.",
       "export": "Échec du traitement. Réessayez."
-    }
+    },
+    "belowTarget": "À ces dimensions, même le fichier de qualité maximale reste sous la taille cible. La qualité maximale et les dimensions choisies ont été conservées."
   }
 }

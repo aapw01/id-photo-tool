@@ -44,6 +44,8 @@ export interface CompressOptions {
   minScale?: number
   /** Quality bounds. Default [0.3, 0.95]. */
   qualityRange?: [number, number]
+  /** Probe the highest quality first; return it if already below target. Opt-in. */
+  tryMaxQuality?: boolean
   /** Encoder. Default → real canvas.toBlob. */
   encode?: EncodeFn
 }
@@ -88,6 +90,7 @@ export async function compressToKB(opts: CompressOptions): Promise<CompressResul
     minScale = 0.3,
     qualityRange = [0.3, 0.95],
     encode = defaultEncode,
+    tryMaxQuality = false,
   } = opts
 
   if (!Number.isFinite(targetKB) || targetKB <= 0) {
@@ -112,6 +115,28 @@ export async function compressToKB(opts: CompressOptions): Promise<CompressResul
     let lo = qualityRange[0]
     let hi = qualityRange[1]
     let quality = (lo + hi) / 2
+    let bestUnderAtScale: CompressResult | null = null
+
+    if (tryMaxQuality) {
+      attempts++
+      const blob = await encode({ source, width, height, quality: hi, mimeType })
+      const finalKB = blob.size / 1024
+      const candidate: CompressResult = {
+        blob,
+        quality: hi,
+        scale,
+        finalKB,
+        width,
+        height,
+        attempts,
+        hit: Math.abs(finalKB - targetKB) <= targetKB * tolerance,
+      }
+      if (!best || Math.abs(finalKB - targetKB) < Math.abs(best.finalKB - targetKB)) {
+        best = candidate
+      }
+      // No lower quality or smaller canvas can improve this under-target result.
+      if (finalKB <= targetKB) return candidate
+    }
 
     for (let probe = 0; probe < qualityProbes; probe++) {
       attempts++
@@ -126,6 +151,10 @@ export async function compressToKB(opts: CompressOptions): Promise<CompressResul
         height,
         attempts,
         hit: false,
+      }
+
+      if (kb <= targetKB && (!bestUnderAtScale || kb > bestUnderAtScale.finalKB)) {
+        bestUnderAtScale = candidate
       }
 
       if (!best || Math.abs(kb - targetKB) < Math.abs(best.finalKB - targetKB)) {
@@ -143,6 +172,16 @@ export async function compressToKB(opts: CompressOptions): Promise<CompressResul
       quality = (lo + hi) / 2
     }
 
+    // Encoders quantize quality. Prefer a feasible result at this resolution
+    // over shrinking merely because an over-target quality step was closer.
+    if (tryMaxQuality && bestUnderAtScale) {
+      return {
+        ...bestUnderAtScale,
+        attempts,
+        hit: bestUnderAtScale.finalKB >= targetKB * (1 - tolerance),
+      }
+    }
+
     // Round failed. If best is still over the band, we need fewer
     // pixels; if under, the JPEG encoder already saturated at the low
     // end and shrinking would only hurt — bail with the closest miss.
@@ -157,7 +196,7 @@ export async function compressToKB(opts: CompressOptions): Promise<CompressResul
   }
   const hit =
     best.finalKB >= targetKB * (1 - tolerance) && best.finalKB <= targetKB * (1 + tolerance)
-  return { ...best, hit }
+  return { ...best, hit, attempts }
 }
 
 /**

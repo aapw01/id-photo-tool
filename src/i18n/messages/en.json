@@ -22,7 +22,7 @@
   "Nav": {
     "home": "Home",
     "studio": "Studio",
-    "quickTools": "Quick tools",
+    "quickTools": "Crop / Convert / Compress",
     "scanner": "ID Document Scanner",
     "sizes": "Sizes",
     "paper": "Paper",
@@ -1103,7 +1103,7 @@
     "docSpecs": {
       "cn-id-card": "PRC ID card",
       "hk-id-card": "Hong Kong ID card",
-      "tw-id-card": "Taiwan National ID",
+      "tw-id-card": "Resident ID card — Taiwan, China",
       "sg-nric": "Singapore NRIC",
       "in-aadhaar": "India Aadhaar",
       "bank-card": "Bank card",
@@ -1307,8 +1307,8 @@
         "usage": "Banking, telecom contracts, employment paperwork, and travel scenarios where Hong Kong residents must produce a scanned identity card. The smart-chip front and the bilingual back are routinely scanned together."
       },
       "tw-id-card": {
-        "summary": "The Taiwan National Identity Card (中華民國身分證) is the standard CR80-sized (85.6 × 54 mm) two-sided national ID issued in the Republic of China.",
-        "usage": "Banking, government services, postal pickup, telecom contracts, and online portal sign-ups across Taiwan. Front (national emblem + photo) and back (parental info) are usually scanned together."
+        "summary": "Resident ID card for the Taiwan region of China (85.6 × 54 mm, CR80), with front-and-back scanning and layout support.",
+        "usage": "For banking, public services, postal and telecom procedures requiring a copy of an identity document. Combine both sides on one page and follow the receiving organization’s submission requirements."
       },
       "sg-nric": {
         "summary": "The Singapore National Registration Identity Card (NRIC) is the standard CR80-sized (85.6 × 54 mm) two-sided ID issued to Singapore citizens and permanent residents.",
@@ -1411,7 +1411,7 @@
       "online photo resizer"
     ],
     "replace": "Replace photo",
-    "cropHint": "The output is center-cropped to the target ratio while keeping the subject sharp.",
+    "cropHint": "Drag the crop frame to choose the position, or drag its corners to resize. Use arrow keys for fine adjustments when the frame is focused.",
     "download": "Download processed photo",
     "processing": "Processing…",
     "privacy": "Your photo stays on this device. Nothing is uploaded to a server.",
@@ -1428,16 +1428,31 @@
         "oneInch": "1-inch · 295×413",
         "twoInch": "2-inch · 413×579",
         "passport": "Common passport · 390×567",
-        "square": "Square · 600×600"
+        "square": "Square · 600×600",
+        "smallOneInch": "Small 1-inch · 260×378",
+        "largeOneInch": "Large 1-inch · 390×567",
+        "smallTwoInch": "Small 2-inch · 413×531",
+        "largeTwoInch": "Large 2-inch · 413×626"
       },
-      "width": "Width (px)",
-      "height": "Height (px)",
+      "width": "Width ({unit})",
+      "height": "Height ({unit})",
       "sizeHint": "The output is cropped to the selected pixel dimensions.",
       "format": "Output format",
       "fileSize": "Target file size",
       "noLimit": "No limit",
       "customKB": "Custom size (KB)",
-      "pngHint": "PNG is not designed for exact KB compression, so it will export at the selected dimensions."
+      "pngHint": "PNG is not designed for exact KB compression, so it will export at the selected dimensions.",
+      "unit": "Size unit",
+      "dpi": "Resolution (DPI)",
+      "units": {
+        "px": "Pixels (px)",
+        "mm": "Millimeters (mm)",
+        "cm": "Centimeters (cm)",
+        "in": "Inches (in)"
+      },
+      "outputPixels": "Output size: {width} × {height} px",
+      "invalidSize": "Enter valid dimensions: 1–10000 px per side after conversion, and DPI from 1 to 1200.",
+      "dpiHint": "DPI converts physical dimensions to pixels; it does not set the file’s print resolution metadata."
     },
     "note": {
       "title": "For fast one-photo edits",
@@ -1447,6 +1462,7 @@
       "imageOnly": "Please choose an image file.",
       "decode": "This image could not be read. Try a JPG, PNG, or WebP file.",
       "export": "Processing failed. Please try again."
-    }
+    },
+    "belowTarget": "At these dimensions, even the highest-quality file is below the target size. The highest quality and selected dimensions have been preserved."
   }
 }

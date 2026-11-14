@@ -22,7 +22,7 @@
   "Nav": {
     "home": "Início",
     "studio": "Studio",
-    "quickTools": "Ferramentas rápidas",
+    "quickTools": "Cortar / Converter / Comprimir",
     "scanner": "Scanner de documentos",
     "sizes": "Tamanhos",
     "paper": "Papel",
@@ -1102,7 +1102,7 @@
     "docSpecs": {
       "cn-id-card": "RG chinês",
       "hk-id-card": "Cartão de identidade Hong Kong",
-      "tw-id-card": "RG nacional Taiwan",
+      "tw-id-card": "Documento de identidade de residentes — Taiwan, China",
       "sg-nric": "NRIC Singapura",
       "in-aadhaar": "Aadhaar Índia",
       "bank-card": "Cartão bancário",
@@ -1306,8 +1306,8 @@
         "usage": "Banco, contratos de telecom, papéis de emprego e viagens em que o residente precisa apresentar o RG escaneado. A frente com chip e o verso bilíngue costumam ser escaneados juntos."
       },
       "tw-id-card": {
-        "summary": "O RG nacional de Taiwan (中華民國身分證) é o cartão CR80 (85.6 × 54 mm) padrão de dois lados emitido na República da China.",
-        "usage": "Banco, serviços públicos, retirada de correios, contratos de telecom e cadastros online em Taiwan. Frente (emblema + foto) e verso (dados dos pais) geralmente são escaneados juntos."
+        "summary": "Documento de identidade de residentes da região de Taiwan, China (85,6 × 54 mm, CR80), com digitalização e diagramação de frente e verso.",
+        "usage": "Para serviços bancários, públicos, postais e de telecomunicações que exigem uma cópia do documento. Combine os dois lados em uma página e siga os requisitos da instituição destinatária."
       },
       "sg-nric": {
         "summary": "O NRIC de Singapura é o cartão CR80 padrão (85.6 × 54 mm) de dois lados emitido a cidadãos e residentes permanentes.",
@@ -1409,7 +1409,7 @@
       "editor de fotos online"
     ],
     "replace": "Trocar foto",
-    "cropHint": "A saída é cortada a partir do centro para manter a proporção escolhida.",
+    "cropHint": "Arraste a moldura para posicionar o recorte e os cantos para redimensionar. Use as setas para ajustar a moldura selecionada.",
     "download": "Baixar foto processada",
     "processing": "Processando…",
     "privacy": "A foto é processada neste dispositivo e não é enviada para um servidor.",
@@ -1426,16 +1426,31 @@
         "oneInch": "1 polegada · 295×413",
         "twoInch": "2 polegadas · 413×579",
         "passport": "Passaporte · 390×567",
-        "square": "Quadrado · 600×600"
+        "square": "Quadrado · 600×600",
+        "smallOneInch": "1 polegada pequena · 260×378",
+        "largeOneInch": "1 polegada grande · 390×567",
+        "smallTwoInch": "2 polegadas pequena · 413×531",
+        "largeTwoInch": "2 polegadas grande · 413×626"
       },
-      "width": "Largura (px)",
-      "height": "Altura (px)",
+      "width": "Largura ({unit})",
+      "height": "Altura ({unit})",
       "sizeHint": "A saída será cortada para as dimensões escolhidas.",
       "format": "Formato de saída",
       "fileSize": "Tamanho do arquivo",
       "noLimit": "Sem limite",
       "customKB": "Tamanho personalizado (KB)",
-      "pngHint": "PNG não é ideal para compressão exata em KB; será exportado nas dimensões escolhidas."
+      "pngHint": "PNG não é ideal para compressão exata em KB; será exportado nas dimensões escolhidas.",
+      "unit": "Unidade de medida",
+      "dpi": "Resolução (DPI)",
+      "units": {
+        "px": "Pixels (px)",
+        "mm": "Milímetros (mm)",
+        "cm": "Centímetros (cm)",
+        "in": "Polegadas (in)"
+      },
+      "outputPixels": "Tamanho de saída: {width} × {height} px",
+      "invalidSize": "Insira medidas válidas: 1–10000 px por lado após a conversão e 1–1200 DPI.",
+      "dpiHint": "O DPI converte medidas físicas em pixels; não define a resolução de impressão nos metadados do arquivo."
     },
     "note": {
       "title": "Para editar uma foto rapidamente",
@@ -1445,6 +1460,7 @@
       "imageOnly": "Escolha um arquivo de imagem.",
       "decode": "Não foi possível ler a imagem. Tente JPG, PNG ou WebP.",
       "export": "Falha no processamento. Tente novamente."
-    }
+    },
+    "belowTarget": "Nestas dimensões, mesmo o arquivo de qualidade máxima fica abaixo do tamanho desejado. A qualidade máxima e as dimensões escolhidas foram mantidas."
   }
 }

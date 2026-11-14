@@ -146,3 +146,80 @@ describe('compressToKB', () => {
     expect(tight.attempts).toBeGreaterThanOrEqual(loose.attempts)
   })
 })
+
+describe('optional highest-quality probe', () => {
+  it('returns full quality in one encode when the target exceeds the image size', async () => {
+    let calls = 0
+    const result = await compressToKB({
+      source: SOURCE,
+      targetKB: 200,
+      qualityRange: [0.3, 1],
+      tryMaxQuality: true,
+      encode: async (params) => {
+        calls++
+        return makeFakeEncoder()(params)
+      },
+    })
+    expect(result.quality).toBe(1)
+    expect(result.scale).toBe(1)
+    expect(result.width).toBe(295)
+    expect(result.height).toBe(413)
+    expect(result.hit).toBe(false)
+    expect(result.finalKB).toBeLessThan(200)
+    expect(calls).toBe(1)
+    expect(result.attempts).toBe(1)
+  })
+
+  it('searches the steep quality region above 95 percent', async () => {
+    const result = await compressToKB({
+      source: SOURCE,
+      targetKB: 200,
+      qualityRange: [0.3, 1],
+      tryMaxQuality: true,
+      tolerance: 0.02,
+      qualityProbes: 10,
+      encode: async ({ quality }) =>
+        new Blob([
+          new Uint8Array(Math.round((quality <= 0.95 ? 49 : 49 + (quality - 0.95) * 5000) * 1024)),
+        ]),
+    })
+    expect(result.hit).toBe(true)
+    expect(result.quality).toBeGreaterThan(0.95)
+    expect(result.finalKB).toBeGreaterThanOrEqual(196)
+    expect(result.finalKB).toBeLessThanOrEqual(204)
+    expect(result.scale).toBe(1)
+  })
+
+  it('still compresses large files and reports all attempts when the limit is unreachable', async () => {
+    let calls = 0
+    const result = await compressToKB({
+      source: SOURCE,
+      targetKB: 0.1,
+      qualityRange: [0.3, 1],
+      tryMaxQuality: true,
+      encode: async (params) => {
+        calls++
+        return makeFakeEncoder()(params)
+      },
+    })
+    expect(result.hit).toBe(false)
+    expect(result.scale).toBeLessThan(1)
+    expect(result.attempts).toBe(calls)
+  })
+})
+
+it('preserves dimensions when quantized quality skips the target band', async () => {
+  const result = await compressToKB({
+    source: SOURCE,
+    targetKB: 100,
+    tryMaxQuality: true,
+    tolerance: 0.02,
+    qualityRange: [0.3, 1],
+    qualityProbes: 10,
+    encode: async ({ quality }) => new Blob([new Uint8Array((quality > 0.8 ? 103 : 95) * 1024)]),
+  })
+  expect(result.finalKB).toBe(95)
+  expect(result.scale).toBe(1)
+  expect(result.hit).toBe(false)
+  expect(result.attempts).toBe(11)
+})

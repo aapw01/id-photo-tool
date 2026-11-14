@@ -22,7 +22,7 @@
   "Nav": {
     "home": "Home",
     "studio": "Studio",
-    "quickTools": "Strumenti rapidi",
+    "quickTools": "Ritaglia / Converti / Comprimi",
     "scanner": "Scanner documenti",
     "sizes": "Formati",
     "paper": "Carta",
@@ -1102,7 +1102,7 @@
     "docSpecs": {
       "cn-id-card": "Carta d’identità cinese",
       "hk-id-card": "Carta d’identità HK",
-      "tw-id-card": "Carta nazionale Taiwan",
+      "tw-id-card": "Documento di identità dei residenti — Taiwan, Cina",
       "sg-nric": "NRIC Singapore",
       "in-aadhaar": "Aadhaar India",
       "bank-card": "Carta bancaria",
@@ -1306,8 +1306,8 @@
         "usage": "Banche, telco, lavoro e viaggi in cui serve un ID scansionato. Lato chip e retro bilingue vengono spesso scansionati insieme."
       },
       "tw-id-card": {
-        "summary": "La carta nazionale di Taiwan (中華民國身分證) è una CR80 standard (85,6 × 54 mm) fronte/retro per cittadini della Repubblica di Cina.",
-        "usage": "Banche, servizi pubblici, ritiro posta, telco e iscrizioni online a Taiwan. Fronte (emblema + foto) e retro (dati dei genitori) vengono solitamente scansionati insieme."
+        "summary": "Documento di identità dei residenti della regione di Taiwan, Cina (85,6 × 54 mm, CR80), con scansione e impaginazione fronte/retro.",
+        "usage": "Per pratiche bancarie, servizi pubblici, postali e di telecomunicazione che richiedono una copia del documento. Disponi entrambi i lati su una pagina e segui i requisiti del destinatario."
       },
       "sg-nric": {
         "summary": "La NRIC di Singapore è una CR80 standard (85,6 × 54 mm) fronte/retro per cittadini e residenti permanenti.",
@@ -1409,7 +1409,7 @@
       "editor foto online"
     ],
     "replace": "Sostituisci foto",
-    "cropHint": "L’output viene ritagliato dal centro per adattarsi al rapporto scelto.",
+    "cropHint": "Trascina il riquadro per spostare il ritaglio e gli angoli per ridimensionarlo. Usa i tasti freccia per regolare il riquadro selezionato.",
     "download": "Scarica foto elaborata",
     "processing": "Elaborazione…",
     "privacy": "La foto viene elaborata sul dispositivo e non viene caricata su un server.",
@@ -1426,16 +1426,31 @@
         "oneInch": "1 pollice · 295×413",
         "twoInch": "2 pollici · 413×579",
         "passport": "Passaporto · 390×567",
-        "square": "Quadrato · 600×600"
+        "square": "Quadrato · 600×600",
+        "smallOneInch": "1 pollice piccola · 260×378",
+        "largeOneInch": "1 pollice grande · 390×567",
+        "smallTwoInch": "2 pollici piccola · 413×531",
+        "largeTwoInch": "2 pollici grande · 413×626"
       },
-      "width": "Larghezza (px)",
-      "height": "Altezza (px)",
+      "width": "Larghezza ({unit})",
+      "height": "Altezza ({unit})",
       "sizeHint": "L’output viene ritagliato alle dimensioni indicate.",
       "format": "Formato di output",
       "fileSize": "Dimensione file obiettivo",
       "noLimit": "Nessun limite",
       "customKB": "Dimensione personalizzata (KB)",
-      "pngHint": "PNG non è adatto alla compressione esatta in KB; verrà esportato alle dimensioni scelte."
+      "pngHint": "PNG non è adatto alla compressione esatta in KB; verrà esportato alle dimensioni scelte.",
+      "unit": "Unità di misura",
+      "dpi": "Risoluzione (DPI)",
+      "units": {
+        "px": "Pixel (px)",
+        "mm": "Millimetri (mm)",
+        "cm": "Centimetri (cm)",
+        "in": "Pollici (in)"
+      },
+      "outputPixels": "Dimensioni di uscita: {width} × {height} px",
+      "invalidSize": "Inserisci misure valide: 1–10000 px per lato dopo la conversione e 1–1200 DPI.",
+      "dpiHint": "I DPI convertono le misure fisiche in pixel; non impostano la risoluzione di stampa nei metadati del file."
     },
     "note": {
       "title": "Per modificare rapidamente una foto",
@@ -1445,6 +1460,7 @@
       "imageOnly": "Scegli un file immagine.",
       "decode": "Impossibile leggere l’immagine. Prova JPG, PNG o WebP.",
       "export": "Elaborazione non riuscita. Riprova."
-    }
+    },
+    "belowTarget": "Con queste dimensioni, anche il file alla massima qualità è inferiore alla dimensione desiderata. Sono state mantenute la massima qualità e le dimensioni scelte."
   }
 }

@@ -4,19 +4,32 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Download, ImagePlus, RefreshCw, SlidersHorizontal } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
+import { CropFrameOverlay } from '@/features/crop/crop-frame'
+import type { CropFrame, PhotoSpec } from '@/types/spec'
 import { UploadDropzone } from '@/components/upload-dropzone'
 import { compressToKB } from '@/features/export'
 import { triggerDownload } from '@/features/export/dom-download'
 import { classifyFileType, trackEvent } from '@/lib/analytics'
-import { coverCrop, positiveInt } from './quick-tools-utils'
+import {
+  fitSelection,
+  positiveInt,
+  dimensionToPixels,
+  pixelsToDimension,
+  pixelsPerUnit,
+  type SizeUnit,
+} from './quick-tools-utils'
 
 type ImageSource = ImageBitmap | HTMLImageElement
 type QuickFormat = 'jpg' | 'png' | 'webp'
 
 const PRESETS = [
   { key: 'original', width: 0, height: 0 },
+  { key: 'smallOneInch', width: 260, height: 378 },
   { key: 'oneInch', width: 295, height: 413 },
+  { key: 'largeOneInch', width: 390, height: 567 },
+  { key: 'smallTwoInch', width: 413, height: 531 },
   { key: 'twoInch', width: 413, height: 579 },
+  { key: 'largeTwoInch', width: 413, height: 626 },
   { key: 'passport', width: 390, height: 567 },
   { key: 'square', width: 600, height: 600 },
 ] as const
@@ -59,20 +72,13 @@ function sourceDimensions(source: ImageSource): { width: number; height: number 
   return { width: source.width, height: source.height }
 }
 
-function drawCover(
-  source: ImageSource,
-  canvas: HTMLCanvasElement,
-  targetWidth: number,
-  targetHeight: number,
-): void {
+function drawSelection(source: ImageSource, canvas: HTMLCanvasElement, crop: CropFrame): void {
   const ctx = canvas.getContext('2d')
   if (!ctx) return
-  const { width, height } = sourceDimensions(source)
-  const crop = coverCrop(width, height, targetWidth, targetHeight)
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.imageSmoothingEnabled = true
   ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(source, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, canvas.width, canvas.height)
+  ctx.drawImage(source, crop.x, crop.y, crop.w, crop.h, 0, 0, canvas.width, canvas.height)
 }
 
 function canvasToBlob(canvas: HTMLCanvasElement, format: QuickFormat): Promise<Blob> {
@@ -92,21 +98,47 @@ export function QuickTools() {
   const sourceRef = useRef<ImageSource | null>(null)
   const previewRef = useRef<HTMLCanvasElement>(null)
   const [source, setSource] = useState<ImageSource | null>(null)
+  const [selection, setSelection] = useState<CropFrame | null>(null)
   const [file, setFile] = useState<File | null>(null)
   const [width, setWidth] = useState('600')
   const [height, setHeight] = useState('800')
+  const [unit, setUnit] = useState<SizeUnit>('px')
+  const [dpi, setDpi] = useState('300')
   const [preset, setPreset] = useState('custom')
   const [format, setFormat] = useState<QuickFormat>('jpg')
   const [targetOption, setTargetOption] = useState<(typeof TARGET_OPTIONS)[number]>('none')
   const [customKB, setCustomKB] = useState('100')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [result, setResult] = useState<{ width: number; height: number; sizeKB: number } | null>(
-    null,
-  )
+  const [result, setResult] = useState<{
+    width: number
+    height: number
+    sizeKB: number
+    belowTarget: boolean
+  } | null>(null)
 
-  const targetWidth = positiveInt(width, 600)
-  const targetHeight = positiveInt(height, 800)
+  const targetWidth = dimensionToPixels(width, unit, Number(dpi))
+  const targetHeight = dimensionToPixels(height, unit, Number(dpi))
+  const imageSize = source ? sourceDimensions(source) : null
+  const frame =
+    imageSize && targetWidth && targetHeight
+      ? fitSelection(imageSize.width, imageSize.height, targetWidth, targetHeight, selection)
+      : null
+  const cropSpec: PhotoSpec | null =
+    targetWidth && targetHeight
+      ? {
+          id: 'quick-tools',
+          builtin: false,
+          category: 'custom',
+          name: { en: 'Custom' },
+          width_mm: (targetWidth * 25.4) / 300,
+          height_mm: (targetHeight * 25.4) / 300,
+          width_px: targetWidth,
+          height_px: targetHeight,
+          dpi: 300,
+        }
+      : null
+
   const targetKB = useMemo(() => {
     if (targetOption === 'none') return null
     if (targetOption === 'custom') return positiveInt(customKB, 100, 10240)
@@ -124,11 +156,14 @@ export function QuickTools() {
   useEffect(() => {
     const canvas = previewRef.current
     if (!canvas || !isImageSource(source)) return
-    const previewScale = Math.min(1, 640 / Math.max(targetWidth, targetHeight))
-    canvas.width = Math.max(1, Math.round(targetWidth * previewScale))
-    canvas.height = Math.max(1, Math.round(targetHeight * previewScale))
-    drawCover(source, canvas, targetWidth, targetHeight)
-  }, [source, targetHeight, targetWidth])
+    const { width: sourceWidth, height: sourceHeight } = sourceDimensions(source)
+    if (!sourceWidth || !sourceHeight) return
+    const scale = Math.min(1, 640 / sourceWidth, 480 / sourceHeight)
+    canvas.width = Math.max(1, Math.round(sourceWidth * scale))
+    canvas.height = Math.max(1, Math.round(sourceHeight * scale))
+    const ctx = canvas.getContext('2d')
+    ctx?.drawImage(source, 0, 0, canvas.width, canvas.height)
+  }, [source])
 
   const handleFile = useCallback(
     async (nextFile: File) => {
@@ -143,8 +178,10 @@ export function QuickTools() {
         releaseSource()
         sourceRef.current = decoded
         setSource(decoded)
+        setSelection(null)
         setFile(nextFile)
         const dimensions = sourceDimensions(decoded)
+        setUnit('px')
         setWidth(String(dimensions.width))
         setHeight(String(dimensions.height))
         setPreset('original')
@@ -158,9 +195,35 @@ export function QuickTools() {
     [releaseSource, t],
   )
 
+  const handleUnit = (nextUnit: SizeUnit) => {
+    if (!targetWidth || !targetHeight) return
+    const conversionDpi = positiveInt(dpi, 300, 1200)
+    setDpi(String(conversionDpi))
+    setWidth(
+      pixelsToDimension(
+        Number(width) * pixelsPerUnit(unit, conversionDpi),
+        nextUnit,
+        conversionDpi,
+      ),
+    )
+    setHeight(
+      pixelsToDimension(
+        Number(height) * pixelsPerUnit(unit, conversionDpi),
+        nextUnit,
+        conversionDpi,
+      ),
+    )
+    setUnit(nextUnit)
+    setResult(null)
+  }
+
   const handlePreset = (value: string) => {
+    setResult(null)
+    setSelection(frame)
+    if (value !== 'custom') setUnit('px')
     setPreset(value)
     if (value === 'original' && source) {
+      setSelection(null)
       const dimensions = sourceDimensions(source)
       setWidth(String(dimensions.width))
       setHeight(String(dimensions.height))
@@ -176,26 +239,30 @@ export function QuickTools() {
   const reset = () => {
     releaseSource()
     setSource(null)
+    setSelection(null)
     setFile(null)
     setResult(null)
     setError(null)
     setPreset('custom')
+    setUnit('px')
+    setDpi('300')
     setWidth('600')
     setHeight('800')
     setTargetOption('none')
   }
 
   const exportImage = async () => {
-    if (!source) return
+    if (!source || !targetWidth || !targetHeight || !frame) return
     setBusy(true)
     setError(null)
     try {
       const canvas = document.createElement('canvas')
       canvas.width = targetWidth
       canvas.height = targetHeight
-      drawCover(source, canvas, targetWidth, targetHeight)
+      drawSelection(source, canvas, frame)
 
       let blob: Blob
+      let belowTarget = false
       let outputWidth = targetWidth
       let outputHeight = targetHeight
       if (targetKB !== null && format !== 'png') {
@@ -205,7 +272,13 @@ export function QuickTools() {
           format,
           initialWidth: targetWidth,
           initialHeight: targetHeight,
+          qualityRange: [0.3, 1],
+          qualityProbes: 10,
+          tolerance: 0.02,
+          tryMaxQuality: true,
         })
+        belowTarget =
+          compressed.quality === 1 && compressed.scale === 1 && compressed.finalKB < targetKB * 0.98
         blob = compressed.blob
         outputWidth = compressed.width
         outputHeight = compressed.height
@@ -215,7 +288,7 @@ export function QuickTools() {
 
       const extension = format === 'jpg' ? 'jpg' : format
       triggerDownload(blob, `pixfit-quick-${outputWidth}x${outputHeight}.${extension}`)
-      setResult({ width: outputWidth, height: outputHeight, sizeKB: blob.size / 1024 })
+      setResult({ width: outputWidth, height: outputHeight, sizeKB: blob.size / 1024, belowTarget })
       trackEvent('quick_tool_export_succeeded', {
         format,
         target_kb: targetKB ?? 0,
@@ -228,8 +301,8 @@ export function QuickTools() {
   }
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.72fr)]">
-      <div className="space-y-6">
+    <section className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.72fr)]">
+      <div className="min-w-0 space-y-6">
         {!source ? (
           <UploadDropzone
             onSelect={(nextFile) => void handleFile(nextFile)}
@@ -257,10 +330,29 @@ export function QuickTools() {
               </button>
             </div>
             <div className="flex min-h-[22rem] items-center justify-center rounded-[var(--radius-lg)] bg-[var(--color-bg)] p-4">
-              <canvas
-                ref={previewRef}
-                className="max-h-[30rem] max-w-full rounded shadow-[var(--shadow-sm)]"
-              />
+              <div
+                className="relative max-w-full overflow-hidden rounded shadow-[var(--shadow-sm)]"
+                style={{
+                  width: imageSize
+                    ? Math.min(640, (480 * imageSize.width) / imageSize.height)
+                    : 640,
+                }}
+                aria-label={t('cropHint')}
+              >
+                <canvas ref={previewRef} className="block h-auto w-full" />
+                {frame && cropSpec && imageSize && (
+                  <CropFrameOverlay
+                    imageW={imageSize.width}
+                    imageH={imageSize.height}
+                    spec={cropSpec}
+                    frame={frame}
+                    onChange={(next) => {
+                      setSelection(next)
+                      setResult(null)
+                    }}
+                  />
+                )}
+              </div>
             </div>
             <p className="mt-3 text-center text-xs text-[var(--color-text-mute)]">
               {t('cropHint')}
@@ -298,30 +390,68 @@ export function QuickTools() {
             </select>
             <div className="grid grid-cols-2 gap-3">
               <label className="text-xs text-[var(--color-text-mute)]">
-                {t('settings.width')}
+                {t('settings.unit')}
+                <select
+                  value={unit}
+                  disabled={!targetWidth || !targetHeight}
+                  onChange={(event) => handleUnit(event.target.value as SizeUnit)}
+                  className="mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 text-sm text-[var(--color-text)]"
+                >
+                  {(['px', 'mm', 'cm', 'in'] as const).map((value) => (
+                    <option key={value} value={value}>
+                      {t(`settings.units.${value}`)}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {unit !== 'px' && (
+                <label className="text-xs text-[var(--color-text-mute)]">
+                  {t('settings.dpi')}
+                  <input
+                    type="number"
+                    min={1}
+                    max={1200}
+                    step={1}
+                    inputMode="numeric"
+                    value={dpi}
+                    onChange={(event) => {
+                      setDpi(event.target.value)
+                      setPreset('custom')
+                      setResult(null)
+                    }}
+                    className="mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 text-sm text-[var(--color-text)]"
+                  />
+                </label>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="text-xs text-[var(--color-text-mute)]">
+                {t('settings.width', { unit })}
                 <input
-                  inputMode="numeric"
+                  inputMode={unit === 'px' ? 'numeric' : 'decimal'}
                   type="number"
-                  min={1}
-                  max={10000}
+                  min={unit === 'px' ? 1 : 0.000001}
+                  step={unit === 'px' ? 1 : 'any'}
                   value={width}
                   onChange={(event) => {
                     setPreset('custom')
+                    setResult(null)
                     setWidth(event.target.value)
                   }}
                   className="mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 text-sm text-[var(--color-text)]"
                 />
               </label>
               <label className="text-xs text-[var(--color-text-mute)]">
-                {t('settings.height')}
+                {t('settings.height', { unit })}
                 <input
-                  inputMode="numeric"
+                  inputMode={unit === 'px' ? 'numeric' : 'decimal'}
                   type="number"
-                  min={1}
-                  max={10000}
+                  min={unit === 'px' ? 1 : 0.000001}
+                  step={unit === 'px' ? 1 : 'any'}
                   value={height}
                   onChange={(event) => {
                     setPreset('custom')
+                    setResult(null)
                     setHeight(event.target.value)
                   }}
                   className="mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 text-sm text-[var(--color-text)]"
@@ -329,6 +459,18 @@ export function QuickTools() {
               </label>
             </div>
             <p className="text-xs text-[var(--color-text-mute)]">{t('settings.sizeHint')}</p>
+            {targetWidth && targetHeight ? (
+              <p className="text-xs text-[var(--color-text-mute)]" aria-live="polite">
+                {t('settings.outputPixels', { width: targetWidth, height: targetHeight })}
+              </p>
+            ) : (
+              <p role="alert" className="text-xs text-red-700">
+                {t('settings.invalidSize')}
+              </p>
+            )}
+            {unit !== 'px' && (
+              <p className="text-xs text-[var(--color-text-mute)]">{t('settings.dpiHint')}</p>
+            )}
           </fieldset>
 
           <label
@@ -340,7 +482,10 @@ export function QuickTools() {
               id="quick-format"
               disabled={!source}
               value={format}
-              onChange={(event) => setFormat(event.target.value as QuickFormat)}
+              onChange={(event) => {
+                setFormat(event.target.value as QuickFormat)
+                setResult(null)
+              }}
               className="mt-2 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 text-sm font-normal text-[var(--color-text)] disabled:opacity-50"
             >
               <option value="jpg">JPG</option>
@@ -358,9 +503,10 @@ export function QuickTools() {
               id="quick-target-size"
               disabled={!source}
               value={targetOption}
-              onChange={(event) =>
+              onChange={(event) => {
                 setTargetOption(event.target.value as (typeof TARGET_OPTIONS)[number])
-              }
+                setResult(null)
+              }}
               className="mt-2 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 text-sm font-normal text-[var(--color-text)] disabled:opacity-50"
             >
               {TARGET_OPTIONS.map((option) => (
@@ -388,7 +534,10 @@ export function QuickTools() {
                 min={1}
                 max={10240}
                 value={customKB}
-                onChange={(event) => setCustomKB(event.target.value)}
+                onChange={(event) => {
+                  setCustomKB(event.target.value)
+                  setResult(null)
+                }}
                 className="mt-1 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2.5 text-sm text-[var(--color-text)]"
               />
             </label>
@@ -419,9 +568,13 @@ export function QuickTools() {
             </p>
           )}
 
+          {result?.belowTarget && (
+            <p className="text-xs text-[var(--color-text-mute)]">{t('belowTarget')}</p>
+          )}
+
           <button
             type="button"
-            disabled={!source || busy}
+            disabled={!source || busy || !targetWidth || !targetHeight}
             onClick={() => void exportImage()}
             className="inline-flex w-full items-center justify-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-3 text-sm font-medium text-white shadow-[var(--shadow-sm)] transition-colors hover:bg-[var(--color-primary-dk)] disabled:cursor-not-allowed disabled:opacity-50"
           >

@@ -28,7 +28,7 @@ export const article: ArticleBody = {
           items: [
             'PRC Resident ID (`cn-id-card`) — 85.6×54 mm. The default and the highest-volume preset. Front shows the photo + name; back shows the validity and the issuing authority.',
             'Hong Kong Smart ID (`hk-id-card`) — 85.6×54 mm. Same physical card as the PRC ID; the preset is provided separately so the Pixfit copy and OCR hints can reference the HK-specific layout.',
-            'Taiwan ID card (`tw-id-card`) — 85.6×54 mm. The 2020-redesign card; the layout differs from PRC and HK but the physical size is identical.',
+            'Resident ID card — Taiwan, China (`tw-id-card`) — 85.6×54 mm, CR80. Supports combining the front and back on one page.',
             'Singapore NRIC (`sg-nric`) — 85.6×54 mm. The "pink" or "blue" NRIC; both scan to the same preset.',
             'India Aadhaar card (`in-aadhaar`) — 85.6×54 mm. The plastic Aadhaar card (not the paper letter, which is A4-sized and uses the `a4` preset).',
             'Bank / credit card (`bank-card`) — 85.6×54 mm. For uploading proof-of-card-ownership scans to fraud / chargeback teams.',
