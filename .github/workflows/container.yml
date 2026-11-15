@@ -1,0 +1,110 @@
+name: Container image
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    # The feature branch publishes testable images before this workflow is merged.
+    branches: [main, codex/container-packaging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: container-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  image:
+    name: Build and smoke test (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - uses: docker/setup-buildx-action@v3
+      - name: Image name
+        id: image
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: echo "name=ghcr.io/${REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          platforms: linux/${{ matrix.arch }}
+          tags: ${{ steps.image.outputs.name }}:sha-${{ github.sha }}-${{ matrix.arch }}
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL || 'https://pix-fit.com' }}
+            NEXT_PUBLIC_GA_MEASUREMENT_ID=${{ vars.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=container-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=container-${{ matrix.arch }}
+      - name: Smoke test running container
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}:sha-${{ github.sha }}-${{ matrix.arch }}
+        run: |
+          docker run --detach --name pixfit-smoke --publish 127.0.0.1:3000:3000 "$IMAGE"
+          node scripts/container-smoke.mjs
+      - name: Container logs
+        if: failure()
+        run: docker logs pixfit-smoke || true
+      - name: Stop test container
+        if: always()
+        run: docker rm --force pixfit-smoke || true
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish tested image
+        if: github.event_name != 'pull_request'
+        env:
+          IMAGE: ${{ steps.image.outputs.name }}:sha-${{ github.sha }}-${{ matrix.arch }}
+        run: docker push "$IMAGE"
+
+  manifest:
+    name: Publish multi-platform image
+    needs: image
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish version tag
+        env:
+          REPOSITORY: ${{ github.repository }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          IMAGE="ghcr.io/${REPOSITORY,,}"
+          docker buildx imagetools create --tag "$IMAGE:sha-$COMMIT" \
+            "$IMAGE:sha-$COMMIT-amd64" "$IMAGE:sha-$COMMIT-arm64"
+          if [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            docker buildx imagetools create --tag "$IMAGE:latest" "$IMAGE:sha-$COMMIT"
+          fi
+          echo "Published: $IMAGE:sha-$COMMIT (linux/amd64, linux/arm64)" >> "$GITHUB_STEP_SUMMARY"

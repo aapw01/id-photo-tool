@@ -8,6 +8,9 @@ const withBundleAnalyzer = createBundleAnalyzer({
 })
 
 const nextConfig: NextConfig = {
+  // Docker needs a self-contained Node.js server. Other hosting targets
+  // keep their existing build output.
+  output: process.env.DOCKER_BUILD === '1' ? 'standalone' : undefined,
   reactStrictMode: true,
   // Pixfit's canonical URLs are no-slash (`/sizes/us-visa`, not
   // `/sizes/us-visa/`); pin the default explicitly so a future Next

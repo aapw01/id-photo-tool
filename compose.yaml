@@ -1,0 +1,20 @@
+services:
+  pixfit:
+    image: ${PIXFIT_IMAGE:?Set PIXFIT_IMAGE to a published sha tag or digest}
+    restart: unless-stopped
+    init: true
+    ports:
+      - '127.0.0.1:${PIXFIT_PORT:-3000}:3000'
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: '3000'
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
