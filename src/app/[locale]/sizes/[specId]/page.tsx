@@ -6,6 +6,7 @@ import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/breadcrumb'
 import { CrossSurfaceLinks } from '@/components/cross-surface-links'
+import { GoogleAdSense } from '@/components/google-adsense'
 import { JsonLd } from '@/components/jsonld'
 import { RegionFlag } from '@/components/region-flag'
 import { SiteFooter } from '@/components/site-footer'
@@ -592,6 +593,7 @@ export default async function SpecDetailPage({ params }: SpecDetailPageProps) {
         </article>
       </main>
       <SiteFooter />
+      <GoogleAdSense />
       <JsonLd data={[webApplicationSchema(locale as Locale), breadcrumbs, howTo, faq]} />
     </>
   )

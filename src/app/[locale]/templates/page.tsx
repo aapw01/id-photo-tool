@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { Breadcrumb } from '@/components/breadcrumb'
+import { GoogleAdSense } from '@/components/google-adsense'
 import { JsonLd } from '@/components/jsonld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -176,6 +177,7 @@ export default async function TemplatesPage({ params }: TemplatesPageProps) {
         </section>
       </main>
       <SiteFooter />
+      <GoogleAdSense />
       <JsonLd data={[webApplicationSchema(locale as Locale), collectionPage, breadcrumbs]} />
     </>
   )
