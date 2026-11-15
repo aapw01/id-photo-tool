@@ -22,6 +22,7 @@ import { GoogleAnalytics } from '@/components/google-analytics'
  * doesn't ship a useless dead script to its users.
  */
 const ON_VERCEL = process.env.VERCEL === '1'
+const ADSENSE_CLIENT_ID = process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID || 'ca-pub-3623293518183352'
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
@@ -45,6 +46,9 @@ export const metadata: Metadata = {
   title: {
     default: SITE_NAME_FULL,
     template: `%s · ${SITE_NAME_FULL}`,
+  },
+  other: {
+    'google-adsense-account': ADSENSE_CLIENT_ID,
   },
 }
 
