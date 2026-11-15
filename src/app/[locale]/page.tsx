@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { Crop, Layout, Lock, Scaling } from 'lucide-react'
 
 import { JsonLd } from '@/components/jsonld'
+import { GoogleAdSense } from '@/components/google-adsense'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { UploadDropzone } from '@/components/upload-dropzone'
@@ -178,6 +179,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </section>
       </main>
       <SiteFooter />
+      <GoogleAdSense />
       <JsonLd data={[webApp, webSite, faq]} />
     </>
   )
