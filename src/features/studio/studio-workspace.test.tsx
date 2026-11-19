@@ -5,11 +5,13 @@ import { useCropStore, __resetCropStoreForTesting } from '@/features/crop/spec-s
 import { useLayoutStore } from '@/features/layout'
 
 import { useStudioStore } from './store'
+import { useStudioTabStore } from './studio-tab-store'
 import { StudioWorkspace } from './studio-workspace'
 
 const mocks = vi.hoisted(() => ({
   routerPush: vi.fn(),
   segment: vi.fn(),
+  segmentationError: null as Error | null,
 }))
 
 vi.mock('next-intl', () => ({
@@ -47,7 +49,7 @@ vi.mock('@/features/segmentation/use-segmentation', () => ({
   useSegmentation: () => ({
     segment: mocks.segment,
     state: 'idle',
-    error: null,
+    error: mocks.segmentationError,
   }),
 }))
 
@@ -60,7 +62,11 @@ vi.mock('@/features/background/background-panel', () => ({
 }))
 
 vi.mock('@/features/background/export-panel', () => ({
-  ExportPanel: () => <div data-testid="export-panel" />,
+  ExportPanel: ({ disabled }: { disabled?: boolean }) => (
+    <button data-testid="export-panel" disabled={disabled}>
+      Download
+    </button>
+  ),
 }))
 
 vi.mock('@/features/crop/compliance-banner', () => ({
@@ -127,6 +133,8 @@ function stagePhoto() {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  mocks.segmentationError = null
+  useStudioTabStore.getState().resetVisited()
   __resetCropStoreForTesting()
   useLayoutStore.getState().reset()
   useStudioStore.setState({
@@ -138,6 +146,18 @@ beforeEach(() => {
   Object.defineProperty(globalThis, 'createImageBitmap', {
     value: vi.fn(async () => makeBitmap(640, 480)),
     configurable: true,
+  })
+})
+
+describe('StudioWorkspace export fallback', () => {
+  it('keeps the original-photo export available after cut-out fails', () => {
+    stagePhoto()
+    mocks.segmentationError = new Error('Model unavailable')
+    useStudioTabStore.getState().setTab('export')
+
+    render(<StudioWorkspace />)
+
+    expect(screen.getByTestId('export-panel')).toBeEnabled()
   })
 })
 

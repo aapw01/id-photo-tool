@@ -96,7 +96,7 @@ export function StudioWorkspace() {
     }
   }, [specsHydrated, rehydrateSpecs])
 
-  const { segment, state, error } = useSegmentation()
+  const { segment, state } = useSegmentation()
 
   const [showCompare, setShowCompare] = useState(false)
 
@@ -259,7 +259,6 @@ export function StudioWorkspace() {
           mask={mask}
           foreground={foreground}
           bg={bg}
-          disabled={!!error}
           spec={cropSpec}
           frame={cropFrame}
         />

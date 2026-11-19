@@ -58,7 +58,6 @@ interface ExportPanelProps {
    */
   foreground?: ImageData | null
   bg: BgColor
-  disabled?: boolean
   spec?: PhotoSpec | null
   frame?: CropFrame | null
 }
@@ -70,7 +69,6 @@ export function ExportPanel({
   mask,
   foreground: precomputedForeground,
   bg,
-  disabled,
   spec,
   frame,
 }: ExportPanelProps) {
@@ -319,7 +317,7 @@ export function ExportPanel({
   // works with either the cut-out or the raw bitmap.
   const formatNeedsMask = format === 'png-alpha'
   const busy = downloading || copying
-  const blocked = disabled || !exportSource || (formatNeedsMask && !foreground) || busy
+  const blocked = !exportSource || (formatNeedsMask && !foreground) || busy
 
   // Show a "preserves original resolution" notice when the export
   // target exceeds the cached preview foreground. The download path
