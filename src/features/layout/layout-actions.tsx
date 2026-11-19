@@ -25,6 +25,7 @@ import { buildFilename, triggerDownload } from '@/features/export'
 import { canvasToBlob } from '@/features/export/export-single'
 import { useEffectivePhotoSpecs } from '@/features/spec-manager/store'
 import { aspectRatio, derivePixels } from '@/lib/spec-units'
+import { trackEvent } from '@/lib/analytics'
 import type { CropFrame, PhotoSpec } from '@/types/spec'
 
 import { exportLayoutPdf } from './export-pdf'
@@ -242,6 +243,11 @@ export function LayoutActions({
       })
       const blob = await canvasToBlob(result.canvas, 'image/png')
       triggerDownload(blob, pngFilename)
+      trackEvent('export_succeeded', {
+        surface: 'layout',
+        destination: 'download',
+        format: 'png',
+      })
       toast.success(t('downloadSuccess', { filename: pngFilename }))
     } catch {
       toast.error(t('downloadFailed'))
@@ -276,6 +282,11 @@ export function LayoutActions({
         settingsOverride: settings,
       })
       triggerDownload(blob, pdfFilename)
+      trackEvent('export_succeeded', {
+        surface: 'layout',
+        destination: 'download',
+        format: 'pdf',
+      })
       toast.success(t('downloadSuccess', { filename: pdfFilename }))
     } catch {
       toast.error(t('downloadFailed'))
